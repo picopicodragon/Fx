@@ -11,6 +11,16 @@
       "source_locator": "現在の設計対話内・第113問へのユーザーの回答",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q114",
+      "excerpt_path": "specs/source_excerpts/Q114.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "現在の設計対話内・第114問へのユーザーの回答",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
     }
   ]
 }
