@@ -1,0 +1,320 @@
+{
+  "schema_version": 1,
+  "decision_ref": "Q115",
+  "state": "PLANNED_ONLY",
+  "note": "Priorities are for evidence collection. No Q1-Q112 original excerpts are verified, and no safety requirement is implementation-approved.",
+  "batches": [
+    {
+      "batch_id": "P0-01",
+      "label": "損失制限・口座純資産・ドローダウン",
+      "order": 1,
+      "requirement_ids": [
+        "FX-SAF-001",
+        "FX-SAF-002",
+        "FX-SAF-003",
+        "FX-SAF-004",
+        "FX-SAF-005",
+        "FX-SAF-006"
+      ],
+      "gate": "対象の原議の本文確認と差分整理、本人承認が終わるまで安全仕様は未確定"
+    },
+    {
+      "batch_id": "P0-02",
+      "label": "注文・サーバーSL・ポジション保護",
+      "order": 2,
+      "requirement_ids": [
+        "FX-SAF-010",
+        "FX-SAF-013"
+      ],
+      "gate": "Broker固有制限の検証と原議照合が必要"
+    },
+    {
+      "batch_id": "P0-03",
+      "label": "障害停止・再起動・復旧",
+      "order": 3,
+      "requirement_ids": [
+        "FX-SAF-011",
+        "FX-SAF-012"
+      ],
+      "gate": "通信断/SL喪失等の重大停止を原議と照合"
+    },
+    {
+      "batch_id": "P0-04",
+      "label": "新規注文許可・重要イベント・仮説失効",
+      "order": 4,
+      "requirement_ids": [
+        "FX-SAF-007",
+        "FX-SAF-008",
+        "FX-SAF-009"
+      ],
+      "gate": "AI判断がリスク制御を越えられないことを確認"
+    },
+    {
+      "batch_id": "P0-05",
+      "label": "実口座稼働ゲート・人間承認",
+      "order": 5,
+      "requirement_ids": [
+        "FX-SAF-014",
+        "FX-SAF-015"
+      ],
+      "gate": "本番稼働はシステム完成後も独立承認"
+    }
+  ],
+  "items": [
+    {
+      "requirement_id": "FX-SAF-001",
+      "question_ids": [
+        "Q5",
+        "Q6",
+        "Q13"
+      ],
+      "batch_id": "P0-01",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-002",
+      "question_ids": [
+        "Q7"
+      ],
+      "batch_id": "P0-01",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-003",
+      "question_ids": [
+        "Q8",
+        "Q9",
+        "Q13",
+        "Q14"
+      ],
+      "batch_id": "P0-01",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-004",
+      "question_ids": [
+        "Q10",
+        "Q45"
+      ],
+      "batch_id": "P0-01",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-005",
+      "question_ids": [
+        "Q11",
+        "Q12"
+      ],
+      "batch_id": "P0-01",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-006",
+      "question_ids": [
+        "Q80"
+      ],
+      "batch_id": "P0-01",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-010",
+      "question_ids": [
+        "Q35",
+        "Q36",
+        "Q37",
+        "Q38",
+        "Q39",
+        "Q40",
+        "Q41",
+        "Q42"
+      ],
+      "batch_id": "P0-02",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-013",
+      "question_ids": [
+        "Q55",
+        "Q56",
+        "Q57"
+      ],
+      "batch_id": "P0-02",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-011",
+      "question_ids": [
+        "Q43",
+        "Q44",
+        "Q45"
+      ],
+      "batch_id": "P0-03",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-012",
+      "question_ids": [
+        "Q46",
+        "Q47"
+      ],
+      "batch_id": "P0-03",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-007",
+      "question_ids": [
+        "Q21",
+        "Q22",
+        "Q23",
+        "Q24"
+      ],
+      "batch_id": "P0-04",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-008",
+      "question_ids": [
+        "Q26",
+        "Q27",
+        "Q28",
+        "Q29"
+      ],
+      "batch_id": "P0-04",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-009",
+      "question_ids": [
+        "Q31",
+        "Q32"
+      ],
+      "batch_id": "P0-04",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-014",
+      "question_ids": [
+        "Q104"
+      ],
+      "batch_id": "P0-05",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    },
+    {
+      "requirement_id": "FX-SAF-015",
+      "question_ids": [
+        "Q107",
+        "Q108",
+        "Q109",
+        "Q110"
+      ],
+      "batch_id": "P0-05",
+      "source_review": "PENDING_ORIGINAL",
+      "spec_comparison": "NOT_REVIEWED",
+      "confidentiality_review": "NOT_REVIEWED",
+      "human_safety_approval": false,
+      "github_excerpt_refs": [],
+      "outstanding_issues": [
+        "原議全文のローカル保存・原議との照合が未完了"
+      ]
+    }
+  ],
+  "next_noncritical_scope": "Q1-Q110のうち安全機能以外のAI/経済データ/その他。P0完了後に段階的に照合。"
+}

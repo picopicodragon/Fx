@@ -51,6 +51,10 @@
 
 Windows手順は `docs/local_archive_guide.md`。決定候補の抽出は `scripts/extract_original_decisions.py`、対象の会話IDを探すには `scripts/list_export_conversations.py` を用いる。ツールは候補をローカルへ保存するのみで、原本をGitHubへアップロードせず、承認も実行しない。第114問の原文抜粋は直接確認した会話から登録済みだが、完全なローカル原議アーカイブは未作成。
 
+## 第115問：安全重要仕様からの登録
+
+`specs/source_review_plan.md` に対応する5段階の安全重要仕様照合順を採用。15件とも原議の最終確認・実装用本人承認前の状態であり、Python抽出結果の存在だけで照合済みにしない。
+
 ## Codexへの引き継ぎ
 
 Codexは、原議の所在が不明な場合に推測で決定の原文を生成せず、`specs/source_evidence.json` の証拠状態を確認してください。新規の抜粋を登録する際は保護対象の情報を審査し、対応仕様と差分を記録してください。
