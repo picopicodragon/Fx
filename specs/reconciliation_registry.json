@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "source_notice": "Initial registry is NOT an original-record comparison. No safety-critical implementation approved.",
+  "items": [
+    {
+      "requirement_id": "FX-SAF-001",
+      "question_ids": [
+        "Q5",
+        "Q6",
+        "Q13"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "日次/取引ごとの純資産基準計算と建玉サイズの口座別制約は要照合"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-002",
+      "question_ids": [
+        "Q7"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "相関・リスク合算の計算方式は別途明文化"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-003",
+      "question_ids": [
+        "Q8",
+        "Q9",
+        "Q13",
+        "Q14"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "NEEDS_CLARIFICATION",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "日次損益に含む決済損益、含み損、手数料、スワップの二重計上回避と入出金の取り扱いを確定"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-004",
+      "question_ids": [
+        "Q10",
+        "Q45"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "翌営業日自動再開がDD/重大停止の人間承認を上書きしない条件を原議照合"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-005",
+      "question_ids": [
+        "Q11",
+        "Q12"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "NEEDS_CLARIFICATION",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "高水位入出金補正の確定アルゴリズム"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-006",
+      "question_ids": [
+        "Q80"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "2/3/4/5%停止状態の優先度と解除条件を逐語照合"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-007",
+      "question_ids": [
+        "Q21",
+        "Q22",
+        "Q23",
+        "Q24"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "イベント時刻、対象ペア選定、発表後の安全性評価を確認"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-008",
+      "question_ids": [
+        "Q26",
+        "Q27",
+        "Q28",
+        "Q29"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "AI検証結果の伝達、データ鮮度、修正回数、Pythonの棄却条件を原議照合"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-009",
+      "question_ids": [
+        "Q31",
+        "Q32"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "NEEDS_CLARIFICATION",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "期限切れ仮説を再評価できないときの最大待機時間が未決"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-010",
+      "question_ids": [
+        "Q35",
+        "Q36",
+        "Q37",
+        "Q38",
+        "Q39",
+        "Q40",
+        "Q41",
+        "Q42"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "SL後退禁止・サーバー制約・ATR参照時間足の境界を確認"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-011",
+      "question_ids": [
+        "Q43",
+        "Q44",
+        "Q45"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "通信異常の計測起点・L1/L2/L3の遷移と安全復旧条件を確認"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-012",
+      "question_ids": [
+        "Q46",
+        "Q47"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "ウォッチドッグ生存確認と再起動3回の事故単位を明文化"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-013",
+      "question_ids": [
+        "Q55",
+        "Q56",
+        "Q57"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "サーバー側SL保持を確認できない場合のPC停止可否、再起動時の照合条件"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-014",
+      "question_ids": [
+        "Q104"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "MT4デモ利用可否・実口座との差異・人間承認を別途確認"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    },
+    {
+      "requirement_id": "FX-SAF-015",
+      "question_ids": [
+        "Q107",
+        "Q108",
+        "Q109",
+        "Q110"
+      ],
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "safety_critical": true,
+      "source_reference": null,
+      "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
+      "issues": [
+        "実装完了、mainマージ、安全仕様承認、本番有効化を区別して照合"
+      ],
+      "implementation_approved": false,
+      "owner_approval": null
+    }
+  ]
+}
