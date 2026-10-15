@@ -28,6 +28,8 @@ jobs:
         run: python scripts/check_traceability.py
       - name: Validate three-level acceptance registry
         run: python scripts/check_acceptance.py
+      - name: Verify Q1–Q110 master specification index
+        run: python scripts/check_master_spec.py
       - name: Compile available Python sources
         shell: bash
         run: |
