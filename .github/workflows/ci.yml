@@ -24,6 +24,8 @@ jobs:
           python-version: "3.12"
       - name: Check repository policy and PR metadata
         run: python scripts/check_repository.py
+      - name: Validate safety-critical specification-to-test traceability
+        run: python scripts/check_traceability.py
       - name: Compile available Python sources
         shell: bash
         run: |
