@@ -31,3 +31,13 @@ Desktop.ini
 .idea/
 # Reports and generated artifacts containing sensitive runtime data
 out/
+
+# Q113: keep complete ChatGPT exports/local conversation archives OUT of GitHub
+conversations.json
+chat.html
+chatgpt_export*.zip
+chatgpt-data-export*.zip
+raw_conversations/
+conversation_exports/
+local_source_archive/
+local_originals/
