@@ -1,0 +1,33 @@
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*
+*secrets*
+# Operational data / account information
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+backups/
+private/
+data/raw/
+logs/
+# Python and tools
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+# Windows / IDE
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+# Reports and generated artifacts containing sensitive runtime data
+out/
