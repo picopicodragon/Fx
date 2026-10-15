@@ -1,0 +1,40 @@
+name: Fx 基本チェック
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  baseline-checks:
+    name: Repository checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check repository policy and PR metadata
+        run: python scripts/check_repository.py
+      - name: Compile available Python sources
+        shell: bash
+        run: |
+          for dir in scripts src; do
+            if [ -d "$dir" ]; then python -m compileall -q "$dir"; fi
+          done
+      - name: Run currently available Python unit tests
+        shell: bash
+        run: |
+          if [ -d tests ] && find tests -type f -name 'test*.py' | grep -q .; then
+            python -m unittest discover -s tests -p 'test*.py' -v
+          else
+            echo "::warning::No Python unit tests are registered yet. This green check does not certify FX trading safety."
+          fi
