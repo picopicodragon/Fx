@@ -7,26 +7,50 @@
 
 第114問は**C：ハイブリッド型**。必要な設計対話を直接保存する方法と、ChatGPTアカウントのエクスポートを取得して対象会話を抽出する方法を併用する。抽出はPythonの標準ライブラリだけで実施し、**抽出結果はすべてレビュー前の候補扱い**。GitHubへの自動書込み・自動承認・本番注文は行わない。
 
-## Windowsのローカル保存先（例）
+## この環境で使用する保存先（固定）
 
-以下は推奨されるフォルダの一例。ユーザーのPC上で実際に作成する必要がある。
+Windowsローカルのパスは以下を使う。GitHubにはWindowsユーザー名をハードコードしないため、PowerShellでは `$env:USERPROFILE` を使用する。**指定されたPCでは、次の2変数は設定済みのFxローカルリポジトリと原議保存フォルダを指す。**
 
-```text
-C:\FxSourceArchive\
-  originals\           # 原本の会話コピー、エクスポートZIP/JSON（Git管理外）
-  candidates\          # Pythonが生成した決定文候補（Git管理外）
-  checked\             # 本人が検証した抜粋の作業ファイル（Git管理外）
+```powershell
+$FxRepo = Join-Path $env:USERPROFILE 'Documents\ChatGPT\Fx'
+$FxArchive = Join-Path $env:USERPROFILE 'Documents\ChatGPT\FxSourceArchive'
+
+# 対象が存在することを確認
+Test-Path $FxRepo
+Test-Path $FxArchive
+
+# 原議保存用の下位フォルダ（未作成の場合だけ作成）
+New-Item -ItemType Directory -Force -Path (Join-Path $FxArchive 'originals'), (Join-Path $FxArchive 'candidates'), (Join-Path $FxArchive 'checked') | Out-Null
+
+Set-Location $FxRepo
 ```
 
-**Fx Gitリポジトリの外**に保存する。原本ZIPや `conversations.json` は、他の会話・個人情報を含む可能性があるため、そのままGitHubへ登録しない。共有PC環境ではローカルフォルダへのアクセス権とWindowsの暗号化を検討する。第60問で決めたローカル保存方針と混同せず、原本の誤消去リスクを管理する。
+**注意：** `Test-Path` が `False` の場合、そのフォルダはまだ作成されていないか、Windowsの実際のユーザープロファイル/ドキュメント保存場所が異なる。原本を置く前にパスを確認する。このガイドをGitHubへ更新しても、ユーザーPCのフォルダが自動で作成されるわけではない。
+
+## Windowsの原議保存フォルダ構成
+
+`$FxArchive` は `$FxRepo` と同じ `ChatGPT` フォルダの直下に置き、Gitリポジトリの外で管理する。
+
+```text
+ChatGPT/
+├── Fx/                    # GitHubからクローンしたFxリポジトリ
+└── FxSourceArchive/       # 原議を保存するGit管理外のフォルダ
+    ├── originals/         # 原本の会話コピー、エクスポートZIP/JSON
+    ├── candidates/        # Pythonが生成した決定文候補
+    └── checked/           # 本人が検証した抜粋の作業ファイル
+```
+
+原本ZIPや `conversations.json` は、他の会話・個人情報を含む可能性があるため、そのままGitHubへ登録しない。共有PC環境ではローカルフォルダへのアクセス権とWindowsの暗号化を検討する。第60問で決めたローカル保存方針と混同せず、原本の誤消去リスクを管理する。
 
 ## 方法A：必要なユーザーの発言を個別保存
 
-元会話のユーザー発言を、そのままUTF-8テキストとして `C:\FxSourceArchive\originals\q114_user.txt` に保存。**AIによる要約やアシスタント発言を原文の代わりに保存しない**。短い「CでOK」だけでは設問番号が分からない場合、原文と前後の質問の参照位置を手動で補う。
+元会話のユーザー発言を、そのままUTF-8テキストとして `$FxArchive\originals\q114_user.txt` に相当する場所へ保存。**AIによる要約やアシスタント発言を原文の代わりに保存しない**。短い「CでOK」だけでは設問番号が分からない場合、原文と前後の質問の参照位置を手動で補う。
 
 ```powershell
-cd C:\path\to\Fx
-py -3 scripts\extract_original_decisions.py --input "C:\FxSourceArchive\originals\q114_user.txt" --format manual --question Q114 --out-dir "C:\FxSourceArchive\candidates\q114"
+$FxRepo = Join-Path $env:USERPROFILE 'Documents\ChatGPT\Fx'
+$FxArchive = Join-Path $env:USERPROFILE 'Documents\ChatGPT\FxSourceArchive'
+Set-Location $FxRepo
+py -3 scripts\extract_original_decisions.py --input (Join-Path $FxArchive 'originals\q114_user.txt') --format manual --question Q114 --out-dir (Join-Path $FxArchive 'candidates\q114')
 ```
 
 `--question` は**人間が元の対話を確認して指定する**。これによって原議との一致が自動的に認証されるわけではない。
@@ -40,14 +64,16 @@ OpenAI公式案内：https://help.openai.com/ja-jp/articles/7260999-how-do-i-exp
 まず対象会話のIDをローカルの一覧から探す。
 
 ```powershell
-cd C:\path\to\Fx
-py -3 scripts\list_export_conversations.py --input "C:\FxSourceArchive\originals\conversations.json" --filter "FX"
+$FxRepo = Join-Path $env:USERPROFILE 'Documents\ChatGPT\Fx'
+$FxArchive = Join-Path $env:USERPROFILE 'Documents\ChatGPT\FxSourceArchive'
+Set-Location $FxRepo
+py -3 scripts\list_export_conversations.py --input (Join-Path $FxArchive 'originals\conversations.json') --filter "FX"
 ```
 
 該当する会話IDを確認してから、**1つの会話のみ**を選択して抽出する。
 
 ```powershell
-py -3 scripts\extract_original_decisions.py --input "C:\FxSourceArchive\originals\conversations.json" --format export --conversation-id "ここに実際の会話ID" --out-dir "C:\FxSourceArchive\candidates\fx_design"
+py -3 scripts\extract_original_decisions.py --input (Join-Path $FxArchive 'originals\conversations.json') --format export --conversation-id "ここに実際の会話ID" --out-dir (Join-Path $FxArchive 'candidates\fx_design')
 ```
 
 抽出後、`candidate_decisions.json` を確認する。この初期ツールは、冒頭に「第114問は」「Q114：」など**明示的な設問番号があるユーザー発言**だけを候補として拾う。単なる「CでOK」や編集履歴による重複は、人間が文脈を確認して補正する。相違があれば抽出結果を無条件で正としない。
