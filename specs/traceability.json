@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "description": "Q109: safety-critical source/test traceability, all planned until implementation",
+  "groups": [
+    {
+      "group_id": "FX-RISK",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13"
+      ],
+      "prefixes": [
+        "src/risk/"
+      ],
+      "tests": [],
+      "status": "planned"
+    },
+    {
+      "group_id": "FX-ACCOUNT-SAFETY",
+      "spec_ids": [
+        "Q8",
+        "Q9",
+        "Q10",
+        "Q11",
+        "Q12",
+        "Q14",
+        "Q80"
+      ],
+      "prefixes": [
+        "src/safety/"
+      ],
+      "tests": [],
+      "status": "planned"
+    },
+    {
+      "group_id": "FX-ORDER-SL",
+      "spec_ids": [
+        "Q26",
+        "Q27",
+        "Q41",
+        "Q42",
+        "Q43",
+        "Q57"
+      ],
+      "prefixes": [
+        "src/execution/",
+        "mt4/"
+      ],
+      "tests": [],
+      "status": "planned"
+    },
+    {
+      "group_id": "FX-RECOVERY",
+      "spec_ids": [
+        "Q43",
+        "Q44",
+        "Q45",
+        "Q46",
+        "Q47",
+        "Q56",
+        "Q57"
+      ],
+      "prefixes": [
+        "src/recovery/"
+      ],
+      "tests": [],
+      "status": "planned"
+    },
+    {
+      "group_id": "FX-AI-APPROVAL",
+      "spec_ids": [
+        "Q25",
+        "Q26",
+        "Q27",
+        "Q28",
+        "Q29",
+        "Q31",
+        "Q88"
+      ],
+      "prefixes": [
+        "src/ai/approval/"
+      ],
+      "tests": [],
+      "status": "planned"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "description": "Q110: three-level acceptance tracking; no module/task implementation or approvals have occurred",
+  "tasks": [],
+  "modules": [],
+  "phases": [
+    {
+      "id": "PHASE-1",
+      "status": "NOT_STARTED",
+      "module_ids": [],
+      "evidence": [],
+      "approval": null
+    },
+    {
+      "id": "PHASE-2",
+      "status": "NOT_STARTED",
+      "module_ids": [],
+      "evidence": [],
+      "approval": null
+    },
+    {
+      "id": "PHASE-3",
+      "status": "NOT_STARTED",
+      "module_ids": [],
+      "evidence": [],
+      "approval": null
+    },
+    {
+      "id": "PHASE-4",
+      "status": "NOT_STARTED",
+      "module_ids": [],
+      "evidence": [],
+      "approval": null
+    },
+    {
+      "id": "PHASE-5",
+      "status": "NOT_STARTED",
+      "module_ids": [],
+      "evidence": [],
+      "approval": null
+    },
+    {
+      "id": "PHASE-6",
+      "status": "NOT_STARTED",
+      "module_ids": [],
+      "evidence": [],
+      "approval": null
+    }
+  ]
+}
