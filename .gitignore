@@ -41,3 +41,9 @@ raw_conversations/
 conversation_exports/
 local_source_archive/
 local_originals/
+
+# Q114: extracted local candidates must not be committed
+candidate_decisions.json
+candidate_decisions_*.json
+candidate_excerpts/
+local_candidates/
