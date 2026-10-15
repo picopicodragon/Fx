@@ -1,64 +1,99 @@
-# Fx | AI-driven FX Trading System
+# Fx | AIによるFX自動売買システム
 
-> Status: **design phase / no live trading enabled**  
-> Specification version: **v10.6** (decision Q106)  
-> Repository: `picopicodragon/Fx`
+> **現在の状態：設計・開発準備段階（実口座での自動売買は無効）**  
+> 仕様バージョン：**v10.7（第107問までの決定を反映）**  
+> GitHubリポジトリ：`picopicodragon/Fx`
 
-## Purpose
+## プロジェクト概要
 
-This repository is the version-controlled source of truth for a planned FX trading system using Python, SQLite, AI macroeconomic reasoning/review, and an MQL4 Expert Advisor (EA) for a planned Rakuten MT4 account.
+本プロジェクトは、経済・金融政策などのマクロ情報をAIが解釈し、独立した反証審査と厳格なリスク管理を経てFX取引を判断する、自動売買システムの開発を目的とします。
 
-**Current status:** The architecture and requirements have been discussed, but the production trading system, MT4 integration, and end-to-end tests are **not yet implemented**. No live trading is permitted by default.
+主な技術構成は次のとおりです。
 
-## Development approach
+- **Python**：経済データ取得、AI分析の制御、リスク管理、監視、取引記録
+- **SQLite**：仕様に基づく分析・注文・リスク・障害・API費用の記録（将来的なPostgreSQLへの移行を想定）
+- **AI API**：マクロ経済の因果分析、売買仮説の構築、独立した反証審査
+- **ChatGPT Web版**：初期開発での調査、仕様設計、テスト事例の作成、人間による分析レビュー
+- **MQL4 / MT4 EA**：楽天MT4の利用を想定した注文処理、損切り管理、注文・口座状態の照合
+- **Git / GitHub / Codex**：仕様、実装、テスト、変更・承認履歴の一元管理
 
-1. Preserve confirmed requirements with unique specification IDs and track the link from requirement -> development task -> code -> acceptance test -> approval.
-2. Build the safety/risk foundation before market-data integration, AI analysis, or order execution.
-3. Develop on feature branches and review Pull Requests before merging into `main`.
-4. Require explicit human authorization for changes to risk limits, stop-loss handling, trade suspension/recovery, live-trading gates, or production AI model approvals.
-5. Test in stages: local simulation -> MT4 demo (if available) -> integrated paper trading -> explicit human approval prior to any real-money deployment.
-6. Never commit secrets, broker credentials, personal account data, raw paid news feeds, or operational SQLite databases.
+**注意：** 現在は仕様策定とリポジトリの初期構成を進めている段階です。本番の取引プログラム、楽天MT4との接続、全体の結合試験は**未実装・未完了**です。実口座での取引は許可されていません。
 
-## Confirmed high-level constraints (selected examples)
+## 基本方針
 
-- Initial account size: JPY 100,000.
-- Risk per trade: at most 0.5% of applicable equity; aggregate initial-stop risk at most 1%.
-- Daily loss limit: 1.5% (including unrealized losses); maximum equity drawdown: 5% with manual reauthorization.
-- Economic reasoning is hypothesis based, with separate mandatory adversarial review; market-price analysis cannot bypass hard risk guards.
-- Trading is disabled unless all required safety checks pass and live operation is expressly authorized.
-- Regular AI API operating budget: JPY 3,000/month; separate development/validation AI API budget: JPY 3,000/month, with advance approval required for increases.
-- During early development, ChatGPT Web may assist human-supervised research and design; unattended trading must use authorized programmatic interfaces.
-- All API usage, model identities, token counts where available, estimated costs, and relevant decisions are logged.
+1. マクロ経済や金融政策、経済指標、市場予想との差、価格への織り込み、反証を踏まえて売買仮説を構築する。固定のニュース点数だけで売買しない。
+2. 売買仮説は**別呼び出しによる独立したAI反証審査**を必須とし、十分な根拠や検証がなければ新規売買を保留する。
+3. **資金管理・安全停止の制約はAIの判断より優先**し、AIやCodexが独断で緩和・回避できない構成にする。
+4. 開発は**共通データ形式・安全基盤 → 経済データ → AI投資判断 → MT4 EA統合 → ペーパートレード → 承認後の本番移行**の順に進める。
+5. 仕様ごとにIDを付け、**仕様 → 開発タスク → 実装コード → 受入テスト → 承認記録**の対応関係を追跡できるようにする。
+6. ローカルGitとGitHubを併用する。通常の開発は作業ブランチで行い、Pull Requestによる確認後に `main` へ統合する。
+7. 通常の実装・テスト・作業ブランチへのコミット・Pull Request作成はCodexに許可する。ただし、**安全仕様の変更、`main`への統合、本番取引の有効化は人間の明示承認を必須**とする。
 
-The authoritative detailed requirements, including exceptions and edge conditions, must be transcribed and reviewed before implementing dependent modules. **Do not infer that this README is the full Q1–Q106 specification.**
+## 主な確定仕様（抜粋）
 
-## Planned repository structure
+| 項目 | 方針 |
+|---|---|
+| 想定通貨ペア | USD/JPY、EUR/JPY、GBP/USD、AUD/USD |
+| 初期運用資金 | 10万円 |
+| 1取引当たりの初期リスク | 有効証拠金等の所定基準額に対して最大0.5% |
+| 同時保有ポジションの初期ストップ基準合計リスク | 最大1% |
+| 日次損失上限 | 1.5%（含み損を含む） |
+| 最大ドローダウン | 5%到達時に新規取引を停止し、決められた清算処理と人間による再開承認を要求 |
+| 損切り | サーバー側に有効なSLを設定できることを前提とする |
+| 通常運用AI API予算 | 月額3,000円 |
+| 開発・検証AI API予算 | 月額3,000円。追加予算は人間の事前承認が必要 |
+| API利用履歴 | 使用モデル、処理目的、トークン数、推定費用、処理時間、予算利用状況等を記録 |
+| AIモデルの採用 | 役割別の品質・安全性を検証し、人間が承認したモデルのみ利用 |
+| 本番移行 | ローカル模擬、利用可能なMT4デモ環境、統合ペーパー運用を経て人間が明示承認 |
+
+ペーパートレードの最低条件は**1か月以上かつ20決済取引以上**ですが、これは本番移行の十分条件ではありません。安全性、成績、統計的妥当性、障害対応などを別途審査します。
+
+このREADMEは確定仕様の**概要**です。詳細な例外条件・停止基準・復旧条件・モデル評価方法などを省略しています。**READMEを第1〜107問の完全な仕様書とみなさず、正式なマスター仕様書と機能別仕様書を整備・照合してから実装してください。**
+
+## 開発・検証の進め方
+
+1. **ローカル模擬**：Pythonで価格変動、損益、注文拒否、通信障害、安全停止などを検証する。
+2. **MT4デモ接続**：デモ環境が利用可能な場合に、EAによる注文処理、SL設定、口座照合を検証する。
+3. **統合ペーパートレード**：経済データ、AI仮説、反証、リスク管理、EAを連携させ、継続運用を評価する。
+4. **本番移行審査**：未解決の重大問題がなく、すべての必要条件を満たしたことを確認し、人間が明示承認した場合に限り実口座での運用を許可する。
+
+## 予定するディレクトリ構成
+
+以下は目標構成であり、**すべてのファイルが現在存在するわけではありません**。
 
 ```text
-MASTER_SPEC.md             # Master requirements index (to be prepared)
-AGENTS.md                  # Codex working rules (to be prepared)
-specs/                     # Risk, AI, data, MT4, cost, recovery requirements
-schemas/                   # Versioned Web/Python/AI exchange formats
-src/                       # Python implementation
-mt4/                       # MQL4 EA
-tests/                     # Acceptance, integration, and failure-injection tests
-TASKS.md                   # Task tracking
-TRACEABILITY.md            # Requirement -> code -> test matrix
-DECISIONS.md               # Approved design decisions and change log
-reports/                   # Sanitized test and review reports
+Fx/
+├── README.md               # この文書
+├── AGENTS.md               # Codex向けの基本ルール（作成済み）
+├── .gitignore              # Git管理から除外する情報（作成済み）
+├── MASTER_SPEC.md          # 全体仕様・仕様IDの索引（予定）
+├── DECISIONS.md            # 設計判断と承認履歴（予定）
+├── TASKS.md                # 開発タスク一覧（予定）
+├── TRACEABILITY.md         # 仕様・コード・テストの対応表（予定）
+├── specs/                  # リスク・AI・データ・MT4・費用・復旧の詳細仕様
+├── schemas/                # Web版・Python・AI APIの共通交換フォーマット
+├── src/                    # Pythonプログラム
+├── mt4/                    # MQL4 EA
+├── tests/                  # 単体・結合・障害注入・受入テスト
+└── reports/                # 機密を除去した検証レポート
 ```
 
-The earlier *FX Web Bridge v1.0* exchange-format prototype is intended for integration into this repository, but has not yet been imported here.
+先に作成した **FX Web Bridge v1.0** は、今後 `schemas/` と関連Pythonプログラムへ統合する予定です。**現時点ではこのリポジトリへの取り込みは未実施です。**
 
-## Repository and security policy
+## GitHub・Codex運用ルール
 
-- `main` is the proposed stable documentation/code baseline.
-- New work should use dedicated feature branches and Pull Requests; do not enable automerge for safety-sensitive changes.
-- Keep credentials in local environment variables or a secret manager, never in Git.
-- The repository is **private**, but privacy is not a substitute for secret management.
-- Operational SQLite databases, backups, broker statements, and potentially licensed market/news data stay outside GitHub by default.
-- CI can test code and schemas using synthetic data. No broker trading credentials or live orders in CI.
+- 開発は原則として専用ブランチを使用し、Pull Requestに関連仕様ID、変更内容、試験結果、影響範囲を記載する。
+- **`main`への統合は人間の承認後**に実施する。安全上重要な変更の自動マージは認めない。
+- リスク制限、サーバー側損切り、安全停止・再開、本番AIモデルの承認、実口座注文の有効化はCodexが独断で変更しない。
+- CI等の自動テストには疑似データを用い、実口座の認証情報や発注機能を使用しない。
+- GitHubリポジトリは非公開（Private）だが、**非公開であることは機密保護の十分条件ではない**。
 
-## Next design decision
+## セキュリティとデータ管理
 
-Q107 will define Codex's degree of implementation autonomy and what requires human approval.
+APIキー、証券口座の認証情報、実運用SQLiteデータベース、バックアップ、口座明細、ライセンス上の制約があるニュース・市場データは、原則としてGitHubに登録しません。
+
+秘密情報はローカル環境変数または適切な秘密情報管理手段で扱います。`.gitignore` があっても、誤ってコミットした機密情報が自動的に消えるわけではないため、登録前の確認が必要です。
+
+## 次の設計項目
+
+**第108問：GitHubのブランチ、Pull Request、受入テスト、自動検証による変更管理ルールの具体化。**
