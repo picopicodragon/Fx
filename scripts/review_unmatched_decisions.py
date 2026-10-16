@@ -15,7 +15,7 @@ USER_Q = (
     re.compile(r"^\s*第\s*(\d{1,3})\s*問\s*(?:は|[:：])", re.MULTILINE),
     re.compile(r"^\s*Q\s*([1-9]\d{0,2})\s*[:：]", re.MULTILINE),
 )
-ASSISTANT_Q = re.compile(r"第\s*([1-9]\d{0,2})\s*問|\bQ\s*([1-9]\d{0,2})\b", re.IGNORECASE)
+ASSISTANT_Q = re.compile(r"第\\s*([1-9]\\d{0,2})\\s*問|(?<![A-Za-z0-9_])Q\\s*([1-9]\\d{0,2})(?![0-9])", re.IGNORECASE)
 
 
 def question_in_user_message(text: str) -> str | None:
