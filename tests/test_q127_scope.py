@@ -41,10 +41,10 @@ class Q127DecisionTests(unittest.TestCase):
             "原則10秒周期", "30分間", "DD1.5%未満", "DD2.5%未満",
             "Q126", "リセット", "Q121/Q122", "DD4%・5%",
             "データ有効期限", "欠測判定", "観測間", "未決",
-            "実装", "implementation_approved=false",
+            "本番取引未承認", "implementation_approved=false",
         ):
             self.assertIn(term, section)
-        self.assertIn("停止発動検知頻度ではない", doc)
+        self.assertIn("重大停止検知や口座全体のDD監視頻度を定めるものではない", doc)
 
 
 if __name__ == "__main__":
