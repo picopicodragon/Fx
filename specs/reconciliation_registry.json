@@ -7,7 +7,8 @@
       "question_ids": [
         "Q5",
         "Q6",
-        "Q13"
+        "Q13",
+        "Q116"
       ],
       "source_kind": "SUMMARY_ONLY",
       "comparison_status": "SOURCE_UNAVAILABLE",
@@ -15,7 +16,8 @@
       "source_reference": null,
       "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
       "issues": [
-        "日次/取引ごとの純資産基準計算と建玉サイズの口座別制約は要照合"
+        "日次/取引ごとの純資産基準計算と建玉サイズの口座別制約は要照合",
+        "Q116で発注前審査の対象（既存建玉・未約定注文・新規候補）と円換算合算・超過/算定不能時の新規拒否を採用。算式、通貨換算・注文状態・相関・例外は未決で、実装承認は未実施"
       ],
       "implementation_approved": false,
       "owner_approval": null
@@ -23,7 +25,8 @@
     {
       "requirement_id": "FX-SAF-002",
       "question_ids": [
-        "Q7"
+        "Q7",
+        "Q116"
       ],
       "source_kind": "SUMMARY_ONLY",
       "comparison_status": "SOURCE_UNAVAILABLE",
@@ -31,7 +34,8 @@
       "source_reference": null,
       "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
       "issues": [
-        "相関・リスク合算の計算方式は別途明文化"
+        "相関・リスク合算の計算方式は別途明文化",
+        "Q116で発注前審査の対象（既存建玉・未約定注文・新規候補）と円換算合算・超過/算定不能時の新規拒否を採用。算式、通貨換算・注文状態・相関・例外は未決で、実装承認は未実施"
       ],
       "implementation_approved": false,
       "owner_approval": null
