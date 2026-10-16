@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Q113-Q121 short decisions captured from user messages in the active design conversation. Historical local archive and safety implementation approvals are independently pending.",
+  "note": "Q113-Q122 user design decisions captured from direct chat. Separate local archive verification and safety implementation approval are pending; no historical private export uploaded.",
   "records": [
     {
       "question_id": "Q113",
@@ -89,6 +89,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "この設計対話内の第121問について本人から直接受領した回答。ローカルエクスポートとの再照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q122",
+      "excerpt_path": "specs/source_excerpts/Q122.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話の第122問に本人が直接回答。Windowsローカルの過去原議エクスポートとの再照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
