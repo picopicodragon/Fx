@@ -41,7 +41,7 @@ class Q126DecisionTests(unittest.TestCase):
         for phrase in (
             "解除基準以上", "データ欠落", "通信障害", "再起動",
             "リセット", "正常なDDデータ", "安全確認",
-            "ゼロから", "DD4%・5%", "他の停止理由",
+            "最初からやり直す", "DD4%・5%", "ほかの停止理由",
             "観測頻度", "未決", "implementation_approved=false",
         ):
             self.assertIn(phrase, section)
