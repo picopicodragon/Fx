@@ -46,7 +46,8 @@
         "Q8",
         "Q9",
         "Q13",
-        "Q14"
+        "Q14",
+        "Q117"
       ],
       "source_kind": "SUMMARY_ONLY",
       "comparison_status": "NEEDS_CLARIFICATION",
@@ -54,7 +55,8 @@
       "source_reference": null,
       "spec_reference": "specs/safety_foundation.md#確定済みハード条件",
       "issues": [
-        "日次損益に含む決済損益、含み損、手数料、スワップの二重計上回避と入出金の取り扱いを確定"
+        "日次損益に含む決済損益、含み損、手数料、スワップの二重計上回避と入出金の取り扱いを確定",
+        "Q117でNY17:00起点の口座純資産の正味変化を外部入出金補正して主計算し、項目別集計を独立照合とする方式を採用。日次損失1.5%の分母と固定時点（Q118）、入出金例外・利益による相殺・データ欠落の処理・二重計上の防止などは未決。実装承認は未実施"
       ],
       "implementation_approved": false,
       "owner_approval": null
