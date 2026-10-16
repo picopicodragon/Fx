@@ -40,11 +40,11 @@ class Q122DecisionTests(unittest.TestCase):
         section = doc.split("## Q122：", 1)[1].split("\n## ", 1)[0]
         for term in (
             "DD改善", "監視レベルを自動解除可能", "自動解除禁止", "本人の明示承認",
-            "Q121", "独立", "未決", "implementation_approved=false",
+            "Q121", "別の停止理由は解除されない", "未決", "implementation_approved=false",
         ):
             self.assertIn(term, section)
         self.assertIn("4%新規停止", doc)
-        self.assertIn("5%で", doc)
+        self.assertIn("5% | 実売買停止", section)
 
 
 if __name__ == "__main__":
