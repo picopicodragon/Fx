@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Q113-Q125 directly provided design choices are recorded. Earlier P0-01 local archive findings are user-reported; human safety implementation approval is pending.",
+  "note": "Short direct-chat design choice excerpts Q113-Q126 recorded. Local historic original audit and safety implementation approval are separate pending tasks.",
   "records": [
     {
       "question_id": "Q113",
@@ -129,6 +129,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "本設計対話の第125問へ本人が直接回答。以前のローカル会話エクスポートとの再照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q126",
+      "excerpt_path": "specs/source_excerpts/Q126.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話の第126問に本人が直接回答。以前のChatGPTエクスポート原本との再照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
