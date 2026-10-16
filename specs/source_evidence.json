@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Direct user excerpts for Q113-Q119 captured from chat. Prior FX P0-01 export review is user-reported; safety implementation approval and local original final audit are still pending.",
+  "note": "Q113-Q120 direct user choice excerpts are tracked. Historical P0-01 local export review remains user-reported, not final safety approval; raw local chat export is never included.",
   "records": [
     {
       "question_id": "Q113",
@@ -69,6 +69,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "この設計対話内の第119問への本人による直接回答。ユーザーのローカル原議アーカイブとの再照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q120",
+      "excerpt_path": "specs/source_excerpts/Q120.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話内で本人が直接送信した第120問Aの回答。過去のエクスポートへの参照照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
