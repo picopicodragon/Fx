@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Full original conversation archive has NOT been created or verified; Q1-Q112 are not registered as original excerpts. Q113-Q115 direct-chat decisions are indexed; this does NOT approve trading safety rules.",
+  "note": "Q113-Q116 decision excerpts are captured from direct user messages. Earlier user-reported local export and P0-01 AI comparison do NOT constitute developer's final original verification or safety implementation approval.",
   "records": [
     {
       "question_id": "Q113",
@@ -29,6 +29,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "現在の設計対話内・第115問へのユーザーの回答",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q116",
+      "excerpt_path": "specs/source_excerpts/Q116.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "この設計対話の第116問への本人による直接回答。エクスポートとの再照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
