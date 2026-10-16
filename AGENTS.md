@@ -22,6 +22,11 @@ This is a **solo-maintainer** project at the design stage. **LIVE TRADING IS NOT
 16. If requirements have not yet been transcribed from design conversation, mark them as **UNVERIFIED / PENDING**; do not invent missing details or claim coverage.
 17. Log implementation decisions, failures, acceptance-test evidence, and any AI API cost implications.
 
+## Extracted-decision follow-up (Q115)
+
+- When explicit answer parsing leaves gaps, use `scripts/review_unmatched_decisions.py` and `docs/review_unmatched_guide.md` to create a **local** unmatched-answer review report. The nearest ancestor assistant turn is only contextual guidance, not authenticated acceptance. Do not assign Q numbers or mark safety requirements approved automatically.
+- Never commit `unmatched_review.json`, a complete ChatGPT export, or raw user conversation text to GitHub.
+
 ## GitHub settings caveat
 
 Do **not** configure a mandatory "one approving review" branch rule for this solo-maintainer repository. A PR author cannot satisfy an independent self-review requirement via GitHub approval. Prefer required status checks (if supported), self-checklist, and **manual merge by the owner**. At present repository rules may not enforce this policy technically, so verify settings before claiming branch protection is active.
