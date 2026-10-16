@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Short direct-chat design choice excerpts Q113-Q126 recorded. Local historic original audit and safety implementation approval are separate pending tasks.",
+  "note": "Short direct user choice excerpts Q113-Q127 are recorded. Historic local archive audit and safety implementation approval remain separate pending work.",
   "records": [
     {
       "question_id": "Q113",
@@ -139,6 +139,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "本設計対話の第126問に本人が直接回答。以前のChatGPTエクスポート原本との再照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q127",
+      "excerpt_path": "specs/source_excerpts/Q127.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話の第127問に対する本人の直接回答。以前のローカル原本との再照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
