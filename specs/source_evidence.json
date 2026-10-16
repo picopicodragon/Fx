@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Short direct-chat excerpts Q113-Q129 captured; local historical archive human final verification and safety-critical implementation approvals remain pending.",
+  "note": "Short direct-chat design decision excerpts Q113-Q130 are recorded. Historic original export verification and safety-critical implementation approval remain separate pending work.",
   "records": [
     {
       "question_id": "Q113",
@@ -169,6 +169,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "本設計対話内の第129問への本人の直接回答。歴史的ローカル原議との照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q130",
+      "excerpt_path": "specs/source_excerpts/Q130.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話の第130問への本人直接回答。過去のローカル会話原本とはまだ再照合していない",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
