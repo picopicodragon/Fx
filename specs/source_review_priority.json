@@ -66,7 +66,8 @@
       "question_ids": [
         "Q5",
         "Q6",
-        "Q13"
+        "Q13",
+        "Q116"
       ],
       "batch_id": "P0-01",
       "source_review": "PENDING_ORIGINAL",
@@ -75,13 +76,15 @@
       "human_safety_approval": false,
       "github_excerpt_refs": [],
       "outstanding_issues": [
-        "原議全文のローカル保存・原議との照合が未完了"
+        "原議全文のローカル保存・原議との照合が未完了",
+        "Q116の範囲決定は直接回答として記録済み。ただしQ5〜Q14の原議照合・リスク詳細算式・本人による最終実装承認は未完了"
       ]
     },
     {
       "requirement_id": "FX-SAF-002",
       "question_ids": [
-        "Q7"
+        "Q7",
+        "Q116"
       ],
       "batch_id": "P0-01",
       "source_review": "PENDING_ORIGINAL",
@@ -90,7 +93,8 @@
       "human_safety_approval": false,
       "github_excerpt_refs": [],
       "outstanding_issues": [
-        "原議全文のローカル保存・原議との照合が未完了"
+        "原議全文のローカル保存・原議との照合が未完了",
+        "Q116の範囲決定は直接回答として記録済み。ただしQ5〜Q14の原議照合・リスク詳細算式・本人による最終実装承認は未完了"
       ]
     },
     {
