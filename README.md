@@ -114,6 +114,10 @@ APIキー、証券口座の認証情報、実運用SQLiteデータベース、�
 
 `specs/source_review_plan.md` と `specs/source_review_priority.json` にP0-01〜P0-05の確認順と安全重要仕様15件の未確認状態を記録。**いずれも本人による原議照合と安全仕様の実装承認は未完了。**
 
+## 未抽出の原議回答をレビューする補助ツール
+
+`scripts/review_unmatched_decisions.py` は、`conversations.json` から設問番号のないユーザー発言と、その親メッセージ側のアシスタント発言を**GitHubへ送信せずローカル**に抽出する。Q番号は照合の**候補ヒント**のみで、割り当て・安全仕様承認を自動実施しない。Windowsでの使い方は `docs/review_unmatched_guide.md` に記録。2026年10月にユーザー側で94件の設問候補・34件の未認識発言が報告されたが、本repoは原本を保持せず、実データでの改善後再検証も未実施。
+
 ## 原議アーカイブとGitHub抜粋の状態
 
 `specs/source_archive_policy.md` にローカル原本保存・GitHubへの限定公開・機密確認のルールを記録した。`specs/source_evidence.json` に現会話で直接確認できるQ113〜Q115のユーザー決定文のみ登録。**ローカル完全原本は未作成、Q1〜112原議の全件抽出・照合は未着手**である。Windows用初期ツールと操作手順は `docs/local_archive_guide.md` を参照する。GitHubのCIでは実物の原本との一致や漏れを自動保証しない。
