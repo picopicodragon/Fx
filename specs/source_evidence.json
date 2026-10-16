@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Q113-Q116 decision excerpts are captured from direct user messages. Earlier user-reported local export and P0-01 AI comparison do NOT constitute developer's final original verification or safety implementation approval.",
+  "note": "Q113-Q117 direct-chat choice excerpts recorded. P0-01 original archive verification and detailed safety implementation acceptance remain pending.",
   "records": [
     {
       "question_id": "Q113",
@@ -39,6 +39,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "この設計対話の第116問への本人による直接回答。エクスポートとの再照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q117",
+      "excerpt_path": "specs/source_excerpts/Q117.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "この設計対話内の第117問への本人による直接回答。エクスポートとの再照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }

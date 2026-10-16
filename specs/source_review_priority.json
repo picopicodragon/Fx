@@ -103,7 +103,8 @@
         "Q8",
         "Q9",
         "Q13",
-        "Q14"
+        "Q14",
+        "Q117"
       ],
       "batch_id": "P0-01",
       "source_review": "PENDING_ORIGINAL",
@@ -112,7 +113,8 @@
       "human_safety_approval": false,
       "github_excerpt_refs": [],
       "outstanding_issues": [
-        "原議全文のローカル保存・原議との照合が未完了"
+        "原議全文のローカル保存・原議との照合が未完了",
+        "Q117の日次主計算方式は直接採用済み。日次損失上限の分母（Q118）と入出金例外・損益相殺・欠落データ処理、原議本人確認・実装承認は未完了"
       ]
     },
     {
