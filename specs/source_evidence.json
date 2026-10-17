@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Q113-Q135 short direct-chat design decisions are recorded. Historic local source audit and safety implementation authorization remain independently pending.",
+  "note": "Q113-Q136 direct-chat choice excerpts recorded; historic local archive reconciliation and safety-critical implementation approvals remain independently pending.",
   "records": [
     {
       "question_id": "Q113",
@@ -229,6 +229,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "本設計対話の第135問への直接回答。過去のWindows原議アーカイブとの再照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q136",
+      "excerpt_path": "specs/source_excerpts/Q136.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話の第136問への直接回答。ローカル原議全文との再照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
