@@ -15,6 +15,11 @@ class Q141Tests(unittest.TestCase):
         self.assertIn("Q141", s["question_ids"])
         self.assertFalse(s["implementation_approved"])
         self.assertIsNone(s["owner_approval"])
+        priority = json.loads((R / "specs/source_review_priority.json").read_text(encoding="utf-8"))
+        pr = next(i for i in priority["items"] if i["requirement_id"] == "FX-SAF-006")
+        self.assertIn("Q141", pr["question_ids"])
+        self.assertFalse(pr["human_safety_approval"])
+        self.assertEqual(pr["source_review"], "PENDING_ORIGINAL")
     def test_timing_and_fail_closed(self):
         q = (R / "specs/source_excerpts/Q141.md").read_text(encoding="utf-8")
         d = (R / "specs/safety_foundation.md").read_text(encoding="utf-8")
