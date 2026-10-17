@@ -24,7 +24,7 @@ class Q141Tests(unittest.TestCase):
         q = (R / "specs/source_excerpts/Q141.md").read_text(encoding="utf-8")
         d = (R / "specs/safety_foundation.md").read_text(encoding="utf-8")
         sec = d.split("## Q141：")[1].split("\n## ")[0]
-        for v in ("タイムアウトを2秒", "待機間隔を1秒", "最大5回試行",
+        for v in ("タイムアウトを2秒", "待機間隔を1秒", "応答時間超過は無効測定", "最大5回試行",
                   "最低3回の有効測定", "30分計測をリセット", "DD4%・5%"):
             self.assertIn(v, q)
         for v in ("タイムアウトは2秒", "待機間隔は1秒", "無効測定",
