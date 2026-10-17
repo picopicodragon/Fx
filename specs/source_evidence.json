@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Short direct-chat user decisions Q113-Q139 recorded; historic local archive reconciliation and explicit safety-critical implementation approvals are separately pending.",
+  "note": "Q113-Q140 short direct-chat user choices captured; local historical archive reconciliation and safety-critical implementation approvals remain separate pending items.",
   "records": [
     {
       "question_id": "Q113",
@@ -269,6 +269,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "本設計対話第139問への本人直接回答。過去のローカル原議全文との最終照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q140",
+      "excerpt_path": "specs/source_excerpts/Q140.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話第140問への本人直接回答。過去のローカル会話原本との再照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
