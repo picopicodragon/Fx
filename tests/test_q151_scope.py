@@ -55,7 +55,7 @@ class Q151DecisionTests(unittest.TestCase):
         self.assertEqual(b["source_review"], "PENDING_ORIGINAL")
         decisions = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
         self.assertEqual(sum(line.startswith("| Q151 |") for line in decisions.splitlines()), 1)
-        self.assertIn("v15.1", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
+        self.assertIn("## Q151：", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
