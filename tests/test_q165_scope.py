@@ -25,6 +25,8 @@ class Q165DecisionTests(unittest.TestCase):
     def test_scope_preserves_watchdog_and_security(self):
         doc = (ROOT / "specs/safety_foundation.md").read_text(encoding="utf-8")
         section = doc.split("## Q165：", 1)[1].split("\n## ", 1)[0]
+        self.assertIn("1秒、2秒、4秒、8秒", section)
+        self.assertIn("総復旧25秒はハートビート異常の6秒判定猶予時間ではない", section)
         for token in (
             "DD2%警告", "DD3%重点再評価", "独立ウォッチドッグ",
             "最大4回", "1秒", "2秒", "4秒", "8秒", "最大25秒",
