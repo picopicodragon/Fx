@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Q113-Q151 short direct-chat decisions recorded. Historical local archive reconciliation and explicit safety-critical implementation approval remain pending.",
+  "note": "Q113-Q152 short direct-chat decisions recorded. Historical local archive reconciliation and explicit safety-critical implementation approval remain pending.",
   "records": [
     {
       "question_id": "Q113",
@@ -389,6 +389,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "本設計対話の第151問への本人直接回答Bと直前の設問選択肢B。過去のWindowsローカル原議との逐語照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q152",
+      "excerpt_path": "specs/source_excerpts/Q152.md",
+      "source_kind": "ORIGINAL",
+      "verification": "DIRECT_CHAT",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本設計対話の第152問への本人直接回答Aと直前の設問選択肢A。Windowsローカル会話原議との逐語照合は未実施",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
