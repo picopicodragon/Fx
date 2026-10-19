@@ -66,7 +66,7 @@ class Q167DecisionTests(unittest.TestCase):
         self.assertEqual(b["source_review"], "PENDING_ORIGINAL")
         dec = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
         self.assertEqual(sum(row.startswith("| Q167 |") for row in dec.splitlines()), 1)
-        self.assertIn("v16.7", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
+        self.assertIn("## Q167：", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
