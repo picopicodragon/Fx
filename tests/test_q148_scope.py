@@ -31,7 +31,7 @@ class Q148DecisionTests(unittest.TestCase):
             self.assertFalse(rec["implementation_approved"] if "implementation_approved" in rec else rec["human_safety_approval"])
         dec = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
         self.assertEqual(sum(x.startswith("| Q148 |") for x in dec.splitlines()), 1)
-        self.assertIn("v14.8", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
+        self.assertIn("## Q148：", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
 
 if __name__ == "__main__":
     unittest.main()
