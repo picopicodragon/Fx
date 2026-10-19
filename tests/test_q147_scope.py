@@ -68,7 +68,7 @@ class Q147DecisionTests(unittest.TestCase):
     def test_decision_record_once(self):
         decisions = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
         self.assertEqual(sum(line.startswith("| Q147 |") for line in decisions.splitlines()), 1)
-        self.assertIn("v14.7", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
+        self.assertIn("## Q147：", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
