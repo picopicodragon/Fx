@@ -1,7 +1,7 @@
 # Fx | AIによるFX自動売買システム
 
 > **現在の状態：設計・開発準備段階（実口座での自動売買は無効）**  
-> 仕様バージョン：**v19.3（第193問のSQLite情報＋アプリ書き込み記録を反映）**  
+> 仕様バージョン：**v19.4（第194問の書き込み全ライフサイクル記録を反映）**  
 > GitHubリポジトリ：`picopicodragon/Fx`
 
 ## プロジェクト概要
@@ -400,7 +400,7 @@ APIキー、証券口座の認証情報、実運用SQLiteデータベース、�
 
 ## 原議アーカイブとGitHub抜粋の状態
 
-`specs/source_archive_policy.md` にローカル原本保存・GitHubへの限定公開・機密確認のルールを記録した。`specs/source_evidence.json` に設計対話で直接確認できるQ113〜Q193の短いユーザー決定文を登録。ユーザーからはWindows上にChatGPTエクスポートを保存してP0-01のAI照合レポートを作成したとの報告があるが、**GitHub側では原本全文を保持せず、本人による原本の最終確認と安全重要仕様の実装承認は未完了**。Windows用初期ツールと操作手順は `docs/local_archive_guide.md` を参照する。GitHubのCIでは実物の原本との一致や漏れを自動保証しない。
+`specs/source_archive_policy.md` にローカル原本保存・GitHubへの限定公開・機密確認のルールを記録した。`specs/source_evidence.json` に設計対話で直接確認できるQ113〜Q194の短いユーザー決定文を登録。ユーザーからはWindows上にChatGPTエクスポートを保存してP0-01のAI照合レポートを作成したとの報告があるが、**GitHub側では原本全文を保持せず、本人による原本の最終確認と安全重要仕様の実装承認は未完了**。Windows用初期ツールと操作手順は `docs/local_archive_guide.md` を参照する。GitHubのCIでは実物の原本との一致や漏れを自動保証しない。
 
 ## 第111問の文書レビュー状態
 
@@ -425,3 +425,5 @@ Q191: WAL physical file size and available write-progress monitoring are combine
 Q192: Two independent WAL measurement tracks (physical size and write progress); apply the more severe result. Progress thresholds remain unverified/undecided. Previous safeguards remain; production trading not approved.
 
 Q193: SQLite WAL/checkpoint observation and Python application write-event logs are reconciled, including external-writer coverage review. Unknown or inconsistent evidence fails closed; Q1-Q192 safeguards unchanged, live trading not approved.
+
+Q194: Distinguish write-start, committed, rolled-back, failed, and unknown states per operation ID. Fail closed on unknown/record loss; preserve prior safeguards; implementation not approved.
