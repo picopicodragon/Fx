@@ -400,7 +400,7 @@ APIキー、証券口座の認証情報、実運用SQLiteデータベース、�
 
 ## 原議アーカイブとGitHub抜粋の状態
 
-`specs/source_archive_policy.md` にローカル原本保存・GitHubへの限定公開・機密確認のルールを記録した。`specs/source_evidence.json` に設計対話で直接確認できるQ113〜Q185の短いユーザー決定文を登録。ユーザーからはWindows上にChatGPTエクスポートを保存してP0-01のAI照合レポートを作成したとの報告があるが、**GitHub側では原本全文を保持せず、本人による原本の最終確認と安全重要仕様の実装承認は未完了**。Windows用初期ツールと操作手順は `docs/local_archive_guide.md` を参照する。GitHubのCIでは実物の原本との一致や漏れを自動保証しない。
+`specs/source_archive_policy.md` にローカル原本保存・GitHubへの限定公開・機密確認のルールを記録した。`specs/source_evidence.json` に設計対話で直接確認できるQ113〜Q189の短いユーザー決定文を登録。ユーザーからはWindows上にChatGPTエクスポートを保存してP0-01のAI照合レポートを作成したとの報告があるが、**GitHub側では原本全文を保持せず、本人による原本の最終確認と安全重要仕様の実装承認は未完了**。Windows用初期ツールと操作手順は `docs/local_archive_guide.md` を参照する。GitHubのCIでは実物の原本との一致や漏れを自動保証しない。
 
 ## 第111問の文書レビュー状態
 
