@@ -4,6 +4,12 @@
 > 仕様バージョン：**v19.4（第194問の書き込み全ライフサイクル記録を反映）**  
 > GitHubリポジトリ：`picopicodragon/Fx`
 
+## 最新の設計決定：第194問（書き込みライフサイクル全体記録）
+
+- Python側の書き込み処理について、開始・コミット成功・ロールバック・失敗・結果不明のイベントを別々に保存し、同一処理IDで関連付ける。
+- SQLiteの実際のコミットとアプリ記録の不一致、記録欠損、結果不明ではFail Closed。DB照合で安全確認する前に重複のおそれがある自動再試行を認めない。
+- イベントの保存先・順序・耐久性・ID・冪等性・再起動時の照合は未決。Q1〜193の全安全条件を維持し、安全実装・本番売買は未承認。
+
 ## プロジェクト概要
 
 本プロジェクトは、経済・金融政策などのマクロ情報をAIが解釈し、独立した反証審査と厳格なリスク管理を経てFX取引を判断する、自動売買システムの開発を目的とします。
@@ -426,4 +432,3 @@ Q192: Two independent WAL measurement tracks (physical size and write progress);
 
 Q193: SQLite WAL/checkpoint observation and Python application write-event logs are reconciled, including external-writer coverage review. Unknown or inconsistent evidence fails closed; Q1-Q192 safeguards unchanged, live trading not approved.
 
-Q194: Distinguish write-start, committed, rolled-back, failed, and unknown states per operation ID. Fail closed on unknown/record loss; preserve prior safeguards; implementation not approved.
