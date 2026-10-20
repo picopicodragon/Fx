@@ -1,7 +1,7 @@
 # Fx | AIによるFX自動売買システム
 
 > **現在の状態：設計・開発準備段階（実口座での自動売買は無効）**  
-> 仕様バージョン：**v19.1（第191問のWALサイズ＋書き込み進捗の複合測定を反映）**  
+> 仕様バージョン：**v19.2（第192問のWAL二系統独立判定を反映）**  
 > GitHubリポジトリ：`picopicodragon/Fx`
 
 ## プロジェクト概要
@@ -400,7 +400,7 @@ APIキー、証券口座の認証情報、実運用SQLiteデータベース、�
 
 ## 原議アーカイブとGitHub抜粋の状態
 
-`specs/source_archive_policy.md` にローカル原本保存・GitHubへの限定公開・機密確認のルールを記録した。`specs/source_evidence.json` に設計対話で直接確認できるQ113〜Q191の短いユーザー決定文を登録。ユーザーからはWindows上にChatGPTエクスポートを保存してP0-01のAI照合レポートを作成したとの報告があるが、**GitHub側では原本全文を保持せず、本人による原本の最終確認と安全重要仕様の実装承認は未完了**。Windows用初期ツールと操作手順は `docs/local_archive_guide.md` を参照する。GitHubのCIでは実物の原本との一致や漏れを自動保証しない。
+`specs/source_archive_policy.md` にローカル原本保存・GitHubへの限定公開・機密確認のルールを記録した。`specs/source_evidence.json` に設計対話で直接確認できるQ113〜Q192の短いユーザー決定文を登録。ユーザーからはWindows上にChatGPTエクスポートを保存してP0-01のAI照合レポートを作成したとの報告があるが、**GitHub側では原本全文を保持せず、本人による原本の最終確認と安全重要仕様の実装承認は未完了**。Windows用初期ツールと操作手順は `docs/local_archive_guide.md` を参照する。GitHubのCIでは実物の原本との一致や漏れを自動保証しない。
 
 ## 第111問の文書レビュー状態
 
@@ -421,3 +421,5 @@ Q189: WAL 1-minute growth CRITICAL threshold = 128 MiB. Critical alert and safe 
 Q190: WAL 5-minute growth CRITICAL threshold = 256 MiB. Critical alert and safety stop; Q1-Q189 safeguards remain, live trading not approved.
 
 Q191: WAL physical file size and available write-progress monitoring are combined; unknown or inconsistent measurements fail closed. Prior safety requirements and live-trading prohibition remain.
+
+Q192: Two independent WAL measurement tracks (physical size and write progress); apply the more severe result. Progress thresholds remain unverified/undecided. Previous safeguards remain; production trading not approved.
