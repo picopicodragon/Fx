@@ -409,3 +409,5 @@ APIキー、証券口座の認証情報、実運用SQLiteデータベース、�
 ## 次の設計項目
 
 **次の作業：P0-01の原議AI照合結果を本人が確認し、Q116以降の未確定なリスク算式・例外条件を順次決定する。実装用仕様の本人受入れは別途必要。**
+
+Q186: WAL 5-minute growth WARNING threshold = 32 MiB. Prior safeguards unchanged.
