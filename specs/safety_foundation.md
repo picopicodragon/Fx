@@ -428,6 +428,14 @@ DD2%警告・DD3%重点再評価の解除用30分連続確認では、原則10�
 
 `FX-SAF-006`の`implementation_approved=false`を維持し、安全重要仕様の実装と実口座注文は未承認。
 
+## Q184：WAL増大監視の10秒周期（B採用）
+
+- 本人直接回答と直前の選択肢B：[`specs/source_excerpts/Q184.md`](source_excerpts/Q184.md)。WALファイルサイズを**通常10秒周期**で取得し、Q183の直近**1分**と**5分**の増大傾向を並行更新する。計測が成立したかは観測時刻・サンプルの有効性検証が必要で、単純な件数だけで正常認定しない。
+- DBコミット成否不明、SQLite/DB整合性異常、停止状態復元不能、重大なディスク容量不足等の既存の即時安全停止は次の10秒測定を待たずFail Closedとする。
+- **未決：** 10秒周期の許容遅延・欠測、測定窓のデータ充足条件、時計とスリープ/再起動の扱い、WALサイズ縮小処理、速度判定閾値・警告解除条件。未決パラメータの推測導入は禁止。
+- Q180〜182のWALサイズ WARNING 64 MiB／MAJOR 256 MiB／CRITICAL 512 MiB、Q177〜179の複合判定、Q176の自動チェックポイント、Q174/175の`synchronous=FULL`/`journal_mode=WAL`、Q171〜173の隔離失敗停止・SQLite永続化・再起動復元、Q171の原因解消＋全検証＋本人明示承認による再開ゲート、Q1〜183の全安全条件を維持。
+- 安全重要実装・実機試験・実口座取引は未承認。`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`。
+
 ## Q183：WAL増大速度の1分＋5分二重測定（方式B採用）
 
 - 本人原議：[`specs/source_excerpts/Q183.md`](source_excerpts/Q183.md)。SQLite WAL増大は**直近1分の増大速度と直近5分の増大傾向を並行測定**し、短期急増と持続増大を別々に検知する。一方が正常でも他方の異常を打ち消さない。
