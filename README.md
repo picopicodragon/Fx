@@ -1,7 +1,7 @@
 # Fx | AIによるFX自動売買システム
 
 > **現在の状態：設計・開発準備段階（実口座での自動売買は無効）**  
-> 仕様バージョン：**v18.8（第188問のWAL直近5分MAJOR 128 MiBを反映）**  
+> 仕様バージョン：**v18.9（第189問のWAL直近1分CRITICAL 128 MiBを反映）**  
 > GitHubリポジトリ：`picopicodragon/Fx`
 
 ## プロジェクト概要
@@ -415,3 +415,5 @@ Q186: WAL 5-minute growth WARNING threshold = 32 MiB. Prior safeguards unchanged
 Q187: WAL 1-minute growth MAJOR threshold = 32 MiB. Stop new orders, investigate and verify safety. Prior safeguards and unapproved trading status remain unchanged.
 
 Q188: WAL 5-minute growth MAJOR threshold = 128 MiB. Stop new orders, investigate, and verify safety. All prior safeguards and unapproved live trading remain unchanged.
+
+Q189: WAL 1-minute growth CRITICAL threshold = 128 MiB. Critical alert and safe stop. Previous safeguards and unapproved live trading remain unchanged.
