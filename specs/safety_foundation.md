@@ -428,6 +428,14 @@ DD2%警告・DD3%重点再評価の解除用30分連続確認では、原則10�
 
 `FX-SAF-006`の`implementation_approved=false`を維持し、安全重要仕様の実装と実口座注文は未承認。
 
+## Q187：直近1分WAL増大量MAJOR 32 MiB（B採用）
+
+- 本人原議：[`specs/source_excerpts/Q187.md`](source_excerpts/Q187.md)。WALファイルが**直近1分で32 MiB（33,554,432バイト）以上増大**した場合は**MAJOR**として新規注文停止・原因確認・安全検証。
+- Q185の直近1分8 MiB WARNINGとQ186の直近5分32 MiB WARNINGとは独立判定。Q180〜182のWALサイズ64/256/512 MiB、Q183〜184の1分/5分窓・10秒監視も維持する。
+- 本数値は実機試験前の初期設計値。増大量の計算方法、欠測・再起動・WAL縮小、5分MAJOR、速度CRITICALの閾値、解除条件は未決。
+- DB整合性・保存コミット・停止理由復元の確認不能は測定完了を待たずFail Closed。Q171の隔離失敗ラッチと本人明示承認を必要とする再開条件、Q172〜176の状態永続化とSQLite FULL/WAL／自動チェックポイント、Q1〜186の安全条件をすべて維持する。
+- 実装、実機安全確認、本番売買は未承認。`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`。
+
 ## Q186：WAL直近5分の増大量WARNING 32 MiB（B採用）
 
 - [本人原議](source_excerpts/Q186.md)。直近5分間のWAL増大量32 MiB（33,554,432バイト）以上でWARNING。Q185の1分間8 MiB警告とは独立して監視強化。
