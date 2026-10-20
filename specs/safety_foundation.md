@@ -428,6 +428,14 @@ DD2%警告・DD3%重点再評価の解除用30分連続確認では、原則10�
 
 `FX-SAF-006`の`implementation_approved=false`を維持し、安全重要仕様の実装と実口座注文は未承認。
 
+## Q185：WAL直近1分間増大量WARNING 8 MiB（方式B採用）
+
+- 本人原議：[`specs/source_excerpts/Q185.md`](source_excerpts/Q185.md)。WALファイルの**直近1分間増大量8 MiB（8,388,608バイト）以上でWARNING**監視強化。Q183の1分＋5分の二重測定窓とQ184の通常10秒周期に基づき検知する。
+- **WALファイル絶対サイズ64 MiBのWARNINGとは独立**して発動する。8 MiB未満なら別のWARNING/MAJOR/CRITICALが解除されるという意味ではない。Q180〜182のWALサイズ64/256/512 MiB、Q177〜179のサイズ・増大速度・残容量・チェックポイント複合監視を維持する。
+- 本基準は実機負荷試験前の初期設計値。増大量の厳密算式、観測窓の充足・時刻妥当性、欠測・チェックポイント縮小・再起動の扱い、5分間のWARNING閾値、速度MAJOR/CRITICAL閾値、解除条件は未決。未決値を推測で正常認定・新規注文許可に使用しない。
+- DB整合性・コミット成否・停止理由復元の確認不能、ディスク重大異常などは1分観測の完了・10秒監視周期を待たずFail Closed。第171問の隔離失敗本人承認必須停止、Q172〜176の永続化/SQLite FULL+WAL/チェックポイント管理と第1〜184問の全安全条件は不変。
+- 実装・実機試験・本番取引は未承認。`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`。
+
 ## Q184：WAL増大監視の10秒周期（B採用）
 
 - 本人直接回答と直前の選択肢B：[`specs/source_excerpts/Q184.md`](source_excerpts/Q184.md)。WALファイルサイズを**通常10秒周期**で取得し、Q183の直近**1分**と**5分**の増大傾向を並行更新する。計測が成立したかは観測時刻・サンプルの有効性検証が必要で、単純な件数だけで正常認定しない。
