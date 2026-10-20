@@ -428,6 +428,15 @@ DD2%警告・DD3%重点再評価の解除用30分連続確認では、原則10�
 
 `FX-SAF-006`の`implementation_approved=false`を維持し、安全重要仕様の実装と実口座注文は未承認。
 
+## Q175：SQLite Write-Ahead Logging（WAL）方式（B採用）
+
+- 本人の選択と提示選択肢：[`specs/source_excerpts/Q175.md`](source_excerpts/Q175.md)。
+- Q173の停止理由・隔離失敗状態・障害状態・更新履歴を保存するSQLiteのジャーナル方式として**`PRAGMA journal_mode=WAL`を採用**する。Q174の**`PRAGMA synchronous=FULL`を基本設定として維持**する。Python本体と独立ウォッチドッグ等の同時参照を想定するが、SQLiteの単一書き手制約とロック競合を考慮する。
+- 起動時にWALモード・FULL設定・停止理由の整合性を検証する。WAL関連ファイル（`-wal`/`-shm`）やチェックポイント処理の失敗・不整合・DB読取不能・コミット結果不明の場合は**Fail Closed**。未検証の削除、設定の黙示的切替、空DBへの無断初期化、解除済み扱いは禁止。
+- チェックポイントのタイミング、方式、長時間読み取りによる滞留、WAL増大とディスク容量、複数プロセスの排他と権限、電源断・破損復旧、バックアップ方式は未決。**WALの採用自体は停電・ハードウェア故障下の耐久性を無条件に保証しない**。
+- Q171の重大障害通知・隔離失敗ラッチと本人承認必須の解除ゲート、Q172再起動時復元と異常時停止、Q173トランザクション管理、Q174コミット検証とFULL、さらにQ1〜174のリスク上限・DD4/5停止・ハートビート認証/鮮度・時刻検証・再試行上限・独立停止理由をすべて維持。既存の独立ウォッチドッグ監視を廃止しない。
+- **実装・実機検証・安全仕様受入れ・実口座売買は未承認**。`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`。
+
 ## Q174：SQLite高耐久設定とコミット検証（方式B採用）
 
 - 本人の直接回答および提示選択肢B：[`specs/source_excerpts/Q174.md`](source_excerpts/Q174.md)。
