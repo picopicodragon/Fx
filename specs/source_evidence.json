@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Q113-Q198 short direct-chat decisions recorded. Historical local archive reconciliation and explicit safety-critical implementation approval remain pending.",
+  "note": "Q113-Q199 design decisions recorded (Q199 onward may be provisionally adopted under direct standing instruction). Historical local archive reconciliation and explicit safety-critical implementation approval remain pending.",
   "records": [
     {
       "question_id": "Q113",
@@ -859,6 +859,16 @@
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
       "source_locator": "第198問の本人直接回答Bと直前に提示された選択肢B。Windowsローカル原議との逐語照合は未実施",
+      "confidentiality_review": "REVIEWED_FOR_GITHUB",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q199",
+      "excerpt_path": "specs/source_excerpts/Q199.md",
+      "source_kind": "DERIVED",
+      "verification": "STANDING_USER_DIRECTIVE_PLUS_AI_RECOMMENDATION",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "source_locator": "本人の直接の包括指示（specs/standing_recommendation_policy.md）と、Q199についてAIが作成した推奨案B。本人のQ199個別直接回答は存在しない",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
