@@ -428,6 +428,15 @@ DD2%警告・DD3%重点再評価の解除用30分連続確認では、原則10�
 
 `FX-SAF-006`の`implementation_approved=false`を維持し、安全重要仕様の実装と実口座注文は未承認。
 
+## Q180：WALサイズWARNING初期基準64 MiB（方式B採用）
+
+- 本人の直接回答と提示選択肢B：[`specs/source_excerpts/Q180.md`](source_excerpts/Q180.md)。
+- SQLite WALファイルの**サイズWARNING初期基準値は64 MiB（67,108,864バイト）**とする。閾値に到達（64 MiB以上）した場合はQ178のWARNINGとして監視を強化する。ただしこの数値は**実機負荷試験による安全性確認前の設計値**である。
+- Q179の複合判定は維持し、WALが64 MiB未満でも急速な増大、チェックポイント停滞、ディスク残容量逼迫等に応じて異常判定を行う。MAJOR/CRITICAL相当の条件、DB整合性検証不能、コミット結果不明、停止状態復元不能等ではWARNINGに留めず即座に既存のFail Closed新規停止・重大障害対応を優先する。
+- **未決：** 増大速度、ディスク残容量、チェックポイント滞留の各閾値、WARNING解除・ヒステリシス・監視頻度、MAJOR/CRITICAL閾値、監査ログ、負荷試験結果に基づく基準値再確認。実装時に未決値を推測補完しない。
+- Q179の固定閾値＋増大傾向複合判定、Q178のWARNING/MAJOR/CRITICAL、Q177の4指標、Q176の自動チェックポイントと監視、Q175の`journal_mode=WAL`、Q174の`synchronous=FULL`・コミット検証、Q173のSQLite永続化、Q172の起動時復元、Q171の隔離失敗ラッチと原因解消＋全検証＋本人明示承認ゲート、および第1〜179問の全リスク・停止条件を維持する。
+- **実装・実機検証・本番売買は未承認**。`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`。
+
 ## Q179：WAL WARNING固定閾値＋増大傾向複合判定（方式B採用）
 
 - 本人直接回答および提示選択肢B：[`specs/source_excerpts/Q179.md`](source_excerpts/Q179.md)。
