@@ -428,6 +428,16 @@ DD2%警告・DD3%重点再評価の解除用30分連続確認では、原則10�
 
 `FX-SAF-006`の`implementation_approved=false`を維持し、安全重要仕様の実装と実口座注文は未承認。
 
+## Q182：WALサイズCRITICAL初期基準512 MiB（方式B採用）
+
+- 本人の設計決定：[`specs/source_excerpts/Q182.md`](source_excerpts/Q182.md)。
+- WALファイルサイズ**512 MiB（536,870,912バイト）以上**でCRITICALを発動し、重大障害通知と安全停止を実行する。既定のLINE＋メール重大通知を使用する。
+- Q180 WARNING **64 MiB**、Q181 MAJOR **256 MiB**を維持。MAJORでは新規注文停止・原因確認と安全検証。512 MiBは実機負荷/障害試験前の初期設計値であり、安全保証値ではない。
+- サイズ基準未満でもWAL急増、ディスク残容量逼迫、チェックポイント停滞、DB整合性・コミット結果・停止状態復元の確認不能ではQ177〜179の複合監視または既存のFail Closed停止を優先し、サイズ到達を待たない。
+- Q171の隔離失敗重大障害は独立したラッチとして保持し、原因解消・旧処理終了と資源隔離の全安全検証・本人明示承認まで解除しない。WAL縮小やチェックポイント成功だけで再開しない。CRITICALサイズ単独の解除権限/具体手順は未決であり、未決のまま無人再開を認めない。
+- Q172〜181のSQLite永続化、起動時復元、`synchronous=FULL`、`journal_mode=WAL`、コミット検証、自動チェックポイント・4指標複合監視・三段階判定、およびQ1〜181のリスク上限・独立停止理由・DD本人承認・通信時計認証条件を維持。
+- **未決**：複合監視の増大速度/残容量/滞留閾値、監視頻度、CRITICAL解除条件・通知詳細、実機検証。`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`。実装・実口座取引は未承認。
+
 ## Q181：WALサイズMAJOR初期基準256 MiB（方式B採用）
 
 - 本人の直接回答と直前の選択肢B：[`specs/source_excerpts/Q181.md`](source_excerpts/Q181.md)。
