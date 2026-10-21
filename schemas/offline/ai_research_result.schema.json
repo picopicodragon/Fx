@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ai_research_result.v1",
+  "description": "Offline schema draft; NOT an AI model approval or permission to trade.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "analysis_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "input_snapshot_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "research_call_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "role": {
+      "const": "MACRO_RESEARCH"
+    },
+    "provider_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "hypothesis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "counterevidence_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "evidence_state": {
+      "enum": [
+        "PENDING",
+        "INSUFFICIENT",
+        "CANDIDATE"
+      ]
+    },
+    "expiry_candidate_utc": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "analysis_id",
+    "input_snapshot_id",
+    "research_call_id",
+    "role",
+    "provider_id",
+    "model_id",
+    "model_version",
+    "prompt_version",
+    "generated_at_utc",
+    "hypothesis",
+    "source_ids",
+    "counterevidence_conditions",
+    "evidence_state",
+    "expiry_candidate_utc"
+  ]
+}
