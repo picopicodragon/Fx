@@ -53,3 +53,7 @@ python scripts/check_source_review_priority.py
 - コード変更・自動テスト実行・実機検証は含まない。
 - 既存の安全閾値・運用許可は一切変更しない。
 - オーナーが差分を確認し、手動でmainへマージする。
+
+## CIイベントの再検証
+
+PR本文の必須見出し（`関連仕様ID`、`テスト結果`、`本人確認`）は`check_repository.py`で検証する。過去の失敗済みworkflow_runの再実行は当時のイベントpayloadを使う場合があるため、PR本文変更後は新規pushによる新しいpull_request/synchronizeイベントのチェック結果を確認する。古い失敗ログのみをもって新しい変更の判定としない。
