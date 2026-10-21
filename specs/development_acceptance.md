@@ -37,6 +37,6 @@
 
 ## 初期管理ファイル
 
-`specs/acceptance_registry.json` は、タスク・モジュール・フェーズをそれぞれ別に記録する初期台帳です。現在のフェーズはすべて `NOT_STARTED` として登録し、完了と誤解しないようにします。
+`specs/acceptance_registry.json` はTASK・MODULE・PHASEを分離して記録する台帳です。**2026-10-21のP1-06棚卸し**でP1-01～P1-06を登録し、PHASE-1と安全重要MODULEは`BLOCKED`、PHASE-2以降は`NOT_STARTED`としました。P1-02～P1-05の`TESTED`は各タスクの**設計・構造検査の範囲限定**であり、P1-04の26件の障害注入とP1-05の27件の模擬シナリオはすべて`NOT_EXECUTED`です。安全重要MODULE/PHASEの受入れ・実取引開始は本人が別途明示承認する必要があります。具体的証拠と未決条件は[`docs/p1_06_acceptance_audit.md`](../docs/p1_06_acceptance_audit.md)を参照してください。
 
 `scripts/check_acceptance.py` は台帳の一部の形式と依存関係を自動検査します。**取引機能の安全性や承認権限の本人性を技術的に保証するものではありません。**
