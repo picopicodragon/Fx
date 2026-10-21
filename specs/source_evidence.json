@@ -865,10 +865,10 @@
     {
       "question_id": "Q199",
       "excerpt_path": "specs/source_excerpts/Q199.md",
-      "source_kind": "DERIVED",
-      "verification": "STANDING_USER_DIRECTIVE_PLUS_AI_RECOMMENDATION",
+      "source_kind": "SUMMARY_ONLY",
+      "verification": "PENDING",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "本人の直接の包括指示（specs/standing_recommendation_policy.md）と、Q199についてAIが作成した推奨案B。本人のQ199個別直接回答は存在しない",
+      "source_locator": "Q199は本人個別原議でなく包括方針に基づくAI推奨Bの派生設計記録。直接原議の証拠ではない。specs/standing_recommendation_policy.mdを参照。ローカル原議照合未実施。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
       "owner_approved_for_safety": false
     }
