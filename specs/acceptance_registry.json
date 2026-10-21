@@ -1,14 +1,91 @@
 {
   "schema_version": 1,
-  "description": "Q110: three-level acceptance tracking; no module/task implementation or approvals have occurred",
-  "tasks": [],
-  "modules": [],
+  "description": "Q110: PHASE-1 started for offline-only preparation; safety-critical implementation and all acceptance/production approvals remain pending.",
+  "tasks": [
+    {
+      "id": "P1-T001",
+      "spec_ids": [
+        "Q110",
+        "Q111",
+        "Q112",
+        "Q115"
+      ],
+      "module_id": "P1-M001",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/phase1_entry.md",
+        "scripts/phase1_readiness.py",
+        "tests/test_phase1_readiness.py"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "P1-T002",
+      "spec_ids": [
+        "Q105",
+        "Q109",
+        "Q110"
+      ],
+      "module_id": "P1-M001",
+      "status": "NOT_STARTED",
+      "evidence": [],
+      "blocker": "Common data contracts and tests to be planned; no trading code authorized"
+    },
+    {
+      "id": "P1-T003",
+      "spec_ids": [
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q115"
+      ],
+      "module_id": "P1-M002",
+      "status": "BLOCKED",
+      "evidence": [
+        "specs/source_review_priority.json",
+        "specs/reconciliation_registry.json"
+      ],
+      "blocker": "All 15 safety critical requirements need original-record reconciliation and individual owner safety approval"
+    }
+  ],
+  "modules": [
+    {
+      "id": "P1-M001",
+      "task_ids": [
+        "P1-T001",
+        "P1-T002"
+      ],
+      "status": "IN_PROGRESS",
+      "safety_critical": false,
+      "evidence": [
+        "docs/phase1_entry.md"
+      ],
+      "approval": null
+    },
+    {
+      "id": "P1-M002",
+      "task_ids": [
+        "P1-T003"
+      ],
+      "status": "BLOCKED",
+      "safety_critical": true,
+      "evidence": [
+        "specs/source_review_priority.json"
+      ],
+      "approval": null
+    }
+  ],
   "phases": [
     {
       "id": "PHASE-1",
-      "status": "NOT_STARTED",
-      "module_ids": [],
-      "evidence": [],
+      "status": "IN_PROGRESS",
+      "module_ids": [
+        "P1-M001",
+        "P1-M002"
+      ],
+      "evidence": [
+        "docs/phase1_entry.md"
+      ],
       "approval": null
     },
     {

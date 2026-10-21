@@ -72,7 +72,11 @@ class Q171DecisionTests(unittest.TestCase):
         self.assertEqual(pri["source_review"], "PENDING_ORIGINAL")
         dec = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
         self.assertEqual(sum(x.startswith("| Q171 |") for x in dec.splitlines()), 1)
-        self.assertIn("v17.1", (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8"))
+        master = (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8")
+        sec = master.split("## Q171：", 1)[1].split("\n## ", 1)[0]
+        for term in ("隔離失敗状態を保持", "自動復旧禁止", "本人の明示的な再開承認",
+                     "安全重要実装・実口座売買は未承認"):
+            self.assertIn(term, sec)
 
 
 if __name__ == "__main__":
