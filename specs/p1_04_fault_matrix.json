@@ -1,0 +1,502 @@
+{
+  "schema_version": 1,
+  "plan_id": "P1-04",
+  "plan_status": "DRAFT_ONLY",
+  "scope": "OFFLINE_FAULT_INJECTION_PLAN",
+  "live_trading_permitted": false,
+  "safety_implementation_approved": false,
+  "thresholds_existing_not_validated": {
+    "wal_absolute_mib": {
+      "warning": 64,
+      "major": 256,
+      "critical": 512
+    },
+    "wal_growth_one_minute_mib": {
+      "warning": 8,
+      "major": 32,
+      "critical": 128
+    },
+    "wal_growth_five_minute_mib": {
+      "warning": 32,
+      "major": 128,
+      "critical": 256
+    },
+    "ordinary_monitor_interval_seconds": 10
+  },
+  "test_cases": [
+    {
+      "id": "P1-04-F01",
+      "category": "DURABILITY",
+      "requirements": [
+        "Q173",
+        "Q174",
+        "Q175"
+      ],
+      "fault": "WAL+FULL configuration readback mismatch",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "REJECT_STARTUP",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F02",
+      "category": "DURABILITY",
+      "requirements": [
+        "Q173",
+        "Q174"
+      ],
+      "fault": "SQLite commit rejected / disk I/O error",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "COMMIT_NOT_CONFIRMED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F03",
+      "category": "DURABILITY",
+      "requirements": [
+        "Q174",
+        "Q194"
+      ],
+      "fault": "commit result unknown after artificial process interruption",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "OUTCOME_UNCERTAIN",
+        "NO_BLIND_RETRY",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F04",
+      "category": "DURABILITY",
+      "requirements": [
+        "Q175",
+        "Q176"
+      ],
+      "fault": "WAL or SHM missing / inaccessible / inconsistent",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "DB_INTEGRITY_UNCERTAIN",
+        "NO_AUTO_REINITIALIZE",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F05",
+      "category": "DURABILITY",
+      "requirements": [
+        "Q173",
+        "Q174"
+      ],
+      "fault": "storage full or read-only directory",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "WRITE_FAILURE_RECORDED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F06",
+      "category": "RESTORE",
+      "requirements": [
+        "Q171",
+        "Q172",
+        "Q173"
+      ],
+      "fault": "restart with isolation failure latched",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "STOP_LATCH_PRESERVED",
+        "OWNER_APPROVAL_REQUIRED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F07",
+      "category": "RESTORE",
+      "requirements": [
+        "Q121",
+        "Q172"
+      ],
+      "fault": "restart with daily stop plus DD4% independent stop",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "INDEPENDENT_REASONS_PRESERVED",
+        "OWNER_APPROVAL_REQUIRED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F08",
+      "category": "RESTORE",
+      "requirements": [
+        "Q172",
+        "Q174"
+      ],
+      "fault": "missing stop-reason table / corrupt record / cannot read DB",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "NO_AUTO_REINITIALIZE",
+        "RESTORE_FAILED_CLOSED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F09",
+      "category": "RESTORE",
+      "requirements": [
+        "Q171",
+        "Q172"
+      ],
+      "fault": "normal reconnect / checkpoint pass while isolation failure still latched",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "STOP_LATCH_PRESERVED",
+        "OWNER_APPROVAL_REQUIRED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F10",
+      "category": "WAL",
+      "requirements": [
+        "Q175",
+        "Q176",
+        "Q177"
+      ],
+      "fault": "reader pins WAL and automatic checkpoint stalls",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "CHECKPOINT_STALL_RECORDED",
+        "NO_CLAIM_OF_DATA_LOSS",
+        "MONITOR_REQUIRED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F11",
+      "category": "WAL",
+      "requirements": [
+        "Q180",
+        "Q181",
+        "Q182"
+      ],
+      "fault": "synthetic WAL absolute size crosses 64/256/512 MiB",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "WARNING_THEN_MAJOR_THEN_CRITICAL",
+        "MAJOR_BLOCKS_NEW_ORDER",
+        "CRITICAL_SAFE_STOP"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F12",
+      "category": "WAL",
+      "requirements": [
+        "Q183",
+        "Q184",
+        "Q185",
+        "Q187",
+        "Q189"
+      ],
+      "fault": "synthetic one-minute WAL growth crosses 8/32/128 MiB",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "ONE_MINUTE_WINDOW_CHECK",
+        "MAJOR_BLOCKS_NEW_ORDER",
+        "CRITICAL_SAFE_STOP"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F13",
+      "category": "WAL",
+      "requirements": [
+        "Q183",
+        "Q184",
+        "Q186",
+        "Q188",
+        "Q190"
+      ],
+      "fault": "synthetic five-minute WAL growth crosses 32/128/256 MiB",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "FIVE_MINUTE_WINDOW_CHECK",
+        "MAJOR_BLOCKS_NEW_ORDER",
+        "CRITICAL_SAFE_STOP"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F14",
+      "category": "WAL",
+      "requirements": [
+        "Q177",
+        "Q191",
+        "Q192"
+      ],
+      "fault": "WAL truncates/reuses blocks and physical size diverges from progress",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "MEASURE_TRACKS_SEPARATELY",
+        "NO_FALSE_BYTE_EQUIVALENCE",
+        "NEW_ORDER_BLOCKED_IF_UNCERTAIN"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F15",
+      "category": "WAL",
+      "requirements": [
+        "Q192",
+        "Q193"
+      ],
+      "fault": "untracked independent writer / app log contradicts SQLite observations",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "EXTERNAL_WRITER_UNCOVERED",
+        "NEW_ORDER_BLOCKED",
+        "DIAGNOSTICS_REQUIRED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F16",
+      "category": "WAL",
+      "requirements": [
+        "Q176",
+        "Q177",
+        "Q192"
+      ],
+      "fault": "missing sample / stale timestamp / unknown free space / checkpoint status",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "MONITOR_UNCERTAIN",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F17",
+      "category": "WAL",
+      "requirements": [
+        "Q176",
+        "Q171"
+      ],
+      "fault": "WAL shrinks after checkpoint but isolation failure remains",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "STOP_LATCH_PRESERVED",
+        "NO_AUTO_RECOVERY"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F18",
+      "category": "CONCURRENCY",
+      "requirements": [
+        "Q173",
+        "Q194",
+        "Q196"
+      ],
+      "fault": "two simultaneous writers contend for SQLite lock",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "NO_FALSE_COMMIT",
+        "NO_DUPLICATE_ACCEPTANCE",
+        "NEW_ORDER_BLOCKED_IF_UNCERTAIN"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F19",
+      "category": "CONCURRENCY",
+      "requirements": [
+        "Q195",
+        "Q196"
+      ],
+      "fault": "duplicate logical_operation_id or attempt_id violates SQLite unique constraint",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "DUPLICATE_REJECTED",
+        "NO_BLIND_RETRY",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F20",
+      "category": "CONCURRENCY",
+      "requirements": [
+        "Q194",
+        "Q195"
+      ],
+      "fault": "application event log says committed but DB transaction was rolled back",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "LOG_IS_NOT_COMMIT_PROOF",
+        "OUTCOME_UNCERTAIN",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F21",
+      "category": "DISPATCH",
+      "requirements": [
+        "Q197",
+        "Q198"
+      ],
+      "fault": "crash after PREPARED but before DISPATCHING commit",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "NO_UNCONFIRMED_SEND",
+        "NO_BLIND_RETRY",
+        "RECONCILE_BEFORE_ACTION"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F22",
+      "category": "DISPATCH",
+      "requirements": [
+        "Q198",
+        "Q199"
+      ],
+      "fault": "crash after DISPATCHING committed but before request sent",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "DISPATCHING_NOT_EXECUTION_PROOF",
+        "OUTCOME_UNCERTAIN",
+        "NO_BLIND_RETRY"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F23",
+      "category": "DISPATCH",
+      "requirements": [
+        "Q198",
+        "Q199"
+      ],
+      "fault": "request sent, broker response lost / timeout / unknown result",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "OUTCOME_UNKNOWN",
+        "NO_BLIND_RETRY",
+        "BROKER_RECONCILIATION_REQUIRED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F24",
+      "category": "DISPATCH",
+      "requirements": [
+        "Q199"
+      ],
+      "fault": "broker response accepted but actual fills/orders not reconciled",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "RESPONSE_ACCEPTED_NOT_FILL_PROOF",
+        "BROKER_RECONCILIATION_REQUIRED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F25",
+      "category": "AUTHORIZATION",
+      "requirements": [
+        "Q171",
+        "Q172"
+      ],
+      "fault": "operator approval missing even though other recovery checks passed",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "OWNER_APPROVAL_REQUIRED",
+        "STOP_LATCH_PRESERVED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-04-F26",
+      "category": "AUTHORIZATION",
+      "requirements": [
+        "Q107",
+        "Q110",
+        "Q171"
+      ],
+      "fault": "CI PASS or PR merge occurs with safety implementation unapproved",
+      "fixture": "SYNTHETIC_OR_DISPOSABLE_SQLITE_ONLY",
+      "expected": [
+        "APPROVAL_FLAGS_UNCHANGED",
+        "LIVE_TRADING_DISABLED"
+      ],
+      "execution_status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    }
+  ]
+}
