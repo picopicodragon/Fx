@@ -1,14 +1,153 @@
 {
   "schema_version": 1,
-  "description": "Q110: three-level acceptance tracking; no module/task implementation or approvals have occurred",
-  "tasks": [],
-  "modules": [],
+  "description": "Q110: design-only P1-01–P1-06 tracking; no MODULE/PHASE acceptance, safety implementation or live trading authorization",
+  "tasks": [
+    {
+      "id": "P1-01",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": [
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/p1_01_gap_report.md",
+        "https://github.com/picopicodragon/Fx/pull/66"
+      ],
+      "approval": null,
+      "scope_note": "Gap report delivered; full original-source owner review, formulas and safety sign-off blocked."
+    },
+    {
+      "id": "P1-02",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": [
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "docs/p1_02_environment_ci_inventory.md",
+        "https://github.com/picopicodragon/Fx/actions/runs/39564023432",
+        "2026-10-21 user-reported Windows Python 3.13 offline test run: 236 tests OK"
+      ],
+      "approval": null,
+      "scope_note": "Offline environment/CI diagnostics and static tests only; compatibility on this user's PC observed, not trading-system validation."
+    },
+    {
+      "id": "P1-03",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": [
+        "Q26",
+        "Q28",
+        "Q29",
+        "Q109"
+      ],
+      "evidence": [
+        "specs/p1_03_offline_data_contracts.md",
+        "https://github.com/picopicodragon/Fx/actions/runs/39565359266"
+      ],
+      "approval": null,
+      "scope_note": "Offline contract draft and schema structural checks only. JSON runtime validation and adapter testing not performed."
+    },
+    {
+      "id": "P1-04",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": [
+        "Q171",
+        "Q173",
+        "Q174",
+        "Q175",
+        "Q176",
+        "Q194",
+        "Q199"
+      ],
+      "evidence": [
+        "docs/p1_04_sqlite_fault_injection_plan.md",
+        "specs/p1_04_fault_matrix.json",
+        "https://github.com/picopicodragon/Fx/actions/runs/39566682572"
+      ],
+      "approval": null,
+      "scope_note": "Planning/registry tests only; all 26 fault injections remain NOT_EXECUTED and safety code unapproved."
+    },
+    {
+      "id": "P1-05",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": [
+        "Q195",
+        "Q196",
+        "Q197",
+        "Q198",
+        "Q199"
+      ],
+      "evidence": [
+        "docs/p1_05_mock_broker_reconciliation_design.md",
+        "specs/p1_05_mock_broker_scenarios.json",
+        "https://github.com/picopicodragon/Fx/actions/runs/39567682927"
+      ],
+      "approval": null,
+      "scope_note": "Planning/schema tests only; all 27 mock scenarios NOT_EXECUTED; no brokerage connectivity or order tests."
+    },
+    {
+      "id": "P1-06",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "IN_PROGRESS",
+      "spec_ids": [
+        "Q107",
+        "Q109",
+        "Q110",
+        "Q111",
+        "Q112"
+      ],
+      "evidence": [
+        "docs/p1_06_acceptance_audit.md"
+      ],
+      "approval": null,
+      "scope_note": "Acceptance audit drafted; owner review, unresolved safety prerequisites and PHASE-1 acceptance outstanding."
+    }
+  ],
+  "modules": [
+    {
+      "id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "safety_critical": true,
+      "task_ids": [
+        "P1-01",
+        "P1-02",
+        "P1-03",
+        "P1-04",
+        "P1-05",
+        "P1-06"
+      ],
+      "evidence": [
+        "docs/p1_06_acceptance_audit.md",
+        "specs/acceptance_registry.json"
+      ],
+      "approval": null,
+      "blockers": [
+        "P1-01 ORIGINAL source review incomplete",
+        "26 SQLite fault scenarios NOT_EXECUTED",
+        "27 mock-broker scenarios NOT_EXECUTED",
+        "MT4 connectivity/order reconciliation unverified",
+        "No explicit owner approval for safety-critical implementation or module acceptance"
+      ]
+    }
+  ],
   "phases": [
     {
       "id": "PHASE-1",
-      "status": "NOT_STARTED",
-      "module_ids": [],
-      "evidence": [],
+      "status": "BLOCKED",
+      "module_ids": [
+        "M-P1-FOUNDATION-DESIGN"
+      ],
+      "evidence": [
+        "docs/p1_06_acceptance_audit.md"
+      ],
       "approval": null
     },
     {
