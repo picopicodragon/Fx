@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "source_record.v1",
+  "description": "P1-03 offline DRAFT; data shape only, not trading approval or runtime validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "source_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "source_kind": {
+      "enum": [
+        "OFFICIAL",
+        "FINANCIAL_NEWS",
+        "ECONOMIC_CALENDAR",
+        "PRICE",
+        "SYNTHETIC"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^https://"
+    },
+    "published_at_utc": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retrieved_at_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "data_status": {
+      "enum": [
+        "UNVERIFIED",
+        "MISSING",
+        "CONFIRMED",
+        "REVISED",
+        "SYNTHETIC"
+      ]
+    },
+    "content_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "market_relevance": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "source_id",
+    "source_kind",
+    "source_url",
+    "published_at_utc",
+    "retrieved_at_utc",
+    "data_status",
+    "content_summary",
+    "market_relevance"
+  ]
+}
