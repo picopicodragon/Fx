@@ -58,6 +58,38 @@ class EvidenceAuditTests(unittest.TestCase):
         d["records"][0]["excerpt_path"] = "../../private/original.md"
         self.assertIn("must be specs/source_excerpts", "\n".join(audit(self.root, d)))
 
+    def test_ai_derived_q199_records_standing_policy_not_individual_answer(self):
+        d = copy.deepcopy(self.data)
+        r = d["records"][0]
+        r.update({
+            "question_id": "Q199",
+            "excerpt_path": "specs/source_excerpts/Q199.md",
+            "source_kind": "DERIVED",
+            "verification": "STANDING_USER_DIRECTIVE_PLUS_AI_RECOMMENDATION",
+            "source_locator": "本人の包括指示 specs/standing_recommendation_policy.md とAI推奨",
+        })
+        excerpt = self.root / r["excerpt_path"]
+        excerpt.write_text("# Q199\\nAI推奨。本人が個別回答したものではない。\\n", encoding="utf-8")
+        self.assertEqual(audit(self.root, d), [])
+        r["verification"] = "DIRECT_CHAT"
+        self.assertIn("standing user directive", " ".join(audit(self.root, d)))
+
+    def test_derived_q199_requires_provenance_and_disclaimer(self):
+        d = copy.deepcopy(self.data)
+        r = d["records"][0]
+        r.update({
+            "question_id": "Q199",
+            "excerpt_path": "specs/source_excerpts/Q199.md",
+            "source_kind": "DERIVED",
+            "verification": "STANDING_USER_DIRECTIVE_PLUS_AI_RECOMMENDATION",
+            "source_locator": "unknown source",
+        })
+        excerpt = self.root / r["excerpt_path"]
+        excerpt.write_text("# Q199\\nAI推奨。\\n", encoding="utf-8")
+        errors = " ".join(audit(self.root, d))
+        self.assertIn("standing policy provenance", errors)
+        self.assertIn("distinguish AI recommendation", errors)
+
     def test_local_archive_needs_confirmation(self):
         d = copy.deepcopy(self.data)
         d["records"][0]["verification"] = "LOCAL_ARCHIVE"
