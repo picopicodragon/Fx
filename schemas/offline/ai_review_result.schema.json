@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ai_review_result.v1",
+  "description": "Offline schema draft; NOT an AI model approval or permission to trade.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "analysis_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "research_call_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "review_call_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "role": {
+      "const": "INDEPENDENT_REVIEW"
+    },
+    "provider_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewed_at_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "verdict": {
+      "enum": [
+        "APPROVED",
+        "REVISION",
+        "REJECTED",
+        "PENDING"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counterevidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "revision_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "analysis_id",
+    "research_call_id",
+    "review_call_id",
+    "role",
+    "provider_id",
+    "model_id",
+    "model_version",
+    "prompt_version",
+    "reviewed_at_utc",
+    "verdict",
+    "reason",
+    "counterevidence",
+    "revision_count",
+    "source_ids"
+  ]
+}
