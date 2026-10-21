@@ -9,8 +9,8 @@ import json
 import re
 from pathlib import Path
 
-ALLOWED_SOURCES = {"ORIGINAL", "SUMMARY_ONLY", "UNAVAILABLE"}
-ALLOWED_VERIFICATION = {"DIRECT_CHAT", "LOCAL_ARCHIVE", "PENDING"}
+ALLOWED_SOURCES = {"ORIGINAL", "SUMMARY_ONLY", "UNAVAILABLE", "DERIVED"}
+ALLOWED_VERIFICATION = {"DIRECT_CHAT", "LOCAL_ARCHIVE", "PENDING", "STANDING_USER_DIRECTIVE_PLUS_AI_RECOMMENDATION"}
 ALLOWED_ARCHIVES = {"PENDING_LOCAL_ARCHIVE", "CONFIRMED_LOCAL_ARCHIVE"}
 ALLOWED_REVIEW = {"REVIEWED_FOR_GITHUB", "NOT_REVIEWED"}
 
@@ -57,6 +57,16 @@ def audit(root: Path, data: object) -> list[str]:
                 errors.append(f"{qid}: ORIGINAL requires actual direct verification")
             if not isinstance(locator, str) or not locator.strip():
                 errors.append(f"{qid}: ORIGINAL requires source_locator")
+        # Q199+: derived design recommendations are NOT direct user answers.
+        if source == "DERIVED":
+            if verification != "STANDING_USER_DIRECTIVE_PLUS_AI_RECOMMENDATION":
+                errors.append(f"{qid}: DERIVED must identify the standing user directive plus AI recommendation")
+            if int(qid[1:]) < 199:
+                errors.append(f"{qid}: DERIVED source is only allowed after the standing policy")
+            if not isinstance(locator, str) or "standing_recommendation_policy.md" not in locator:
+                errors.append(f"{qid}: DERIVED must reference the standing policy provenance")
+        elif verification == "STANDING_USER_DIRECTIVE_PLUS_AI_RECOMMENDATION":
+            errors.append(f"{qid}: standing directive verification requires DERIVED source_kind")
         if verification == "LOCAL_ARCHIVE" and archive != "CONFIRMED_LOCAL_ARCHIVE":
             errors.append(f"{qid}: local archive verification needs confirmed archive")
         if not isinstance(path, str) or not re.fullmatch(r"specs/source_excerpts/Q[1-9][0-9]*\.md", path):
@@ -70,6 +80,11 @@ def audit(root: Path, data: object) -> list[str]:
             errors.append(f"{qid}: referenced excerpt file is missing")
             continue
         excerpt_text = excerpt_file.read_text(encoding="utf-8")
+        if source == "DERIVED" and (
+            "推奨" not in excerpt_text
+            or "個別回答したものではない" not in excerpt_text
+        ):
+            errors.append(f"{qid}: DERIVED excerpt must distinguish AI recommendation from direct user answer")
         if qid not in excerpt_text:
             errors.append(f"{qid}: excerpt file does not mention its question_id")
         if reviewed != "REVIEWED_FOR_GITHUB":
