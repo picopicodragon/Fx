@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "plan_id": "P1-05",
+  "status": "DRAFT_ONLY",
+  "disclaimer": "Planned mock-broker scenarios. No broker calls, no SQLite writes, no live orders or safety implementation.",
+  "broker_connected": false,
+  "orders_permitted": false,
+  "implementation_approved": false,
+  "reconciliation_provider_verified": false,
+  "test_cases": [
+    {
+      "id": "P1-05-F01",
+      "category": "PRE_DISPATCH",
+      "requirements": [
+        "Q197",
+        "Q198"
+      ],
+      "stimulus": "PREPARED persisted, DISPATCHING commit failed",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "NO_DISPATCH_ALLOWED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F02",
+      "category": "PRE_DISPATCH",
+      "requirements": [
+        "Q197",
+        "Q198"
+      ],
+      "stimulus": "PREPARED transaction result ambiguous",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "NO_DISPATCH_ALLOWED",
+        "NEW_ORDER_BLOCKED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F03",
+      "category": "PRE_DISPATCH",
+      "requirements": [
+        "Q198",
+        "Q199"
+      ],
+      "stimulus": "DISPATCHING commit succeeded, crash before network call",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "DISPATCHING_NOT_SEND_PROOF",
+        "OUTCOME_UNCERTAIN",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F04",
+      "category": "PRE_DISPATCH",
+      "requirements": [
+        "Q195",
+        "Q196",
+        "Q198"
+      ],
+      "stimulus": "two send workers race same logical operation",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "NO_DOUBLE_SEND_ASSUMPTION",
+        "NEW_ORDER_BLOCKED_IF_UNCERTAIN"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F05",
+      "category": "PRE_DISPATCH",
+      "requirements": [
+        "Q195",
+        "Q196",
+        "Q197"
+      ],
+      "stimulus": "duplicate logical and attempt UUID or missing unique constraint",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "DUPLICATE_REJECTED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F06",
+      "category": "RESPONSE",
+      "requirements": [
+        "Q198",
+        "Q199"
+      ],
+      "stimulus": "positive broker API response without separately verified order or position",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "RESPONSE_ACCEPTED_NOT_FILL_PROOF",
+        "RECONCILIATION_REQUIRED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F07",
+      "category": "RESPONSE",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "negative broker API response without independent order history",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "RESPONSE_REJECTED_NOT_ABSENCE_PROOF",
+        "RECONCILIATION_REQUIRED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F08",
+      "category": "RESPONSE",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "request times out after possible network send",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "OUTCOME_UNKNOWN",
+        "NEW_ORDER_BLOCKED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F09",
+      "category": "RESPONSE",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "network disconnect after request before response",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "OUTCOME_UNKNOWN",
+        "NEW_ORDER_BLOCKED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F10",
+      "category": "RESPONSE",
+      "requirements": [
+        "Q194",
+        "Q199"
+      ],
+      "stimulus": "response malformed, contradictory, or missing status field",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "OUTCOME_UNKNOWN",
+        "NEW_ORDER_BLOCKED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F11",
+      "category": "RESPONSE",
+      "requirements": [
+        "Q195",
+        "Q199"
+      ],
+      "stimulus": "late response arrives with stale attempt ID",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "QUARANTINE_STALE_RESPONSE",
+        "RECONCILIATION_REQUIRED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F12",
+      "category": "RESPONSE",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "received provider code not in verified code mapping",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "OUTCOME_UNKNOWN",
+        "NEW_ORDER_BLOCKED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F13",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "broker order lookup no match while history may be delayed",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "ABSENCE_UNPROVEN",
+        "NEW_ORDER_BLOCKED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F14",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "broker reports pending order but position not yet present",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "PENDING_ORDER_NOT_FILL_PROOF",
+        "NEW_ORDER_BLOCKED_IF_UNCERTAIN"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F15",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "partial fill plus open remainder",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "PARTIAL_FILL_TRACKED",
+        "REMAINING_ORDER_TRACKED",
+        "NO_ASSUMED_COMPLETION"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F16",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "fill history conflicts with open position snapshot",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "CONFLICT_FAIL_CLOSED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F17",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q198",
+        "Q199"
+      ],
+      "stimulus": "two possible broker-side order references for one attempt",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "AMBIGUITY_FAIL_CLOSED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F18",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "historical execution arrives after initial no-match result",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "LATE_EXECUTION_NOT_LOST",
+        "NO_ABSENCE_INFERENCE",
+        "NEW_ORDER_BLOCKED_IF_UNCERTAIN"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F19",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "broker order and position APIs unavailable or stale",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "RECONCILIATION_UNAVAILABLE",
+        "NEW_ORDER_BLOCKED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F20",
+      "category": "RECONCILIATION",
+      "requirements": [
+        "Q199"
+      ],
+      "stimulus": "cancel acknowledged, order status still pending or unknown",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "CANCEL_ACK_NOT_FINAL_STATE",
+        "RECONCILIATION_REQUIRED",
+        "NO_BLIND_RETRY"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F21",
+      "category": "STOP_AND_RESTART",
+      "requirements": [
+        "Q171",
+        "Q172",
+        "Q199"
+      ],
+      "stimulus": "restart while unresolved outcome unknown and isolation failure latch present",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "ISOLATION_LATCH_PRESERVED",
+        "OWNER_APPROVAL_REQUIRED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F22",
+      "category": "STOP_AND_RESTART",
+      "requirements": [
+        "Q121",
+        "Q171",
+        "Q199"
+      ],
+      "stimulus": "daily loss stop plus DD4 stop, normal broker response received",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "INDEPENDENT_STOPS_PRESERVED",
+        "OWNER_APPROVAL_REQUIRED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F23",
+      "category": "STOP_AND_RESTART",
+      "requirements": [
+        "Q194",
+        "Q197",
+        "Q199"
+      ],
+      "stimulus": "event log reports success but DB is rollback or commit unknown",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "LOG_NOT_COMMIT_PROOF",
+        "NO_BLIND_RETRY",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F24",
+      "category": "STOP_AND_RESTART",
+      "requirements": [
+        "Q171",
+        "Q199"
+      ],
+      "stimulus": "API re-authentication succeeds while prior stop latch active",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "REAUTH_NOT_RESTART_AUTHORIZATION",
+        "ISOLATION_LATCH_PRESERVED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F25",
+      "category": "DATA_AND_SECURITY",
+      "requirements": [
+        "Q27",
+        "Q199"
+      ],
+      "stimulus": "broker price/order evidence stale or lacks timestamp",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "EVIDENCE_NOT_TRUSTED",
+        "NEW_ORDER_BLOCKED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F26",
+      "category": "DATA_AND_SECURITY",
+      "requirements": [
+        "Q107",
+        "Q199"
+      ],
+      "stimulus": "unverified broker code mapping suggests fill based on guessed API semantics",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "UNKNOWN_MAPPING_FAIL_CLOSED",
+        "NO_CLAIM_OF_FILL"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    },
+    {
+      "id": "P1-05-F27",
+      "category": "AUTHORIZATION",
+      "requirements": [
+        "Q107",
+        "Q110",
+        "Q199"
+      ],
+      "stimulus": "PR merged and CI passed without specific safety sign-off",
+      "fixture": "SYNTHETIC_MOCK_ONLY",
+      "expected": [
+        "APPROVAL_FLAGS_UNCHANGED",
+        "LIVE_TRADING_DISABLED"
+      ],
+      "status": "NOT_EXECUTED",
+      "evidence_refs": [],
+      "owner_safety_approved": false
+    }
+  ]
+}
