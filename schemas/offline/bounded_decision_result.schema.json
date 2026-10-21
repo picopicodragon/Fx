@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bounded_decision_result.v1",
+  "description": "Offline schema draft; NOT an AI model approval or permission to trade.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "decision_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "input_snapshot_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "role": {
+      "const": "BOUNDED_DECISION"
+    },
+    "provider_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "decision_type": {
+      "enum": [
+        "NEWS_IMPORTANCE",
+        "REANALYSIS_REQUIRED",
+        "FURTHER_RESEARCH",
+        "PRIORITY"
+      ]
+    },
+    "allowed_choices": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 2,
+      "uniqueItems": true
+    },
+    "selected_choice": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "decision_status": {
+      "enum": [
+        "COMPLETED",
+        "ABSTAINED",
+        "INVALID"
+      ]
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "decision_id",
+    "input_snapshot_id",
+    "role",
+    "provider_id",
+    "model_id",
+    "model_version",
+    "question_version",
+    "generated_at_utc",
+    "decision_type",
+    "allowed_choices",
+    "selected_choice",
+    "decision_status",
+    "confidence",
+    "reason"
+  ]
+}
