@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "p1_05_mock_broker_evidence.v1",
+  "description": "Draft shape for SYNTHETIC test evidence only; does not authorize or establish real broker state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mock_only",
+    "logical_operation_id",
+    "attempt_id",
+    "observed_at_utc",
+    "evidence_source",
+    "response_classification",
+    "order_observation",
+    "fill_observation",
+    "position_observation",
+    "evidence_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "mock_only": {
+      "const": true
+    },
+    "logical_operation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "attempt_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "observed_at_utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "evidence_source": {
+      "enum": [
+        "SIMULATED_RESPONSE",
+        "SIMULATED_ORDER_LOOKUP",
+        "SIMULATED_FILL_HISTORY",
+        "SIMULATED_POSITION_SNAPSHOT"
+      ]
+    },
+    "response_classification": {
+      "enum": [
+        "RESPONSE_ACCEPTED",
+        "RESPONSE_REJECTED",
+        "OUTCOME_UNKNOWN"
+      ]
+    },
+    "order_observation": {
+      "enum": [
+        "UNOBSERVED",
+        "PENDING",
+        "PARTIALLY_FILLED",
+        "FILLED",
+        "CANCELLED",
+        "REJECTED",
+        "CONFLICTING"
+      ]
+    },
+    "fill_observation": {
+      "enum": [
+        "UNOBSERVED",
+        "NONE_OBSERVED",
+        "PARTIAL",
+        "COMPLETE",
+        "CONFLICTING"
+      ]
+    },
+    "position_observation": {
+      "enum": [
+        "UNOBSERVED",
+        "NONE_OBSERVED",
+        "POSITION_OBSERVED",
+        "CONFLICTING"
+      ]
+    },
+    "evidence_status": {
+      "enum": [
+        "UNVERIFIED",
+        "INCOMPLETE",
+        "CONFLICTING",
+        "MOCK_CONSISTENT"
+      ]
+    }
+  }
+}
