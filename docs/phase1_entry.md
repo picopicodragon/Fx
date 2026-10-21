@@ -44,6 +44,14 @@
 - PHASE-1全体について本人が受入れを明示し、`specs/acceptance_registry.json`へ承認者・日時・判断参照が記録されること。
 - PHASE-1受入れは本番売買の開始許可とは別判定であること。
 
+## オフライン診断コマンドと注意
+
+- `python scripts/phase1_readiness.py`：安全証拠の台帳メタデータを表示する（読み取り専用）。
+- `python scripts/phase1_readiness.py --require-evidence-complete`：証拠メタデータが未充足なら終了コード2。
+- `python -m unittest discover -s tests -p 'test*.py' -v`：合成データの単体テストを含むリポジトリのテスト。
+- 初期の合成データによるオフライン試験は5件PASS。ただし実際のGitHub PR CIとWindows環境での試験は別途結果確認が必要。
+- GitHubの[ドラフトPR #63](https://github.com/picopicodragon/Fx/pull/63)で差分・CIを本人が確認する。**PR作成だけではPHASE受入れは成立しない**。
+
 ## 現時点の到達点
 
 - 作業ブランチを作成。
