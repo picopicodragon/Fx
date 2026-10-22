@@ -18,7 +18,7 @@
   "open_issues": [
     "The precise subsequent message text and message ID have not been independently inspected by this assistant.",
     "All later decisions, source-excerpt registration, implementation formula details and full safety requirement review remain separate.",
-    "Q11 and Q13 unmatched context hints remain to be independently resolved."
+    "Q11 and Q13 hint classifications are recorded as cross-question material (Q106 and Q14). Original message IDs and full original excerpts remain unregistered."
   ],
   "implementation_approved": false,
   "human_safety_approval": false,

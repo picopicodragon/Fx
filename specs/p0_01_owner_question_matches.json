@@ -8,7 +8,7 @@
   "source_excerpt_registered": false,
   "all_original_context_verified_by_repo": false,
   "open_context_items": [
-    "Q11 and Q13 also have unassigned assistant-context hints; these have not been separately certified in this record.",
+    "Q11 and Q13 unmatched hint classifications were later documented as cross-question material (Q106 and Q14 respectively); see specs/p0_01_cross_question_context_classifications.json. This does not verify the original message IDs or finalize risk implementation approvals.",
     "Other Q5-Q8 and Q14 decisions remain to be reviewed.",
     "Later decisions Q116 onward and safety implementation formulas require separate reconciliation.",
     "All safety-important requirements continue to require original excerpts, full issue resolution and explicit safety approval."
@@ -41,8 +41,9 @@
       "review_kind": "OWNER_DIRECT_ATTESTATION",
       "question_level_only": true,
       "registered_original_excerpt": false,
-      "unmatched_context_resolution": "NOT_SEPARATELY_CONFIRMED",
-      "safety_approval": false
+      "unmatched_context_resolution": "CROSS_QUESTION_UNRELATED_TO_RISK_SETTING",
+      "safety_approval": false,
+      "unmatched_context_resolution_ref": "specs/p0_01_cross_question_context_classifications.json"
     },
     {
       "question_id": "Q12",
@@ -59,8 +60,9 @@
       "review_kind": "OWNER_DIRECT_ATTESTATION",
       "question_level_only": true,
       "registered_original_excerpt": false,
-      "unmatched_context_resolution": "NOT_SEPARATELY_CONFIRMED",
-      "safety_approval": false
+      "unmatched_context_resolution": "CROSS_QUESTION_UNRELATED_TO_RISK_SETTING",
+      "safety_approval": false,
+      "unmatched_context_resolution_ref": "specs/p0_01_cross_question_context_classifications.json"
     }
   ]
 }

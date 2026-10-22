@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "record_type": "P0_01_OWNER_CROSS_QUESTION_CONTEXT_CLASSIFICATION",
+  "recorded_date": "2026-10-22",
+  "source_kind": "OWNER_FOLLOWUP_DESCRIPTION_NOT_ARCHIVE_EXCERPT",
+  "scope": "Only two ambiguous assistant-context hints, originally associated with Q11 and Q13.",
+  "classification_rules": "A later source item containing another question label does not become an amendment to a risk-control question merely because a preceding assistant message contained that risk-control question number.",
+  "items": [
+    {
+      "hint_owner_question_id": "Q11",
+      "classification": "CROSS_QUESTION_UNRELATED_TO_RISK_SETTING",
+      "actual_question_id": "Q106",
+      "owner_reported_description": "Master specification and Codex hand-off, option C: split Markdown plus local Git management.",
+      "owner_original_label": "追加決定",
+      "interpretation": "A separate Q106 documentation/tooling design decision; not an amendment to Q11 maximum drawdown 5 percent.",
+      "spec_alignment": "MASTER_SPEC.md Q106 also records split Markdown plus local Git and the existing private GitHub repository.",
+      "question_11_match_unchanged": true
+    },
+    {
+      "hint_owner_question_id": "Q13",
+      "classification": "CROSS_QUESTION_UNRELATED_TO_RISK_SETTING",
+      "actual_question_id": "Q14",
+      "owner_reported_description": "User asked the Japan-time equivalent of New York market 17:00.",
+      "owner_original_label": "無関係",
+      "interpretation": "Context for Q14 time-zone explanation; not an amendment to Q13 equity-based risk accounting.",
+      "spec_alignment": "Q14 adopted NY17:00 in a later reply per separate owner attestation.",
+      "question_13_match_unchanged": true
+    }
+  ],
+  "original_message_ids_independently_verified": false,
+  "original_excerpts_registered": false,
+  "risk_limits_unchanged": true,
+  "source_kind_upgraded": false,
+  "requirement_comparison_upgraded": false,
+  "human_safety_approval": false,
+  "implementation_approved": false,
+  "owner_approved_for_safety": false,
+  "trade_enabled": false
+}
