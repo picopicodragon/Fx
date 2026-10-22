@@ -78,3 +78,13 @@ Q14についてユーザーが確認した原文候補は、**ニューヨーク
 時刻換算の参考：America/New_Yorkの17:00は日本の翌日06:00（米国夏時間EDT）または07:00（米国標準時間EST）。これは設計上の換算説明であり、当時の**採用の意思表示**の代わりにはならない。現行`MASTER_SPEC.md`のQ14設計はこのレビューだけでは変更しない。
 
 Q5～Q13の9設問の本人申告MATCHは**設問単位の部分照合**。Q11/Q13の追加文脈候補、Q116以降の改訂、FX-SAF-001～006各要件の未確定実装条件や安全承認は引き続き未解決。要件単位の`source_kind`、`comparison_status`、承認フラグ、PHASE-1 BLOCKEDおよび本番取引禁止を維持する。
+
+## 2026-10-22追記3：Q14の後続採用回答を本人が確認
+
+本人から、Q14の「ニューヨーク市場17:00とは日本時間で何時？」という時刻換算の質問の**次の応答でニューヨーク市場17:00を採用している**との追報があった。したがってQ14の設問単位の最新判定は **MATCH（本人申告）** とする。
+
+`specs/p0_01_owner_q14_followup_match.json`に今回の追報を登録し、`specs/reconciliation_registry.json`のFX-SAF-003の`partial_owner_question_matches`へQ14のMATCHを追加した。前回のUNCLEARは`specs/p0_01_owner_question_reviews_round2.json`から削除せず、FX-SAF-003台帳でも`HISTORICAL_SUPERSEDED`として変更履歴を残している。**時刻換算の質問だけを根拠に採用を推認したわけではない**。
+
+これで **Q5～Q14はすべて本人の報告に基づく設問単位MATCH** となる。ただし、後続応答の正確な原文とメッセージIDは本チャットから独立検証していない。GitHub原議抜粋も未登録。Q11・Q13の別文脈候補、Q116以降の後続改訂、FX-SAF要件全体の原議照合、損失計算・障害停止条件の詳細化と安全実装の承認は未完了。
+
+当初のNY17:00（米国DSTに従い日本時間翌日06:00/07:00）という設計は変更せず、`source_kind=SUMMARY_ONLY`等の要件レベル状態、全安全重要仕様の`PENDING_ORIGINAL`、`implementation_approved=false`、PHASE-1 BLOCKED、本番売買禁止を維持する。
