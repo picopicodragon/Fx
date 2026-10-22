@@ -43,7 +43,11 @@ class PartialOriginalComparisonTests(unittest.TestCase):
         for item in data["items"]:
             if item["question_id"] in ("Q11", "Q13"):
                 self.assertEqual(
-                    item["unmatched_context_resolution"], "NOT_SEPARATELY_CONFIRMED"
+                    item["unmatched_context_resolution"], "CROSS_QUESTION_UNRELATED_TO_RISK_SETTING"
+                )
+                self.assertEqual(
+                    item["unmatched_context_resolution_ref"],
+                    "specs/p0_01_cross_question_context_classifications.json",
                 )
 
     def test_related_requirements_are_only_partially_marked(self):
