@@ -52,7 +52,7 @@ class PartialOriginalComparisonTests(unittest.TestCase):
         expected = {
             "FX-SAF-001": {"Q5", "Q6", "Q13"},
             "FX-SAF-002": {"Q7"},
-            "FX-SAF-003": {"Q8", "Q9", "Q13"},
+            "FX-SAF-003": {"Q8", "Q9", "Q13", "Q14"},
             "FX-SAF-004": {"Q10"},
             "FX-SAF-005": {"Q11", "Q12"},
         }
@@ -66,7 +66,7 @@ class PartialOriginalComparisonTests(unittest.TestCase):
                 for match in matches:
                     self.assertEqual(match["result"], "MATCH")
                     self.assertEqual(
-                        match["evidence_ref"], "specs/p0_01_owner_question_reviews_round2.json" if match["question_id"] in ("Q5", "Q6", "Q7", "Q8") else "specs/p0_01_owner_question_matches.json"
+                        match["evidence_ref"], ("specs/p0_01_owner_q14_followup_match.json" if match["question_id"] == "Q14" else "specs/p0_01_owner_question_reviews_round2.json" if match["question_id"] in ("Q5", "Q6", "Q7", "Q8") else "specs/p0_01_owner_question_matches.json")
                     )
                     self.assertEqual(
                         match["record_kind"], "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
