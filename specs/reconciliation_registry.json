@@ -119,6 +119,14 @@
           "report_date": "2026-10-22",
           "evidence_ref": "specs/p0_01_owner_question_matches.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        },
+        {
+          "question_id": "Q14",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_q14_followup_match.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL",
+          "context": "Adoption confirmed by user as a later reply, superseding earlier time-conversion-only interpretation."
         }
       ],
       "partial_owner_question_reviews": [
@@ -127,7 +135,9 @@
           "result": "UNCLEAR",
           "report_date": "2026-10-22",
           "evidence_ref": "specs/p0_01_owner_question_reviews_round2.json",
-          "reason": "Local response asked to convert NY17:00 to JST rather than explicitly adopting a trading-day boundary."
+          "reason": "Local response asked to convert NY17:00 to JST rather than explicitly adopting a trading-day boundary.",
+          "superseded_by": "specs/p0_01_owner_q14_followup_match.json",
+          "review_lifecycle": "HISTORICAL_SUPERSEDED"
         }
       ]
     },

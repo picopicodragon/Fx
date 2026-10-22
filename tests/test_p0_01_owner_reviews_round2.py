@@ -27,14 +27,16 @@ class P001OwnerRoundTwoTests(unittest.TestCase):
                      "human_safety_approval", "owner_approved_for_safety"):
             self.assertIs(report[name], False)
 
-    def test_question_14_remains_unresolved_on_safety_requirement(self):
+    def test_round_two_unclear_is_historical_and_superseded(self):
         ledger = read_json("specs/reconciliation_registry.json")
         saf003 = next(x for x in ledger["items"] if x["requirement_id"] == "FX-SAF-003")
         q14 = saf003["partial_owner_question_reviews"]
         self.assertEqual(len(q14), 1)
         self.assertEqual(q14[0]["question_id"], "Q14")
         self.assertEqual(q14[0]["result"], "UNCLEAR")
-        self.assertNotIn("Q14", {x["question_id"] for x in saf003["partial_owner_question_matches"]})
+        self.assertEqual(q14[0]["review_lifecycle"], "HISTORICAL_SUPERSEDED")
+        self.assertEqual(q14[0]["superseded_by"], "specs/p0_01_owner_q14_followup_match.json")
+        self.assertIn("Q14", {x["question_id"] for x in saf003["partial_owner_question_matches"]})
         self.assertFalse(saf003["implementation_approved"])
         self.assertIsNone(saf003["owner_approval"])
         self.assertNotEqual(saf003["comparison_status"], "MATCH")
