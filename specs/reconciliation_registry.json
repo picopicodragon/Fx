@@ -20,7 +20,16 @@
         "Q116で発注前審査の対象（既存建玉・未約定注文・新規候補）と円換算合算・超過/算定不能時の新規拒否を採用。算式、通貨換算・注文状態・相関・例外は未決で、実装承認は未実施"
       ],
       "implementation_approved": false,
-      "owner_approval": null
+      "owner_approval": null,
+      "partial_owner_question_matches": [
+        {
+          "question_id": "Q13",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_matches.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ]
     },
     {
       "requirement_id": "FX-SAF-002",
@@ -65,7 +74,23 @@
         "Q121：停止理由（日次損失、通信障害、DD4%、DD5%、戦略悪化等）を独立して保持。すべての解除条件を満たすまで新規禁止。自動復旧は人間承認必須の停止を解除できず、再起動後も停止状態を保持。不明なら新規禁止。状態遷移・永続化・承認ログと例外処理は未決。実装承認なし"
       ],
       "implementation_approved": false,
-      "owner_approval": null
+      "owner_approval": null,
+      "partial_owner_question_matches": [
+        {
+          "question_id": "Q9",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_matches.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        },
+        {
+          "question_id": "Q13",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_matches.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ]
     },
     {
       "requirement_id": "FX-SAF-004",
@@ -84,7 +109,16 @@
         "Q121：停止理由（日次損失、通信障害、DD4%、DD5%、戦略悪化等）を独立して保持。すべての解除条件を満たすまで新規禁止。自動復旧は人間承認必須の停止を解除できず、再起動後も停止状態を保持。不明なら新規禁止。状態遷移・永続化・承認ログと例外処理は未決。実装承認なし"
       ],
       "implementation_approved": false,
-      "owner_approval": null
+      "owner_approval": null,
+      "partial_owner_question_matches": [
+        {
+          "question_id": "Q10",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_matches.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ]
     },
     {
       "requirement_id": "FX-SAF-005",
@@ -109,7 +143,23 @@
         "Q122：DD2%警告・3%重点再評価の監視レベルはDD改善とデータ/運用安全確認合格後のみ自動解除可能。DD4%・5%停止は数値改善でも自動解除せず本人明示承認が必須。ほかの停止理由はQ121に従って独立保持。改善判定基準・検証期間・解除手順は未決、実装は未承認"
       ],
       "implementation_approved": false,
-      "owner_approval": null
+      "owner_approval": null,
+      "partial_owner_question_matches": [
+        {
+          "question_id": "Q11",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_matches.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        },
+        {
+          "question_id": "Q12",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_matches.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ]
     },
     {
       "requirement_id": "FX-SAF-006",
