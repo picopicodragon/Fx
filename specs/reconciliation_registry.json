@@ -328,7 +328,17 @@
         "Q171：Q170の旧試行ID無効化・通信ハンドル閉鎖を試みてもQ168の旧I/O終了・未完了通信ゼロ・資源無効化/隔離を確認できない場合は隔離失敗の重大障害として既定のLINE＋メールで通知し、隔離失敗状態・新規注文停止・正常ハートビート認定禁止・安全停止を保持（B）。自動再接続・自動再起動・通信回復による無人自動復旧/停止自動解除は禁止。原因解消＋旧処理終了・資源隔離/時計・通信・リスク等の全安全検証合格＋本人の明示的再開承認がすべて揃った場合のみ再開可能。本人承認だけでは他のDD/時計・通信停止を解除しない。Q169確認最大1秒、Q166試行最大2秒、Q165最大4回・待機1/2/4/8秒・総25秒、Q164バックオフ、Q167非同期明示キャンセル、Q150通常2秒/Q151厳密6秒超/Q152欠落回数非依存、一般通信障害連続60秒LEVEL1/10分LEVEL2・自動再起動最大3回は残すが隔離失敗の自動復旧には適用しない。Q163接続リセット/連番・リプレイ防止履歴/停止理由維持、Q162段階的受信、Q161フレーム20 KiB、Q159認証対象16 KiB/各内容4 KiB、Q160 UINT32BE事前長さ検証、Q157/158固定順序、Q156全6要素HMAC、Q155送信元別HMAC-SHA256＋Windows ACL、Q154全認証/鮮度/再送検証、Q153受信瞬間Windows単調増加時計、Q149電源/時計異常即時安全処理、Q148時計検証2回成功無効/Q126の30分計測リセットと再検証までDD2/3解除禁止、Q145〜147の独立2回/60秒/UTC、Q133結果最大5分/異常時即失効、Q139〜143時計条件、DD4/5本人承認停止/ほかの停止を維持。通知CRITICAL/MAJOR分類、状態永続化/解除証跡、本人承認認証・実機検証は未決。安全実装・実口座売買未承認"
       ],
       "implementation_approved": false,
-      "owner_approval": null
+      "owner_approval": null,
+      "partial_owner_question_reviews": [
+        {
+          "question_id": "Q80",
+          "result": "ADDITIONAL_DETAILS",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_q80_additional_details.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL",
+          "detail": "Q80 hybrid statistical plus AI analysis, performance LEVEL 3 requires human clearance; DD2/3/4 thresholds match index, DD5 belongs to Q11/Q12."
+        }
+      ]
     },
     {
       "requirement_id": "FX-SAF-007",
