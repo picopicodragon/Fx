@@ -58,3 +58,13 @@ human_safety_approval=false
 owner_approved_for_safety=false
 
 Q171の隔離失敗時本人承認必須ラッチ、Q195～199の結果不明時の無確認再送禁止を維持。MT4接続・注文・EA・復旧のコード実装は含まない。
+
+## 2026-10-22追記：Q9～Q13は本人申告MATCH（設問単位のみ）
+
+ユーザーがローカル照合表を生成後、「Q9: MATCH」「Q10: MATCH」「Q11: MATCH」「Q12: MATCH」「Q13: MATCH」と回答した。GitHubには**本人による設問単位の照合申告**として、`specs/p0_01_owner_question_matches.json`に記録し、該当するFX-SAF-001/003/004/005の`partial_owner_question_matches`に対応付ける。
+
+**これは5設問に対する本人の比較結果であり、元の会話原文や選択肢、ローカルの完全な照合表をChatGPTが確認できたことを意味しない。** 原文抜粋のGitHub登録、原議全体の独立検証、実装算式の確定、Q116以降の改訂との整合、承認を示すものではない。
+
+Q11とQ13には明示番号候補に加え未割当の文脈ヒントが各1件あるため、それらの追補・修正・無関係性の**個別解決は未確認**として保持する。Q5～Q8・Q14の人間確認も未完了。
+
+要件単位の`source_kind`、`comparison_status`、`implementation_approved=false`、`owner_approval=null`と、`specs/source_review_priority.json`の`PENDING_ORIGINAL`を維持。安全重要MODULE/PHASEのBLOCKED状態と、本番売買禁止を解除しない。
