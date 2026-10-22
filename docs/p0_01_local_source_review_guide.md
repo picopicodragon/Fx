@@ -111,3 +111,11 @@ Q5～Q13の9設問の本人申告MATCHは**設問単位の部分照合**。Q11/Q
 区別すべき点：**DD5%時の全決済試行は既存Q11/Q12による別の条件**であり、今回のQ80回答から発明・再採用したものではない。また「LEVEL 3」がDD4%と完全に同じ内部状態かどうかは、この原議回答だけでは確定しない。統計評価とAI分析によって新規停止・本人承認の安全ゲートを解除することは許さない。
 
 Q80の判定は**ADDITIONAL_DETAILS（本人報告による部分一致＋索引に説明不足あり）**。正式な`ORIGINAL`抜粋照合、Q119～171の改訂含む全体差分、安全実装承認までは`FX-SAF-006`の`comparison_status=SOURCE_UNAVAILABLE`、`source_kind=SUMMARY_ONLY`、`implementation_approved=false`およびPHASE-1のBLOCKEDを維持する。
+
+## 2026-10-22追記6：Q80の原因別再開方式Cを本人が追報
+
+成績悪化の**LEVEL 1は原因解消後に通常監視へ復帰、LEVEL 2はAI再評価＋安全確認後に通常監視へ復帰可能、LEVEL 3は安全確認＋人間の明示承認が必要**。さらに**口座DDの一時的縮小だけでLEVEL 3は自動解除しない**。**DD5%到達後の本人再開承認**も従来どおり維持する。
+
+本人追報は`specs/p0_01_owner_q80_recovery_levels.json`に設問単位の追加条件として記録。成績悪化のLEVELと通信障害のL1/L2/L3を別分類とし、復帰先が「通常監視」でも新規注文を無条件に再開しない。Q80のLEVEL 3とDD4%/DD5%の停止理由はQ121に従い独立して扱い、本人承認必須の停止をAIだけで解除しない。
+
+今回の追報は原議全文の独立した照合でも、実装承認でもない。FX-SAF-006は`source_kind=SUMMARY_ONLY`、`comparison_status=SOURCE_UNAVAILABLE`、`implementation_approved=false`を維持。元JSONとローカル候補をGitHubには登録していない。
