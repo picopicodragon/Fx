@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "record_type": "OWNER_REPORTED_PARTIAL_QUESTION_MATCH",
+  "recorded_date": "2026-10-22",
+  "source_context": "2026-10-22 Fx project chat: owner replied Q9: MATCH, Q10: MATCH, Q11: MATCH, Q12: MATCH, Q13: MATCH following local Q5-Q14 worksheet review.",
+  "local_evidence": "Local ChatGPT export and Q5-Q14 worksheet remain outside the Git repository; raw source text and private paths not uploaded.",
+  "review_scope": "Individual Q9-Q13 decision-to-spec comparisons as reported by owner, not end-to-end FX-SAF requirement verification.",
+  "source_excerpt_registered": false,
+  "all_original_context_verified_by_repo": false,
+  "open_context_items": [
+    "Q11 and Q13 also have unassigned assistant-context hints; these have not been separately certified in this record.",
+    "Other Q5-Q8 and Q14 decisions remain to be reviewed.",
+    "Later decisions Q116 onward and safety implementation formulas require separate reconciliation.",
+    "All safety-important requirements continue to require original excerpts, full issue resolution and explicit safety approval."
+  ],
+  "implementation_approved": false,
+  "human_safety_approval": false,
+  "owner_approved_for_safety": false,
+  "items": [
+    {
+      "question_id": "Q9",
+      "owner_reported_comparison": "MATCH",
+      "review_kind": "OWNER_DIRECT_ATTESTATION",
+      "question_level_only": true,
+      "registered_original_excerpt": false,
+      "unmatched_context_resolution": "NOT_APPLICABLE",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q10",
+      "owner_reported_comparison": "MATCH",
+      "review_kind": "OWNER_DIRECT_ATTESTATION",
+      "question_level_only": true,
+      "registered_original_excerpt": false,
+      "unmatched_context_resolution": "NOT_APPLICABLE",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q11",
+      "owner_reported_comparison": "MATCH",
+      "review_kind": "OWNER_DIRECT_ATTESTATION",
+      "question_level_only": true,
+      "registered_original_excerpt": false,
+      "unmatched_context_resolution": "NOT_SEPARATELY_CONFIRMED",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q12",
+      "owner_reported_comparison": "MATCH",
+      "review_kind": "OWNER_DIRECT_ATTESTATION",
+      "question_level_only": true,
+      "registered_original_excerpt": false,
+      "unmatched_context_resolution": "NOT_APPLICABLE",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q13",
+      "owner_reported_comparison": "MATCH",
+      "review_kind": "OWNER_DIRECT_ATTESTATION",
+      "question_level_only": true,
+      "registered_original_excerpt": false,
+      "unmatched_context_resolution": "NOT_SEPARATELY_CONFIRMED",
+      "safety_approval": false
+    }
+  ]
+}
