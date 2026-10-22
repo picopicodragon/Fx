@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "record_type": "OWNER_REPORTED_Q80_ADDITIONAL_DECISION_DETAILS",
+  "recorded_date": "2026-10-22",
+  "question_id": "Q80",
+  "owner_review_result": "ADDITIONAL_DETAILS",
+  "source_kind": "OWNER_FOLLOWUP_DESCRIPTION_NOT_INDEPENDENTLY_VERIFIED_ORIGINAL",
+  "source_conversation_title": "FXシステム仕様策定",
+  "source_excerpt_registered": false,
+  "original_source_message_id_verified": false,
+  "design_option": "C",
+  "review_basis": "User described local Q80 source answer in the current Fx design chat.",
+  "confirmed_elements": [
+    {
+      "element": "DD_LEVELS",
+      "details": "Drawdown 2% warning, 3% focused reevaluation, 4% new-order stop."
+    },
+    {
+      "element": "HYBRID_PERFORMANCE_MONITOR",
+      "details": "Combine strategy-specific statistical evaluation and AI analysis as a hybrid approach."
+    },
+    {
+      "element": "LEVEL3_RESTART_GATE",
+      "details": "Explicit human approval is required to clear performance-deterioration LEVEL 3."
+    }
+  ],
+  "separate_safety_decisions": [
+    "DD5% position-close attempt and mandatory human approval follow Q11/Q12 and subsequent safety requirements, not this Q80 quote alone.",
+    "AI statistical/qualitative monitoring cannot override DD threshold stops or any independent human-required safety latch.",
+    "Q116 and later DD/recovery calculation and exception policies require separate original review."
+  ],
+  "comparison_with_master_spec": {
+    "status": "PARTIAL_MATCH_WITH_OMITTED_DETAIL",
+    "existing_in_index": [
+      "DD 2/3/4 levels and new-order stop",
+      "Human approval for resumption"
+    ],
+    "missing_from_q80_index": [
+      "Strategy-specific statistics combined with AI analysis",
+      "Explicit performance deterioration LEVEL 3 human approval wording"
+    ],
+    "clarification": "Index previously appended DD5% close-attempt to Q80; retain that independently from Q11/Q12."
+  },
+  "question_level_review_only": true,
+  "source_kind_upgraded": false,
+  "safety_requirement_comparison_upgraded": false,
+  "human_safety_approval": false,
+  "implementation_approved": false,
+  "owner_approved_for_safety": false,
+  "forward_trading_enabled": false
+}
