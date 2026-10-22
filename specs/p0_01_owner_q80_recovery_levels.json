@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "record_type": "OWNER_REPORTED_Q80_LEVEL_DEPENDENT_RECOVERY",
+  "reported_date": "2026-10-22",
+  "question_id": "Q80",
+  "design_option": "C",
+  "review_kind": "OWNER_DIRECT_DESCRIPTION_OF_ORIGINAL_Q80_FOLLOWUP",
+  "recorded_original_excerpt": false,
+  "independently_verified_chat_message_id": false,
+  "scope": "Performance-deterioration monitoring LEVEL 1-3, not communication failure L1/L2/L3.",
+  "levels": [
+    {
+      "level": "PERFORMANCE_LEVEL_1",
+      "owner_reported_condition": "Cause resolved; return to normal monitoring.",
+      "conditions": [
+        "CAUSE_RESOLVED"
+      ],
+      "human_approval_required_by_this_level": false,
+      "return_target": "NORMAL_MONITORING_ONLY"
+    },
+    {
+      "level": "PERFORMANCE_LEVEL_2",
+      "owner_reported_condition": "AI reevaluation and safety checks completed before return to normal monitoring.",
+      "conditions": [
+        "AI_REEVALUATION_PASSED",
+        "SAFETY_CHECK_PASSED"
+      ],
+      "human_approval_required_by_this_level": false,
+      "return_target": "NORMAL_MONITORING_ONLY"
+    },
+    {
+      "level": "PERFORMANCE_LEVEL_3",
+      "owner_reported_condition": "Safety checks plus explicit human approval required for clearance.",
+      "conditions": [
+        "SAFETY_CHECK_PASSED",
+        "EXPLICIT_HUMAN_APPROVAL"
+      ],
+      "human_approval_required_by_this_level": true,
+      "temporary_dd_improvement_is_sufficient": false,
+      "return_target": "LEVEL_CLEARANCE_SUBJECT_TO_ALL_OTHER_STOPS"
+    },
+    {
+      "level": "DD_5_PERCENT_STOP",
+      "owner_reported_condition": "Continue the pre-existing human-approval required restart gate.",
+      "conditions": [
+        "PREVIOUS_SAFETY_CHECKS",
+        "EXPLICIT_HUMAN_APPROVAL",
+        "ALL_OTHER_STOP_REASONS_CLEARED"
+      ],
+      "human_approval_required_by_this_level": true,
+      "return_target": "SUBJECT_TO_EXISTING_Q11_Q12_Q121_SAFETY_GATES"
+    }
+  ],
+  "interpretation_constraints": [
+    "Monitoring level clearance is not itself permission to open positions.",
+    "The DD4% new-order stop also requires independent human approval and cannot be overridden by LEVEL 1 or LEVEL 2 improvements.",
+    "LEVEL 3 human approval is necessary but never sufficient to override other active stop reasons.",
+    "DD5% stop and liquidation-attempt conditions derive from prior Q11/Q12, not solely Q80.",
+    "Do not equate performance LEVEL 1/2/3 with communication failure L1/L2/L3.",
+    "Missing, stale, ambiguous or failed safety evidence defaults to new-order prohibition (Fail Closed)."
+  ],
+  "owner_reported_question_level_only": true,
+  "source_excerpt_registered": false,
+  "requirement_original_verified": false,
+  "implementation_approved": false,
+  "human_safety_approval": false,
+  "owner_approved_for_safety": false,
+  "forward_trading_enabled": false
+}
