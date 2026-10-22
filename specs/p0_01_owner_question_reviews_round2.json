@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "record_date": "2026-10-22",
+  "record_type": "PARTIAL_OWNER_REVIEW",
+  "results": [
+    {
+      "q": "Q5",
+      "status": "MATCH"
+    },
+    {
+      "q": "Q6",
+      "status": "MATCH"
+    },
+    {
+      "q": "Q7",
+      "status": "MATCH"
+    },
+    {
+      "q": "Q8",
+      "status": "MATCH"
+    },
+    {
+      "q": "Q14",
+      "status": "UNCLEAR",
+      "reason": "Original reply asked about Japan-time conversion, not acceptance."
+    }
+  ],
+  "source_original_registered": false,
+  "implementation_approved": false,
+  "human_safety_approval": false,
+  "owner_approved_for_safety": false
+}
