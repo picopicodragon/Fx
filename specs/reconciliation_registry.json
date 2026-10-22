@@ -23,6 +23,20 @@
       "owner_approval": null,
       "partial_owner_question_matches": [
         {
+          "question_id": "Q5",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_reviews_round2.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        },
+        {
+          "question_id": "Q6",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_reviews_round2.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        },
+        {
           "question_id": "Q13",
           "result": "MATCH",
           "report_date": "2026-10-22",
@@ -47,7 +61,16 @@
         "Q116で発注前審査の対象（既存建玉・未約定注文・新規候補）と円換算合算・超過/算定不能時の新規拒否を採用。算式、通貨換算・注文状態・相関・例外は未決で、実装承認は未実施"
       ],
       "implementation_approved": false,
-      "owner_approval": null
+      "owner_approval": null,
+      "partial_owner_question_matches": [
+        {
+          "question_id": "Q7",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_reviews_round2.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ]
     },
     {
       "requirement_id": "FX-SAF-003",
@@ -77,6 +100,13 @@
       "owner_approval": null,
       "partial_owner_question_matches": [
         {
+          "question_id": "Q8",
+          "result": "MATCH",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_reviews_round2.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        },
+        {
           "question_id": "Q9",
           "result": "MATCH",
           "report_date": "2026-10-22",
@@ -89,6 +119,15 @@
           "report_date": "2026-10-22",
           "evidence_ref": "specs/p0_01_owner_question_matches.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ],
+      "partial_owner_question_reviews": [
+        {
+          "question_id": "Q14",
+          "result": "UNCLEAR",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_question_reviews_round2.json",
+          "reason": "Local response asked to convert NY17:00 to JST rather than explicitly adopting a trading-day boundary."
         }
       ]
     },
