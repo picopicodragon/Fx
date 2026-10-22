@@ -68,3 +68,13 @@ Q171の隔離失敗時本人承認必須ラッチ、Q195～199の結果不明時
 Q11とQ13には明示番号候補に加え未割当の文脈ヒントが各1件あるため、それらの追補・修正・無関係性の**個別解決は未確認**として保持する。Q5～Q8・Q14の人間確認も未完了。
 
 要件単位の`source_kind`、`comparison_status`、`implementation_approved=false`、`owner_approval=null`と、`specs/source_review_priority.json`の`PENDING_ORIGINAL`を維持。安全重要MODULE/PHASEのBLOCKED状態と、本番売買禁止を解除しない。
+
+## 2026-10-22追記2：Q5～Q8はMATCH、Q14はUNCLEAR
+
+本人によるローカル照合結果は **Q5、Q6、Q7、Q8 = MATCH**、**Q14 = UNCLEAR**。追加の部分照合記録は `specs/p0_01_owner_question_reviews_round2.json`、安全要件台帳への参照は `specs/reconciliation_registry.json` に登録した。
+
+Q14についてユーザーが確認した原文候補は、**ニューヨーク市場17:00が日本時間で何時かを尋ねる質問**であり、NY17:00基準を採用した原議の直接証拠ではない。その質問に対する採用回答を確認できるまで、Q14の原議比較はUNCLEARを維持する。Q14の別の文脈ヒント・後続決定も照合未了。
+
+時刻換算の参考：America/New_Yorkの17:00は日本の翌日06:00（米国夏時間EDT）または07:00（米国標準時間EST）。これは設計上の換算説明であり、当時の**採用の意思表示**の代わりにはならない。現行`MASTER_SPEC.md`のQ14設計はこのレビューだけでは変更しない。
+
+Q5～Q13の9設問の本人申告MATCHは**設問単位の部分照合**。Q11/Q13の追加文脈候補、Q116以降の改訂、FX-SAF-001～006各要件の未確定実装条件や安全承認は引き続き未解決。要件単位の`source_kind`、`comparison_status`、承認フラグ、PHASE-1 BLOCKEDおよび本番取引禁止を維持する。
