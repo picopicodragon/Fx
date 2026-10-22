@@ -33,7 +33,7 @@ class Q80OwnerHybridMonitorTests(unittest.TestCase):
     def test_q80_index_and_safety_spec_are_reconciled(self):
         master = (ROOT / "MASTER_SPEC.md").read_text(encoding="utf-8")
         q80 = next(line for line in master.splitlines() if line.startswith("| Q80 |"))
-        for piece in ("DD2%", "3%", "4%", "統計評価", "AI分析", "ハイブリッド", "LEVEL 3", "人間"):
+        for piece in ("DD2%", "3%", "4%", "統計評価", "AI分析", "ハイブリッド", "LEVEL 3", "本人明示承認"):
             with self.subTest(piece=piece):
                 self.assertIn(piece, q80)
         safety = (ROOT / "specs/safety_foundation.md").read_text(encoding="utf-8")
