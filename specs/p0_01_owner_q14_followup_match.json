@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "record_type": "OWNER_REPORTED_Q14_FOLLOWUP_MATCH",
+  "reported_date": "2026-10-22",
+  "question_id": "Q14",
+  "owner_reported_comparison": "MATCH",
+  "review_kind": "OWNER_DIRECT_ATTESTATION",
+  "question_level_only": true,
+  "owner_report_summary": "The user stated that the response immediately after the Japan-time conversion question adopted the New York market 17:00 boundary.",
+  "previous_status": "UNCLEAR",
+  "previous_record_ref": "specs/p0_01_owner_question_reviews_round2.json",
+  "supersedes_prior_interpretation": true,
+  "new_selection_claim": "America/New_York 17:00 adopted as trading-day boundary, with daylight saving time respected.",
+  "recorded_original_quote": false,
+  "registered_original_excerpt": false,
+  "all_original_context_verified_by_repo": false,
+  "time_zone_conversion_note": "New York 17:00 = Japan next day 06:00 in EDT or 07:00 in EST; this arithmetic is not the source evidence of adoption.",
+  "open_issues": [
+    "The precise subsequent message text and message ID have not been independently inspected by this assistant.",
+    "All later decisions, source-excerpt registration, implementation formula details and full safety requirement review remain separate.",
+    "Q11 and Q13 unmatched context hints remain to be independently resolved."
+  ],
+  "implementation_approved": false,
+  "human_safety_approval": false,
+  "owner_approved_for_safety": false
+}
