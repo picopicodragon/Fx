@@ -337,6 +337,14 @@
           "evidence_ref": "specs/p0_01_owner_q80_additional_details.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL",
           "detail": "Q80 hybrid statistical plus AI analysis, performance LEVEL 3 requires human clearance; DD2/3/4 thresholds match index, DD5 belongs to Q11/Q12."
+        },
+        {
+          "question_id": "Q80",
+          "result": "ADDITIONAL_RECOVERY_CONDITIONS",
+          "report_date": "2026-10-22",
+          "evidence_ref": "specs/p0_01_owner_q80_recovery_levels.json",
+          "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL",
+          "detail": "Performance LEVEL 1 cause-resolved, LEVEL 2 AI reevaluation plus safety confirmation, LEVEL 3 safety confirmation plus explicit human approval; DD5 human approval. Recovery of monitoring must never override independent new-order stop reasons."
         }
       ]
     },
