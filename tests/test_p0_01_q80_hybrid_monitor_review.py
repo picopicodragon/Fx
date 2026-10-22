@@ -47,10 +47,18 @@ class Q80OwnerHybridMonitorTests(unittest.TestCase):
         self.assertEqual(check_reconciliation(registry), [])
         item = next(x for x in registry["items"] if x["requirement_id"] == "FX-SAF-006")
         reported = item["partial_owner_question_reviews"]
-        self.assertEqual(len(reported), 1)
-        self.assertEqual(reported[0]["question_id"], "Q80")
-        self.assertEqual(reported[0]["result"], "ADDITIONAL_DETAILS")
-        self.assertEqual(reported[0]["evidence_ref"], "specs/p0_01_owner_q80_additional_details.json")
+        self.assertEqual(len(reported), 2)
+        by_status = {entry["result"]: entry for entry in reported}
+        self.assertEqual(set(by_status), {"ADDITIONAL_DETAILS", "ADDITIONAL_RECOVERY_CONDITIONS"})
+        self.assertEqual(by_status["ADDITIONAL_DETAILS"]["question_id"], "Q80")
+        self.assertEqual(
+            by_status["ADDITIONAL_DETAILS"]["evidence_ref"],
+            "specs/p0_01_owner_q80_additional_details.json"
+        )
+        self.assertEqual(
+            by_status["ADDITIONAL_RECOVERY_CONDITIONS"]["evidence_ref"],
+            "specs/p0_01_owner_q80_recovery_levels.json"
+        )
         self.assertEqual(item["source_kind"], "SUMMARY_ONLY")
         self.assertEqual(item["comparison_status"], "SOURCE_UNAVAILABLE")
         self.assertFalse(item["implementation_approved"])
