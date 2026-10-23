@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "report_type": "P0_01_DESIGN_CONSISTENCY_CROSSWALK_NOT_IMPLEMENTATION_ACCEPTANCE",
+  "review_date": "2026-10-23",
+  "review_scope": "Read-only examination of main-branch safety_foundation, MASTER_SPEC, reconciliation and confirmed Q116-Q122 owner reviews. Checks interaction of adopted policies, not completed numerical implementations.",
+  "source_paths": [
+    "specs/safety_foundation.md",
+    "MASTER_SPEC.md",
+    "specs/reconciliation_registry.json",
+    "specs/p0_01_owner_archive_q116_122_exact.json",
+    "specs/p0_01_owner_q116_122_context_review.json"
+  ],
+  "crosswalk": [
+    {
+      "id": "CW-01",
+      "questions": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q116"
+      ],
+      "requirements": [
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "finding": "COMPATIBLE_DISTINCT_CONTROLS",
+      "binding_interpretation": "Every candidate new order must pass individual 0.5% equity and combined 1.0% equity maximum estimated stop-loss exposure tests, counting open positions, pending orders and the candidate. Calculation unavailable or limits breached means reject new order.",
+      "remaining": "Define time-consistent equity snapshot, account- and pair-specific value/pip and JPY conversion, spreads/fees/slippage assumptions, concurrent order reservations, portfolio offsets, partial fills, broker minimum size, server SL confidence. Gap/slippage can exceed estimates."
+    },
+    {
+      "id": "CW-02",
+      "questions": [
+        "Q8",
+        "Q9",
+        "Q13",
+        "Q14",
+        "Q117",
+        "Q118"
+      ],
+      "requirements": [
+        "FX-SAF-003"
+      ],
+      "finding": "COMPATIBLE_SEPARATE_NUMERATOR_AND_DENOMINATOR",
+      "binding_interpretation": "Daily loss numerator follows NY17:00 start-to-current equity change corrected for external cash flows and independently reconciled with trade P/L and charges; 1.5% loss limit denominator is start-of-day equity frozen until next NY17:00 boundary, regardless of intraday profit/loss or deposits/withdrawals.",
+      "remaining": "Define net cash-flow cutoffs, missing opening equity, profit/loss offsetting, account resets, boundary DST and holidays, missing swap/fees, rounding and disagreement fail-closed transitions."
+    },
+    {
+      "id": "CW-03",
+      "questions": [
+        "Q11",
+        "Q12",
+        "Q80",
+        "Q119",
+        "Q122",
+        "Q123",
+        "Q124",
+        "Q125",
+        "Q126",
+        "Q127",
+        "Q128",
+        "Q129",
+        "Q130",
+        "Q131",
+        "Q132",
+        "Q133",
+        "Q134",
+        "Q135",
+        "Q136",
+        "Q137",
+        "Q138",
+        "Q139",
+        "Q140",
+        "Q141",
+        "Q142",
+        "Q143",
+        "Q144",
+        "Q145",
+        "Q146",
+        "Q147"
+      ],
+      "requirements": [
+        "FX-SAF-005",
+        "FX-SAF-006"
+      ],
+      "finding": "COMPATIBLE_IF_DD_STATE_INDEPENDENCE_PRESERVED",
+      "binding_interpretation": "Unitized equity adjusts virtual units for external capital moves; DD is tracked relative to unit-value high water. DD2/3 monitoring can clear only after strictly below 1.5/2.5% respectively for valid continuous 30-minute observation plus safety checks. DD4/5 new-order-stop latch needs explicit human approval regardless of temporary DD recovery; DD5 also retains liquidation attempts and incident analysis.",
+      "remaining": "Specify unit issuance/redemption and HWM precision, valuation and fresh prices, account resets, exact state machine, simultaneous levels, recovery audit and the full adopted clock/watchdog conditions without inferring from headline values."
+    },
+    {
+      "id": "CW-04",
+      "questions": [
+        "Q80",
+        "Q121",
+        "Q122"
+      ],
+      "requirements": [
+        "FX-SAF-005",
+        "FX-SAF-006"
+      ],
+      "finding": "REQUIRES_DISTINCT_LEVEL_NAMESPACE",
+      "binding_interpretation": "Q80 strategy/performance deterioration LEVEL 1/2/3 are not by definition identical to DD2/3/4 thresholds, nor communication L1/L2/L3. LEVEL 1 requires cause resolution, LEVEL 2 AI reevaluation and safety checks, LEVEL 3 safety checks plus explicit human clearance. Clearing performance monitor never clears independent DD4/5 or network stops.",
+      "remaining": "Formal identifiers and event taxonomy; map observations to latches only after original-scope validation, decide what safely counts as cause resolved and confirm approval audit identity."
+    },
+    {
+      "id": "CW-05",
+      "questions": [
+        "Q9",
+        "Q10",
+        "Q12",
+        "Q45",
+        "Q80",
+        "Q120",
+        "Q121",
+        "Q122",
+        "Q171"
+      ],
+      "requirements": [
+        "FX-SAF-003",
+        "FX-SAF-004",
+        "FX-SAF-005",
+        "FX-SAF-006",
+        "FX-SAF-011"
+      ],
+      "finding": "COMPATIBLE_IF_STOP_REASON_LATCHES_ARE_INDEPENDENT",
+      "binding_interpretation": "Daily-stop next-trading-day conditional automatic safety recovery and network recovery do not remove DD4/5, performance LEVEL 3, communication serious-fault or isolation-failure human-approval latches. Restart retains all stop reasons and unknown stop state prohibits new orders.",
+      "remaining": "Canonical stop-reason IDs, persistence and atomic updates, approval authentication/expiry, reboot reconciliation, account-vs-strategy scope, race-free simultaneous trigger/clear events."
+    },
+    {
+      "id": "CW-06",
+      "questions": [
+        "Q120",
+        "Q171",
+        "Q195",
+        "Q196",
+        "Q197",
+        "Q198",
+        "Q199"
+      ],
+      "requirements": [
+        "FX-SAF-003",
+        "FX-SAF-005"
+      ],
+      "finding": "REQUIRES_EXPLICIT_RETRY_GUARD",
+      "binding_interpretation": "Q120 allows conditional repeat of close-out attempts only after independent broker/order/position/SL state reconciliation proves no duplicate or reversal risk. Q195-Q199 order identification, pre-dispatch durable state and OUTCOME_UNKNOWN rules prohibit any blind resend or new orders while effects may already have occurred. A new attempt ID does not itself authorize repeating a logical operation.",
+      "remaining": "Precise broker response-to-state mapping, retry eligibility and idempotency proofs, partial fill/reversal handling, timeout bounds, crash recovery, failure-to-close fallback, same-logical-ID attempt linkage and human intervention."
+    }
+  ],
+  "review_findings": {
+    "direct_conflicts_confirmed": 0,
+    "conditional_interpretations_requiring_implementation_detail": [
+      "CW-03",
+      "CW-04",
+      "CW-05",
+      "CW-06"
+    ],
+    "claim_limit": "No direct policy-level incompatibility was identified among the selected summaries under the stated conjunctive conditions. This is not proof of exhaustive original context, mathematical correctness or runtime safety."
+  },
+  "priority_decisions": [
+    {
+      "priority": "P0",
+      "topic": "Stop reason and clearance transition table",
+      "references": [
+        "CW-04",
+        "CW-05"
+      ],
+      "reason": "Prevents one subsystem's auto-clear from releasing a separate human-gated stop."
+    },
+    {
+      "priority": "P0",
+      "topic": "Unknown broker outcome and safe closeout retry",
+      "references": [
+        "CW-06"
+      ],
+      "reason": "Prevent duplicated or opposite orders while an attempted liquidation is unresolved."
+    },
+    {
+      "priority": "P0",
+      "topic": "Unified risk snapshot and fail-closed calculation cases",
+      "references": [
+        "CW-01",
+        "CW-02",
+        "CW-03"
+      ],
+      "reason": "Live values and account events can make deterministic risk limits ambiguous."
+    },
+    {
+      "priority": "P1",
+      "topic": "Unitized DD numerical examples and NY17 equity event boundaries",
+      "references": [
+        "CW-02",
+        "CW-03"
+      ],
+      "reason": "Clarify formulas, deposits/withdrawals and high-water recalculation."
+    },
+    {
+      "priority": "P1",
+      "topic": "Performance LEVEL namespace and evidence/audit trails",
+      "references": [
+        "CW-04"
+      ],
+      "reason": "Prevent performance level from being mistaken for DD or network level."
+    }
+  ],
+  "authorizations": {
+    "whole_requirements_reconciled": false,
+    "full_original_context_verified": false,
+    "implementation_approved": false,
+    "human_safety_approval": false,
+    "owner_approved_for_safety": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "allow_live_orders": false
+  }
+}
