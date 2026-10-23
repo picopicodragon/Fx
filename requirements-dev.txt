@@ -1,0 +1,4 @@
+# Local Windows development dependency for zoneinfo (Q14/Q117/Q118).
+# Version verified as released 2026-10-03. Review IANA updates separately.
+# Linux/macOS CI can use system IANA database; Windows needs the wheel.
+tzdata==2026.5; sys_platform == "win32"
