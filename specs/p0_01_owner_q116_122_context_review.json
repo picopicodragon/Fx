@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "record_type": "P0_01_OWNER_REVIEWED_Q116_TO_Q122_CONTEXT_AUDIT",
+  "review_date": "2026-10-23",
+  "source_kind": "OWNER_LOCAL_CONTEXT_CHECK_RESULT_NOT_INDEPENDENT_ORIGINAL",
+  "source_export_filename": "conversations_20261023.json",
+  "source_conversation_title": "FXシステム仕様策定",
+  "source_conversation_id": "6aceda54-1388-83e8-ad0a-6edfc39ad11d",
+  "previous_quote_comparison_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+  "audit_tool": "scripts/audit_p0_01_q116_122_context.py",
+  "scope": "One selected conversation in the 2026-10-23 local export; metadata-only scan and owner's explicit classification of two unnumbered context hints.",
+  "audit_results": [
+    {
+      "question_id": "Q116",
+      "explicit_answers": 1,
+      "preceding_assistant_question_hint": "YES",
+      "on_active_branch": "YES",
+      "later_explicit_question_references": 0,
+      "later_references_with_change_keywords": 0,
+      "unnumbered_followup_context_hints": 0,
+      "unknown_order_references": 0,
+      "previous_exact_quote_check": "EXACT"
+    },
+    {
+      "question_id": "Q117",
+      "explicit_answers": 1,
+      "preceding_assistant_question_hint": "YES",
+      "on_active_branch": "YES",
+      "later_explicit_question_references": 0,
+      "later_references_with_change_keywords": 0,
+      "unnumbered_followup_context_hints": 1,
+      "unknown_order_references": 0,
+      "previous_exact_quote_check": "EXACT"
+    },
+    {
+      "question_id": "Q118",
+      "explicit_answers": 1,
+      "preceding_assistant_question_hint": "YES",
+      "on_active_branch": "YES",
+      "later_explicit_question_references": 0,
+      "later_references_with_change_keywords": 0,
+      "unnumbered_followup_context_hints": 1,
+      "unknown_order_references": 0,
+      "previous_exact_quote_check": "EXACT"
+    },
+    {
+      "question_id": "Q119",
+      "explicit_answers": 1,
+      "preceding_assistant_question_hint": "YES",
+      "on_active_branch": "YES",
+      "later_explicit_question_references": 0,
+      "later_references_with_change_keywords": 0,
+      "unnumbered_followup_context_hints": 0,
+      "unknown_order_references": 0,
+      "previous_exact_quote_check": "EXACT"
+    },
+    {
+      "question_id": "Q120",
+      "explicit_answers": 1,
+      "preceding_assistant_question_hint": "YES",
+      "on_active_branch": "YES",
+      "later_explicit_question_references": 0,
+      "later_references_with_change_keywords": 0,
+      "unnumbered_followup_context_hints": 0,
+      "unknown_order_references": 0,
+      "previous_exact_quote_check": "EXACT"
+    },
+    {
+      "question_id": "Q121",
+      "explicit_answers": 1,
+      "preceding_assistant_question_hint": "YES",
+      "on_active_branch": "YES",
+      "later_explicit_question_references": 0,
+      "later_references_with_change_keywords": 0,
+      "unnumbered_followup_context_hints": 0,
+      "unknown_order_references": 0,
+      "previous_exact_quote_check": "EXACT"
+    },
+    {
+      "question_id": "Q122",
+      "explicit_answers": 1,
+      "preceding_assistant_question_hint": "YES",
+      "on_active_branch": "YES",
+      "later_explicit_question_references": 0,
+      "later_references_with_change_keywords": 0,
+      "unnumbered_followup_context_hints": 0,
+      "unknown_order_references": 0,
+      "previous_exact_quote_check": "EXACT"
+    }
+  ],
+  "owner_reviewed_unnumbered_hints": [
+    {
+      "hint_question_id": "Q117",
+      "hint_count": 1,
+      "owner_classification": "MATCH",
+      "owner_reported_interpretation": "The unnumbered context hint is consistent with the existing Q117 specification; no new or conflicting design decision reported.",
+      "original_message_id_verified_by_assistant": false,
+      "full_text_saved_to_github": false
+    },
+    {
+      "hint_question_id": "Q118",
+      "hint_count": 1,
+      "owner_classification": "MATCH",
+      "owner_reported_interpretation": "The unnumbered context hint is consistent with the existing Q118 specification; no new or conflicting design decision reported.",
+      "original_message_id_verified_by_assistant": false,
+      "full_text_saved_to_github": false
+    }
+  ],
+  "unnumbered_hints_in_scope_resolved_by_owner": true,
+  "limits": [
+    "MATCH refers to the owner's classification of an unnumbered context hint, not a new exact-quote comparison or sign-off on an entire safety requirement.",
+    "A zero reference count does not rule out corrections elsewhere, later messages in other conversations, edited branches, or unnumbered references without preceding-assistant hints.",
+    "Current branch membership and preceding assistant hint are useful checks, not independent verification of original decision intent.",
+    "No implementation-level numerical formula, ambiguity resolution, trading permissions, or safety approval is implied."
+  ],
+  "original_user_messages_uploaded": false,
+  "original_message_ids_verified_by_assistant": false,
+  "safety_requirement_comparison_upgraded": false,
+  "implementation_approved": false,
+  "human_safety_approval": false,
+  "owner_approved_for_safety": false,
+  "forward_trading_enabled": false
+}

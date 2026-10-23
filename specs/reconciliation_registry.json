@@ -193,6 +193,28 @@
           "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
           "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
         }
+      ],
+      "partial_owner_context_hint_reviews": [
+        {
+          "question_id": "Q117",
+          "owner_classification": "MATCH",
+          "review_date": "2026-10-23",
+          "record_kind": "OWNER_CLASSIFIED_UNNUMBERED_CONTEXT_HINT_NOT_SAFETY_REQUIREMENT_MATCH",
+          "evidence_ref": "specs/p0_01_owner_q116_122_context_review.json",
+          "source_excerpt_included": false,
+          "original_message_id_verified": false,
+          "implementation_approved": false
+        },
+        {
+          "question_id": "Q118",
+          "owner_classification": "MATCH",
+          "review_date": "2026-10-23",
+          "record_kind": "OWNER_CLASSIFIED_UNNUMBERED_CONTEXT_HINT_NOT_SAFETY_REQUIREMENT_MATCH",
+          "evidence_ref": "specs/p0_01_owner_q116_122_context_review.json",
+          "source_excerpt_included": false,
+          "original_message_id_verified": false,
+          "implementation_approved": false
+        }
       ]
     },
     {
