@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "record_type": "OWNER_REPORTED_LOCAL_ARCHIVE_QUOTE_EXACT_CHECK",
+  "reported_date": "2026-10-23",
+  "scope": "Question-level literal comparison only for Q116 through Q122, seven questions.",
+  "archive": {
+    "current_filename": "conversations_20261023.json",
+    "current_file_size_bytes": 8792840,
+    "previous_filename": "conversations_20261016.json",
+    "previous_file_size_bytes": 6729763,
+    "archives_have_different_sha256_owner_reported": true,
+    "old_archive_sha256_matches_previous_local_worksheet_owner_reported": true,
+    "archived_full_content_uploaded": false,
+    "actual_sha256_values_not_shared": true
+  },
+  "source_conversation": {
+    "title": "FXシステム仕様策定",
+    "conversation_id": "6aceda54-1388-83e8-ad0a-6edfc39ad11d"
+  },
+  "comparison": {
+    "procedure": "User executed local read-only Python comparing one explicit question-labeled user text against one matching Markdown blockquote in specs/source_excerpts/Qxxx.md.",
+    "matching_rule": "Exact Python string equality after strip() on the user message and Markdown quote; no whitespace-normalized fallback needed.",
+    "per_question": [
+      {
+        "question_id": "Q116",
+        "explicit_user_candidates": 1,
+        "matching_markdown_quote_blocks": 1,
+        "source_heading_found": true,
+        "comparison": "EXACT",
+        "existing_excerpt": "specs/source_excerpts/Q116.md"
+      },
+      {
+        "question_id": "Q117",
+        "explicit_user_candidates": 1,
+        "matching_markdown_quote_blocks": 1,
+        "source_heading_found": true,
+        "comparison": "EXACT",
+        "existing_excerpt": "specs/source_excerpts/Q117.md"
+      },
+      {
+        "question_id": "Q118",
+        "explicit_user_candidates": 1,
+        "matching_markdown_quote_blocks": 1,
+        "source_heading_found": true,
+        "comparison": "EXACT",
+        "existing_excerpt": "specs/source_excerpts/Q118.md"
+      },
+      {
+        "question_id": "Q119",
+        "explicit_user_candidates": 1,
+        "matching_markdown_quote_blocks": 1,
+        "source_heading_found": true,
+        "comparison": "EXACT",
+        "existing_excerpt": "specs/source_excerpts/Q119.md"
+      },
+      {
+        "question_id": "Q120",
+        "explicit_user_candidates": 1,
+        "matching_markdown_quote_blocks": 1,
+        "source_heading_found": true,
+        "comparison": "EXACT",
+        "existing_excerpt": "specs/source_excerpts/Q120.md"
+      },
+      {
+        "question_id": "Q121",
+        "explicit_user_candidates": 1,
+        "matching_markdown_quote_blocks": 1,
+        "source_heading_found": true,
+        "comparison": "EXACT",
+        "existing_excerpt": "specs/source_excerpts/Q121.md"
+      },
+      {
+        "question_id": "Q122",
+        "explicit_user_candidates": 1,
+        "matching_markdown_quote_blocks": 1,
+        "source_heading_found": true,
+        "comparison": "EXACT",
+        "existing_excerpt": "specs/source_excerpts/Q122.md"
+      }
+    ],
+    "owner_reported_result": "ALL_SEVEN_EXACT",
+    "local_program_output_status": "Read-only comparison completed. No uploads, GitHub writes or safety approvals."
+  },
+  "verified_scope": [
+    "Text equality of seven explicitly numbered user answers versus seven existing excerpt blockquotes, as reported by the owner.",
+    "Each of Q116-Q122 had exactly one explicit answer in the selected conversation in the current export."
+  ],
+  "not_verified_scope": [
+    "Assistant question and response branches, parent-chain chronology, later amendments, or completeness of all conversation versions.",
+    "Assistant's independent access to the local archive, true SHA256 values, or original individual message IDs.",
+    "Full safety requirement reconciliation, risk calculation edge cases, live operation, or human implementation approval."
+  ],
+  "question_level_only": true,
+  "original_message_ids_independently_verified": false,
+  "complete_context_verified": false,
+  "new_original_quotes_uploaded": false,
+  "safety_requirements_reconciled": false,
+  "implementation_approved": false,
+  "human_safety_approval": false,
+  "owner_approved_for_safety": false,
+  "forward_trading_enabled": false
+}
