@@ -482,3 +482,14 @@ Q192: Two independent WAL measurement tracks (physical size and write progress);
 
 Q193: SQLite WAL/checkpoint observation and Python application write-event logs are reconciled, including external-writer coverage review. Unknown or inconsistent evidence fails closed; Q1-Q192 safeguards unchanged, live trading not approved.
 
+## Windowsテスト環境のタイムゾーンデータ（2026-10-23）
+
+Pythonの`zoneinfo`はWindowsでIANAデータベースを直接取得できないことがある。Q14/Q117/Q118のNY17:00のDST変換テストで`ZoneInfoNotFoundError`が出た場合、**テストと同じPython**で以下を実行する。
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python scripts/doctor_development_environment.py
+python -m unittest discover -s tests -p "test*.py"
+```
+
+Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタイムゾーンデータを使用する。CIはLinux Python 3.12に加えてWindows Python 3.13で全テストを実行。詳細：[Windows zoneinfo修正手順](docs/windows_zoneinfo_tzdata_fix_20261023.md)。これは実注文・安全仕様の承認や稼働状態を変更しない。
