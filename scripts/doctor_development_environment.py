@@ -9,6 +9,7 @@ import argparse
 import sys
 import tempfile
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ROOT = Path(__file__).resolve().parents[1]
 CI_PYTHON = (3, 12)
@@ -17,6 +18,7 @@ REQUIRED_FILES = (
     "AGENTS.md",
     "MASTER_SPEC.md",
     ".github/workflows/ci.yml",
+    "requirements-dev.txt",
 )
 REQUIRED_DIRS = ("scripts", "tests", "specs")
 
@@ -39,6 +41,20 @@ def probe_temp_directory(base: Path) -> bool:
             return probe.read_bytes() == b"fx-p1-02"
     except OSError:
         return False
+
+
+REQUIRED_IANA_ZONES = ("America/New_York", "Asia/Tokyo")
+
+
+def unavailable_iana_timezones(zone_loader=ZoneInfo) -> list[str]:
+    """Check required IANA names without changing the Python environment."""
+    missing = []
+    for key in REQUIRED_IANA_ZONES:
+        try:
+            zone_loader(key)
+        except (ZoneInfoNotFoundError, ModuleNotFoundError):
+            missing.append(key)
+    return missing
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -78,8 +94,16 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print("FAIL: Temporary-file operations unavailable; inspect TEMP/TMP permissions")
         print("      Use --temp-base with an existing writable directory to diagnose.")
+    missing_zones = unavailable_iana_timezones()
+    if missing_zones:
+        print("FAIL: Required IANA time zones unavailable: " + ", ".join(missing_zones))
+        print("      Windows: python -m pip install -r requirements-dev.txt")
+        print("      zoneinfo needs system IANA data or the first-party tzdata wheel.")
+    else:
+        print("PASS: Required IANA time zones America/New_York and Asia/Tokyo")
+
     print("INFO: No API calls, broker access, real order handling, or approval changes.")
-    return 0 if not missing and temp_ok else 1
+    return 0 if not missing and temp_ok and not missing_zones else 1
 
 
 if __name__ == "__main__":
