@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "document_kind": "P0_01_FORMULA_IMPLEMENTATION_DECISIONS_REGISTER_UNAPPROVED",
+  "as_of": "2026-10-23",
+  "status": "OPEN_DESIGN_DECISIONS_ONLY",
+  "scope": "Resolve ambiguity before any Python/EA production risk calculations or automated trades. Existing policy limits are not modified.",
+  "evidence_refs": [
+    "specs/safety_foundation.md",
+    "specs/p0_01_risk_data_consistency_draft.json",
+    "specs/p0_01_risk_snapshot_timing_numeric_examples.json",
+    "specs/p0_01_safety_consistency_crosswalk.json",
+    "specs/p0_01_closeout_retry_evidence_matrix_draft.json",
+    "specs/p0_01_stop_reason_clearance_matrix_draft.json"
+  ],
+  "adopted_fixed_controls": {
+    "individual_risk_fraction_of_current_equity": "0.005",
+    "combined_risk_fraction_of_current_equity": "0.010",
+    "daily_loss_fraction_of_ny17_opening_equity": "0.015",
+    "aggregate_include_existing_pending_candidate": true,
+    "reject_uncomputable_new_order": true,
+    "daily_denominator_frozen": true,
+    "drawdown_unitized_for_external_flows": true,
+    "stop_latches_separate": true,
+    "external_order_unknown_no_blind_retry": true,
+    "live_trading_forbidden": true
+  },
+  "open_decisions": [
+    {
+      "id": "FORM-01",
+      "priority": "P0",
+      "question_ids": [
+        "Q6",
+        "Q7",
+        "Q116"
+      ],
+      "topic": "Position size and symbol contract metadata",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Identify broker-specific units per lot, minimum volume and step, digits, tick size/tick value and account-currency versus quote-currency mapping for each allowed pair; establish validation of contract changes.",
+      "unsafe_guess": "Assume every FX contract/lot or tick value is identical across symbols and brokers.",
+      "evidence_to_collect": "Read-only MT4 symbol specifications for the intended account and a reproducible synthetic valuation crosscheck.",
+      "acceptance_condition": "Each of four pairs has verified contract metadata; unavailable metadata rejects new entry."
+    },
+    {
+      "id": "FORM-02",
+      "priority": "P0",
+      "question_ids": [
+        "Q6",
+        "Q7",
+        "Q116"
+      ],
+      "topic": "Stop-based expected risk formula by direction and order kind",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Specify BUY versus SELL planned entry, pending trigger, stop location, absolute/worst-case adverse move, current open-position handling and missing/mutable server SL; prohibit silent optimistic price assumption.",
+      "unsafe_guess": "Use request price as guaranteed fill or treat absent stop as zero loss.",
+      "evidence_to_collect": "Scenario matrix for BUY/SELL, limit/stop/market, changed SL, adverse gap and partial fill.",
+      "acceptance_condition": "Transparent price and direction inputs with measurable conservative loss bound or fail-closed noncalculation."
+    },
+    {
+      "id": "FORM-03",
+      "priority": "P0",
+      "question_ids": [
+        "Q13",
+        "Q116"
+      ],
+      "topic": "Cross-currency conversion to JPY at one coherent risk epoch",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Define quote-to-account-to-JPY conversion paths for USD/JPY, EUR/JPY, GBP/USD and AUD/USD, side-specific bid/ask, valid observation/receipt timestamps, and fallback rejection.",
+      "unsafe_guess": "Treat 10 USD as 10 JPY, use reciprocal conversion incorrectly, or use yesterday's rate.",
+      "evidence_to_collect": "Synthetic long/short USD-quoted trade plus independent quote converter and broker-specific tick value checks.",
+      "acceptance_condition": "Conservative JPY risk consistent with account denomination, observable conversion side and tested time consistency."
+    },
+    {
+      "id": "FORM-04",
+      "priority": "P0",
+      "question_ids": [
+        "Q6",
+        "Q7",
+        "Q116"
+      ],
+      "topic": "Fees, spread, swap and stop slippage in planned-risk estimate",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Determine which costs belong in per-trade and aggregate anticipated stop loss, how to prevent double counting and what to do when uncertainty or adverse fills make a finite bound impossible.",
+      "unsafe_guess": "Exclude fees or assume stop execution at exactly the submitted SL; state estimated risk as a guaranteed maximum realized loss.",
+      "evidence_to_collect": "Fee/swap posting examples, widening-spread stress, broker SL and negative-slippage fault injection.",
+      "acceptance_condition": "Conservative documented estimate and explicit non-guarantee for gaps/slippage; no missing cost silently treated as zero."
+    },
+    {
+      "id": "FORM-05",
+      "priority": "P0",
+      "question_ids": [
+        "Q116",
+        "Q120",
+        "Q121",
+        "Q195",
+        "Q198",
+        "Q199"
+      ],
+      "topic": "Single risk decision snapshot and concurrent new order reservations",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Specify broker account/position/pending/in-flight snapshot generation, durable reservation lifetime, concurrent workers and replay behavior; unknown DISPATCHING/OUTCOME_UNKNOWN effects must block entry.",
+      "unsafe_guess": "Add independently captured state values despite an intervening fill, or double-spend the 1% budget under two AI order requests.",
+      "evidence_to_collect": "Interleaved create/cancel/fill/manual-change histories with monotonic generation IDs, broker reconciliations, crash/restart cases.",
+      "acceptance_condition": "One order candidate cannot pass using obsolete/noncoherent positions and pending orders; unknown outcome blocks."
+    },
+    {
+      "id": "FORM-06",
+      "priority": "P0",
+      "question_ids": [
+        "Q7",
+        "Q116",
+        "Q120"
+      ],
+      "topic": "Aggregation with partial fills, opposite positions and pending-order contingencies",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Define conservative aggregation for partial fills, OCO conditional pending orders, opposing/hedged positions and correlation. Do not net exposures or omit simultaneous triggers without demonstrated broker guarantee.",
+      "unsafe_guess": "Cancel one pending order in local intent but subtract its risk before broker cancellation confirmation.",
+      "evidence_to_collect": "Multiple simultaneous order/fill scenarios, split lots, hedge orders and missing server acknowledgments.",
+      "acceptance_condition": "All potentially executable exposures counted once without optimistic unproven offsets."
+    },
+    {
+      "id": "FORM-07",
+      "priority": "P0",
+      "question_ids": [
+        "Q6",
+        "Q7",
+        "Q116"
+      ],
+      "topic": "Precision, risk boundary, lot rounding and invalid quantities",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Approve decimal precision, currency rounding, thresholds for equality, minimum lot and nonnegative/finite validity; above-limit risk is rejected and never rounded down to pass.",
+      "unsafe_guess": "Binary floating-point or a nearest-yen rounding drops a 500.01 JPY estimate to the 500 JPY threshold.",
+      "evidence_to_collect": "Boundary cases 499.99/500/500.01 and 999.99/1000/1000.01 plus volume-step tests.",
+      "acceptance_condition": "Monotone, reproducible precise comparisons with account/broker precision validated, and no inflated volume."
+    },
+    {
+      "id": "FORM-08",
+      "priority": "P0",
+      "question_ids": [
+        "Q9",
+        "Q14",
+        "Q117",
+        "Q118"
+      ],
+      "topic": "Daily net equity change, loss offset and independent PnL reconciliation",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Confirm profit offset policy, commissions/swap classification, correction latency, opening equity and external cashflow effective time at NY17, discrepancy tolerances and bounded age.",
+      "unsafe_guess": "Use current equity as the fixed day denominator or treat deposits as profit and later corrections as harmless.",
+      "evidence_to_collect": "NY17 boundary examples including DST, late deposit/withdrawal, fee posted after close, missing opening snapshot and independent ledger discrepancy.",
+      "acceptance_condition": "Reproducible fixed 1.5% opening limit, independently reconcilable adjusted daily loss and fail-closed on indeterminate figures."
+    },
+    {
+      "id": "FORM-09",
+      "priority": "P0",
+      "question_ids": [
+        "Q11",
+        "Q12",
+        "Q119",
+        "Q122"
+      ],
+      "topic": "Unitized DD issuance/redemption, high-water and restart recovery",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Approve starting units/unit price, issue and redeem rules, ordering for simultaneous transfers and quote updates, zero/negative equity behavior, HWM persistence, reset and human-gated DD4/5 stop.",
+      "unsafe_guess": "Reset high-water after deposit or drop the DD4% stop once unit value recovers.",
+      "evidence_to_collect": "Cash in/out examples, unit HWM recomputation, simultaneous timestamps, interrupted persistence and negative/zero account state.",
+      "acceptance_condition": "External transfers do not cause false DD changes; DD4/5 stop survives recovery and restarts pending approval."
+    },
+    {
+      "id": "FORM-10",
+      "priority": "P0",
+      "question_ids": [
+        "Q14",
+        "Q117",
+        "Q118",
+        "Q128",
+        "Q147"
+      ],
+      "topic": "Per-data freshness and timebase / NY17 calendar",
+      "owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "blocking": true,
+      "required_choice": "Approve separate timestamps, maximum age, causal epoch and market availability for equity/positions/pending/quotes/FX conversion/ledger, NY17 DST/holiday rules and clock discontinuity failures. Preserve Q128 <=15 seconds only for DD2/3 monitor release.",
+      "unsafe_guess": "Apply the DD monitor 15-second window to all order, price and daily snapshot data.",
+      "evidence_to_collect": "Stale/cross-epoch fixtures, sleep/wake clock jumps, EDT/EST and trading holidays with missing or reversed observations.",
+      "acceptance_condition": "All critical inputs have explicit provenance and source-appropriate limits or new order is denied; no universal TTL invented."
+    }
+  ],
+  "hypothetical_numeric_scenarios": {
+    "unit": "JPY",
+    "source": "Synthetic values only, no actual Rakuten MT4 contract or market data.",
+    "cases": [
+      {
+        "id": "HF-01",
+        "kind": "JPY_QUOTED_STOP_EXAMPLE",
+        "trade_direction": "BUY",
+        "hypothetical_base_units": "10000",
+        "hypothetical_entry_jpy_per_base": "150.00",
+        "hypothetical_stop_jpy_per_base": "149.95",
+        "quote_loss_jpy": "500",
+        "meaning": "Price difference x base units with costs/execution gaps excluded."
+      },
+      {
+        "id": "HF-02",
+        "kind": "USD_QUOTED_STOP_EXAMPLE",
+        "trade_direction": "BUY",
+        "hypothetical_base_units": "10000",
+        "hypothetical_entry_usd_per_base": "1.1000",
+        "hypothetical_stop_usd_per_base": "1.0990",
+        "quote_loss_usd": "10",
+        "hypothetical_usd_jpy_rate": "150",
+        "converted_loss_jpy": "1500",
+        "meaning": "Explicit conversion illustration; actual bid/ask/account-currency and broker tick values unverified."
+      },
+      {
+        "id": "HF-03",
+        "kind": "CONVERSION_RATE_SENSITIVITY",
+        "quote_loss_usd": "10",
+        "hypothetical_usd_jpy_rate": "151",
+        "converted_loss_jpy": "1510",
+        "meaning": "Conversion rate movement changes JPY exposure; fixed USD amount does not imply fixed JPY risk."
+      },
+      {
+        "id": "HF-04",
+        "kind": "SINGLE_LIMIT_BOUNDARY",
+        "equity_jpy": "100000",
+        "candidate_risk_jpy": "500.01",
+        "individual_ceiling_jpy": "500",
+        "numeric_comparison": "EXCEEDS_SINGLE_LIMIT",
+        "meaning": "Never silently round down to 500; exact precision rule remains open."
+      },
+      {
+        "id": "HF-05",
+        "kind": "TOTAL_LIMIT_BOUNDARY",
+        "equity_jpy": "100000",
+        "existing_risk_jpy": "350",
+        "pending_risk_jpy": "250",
+        "candidate_risk_jpy": "400.01",
+        "combined_jpy": "1000.01",
+        "combined_ceiling_jpy": "1000",
+        "numeric_comparison": "EXCEEDS_COMBINED_LIMIT",
+        "meaning": "Must include potentially executable unfilled orders and candidate."
+      },
+      {
+        "id": "HF-06",
+        "kind": "COST_INCREMENT",
+        "equity_jpy": "100000",
+        "existing_risk_jpy": "300",
+        "pending_risk_jpy": "250",
+        "candidate_base_risk_jpy": "400",
+        "hypothetical_extra_cost_jpy": "60",
+        "combined_with_cost_jpy": "1010",
+        "combined_ceiling_jpy": "1000",
+        "numeric_comparison": "EXCEEDS_COMBINED_LIMIT",
+        "meaning": "Illustrates omitted cost changing result; inclusion formula and assumptions remain unapproved."
+      }
+    ]
+  },
+  "review_gates": {
+    "all_open_decisions_authorized": false,
+    "formula_implementation_approved": false,
+    "original_complete_reconciliation_approved": false,
+    "safety_level_owner_approval": false,
+    "new_order_permission": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "owner_approval_reference": null
+  },
+  "note": "Any example below a numerical ceiling is only arithmetic, not a trading order or safe-to-implement judgment. This register intentionally specifies no production algorithm, no command execution, and no default parameter approval."
+}
