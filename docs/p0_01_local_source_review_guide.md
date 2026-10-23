@@ -146,3 +146,13 @@ python -m scripts.audit_p0_01_q116_122_context --input "C:\Users\Suzuki\Document
 **警告：** LaterRefsやChangeRefsは後続**修正の証明ではなく確認候補**。単なる「以前の設問の条件を維持」のような引用も数える。0件でも他会話・別分岐・元JSON生成後の発言や暗黙の修正は否定できない。PromptHint=YESだけで選択肢の対応を証明しない。ActiveBranch=NO/UNKNOWN、回答候補数≠1、OrderUnknown>0は本人による原議の個別レビューが必要。
 
 前回同様、数値/状態だけをChatGPTで共有し、プライベート原文・会話JSONをアップロードしない。**報告後もFX-SAF-001～006の要件照合と実装承認は別工程**。PHASE-1 BLOCKED、forward_trading_enabled=false、安全な発注拒否（Fail Closed）を維持する。
+
+## 2026-10-23追記：Q116～Q122文脈監査とQ117/Q118未割当ヒントの本人判定
+
+PR #80の`scripts/audit_p0_01_q116_122_context.py`を本人が新原本に対して実行し、**280 tests / OK**と合わせて報告した。7設問すべて`Explicit=1`、`PromptHint=YES`、`ActiveBranch=YES`であり、`LaterRefs=0`、`ChangeRefs=0`、`OrderUnknown=0`。無番号回答に対応する文脈ヒントだけが`Q117=1`、`Q118=1`であり、残り5設問は0だった。
+
+本人は2026-10-23にこの2候補をそれぞれ**「Q117: MATCH」「Q118: MATCH」**と分類した。これは**当該無番号ヒントが既存仕様と整合し、別の仕様変更は報告されなかったという本人分類**を意味する。`specs/p0_01_owner_q116_122_context_review.json`に文脈監査結果と2件の分類のみ記録した。原本の無番号回答本文やそのメッセージIDはGitHubへ転記していない。
+
+別に記録済みのQ116～Q122各1件の原議引用`EXACT`（`specs/p0_01_owner_archive_q116_122_exact.json`）と、今回の**Q117/Q118無番号ヒントMATCH**は別の検証である。前後の候補確認は今回のスコープ内で完了したが、他会話・将来の修正、編集分岐の全検証、安全要件の未決事項やコード実装の安全性確認は未完了。
+
+`FX-SAF-003`に`partial_owner_context_hint_reviews`として2件だけ追加。**要件全体の`comparison_status=NEEDS_CLARIFICATION`、`source_kind=SUMMARY_ONLY`、`implementation_approved=false`、`owner_approval=null`は不変**。他の停止理由やDD4/5%本人承認停止、PHASE-1 BLOCKED、本番注文禁止も不変。
