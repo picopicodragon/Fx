@@ -12,7 +12,12 @@ from pathlib import Path
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ROOT = Path(__file__).resolve().parents[1]
-CI_PYTHON = (3, 12)
+# Match the versions exercised by .github/workflows/ci.yml. This does not
+# certify every patch release or a user's machine-specific dependencies.
+CI_PYTHON_MATRIX = {
+    "linux": (3, 12),
+    "win32": (3, 13),
+}
 REQUIRED_FILES = (
     "README.md",
     "AGENTS.md",
@@ -43,6 +48,26 @@ def probe_temp_directory(base: Path) -> bool:
         return False
 
 
+def python_matrix_diagnostic(platform: str, version: tuple[int, int]) -> tuple[str, str]:
+    """Report CI matrix membership, not proof of full runtime compatibility."""
+    expected = CI_PYTHON_MATRIX.get(platform)
+    actual = f"{version[0]}.{version[1]}"
+    if expected is None:
+        return ("WARN", f"Python {actual} on {platform}: no corresponding CI job")
+    expected_text = f"{expected[0]}.{expected[1]}"
+    if version == expected:
+        return (
+            "PASS",
+            f"Python {actual} on {platform} matches CI test matrix "
+            "(not full machine compatibility certification)"
+        )
+    return (
+        "WARN",
+        f"Python {actual} on {platform} differs from CI-tested "
+        f"Python {expected_text} on this platform"
+    )
+
+
 REQUIRED_IANA_ZONES = ("America/New_York", "Asia/Tokyo")
 
 
@@ -69,13 +94,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     print("Fx P1-02 development environment (NOT a trading-safety test)")
-    if sys.version_info[:2] == CI_PYTHON:
-        print("PASS: Python matches CI reference version 3.12")
-    else:
-        print(
-            f"WARN: Python {sys.version_info.major}.{sys.version_info.minor} "
-            "differs from CI reference 3.12; compatibility is not yet certified"
-        )
+    python_level, python_message = python_matrix_diagnostic(
+        sys.platform, sys.version_info[:2]
+    )
+    print(f"{python_level}: {python_message}")
 
     missing = missing_repository_paths(ROOT)
     if missing:
