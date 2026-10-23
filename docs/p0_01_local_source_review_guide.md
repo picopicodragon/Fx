@@ -131,3 +131,18 @@ Q80の判定は**ADDITIONAL_DETAILS（本人報告による部分一致＋索引
 既存`specs/source_evidence.json`のQ116～Q122は`source_kind=ORIGINAL`と`verification=DIRECT_CHAT`の従来記録を維持したまま、本人申告の`owner_reported_local_archive_check`を追加する。**`archive_locator_status=PENDING_LOCAL_ARCHIVE`は、ローカル原本が存在しないという意味ではなく、具体的メッセージID/前後文脈までの追跡可能なロケーターの独立照合が未完了の意味で残す**。各安全要件の`partial_owner_archive_quote_checks`は引用レベルの照合リンクであり、`comparison_status=MATCH`や`implementation_approved=true`に格上げしていない。
 
 次の段階では、会話の前後関係、後続訂正、Q80/116～122とQ123～171等の安全仕様間の整合、残る計算の未決事項を順に照合する。PHASE-1 BLOCKED、発注禁止、本人の安全実装承認待ちを維持する。
+
+## 2026-10-23追記：Q116～Q122の前後文脈・後続参照のオフライン検査ツール
+
+7/7 EXACTの文字列一致を得た後も、**質問への回答対応付け、編集分岐、後続修正/参照**の人間によるレビューは未完了。全ユーザー原議をGitHubへ取り込まずにレビューの優先度を判断するため、読み取り専用`scripts/audit_p0_01_q116_122_context.py`を用意した。
+
+```powershell
+cd "C:\Users\Suzuki\Documents\ChatGPT\Fx"
+python -m scripts.audit_p0_01_q116_122_context --input "C:\Users\Suzuki\Documents\ChatGPT\FxSourceArchive\originals\conversations_20261023.json" --conversation-id "6aceda54-1388-83e8-ad0a-6edfc39ad11d"
+```
+
+出力は**各設問の回答候補数、親チェーン上の直前assistantに同じ設問番号が言及されているか（PromptHint）、現在の会話ブランチ上にあるか（ActiveBranch）、回答後のユーザーメッセージでの設問参照件数（LaterRefs）、修正等の語を含む参照件数（ChangeRefs）、設問番号なしの回答へのassistant文脈ヒント（UnlabeledHints）、時刻順が確定できない参照件数（OrderUnknown）**だけ。元の質問・回答文やメッセージIDを標準出力へ表示しない。ファイル出力もネットワーク通信もGitHub書込みも行わない。
+
+**警告：** LaterRefsやChangeRefsは後続**修正の証明ではなく確認候補**。単なる「以前の設問の条件を維持」のような引用も数える。0件でも他会話・別分岐・元JSON生成後の発言や暗黙の修正は否定できない。PromptHint=YESだけで選択肢の対応を証明しない。ActiveBranch=NO/UNKNOWN、回答候補数≠1、OrderUnknown>0は本人による原議の個別レビューが必要。
+
+前回同様、数値/状態だけをChatGPTで共有し、プライベート原文・会話JSONをアップロードしない。**報告後もFX-SAF-001～006の要件照合と実装承認は別工程**。PHASE-1 BLOCKED、forward_trading_enabled=false、安全な発注拒否（Fail Closed）を維持する。
