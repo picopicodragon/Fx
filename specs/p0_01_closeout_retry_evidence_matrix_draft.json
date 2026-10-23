@@ -60,7 +60,7 @@
   "durable_evidence_order": [
     "Before side effects: Q195 logical-operation ID and per-attempt ID registered with Q196 uniqueness control; Q197 PREPARED intent committed successfully.",
     "Immediately before external dispatch: Q198 DISPATCHING recorded and transaction commit confirmed; this records POSSIBILITY of sending, not that a send occurred.",
-    "On return or absence of response: Q199 response class recorded with attempt correlation if reliably known; accepted/rejected do not settle filled and position state.",
+    "On return or absence of response: Q199 response class recorded with attempt correlation if reliably known; accepted/rejected do not settle filled and position state. OUTCOME_UNKNOWN must never be treated as no execution.",
     "Reconcile independent broker orders, executions/fills, open positions, pending/close orders, server-side SL and sufficiently complete history with local persistence for same account and logical close intent.",
     "Recalculate outstanding quantity/side per position; detect late fills, partial fills, manual intervention, concurrent algorithms, inconsistent timestamps, duplicate or reversal risk.",
     "Only if every required broker/local proof is complete, internally consistent, sufficiently fresh and retry eligibility is unambiguous may a separate approved policy CONSIDER a new close-out attempt; new UUID alone never suffices."
@@ -121,7 +121,7 @@
     {
       "id": "ELIGIBLE_FOR_LATER_POLICY_CHECK",
       "kind": "REVIEW_ONLY_NOT_ORDER_PERMISSION",
-      "meaning": "Verified residual quantity and no pending/late/duplicate/reversal risk; must still pass EP-08 and later approved broker-specific logic before any close attempt."
+      "meaning": "Verified residual quantity and no pending/late/duplicate/reversal risk; must still pass EP-08 and later approved broker-specific logic before any close attempt. This categorization is not an order or independent approval to retry."
     },
     {
       "id": "BLOCKED_OTHER_STOP",
