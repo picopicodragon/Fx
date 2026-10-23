@@ -45,6 +45,24 @@ class Q116ToQ122OwnerContextReviewTests(unittest.TestCase):
             self.assertFalse(review["original_message_id_verified_by_assistant"])
             self.assertFalse(review["full_text_saved_to_github"])
 
+    def test_exact_quote_evidence_is_distinct_from_unnumbered_hint_match(self):
+        previous = load("specs/p0_01_owner_archive_q116_122_exact.json")
+        quotes = {r["question_id"]: r for r in previous["comparison"]["per_question"]}
+        current = load(REPORT)
+        self.assertEqual(
+            current["previous_quote_comparison_ref"],
+            "specs/p0_01_owner_archive_q116_122_exact.json"
+        )
+        for q in ("Q117", "Q118"):
+            self.assertEqual(quotes[q]["comparison"], "EXACT")
+            self.assertEqual(quotes[q]["explicit_user_candidates"], 1)
+        self.assertEqual(
+            {r["hint_question_id"]: r["owner_classification"]
+             for r in current["owner_reviewed_unnumbered_hints"]},
+            {"Q117": "MATCH", "Q118": "MATCH"}
+        )
+        self.assertFalse(current["safety_requirement_comparison_upgraded"])
+
     def test_registry_marks_owner_hint_not_full_safety_match(self):
         registry = load("specs/reconciliation_registry.json")
         self.assertEqual(check_reconciliation(registry), [])
