@@ -118,7 +118,7 @@
     {
       "id": "TD-09",
       "domain": "DD2_DD3_MONITOR_RELEASE_SAMPLE",
-      "event": "Conditional monitoring-level release only",
+      "event": "DD2/3 conditional monitoring-level release only",
       "required": [
         "DD observation freshness <= 15 seconds per Q128",
         "Q129 origin/receipt timestamps",
