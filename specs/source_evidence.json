@@ -38,9 +38,18 @@
       "source_kind": "ORIGINAL",
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "この設計対話の第116問への本人による直接回答。エクスポートとの再照合は未実施",
+      "source_locator": "原議のユーザー本人直接回答。2026-10-23版ローカル原本と本抜粋の文字列EXACTを本人が報告。元メッセージID・前後文脈・後続修正を独立照合する原議ロケーターの確定は未完了。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
-      "owner_approved_for_safety": false
+      "owner_approved_for_safety": false,
+      "owner_reported_local_archive_check": {
+        "comparison": "EXACT",
+        "checked_date": "2026-10-23",
+        "source_export_filename": "conversations_20261023.json",
+        "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+        "original_message_id_confirmed": false,
+        "full_context_confirmed": false,
+        "review_level": "EXCERPT_TEXT_COMPARISON_ONLY"
+      }
     },
     {
       "question_id": "Q117",
@@ -48,9 +57,18 @@
       "source_kind": "ORIGINAL",
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "この設計対話内の第117問への本人による直接回答。エクスポートとの再照合は未実施",
+      "source_locator": "原議のユーザー本人直接回答。2026-10-23版ローカル原本と本抜粋の文字列EXACTを本人が報告。元メッセージID・前後文脈・後続修正を独立照合する原議ロケーターの確定は未完了。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
-      "owner_approved_for_safety": false
+      "owner_approved_for_safety": false,
+      "owner_reported_local_archive_check": {
+        "comparison": "EXACT",
+        "checked_date": "2026-10-23",
+        "source_export_filename": "conversations_20261023.json",
+        "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+        "original_message_id_confirmed": false,
+        "full_context_confirmed": false,
+        "review_level": "EXCERPT_TEXT_COMPARISON_ONLY"
+      }
     },
     {
       "question_id": "Q118",
@@ -58,9 +76,18 @@
       "source_kind": "ORIGINAL",
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "この設計対話の第118問に対する本人の直接回答。ローカルエクスポートとの照合は未実施",
+      "source_locator": "原議のユーザー本人直接回答。2026-10-23版ローカル原本と本抜粋の文字列EXACTを本人が報告。元メッセージID・前後文脈・後続修正を独立照合する原議ロケーターの確定は未完了。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
-      "owner_approved_for_safety": false
+      "owner_approved_for_safety": false,
+      "owner_reported_local_archive_check": {
+        "comparison": "EXACT",
+        "checked_date": "2026-10-23",
+        "source_export_filename": "conversations_20261023.json",
+        "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+        "original_message_id_confirmed": false,
+        "full_context_confirmed": false,
+        "review_level": "EXCERPT_TEXT_COMPARISON_ONLY"
+      }
     },
     {
       "question_id": "Q119",
@@ -68,9 +95,18 @@
       "source_kind": "ORIGINAL",
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "この設計対話内の第119問への本人による直接回答。ユーザーのローカル原議アーカイブとの再照合は未実施",
+      "source_locator": "原議のユーザー本人直接回答。2026-10-23版ローカル原本と本抜粋の文字列EXACTを本人が報告。元メッセージID・前後文脈・後続修正を独立照合する原議ロケーターの確定は未完了。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
-      "owner_approved_for_safety": false
+      "owner_approved_for_safety": false,
+      "owner_reported_local_archive_check": {
+        "comparison": "EXACT",
+        "checked_date": "2026-10-23",
+        "source_export_filename": "conversations_20261023.json",
+        "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+        "original_message_id_confirmed": false,
+        "full_context_confirmed": false,
+        "review_level": "EXCERPT_TEXT_COMPARISON_ONLY"
+      }
     },
     {
       "question_id": "Q120",
@@ -78,9 +114,18 @@
       "source_kind": "ORIGINAL",
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "本設計対話内で本人が直接送信した第120問Aの回答。過去のエクスポートへの参照照合は未実施",
+      "source_locator": "原議のユーザー本人直接回答。2026-10-23版ローカル原本と本抜粋の文字列EXACTを本人が報告。元メッセージID・前後文脈・後続修正を独立照合する原議ロケーターの確定は未完了。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
-      "owner_approved_for_safety": false
+      "owner_approved_for_safety": false,
+      "owner_reported_local_archive_check": {
+        "comparison": "EXACT",
+        "checked_date": "2026-10-23",
+        "source_export_filename": "conversations_20261023.json",
+        "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+        "original_message_id_confirmed": false,
+        "full_context_confirmed": false,
+        "review_level": "EXCERPT_TEXT_COMPARISON_ONLY"
+      }
     },
     {
       "question_id": "Q121",
@@ -88,9 +133,18 @@
       "source_kind": "ORIGINAL",
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "この設計対話内の第121問について本人から直接受領した回答。ローカルエクスポートとの再照合は未実施",
+      "source_locator": "原議のユーザー本人直接回答。2026-10-23版ローカル原本と本抜粋の文字列EXACTを本人が報告。元メッセージID・前後文脈・後続修正を独立照合する原議ロケーターの確定は未完了。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
-      "owner_approved_for_safety": false
+      "owner_approved_for_safety": false,
+      "owner_reported_local_archive_check": {
+        "comparison": "EXACT",
+        "checked_date": "2026-10-23",
+        "source_export_filename": "conversations_20261023.json",
+        "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+        "original_message_id_confirmed": false,
+        "full_context_confirmed": false,
+        "review_level": "EXCERPT_TEXT_COMPARISON_ONLY"
+      }
     },
     {
       "question_id": "Q122",
@@ -98,9 +152,18 @@
       "source_kind": "ORIGINAL",
       "verification": "DIRECT_CHAT",
       "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
-      "source_locator": "本設計対話の第122問に本人が直接回答。Windowsローカルの過去原議エクスポートとの再照合は未実施",
+      "source_locator": "原議のユーザー本人直接回答。2026-10-23版ローカル原本と本抜粋の文字列EXACTを本人が報告。元メッセージID・前後文脈・後続修正を独立照合する原議ロケーターの確定は未完了。",
       "confidentiality_review": "REVIEWED_FOR_GITHUB",
-      "owner_approved_for_safety": false
+      "owner_approved_for_safety": false,
+      "owner_reported_local_archive_check": {
+        "comparison": "EXACT",
+        "checked_date": "2026-10-23",
+        "source_export_filename": "conversations_20261023.json",
+        "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+        "original_message_id_confirmed": false,
+        "full_context_confirmed": false,
+        "review_level": "EXCERPT_TEXT_COMPARISON_ONLY"
+      }
     },
     {
       "question_id": "Q123",

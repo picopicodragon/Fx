@@ -43,6 +43,16 @@
           "evidence_ref": "specs/p0_01_owner_question_matches.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
         }
+      ],
+      "partial_owner_archive_quote_checks": [
+        {
+          "question_id": "Q116",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        }
       ]
     },
     {
@@ -69,6 +79,16 @@
           "report_date": "2026-10-22",
           "evidence_ref": "specs/p0_01_owner_question_reviews_round2.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ],
+      "partial_owner_archive_quote_checks": [
+        {
+          "question_id": "Q116",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
         }
       ]
     },
@@ -139,6 +159,40 @@
           "superseded_by": "specs/p0_01_owner_q14_followup_match.json",
           "review_lifecycle": "HISTORICAL_SUPERSEDED"
         }
+      ],
+      "partial_owner_archive_quote_checks": [
+        {
+          "question_id": "Q117",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q118",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q120",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q121",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        }
       ]
     },
     {
@@ -166,6 +220,16 @@
           "report_date": "2026-10-22",
           "evidence_ref": "specs/p0_01_owner_question_matches.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ],
+      "partial_owner_archive_quote_checks": [
+        {
+          "question_id": "Q121",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
         }
       ]
     },
@@ -207,6 +271,40 @@
           "report_date": "2026-10-22",
           "evidence_ref": "specs/p0_01_owner_question_matches.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL"
+        }
+      ],
+      "partial_owner_archive_quote_checks": [
+        {
+          "question_id": "Q119",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q120",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q121",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q122",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
         }
       ]
     },
@@ -345,6 +443,32 @@
           "evidence_ref": "specs/p0_01_owner_q80_recovery_levels.json",
           "record_kind": "OWNER_ATTESTATION_ONLY_NOT_REGISTERED_ORIGINAL",
           "detail": "Performance LEVEL 1 cause-resolved, LEVEL 2 AI reevaluation plus safety confirmation, LEVEL 3 safety confirmation plus explicit human approval; DD5 human approval. Recovery of monitoring must never override independent new-order stop reasons."
+        }
+      ],
+      "partial_owner_archive_quote_checks": [
+        {
+          "question_id": "Q119",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q121",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
+        },
+        {
+          "question_id": "Q122",
+          "result": "EXACT",
+          "archive_filename": "conversations_20261023.json",
+          "reported_date": "2026-10-23",
+          "evidence_ref": "specs/p0_01_owner_archive_q116_122_exact.json",
+          "record_kind": "OWNER_LOCAL_LITERAL_COMPARISON_NOT_REQUIREMENT_APPROVAL"
         }
       ]
     },

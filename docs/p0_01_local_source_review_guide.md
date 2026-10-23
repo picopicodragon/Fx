@@ -119,3 +119,15 @@ Q80の判定は**ADDITIONAL_DETAILS（本人報告による部分一致＋索引
 本人追報は`specs/p0_01_owner_q80_recovery_levels.json`に設問単位の追加条件として記録。成績悪化のLEVELと通信障害のL1/L2/L3を別分類とし、復帰先が「通常監視」でも新規注文を無条件に再開しない。Q80のLEVEL 3とDD4%/DD5%の停止理由はQ121に従い独立して扱い、本人承認必須の停止をAIだけで解除しない。
 
 今回の追報は原議全文の独立した照合でも、実装承認でもない。FX-SAF-006は`source_kind=SUMMARY_ONLY`、`comparison_status=SOURCE_UNAVAILABLE`、`implementation_approved=false`を維持。元JSONとローカル候補をGitHubには登録していない。
+
+## 2026-10-23追記：新原本でQ116～Q122の登録済み原議抜粋を全件照合
+
+ユーザーは旧原本を`conversations_20261016.json`（6,729,763 bytes）、新原本を`conversations_20261023.json`（8,792,840 bytes）として、Git管理外に別名保存した。ローカルで旧原本SHA-256と従前の`p0_01_worksheet.json`記録値の一致、新旧原本SHA-256の相違を確認したと報告。GitHubに原本や実際のSHA-256値はアップロードしていない。
+
+新原本全会話から、対象会話「FXシステム仕様策定」（既知の会話ID `6aceda54-1388-83e8-ad0a-6edfc39ad11d`）に **Q116～Q122の明示回答が各1件** 存在することを検出。次いでローカルの`specs/source_excerpts/Q116.md`～`Q122.md`のユーザー決定原文引用に対して、各1引用・見出し有効・元回答と引用の`strip()`後の**文字列完全一致`EXACT`が7件全件**という照合結果が報告された。見出しの文字化け問題により初回の比較スクリプトは不成功だったが、Unicodeエスケープを使った訂正版の最終結果が7/7 EXACTである。
+
+この結果は**本人がローカルで実施した文字列比較の申告**であり、本アシスタントやGitHub CIが原本を直接読んだ証明ではない。会話の前後質問・編集分岐・後続訂正の有無、原メッセージID、原本の完全性/由来、仕様実装の例外計算や他の決定との整合までは未確認。別記`specs/p0_01_owner_archive_q116_122_exact.json`に最終結果だけを登録した。
+
+既存`specs/source_evidence.json`のQ116～Q122は`source_kind=ORIGINAL`と`verification=DIRECT_CHAT`の従来記録を維持したまま、本人申告の`owner_reported_local_archive_check`を追加する。**`archive_locator_status=PENDING_LOCAL_ARCHIVE`は、ローカル原本が存在しないという意味ではなく、具体的メッセージID/前後文脈までの追跡可能なロケーターの独立照合が未完了の意味で残す**。各安全要件の`partial_owner_archive_quote_checks`は引用レベルの照合リンクであり、`comparison_status=MATCH`や`implementation_approved=true`に格上げしていない。
+
+次の段階では、会話の前後関係、後続訂正、Q80/116～122とQ123～171等の安全仕様間の整合、残る計算の未決事項を順に照合する。PHASE-1 BLOCKED、発注禁止、本人の安全実装承認待ちを維持する。
