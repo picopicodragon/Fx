@@ -1,0 +1,586 @@
+{
+  "schema_version": 1,
+  "document_kind": "P0_01_STOP_REASON_CLEARANCE_CONSTRAINT_MATRIX_DRAFT",
+  "as_of": "2026-10-23",
+  "status": "DRAFT_FROM_ADOPTED_POLICY_NOT_FINAL_STATE_MACHINE",
+  "purpose": "Specify jointly necessary safety invariants and stop-reason distinctions for subsequent owner review. No executable authorization or trading permission.",
+  "sources": [
+    "specs/safety_foundation.md",
+    "specs/p0_01_safety_consistency_crosswalk.json",
+    "specs/p0_01_owner_q80_recovery_levels.json",
+    "specs/p0_01_owner_archive_q116_122_exact.json",
+    "specs/p0_01_owner_q116_122_context_review.json"
+  ],
+  "guarantees": [
+    {
+      "id": "SR-01",
+      "invariant": "Stop reasons remain individually addressable and are never globally cleared by a different reason's recovery.",
+      "basis": [
+        "Q121"
+      ]
+    },
+    {
+      "id": "SR-02",
+      "invariant": "An uncleared or unknown order-blocking reason forbids new orders; partial recovery is not global permission.",
+      "basis": [
+        "Q121",
+        "Q104"
+      ]
+    },
+    {
+      "id": "SR-03",
+      "invariant": "Stop state must be recoverable after restart; unavailable, inconsistent or unverified persisted state forbids new orders.",
+      "basis": [
+        "Q121",
+        "Q171"
+      ]
+    },
+    {
+      "id": "SR-04",
+      "invariant": "DD4 and DD5 order stop cannot be automatically cleared by DD improvement; explicit human approval plus required safety verification remain necessary.",
+      "basis": [
+        "Q12",
+        "Q80",
+        "Q122"
+      ]
+    },
+    {
+      "id": "SR-05",
+      "invariant": "Performance deterioration LEVEL3 clearance requires safety check and explicit human approval. LEVEL1/2 return only to normal monitoring, not order authorization.",
+      "basis": [
+        "Q80",
+        "Q121"
+      ]
+    },
+    {
+      "id": "SR-06",
+      "invariant": "Monitor-only DD2/DD3 recovery cannot clear DD4/5 or other blockers; the adopted below-threshold, 30-minute, fresh clock/operation checks remain applicable.",
+      "basis": [
+        "Q122",
+        "Q123",
+        "Q124",
+        "Q125",
+        "Q126",
+        "Q127",
+        "Q128",
+        "Q147"
+      ]
+    },
+    {
+      "id": "SR-07",
+      "invariant": "Communication L1/L2/L3 are a different namespace from performance LEVEL1/2/3. Serious communication and isolation failure latches cannot be released by mere reconnection, process restart or a different monitor reset.",
+      "basis": [
+        "Q44",
+        "Q45",
+        "Q121",
+        "Q171"
+      ]
+    },
+    {
+      "id": "SR-08",
+      "invariant": "Daily loss stop may only conditionally clear after next NY17:00 trading-day boundary and completed safety checks; it cannot clear human-gated DD or performance stops.",
+      "basis": [
+        "Q9",
+        "Q10",
+        "Q14",
+        "Q118",
+        "Q121"
+      ]
+    },
+    {
+      "id": "SR-09",
+      "invariant": "A close-out retry is not authorized when execution outcome is unknown; independent broker/position/order/SL reconciliation must establish duplicate/reversal safety first.",
+      "basis": [
+        "Q120",
+        "Q195",
+        "Q196",
+        "Q197",
+        "Q198",
+        "Q199"
+      ]
+    },
+    {
+      "id": "SR-10",
+      "invariant": "PHASE-1 BLOCKED and forward_trading_enabled=false prohibit live orders even if hypothetical active-stop set is empty.",
+      "basis": [
+        "Q104",
+        "Q107",
+        "Q110"
+      ]
+    }
+  ],
+  "namespaces": [
+    {
+      "name": "DRAWDOWN_MONITOR",
+      "members": [
+        "DD2_WARNING",
+        "DD3_FOCUSED_REVIEW"
+      ],
+      "effect": "MONITOR_ONLY"
+    },
+    {
+      "name": "DRAWDOWN_STOP",
+      "members": [
+        "DD4_NEW_ORDER_HALT",
+        "DD5_EMERGENCY_HALT"
+      ],
+      "effect": "BLOCK_NEW_ORDERS"
+    },
+    {
+      "name": "STRATEGY_PERFORMANCE",
+      "members": [
+        "PERFORMANCE_LEVEL1",
+        "PERFORMANCE_LEVEL2",
+        "PERFORMANCE_LEVEL3"
+      ],
+      "effect": "LEVEL_DEPENDENT_MONITOR_OR_STOP"
+    },
+    {
+      "name": "NETWORK_FAULT",
+      "members": [
+        "NETWORK_L1",
+        "NETWORK_L2",
+        "NETWORK_L3",
+        "ISOLATION_FAILURE"
+      ],
+      "effect": "FAULT_DEPENDENT_BLOCK"
+    },
+    {
+      "name": "OTHER_STOP",
+      "members": [
+        "DAILY_LOSS_HALT",
+        "EVENT_PAIR_HALT",
+        "ORDER_OUTCOME_UNKNOWN",
+        "STATE_OR_RISK_UNKNOWN"
+      ],
+      "effect": "BLOCK_NEW_ORDERS"
+    },
+    {
+      "name": "GLOBAL_LIVE_AUTHORIZATION",
+      "members": [
+        "PHASE1_BLOCKED"
+      ],
+      "effect": "ALWAYS_NO_LIVE_ORDERS"
+    }
+  ],
+  "rows": [
+    {
+      "id": "DD2_WARNING",
+      "namespace": "DRAWDOWN_MONITOR",
+      "effect": "MONITOR_ONLY",
+      "automatic_monitor_clear": "CONDITIONAL",
+      "explicit_human_approval_required": false,
+      "necessary_evidence": [
+        "DD strictly below 1.5% for continuous validated 30 minutes",
+        "Q126-Q147 clock, freshness, interruption and safety validation"
+      ],
+      "clearance_scope": "THIS_MONITOR_ONLY",
+      "ref": [
+        "Q80",
+        "Q122",
+        "Q124",
+        "Q125"
+      ]
+    },
+    {
+      "id": "DD3_FOCUSED_REVIEW",
+      "namespace": "DRAWDOWN_MONITOR",
+      "effect": "MONITOR_ONLY",
+      "automatic_monitor_clear": "CONDITIONAL",
+      "explicit_human_approval_required": false,
+      "necessary_evidence": [
+        "DD strictly below 2.5% for continuous validated 30 minutes",
+        "Q126-Q147 clock, freshness, interruption and safety validation"
+      ],
+      "clearance_scope": "THIS_MONITOR_ONLY",
+      "ref": [
+        "Q80",
+        "Q122",
+        "Q124",
+        "Q125"
+      ]
+    },
+    {
+      "id": "DD4_NEW_ORDER_HALT",
+      "namespace": "DRAWDOWN_STOP",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "FORBIDDEN",
+      "explicit_human_approval_required": true,
+      "necessary_evidence": [
+        "Explicit human approval",
+        "Independent stop-specific safety checks"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q80",
+        "Q121",
+        "Q122"
+      ]
+    },
+    {
+      "id": "DD5_EMERGENCY_HALT",
+      "namespace": "DRAWDOWN_STOP",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "FORBIDDEN",
+      "explicit_human_approval_required": true,
+      "necessary_evidence": [
+        "Full-close attempt and root-cause investigation under Q12/Q120",
+        "Explicit human approval",
+        "Independent stop-specific safety checks"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q11",
+        "Q12",
+        "Q120",
+        "Q121",
+        "Q122"
+      ]
+    },
+    {
+      "id": "PERFORMANCE_LEVEL1",
+      "namespace": "STRATEGY_PERFORMANCE",
+      "effect": "MONITOR_ONLY",
+      "automatic_monitor_clear": "CONDITIONAL",
+      "explicit_human_approval_required": false,
+      "necessary_evidence": [
+        "Performance deterioration cause resolved"
+      ],
+      "clearance_scope": "THIS_MONITOR_ONLY",
+      "ref": [
+        "Q80"
+      ]
+    },
+    {
+      "id": "PERFORMANCE_LEVEL2",
+      "namespace": "STRATEGY_PERFORMANCE",
+      "effect": "MONITOR_ONLY",
+      "automatic_monitor_clear": "CONDITIONAL",
+      "explicit_human_approval_required": false,
+      "necessary_evidence": [
+        "AI reevaluation completed",
+        "Safety checks passed"
+      ],
+      "clearance_scope": "THIS_MONITOR_ONLY",
+      "ref": [
+        "Q80"
+      ]
+    },
+    {
+      "id": "PERFORMANCE_LEVEL3",
+      "namespace": "STRATEGY_PERFORMANCE",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "FORBIDDEN",
+      "explicit_human_approval_required": true,
+      "necessary_evidence": [
+        "Safety checks passed",
+        "Explicit human approval",
+        "Temporary drawdown improvement alone cannot clear"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q80",
+        "Q121"
+      ]
+    },
+    {
+      "id": "DAILY_LOSS_HALT",
+      "namespace": "OTHER_STOP",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "CONDITIONAL",
+      "explicit_human_approval_required": false,
+      "necessary_evidence": [
+        "Subsequent NY17:00 trading-day boundary reached",
+        "Account/orders/SL/process and cause safety checks passed",
+        "No other blocking stop assumed cleared"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q9",
+        "Q10",
+        "Q14",
+        "Q118",
+        "Q121"
+      ]
+    },
+    {
+      "id": "NETWORK_L1",
+      "namespace": "NETWORK_FAULT",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "CONDITIONAL",
+      "explicit_human_approval_required": false,
+      "necessary_evidence": [
+        "Actual communication fault resolved",
+        "Authentication, price, EA/Python, order and position safety checks as applicable"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q43",
+        "Q44",
+        "Q45",
+        "Q121"
+      ]
+    },
+    {
+      "id": "NETWORK_L2",
+      "namespace": "NETWORK_FAULT",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "CONDITIONAL_REQUIRES_DETAIL",
+      "explicit_human_approval_required": "UNDETERMINED_FROM_THIS_REVIEW",
+      "necessary_evidence": [
+        "Cause resolved with higher-severity safety validation",
+        "Independent incident and reactivation criteria to be confirmed against original"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q44",
+        "Q45",
+        "Q121"
+      ]
+    },
+    {
+      "id": "NETWORK_L3",
+      "namespace": "NETWORK_FAULT",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "FORBIDDEN",
+      "explicit_human_approval_required": true,
+      "necessary_evidence": [
+        "Cause resolved and strong safety evidence",
+        "Explicit human approval"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q45",
+        "Q121"
+      ]
+    },
+    {
+      "id": "ISOLATION_FAILURE",
+      "namespace": "NETWORK_FAULT",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "FORBIDDEN",
+      "explicit_human_approval_required": true,
+      "necessary_evidence": [
+        "Cause resolved",
+        "Old attempt terminated and old communication resources safely isolated",
+        "Clock/connection/risk safety checks passed",
+        "Explicit human approval"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q168",
+        "Q169",
+        "Q170",
+        "Q171"
+      ]
+    },
+    {
+      "id": "ORDER_OUTCOME_UNKNOWN",
+      "namespace": "OTHER_STOP",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "NO_AUTOMATIC_RETRY",
+      "explicit_human_approval_required": "CONTEXT_DEPENDENT_UNDETERMINED",
+      "necessary_evidence": [
+        "Independent broker order, fill, position and SL reconciliation",
+        "No duplicate or reverse-side execution risk",
+        "Stop-specific handling of unknown outcome and other reasons"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q120",
+        "Q195",
+        "Q196",
+        "Q197",
+        "Q198",
+        "Q199"
+      ]
+    },
+    {
+      "id": "STATE_OR_RISK_UNKNOWN",
+      "namespace": "OTHER_STOP",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "FORBIDDEN_WHILE_UNKNOWN",
+      "explicit_human_approval_required": "CONTEXT_DEPENDENT_UNDETERMINED",
+      "necessary_evidence": [
+        "Integrity and completeness of persisted stop state, account/risk and order data re-established",
+        "Independent checks passed"
+      ],
+      "clearance_scope": "THIS_STOP_ONLY",
+      "ref": [
+        "Q116",
+        "Q121"
+      ]
+    },
+    {
+      "id": "EVENT_PAIR_HALT",
+      "namespace": "OTHER_STOP",
+      "effect": "BLOCK_NEW_ORDERS",
+      "automatic_clear": "CONDITIONAL",
+      "explicit_human_approval_required": false,
+      "necessary_evidence": [
+        "At least 15 minutes after event",
+        "Affected pair scope and market/data safety check passed"
+      ],
+      "clearance_scope": "THIS_PAIR_STOP_ONLY",
+      "ref": [
+        "Q21",
+        "Q22",
+        "Q23",
+        "Q24",
+        "Q121"
+      ]
+    },
+    {
+      "id": "PHASE1_BLOCKED",
+      "namespace": "GLOBAL_LIVE_AUTHORIZATION",
+      "effect": "GLOBAL_LIVE_ORDER_DENY",
+      "automatic_clear": "FORBIDDEN",
+      "explicit_human_approval_required": true,
+      "necessary_evidence": [
+        "Separate Phase acceptance, production evidence and explicit live activation approval in a future authorized workflow"
+      ],
+      "clearance_scope": "NO_CLEARANCE_IN_THIS_DRAFT",
+      "ref": [
+        "Q104",
+        "Q107",
+        "Q110"
+      ]
+    }
+  ],
+  "synthetic_cases": [
+    {
+      "id": "SC-01",
+      "initial": [
+        "DAILY_LOSS_HALT",
+        "DD4_NEW_ORDER_HALT"
+      ],
+      "event": "Next NY17 day plus daily safety passed only",
+      "expected_remaining": [
+        "DD4_NEW_ORDER_HALT"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-02",
+      "initial": [
+        "DD4_NEW_ORDER_HALT"
+      ],
+      "event": "DD drops below 4% without human approval",
+      "expected_remaining": [
+        "DD4_NEW_ORDER_HALT"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-03",
+      "initial": [
+        "DD5_EMERGENCY_HALT",
+        "ORDER_OUTCOME_UNKNOWN"
+      ],
+      "event": "DD recovers but broker close outcome remains unknown",
+      "expected_remaining": [
+        "DD5_EMERGENCY_HALT",
+        "ORDER_OUTCOME_UNKNOWN"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-04",
+      "initial": [
+        "PERFORMANCE_LEVEL3"
+      ],
+      "event": "Performance and DD recover; safety passes; no human approval",
+      "expected_remaining": [
+        "PERFORMANCE_LEVEL3"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-05",
+      "initial": [
+        "PERFORMANCE_LEVEL2",
+        "DD5_EMERGENCY_HALT"
+      ],
+      "event": "Performance AI reevaluation and safety checks pass",
+      "expected_remaining": [
+        "DD5_EMERGENCY_HALT"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-06",
+      "initial": [
+        "NETWORK_L1",
+        "ISOLATION_FAILURE"
+      ],
+      "event": "Connection returns but old async I/O isolation is not verified",
+      "expected_remaining": [
+        "ISOLATION_FAILURE"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-07",
+      "initial": [
+        "DAILY_LOSS_HALT",
+        "DD4_NEW_ORDER_HALT"
+      ],
+      "event": "System restarted and persisted stop record cannot be verified",
+      "expected_remaining": [
+        "DAILY_LOSS_HALT",
+        "DD4_NEW_ORDER_HALT",
+        "STATE_OR_RISK_UNKNOWN"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-08",
+      "initial": [
+        "ORDER_OUTCOME_UNKNOWN",
+        "DD5_EMERGENCY_HALT"
+      ],
+      "event": "Blind retry attempted with a new UUID but broker outcome unresolved",
+      "expected_remaining": [
+        "ORDER_OUTCOME_UNKNOWN",
+        "DD5_EMERGENCY_HALT"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-09",
+      "initial": [
+        "DD2_WARNING",
+        "DD4_NEW_ORDER_HALT"
+      ],
+      "event": "DD2 monitoring cleared after validated strict recovery and 30 minutes",
+      "expected_remaining": [
+        "DD4_NEW_ORDER_HALT"
+      ],
+      "live_orders_allowed": false
+    },
+    {
+      "id": "SC-10",
+      "initial": [],
+      "event": "No active stop but PHASE-1 remains BLOCKED",
+      "expected_remaining": [],
+      "live_orders_allowed": false
+    }
+  ],
+  "unresolved_implementation_parameters": [
+    "Separate monitor and order-stop lifecycle enums with account/strategy/pair scope; mapping performance LEVEL3 to DD4 is not assumed.",
+    "Atomic persist-and-confirm set/clear, versioning/generation, restart replay, damaged record handling and concurrent triggers.",
+    "How safe recovery checklists and independent data freshness are recorded and audited.",
+    "Human approval identity, permitted channel, signature or equivalent, expiry, replay protection, scope and revocation.",
+    "Precise NETWORK_L2 human gate and severity taxonomy verified from applicable source decisions.",
+    "Safe order-outcome reconciliation to underlying broker order/fill/position state and conditional close-out retry proof.",
+    "Manual clearance action must not implicitly reset other stopping reasons or live-trading global gate."
+  ],
+  "safety_authorization": {
+    "implementation_approved": false,
+    "human_safety_approval": false,
+    "owner_approved_for_safety": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "live_orders_allowed": false
+  }
+}
