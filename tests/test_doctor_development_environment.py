@@ -9,6 +9,8 @@ from scripts.doctor_development_environment import (
     probe_temp_directory,
     unavailable_iana_timezones,
     REQUIRED_IANA_ZONES,
+    CI_PYTHON_MATRIX,
+    python_matrix_diagnostic,
 )
 
 
@@ -29,6 +31,31 @@ class DevelopmentEnvironmentTests(unittest.TestCase):
         before = set(base.glob("fx-p102-*"))
         self.assertTrue(probe_temp_directory(base))
         self.assertEqual(set(base.glob("fx-p102-*")), before)
+
+    def test_windows_python313_matches_ci_without_full_certification(self):
+        self.assertEqual(CI_PYTHON_MATRIX["win32"], (3, 13))
+        level, message = python_matrix_diagnostic("win32", (3, 13))
+        self.assertEqual(level, "PASS")
+        self.assertIn("CI test matrix", message)
+        self.assertIn("not full machine compatibility certification", message)
+
+    def test_linux_python312_matches_ci(self):
+        self.assertEqual(CI_PYTHON_MATRIX["linux"], (3, 12))
+        level, message = python_matrix_diagnostic("linux", (3, 12))
+        self.assertEqual(level, "PASS")
+        self.assertIn("Python 3.12 on linux", message)
+
+    def test_same_version_on_different_ci_platform_does_not_match(self):
+        for platform, version in (("win32", (3, 12)), ("linux", (3, 13))):
+            with self.subTest(platform=platform):
+                level, message = python_matrix_diagnostic(platform, version)
+                self.assertEqual(level, "WARN")
+                self.assertIn("differs from CI-tested", message)
+
+    def test_uncovered_platform_warns_instead_of_claiming_certification(self):
+        level, message = python_matrix_diagnostic("darwin", (3, 13))
+        self.assertEqual(level, "WARN")
+        self.assertIn("no corresponding CI job", message)
 
     def test_required_iana_zone_probe_uses_expected_names(self):
         seen = []
