@@ -513,8 +513,9 @@
         "NETWORK_L1",
         "ISOLATION_FAILURE"
       ],
-      "event": "Connection returns but old async I/O isolation is not verified",
+      "event": "Connection resumes, but old async I/O isolation and complete network recovery checks have not been verified",
       "expected_remaining": [
+        "NETWORK_L1",
         "ISOLATION_FAILURE"
       ],
       "live_orders_allowed": false
