@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "record_type": "P0_01_RISK_DATA_SNAPSHOT_AND_FAIL_CLOSED_DRAFT",
+  "recorded_date": "2026-10-23",
+  "status": "DRAFT_ONLY_NO_APPROVED_FORMULAS_OR_LIVE_DATA_INTERFACE",
+  "scope": "Requirements-level data contracts and exception categories for Q116-Q119 and Q121. Not a risk calculator, broker adapter, money manager, or permission to trade.",
+  "source_refs": [
+    "specs/safety_foundation.md",
+    "specs/p0_01_safety_consistency_crosswalk.json",
+    "specs/p0_01_stop_reason_clearance_matrix_draft.json",
+    "specs/p0_01_closeout_retry_evidence_matrix_draft.json",
+    "specs/p0_01_owner_archive_q116_122_exact.json"
+  ],
+  "requirement_ids": [
+    "FX-SAF-001",
+    "FX-SAF-002",
+    "FX-SAF-003",
+    "FX-SAF-005",
+    "FX-SAF-006"
+  ],
+  "question_ids": [
+    "Q6",
+    "Q7",
+    "Q8",
+    "Q9",
+    "Q11",
+    "Q12",
+    "Q13",
+    "Q14",
+    "Q80",
+    "Q116",
+    "Q117",
+    "Q118",
+    "Q119",
+    "Q120",
+    "Q121",
+    "Q122"
+  ],
+  "adopted_policy": {
+    "preorder_individual_max_estimated_loss_pct_of_current_equity": "0.5",
+    "preorder_combined_max_estimated_loss_pct_of_current_equity": "1.0",
+    "preorder_includes": [
+      "existing open positions",
+      "unfilled pending orders under possible execution",
+      "new candidate order"
+    ],
+    "preorder_normalization": "JPY-denominated conservative stop-based maximum estimated loss; reject new orders when unavailable or exceeds a limit",
+    "daily_loss_main_measure": "NY17:00 start-to-current equity change adjusted for net external cash transfers, independently reconciled with realized/unrealized PnL and financing/cost events",
+    "daily_loss_limit_pct_of_fixed_opening_equity": "1.5",
+    "daily_limit_reset": "next trading-day start at 17:00 America/New_York respecting DST; opening equity fixed within that trading day",
+    "drawdown_basis": "unitized equity adjusted for external deposits/withdrawals; unit value high-water tracking",
+    "drawdown_levels_pct": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "dd4_dd5_order_stop_clearing": "explicit human approval required; numeric improvement alone is insufficient",
+    "stop_reasons": "independently retained under Q121",
+    "gaps_slippage": "planned-stop-loss risk estimates do not guarantee realized upper bounds"
+  },
+  "snapshot_domains": [
+    {
+      "id": "DS-01",
+      "name": "ACCOUNT_EQUITY_CURRENT",
+      "critical_for": [
+        "PREORDER_SINGLE",
+        "PREORDER_TOTAL",
+        "DAILY_CURRENT",
+        "DD_UNIT_VALUE"
+      ],
+      "required_evidence": [
+        "authoritative account and account-currency identity",
+        "equity valuation with broker observation time and local reception time",
+        "identity linkage to positions, orders, prices and conversion snapshot"
+      ],
+      "not_finalized": "acceptable broker timestamp/quote staleness, margin context and precise synchronized read/lock rule"
+    },
+    {
+      "id": "DS-02",
+      "name": "OPEN_POSITIONS",
+      "critical_for": [
+        "PREORDER_TOTAL",
+        "POSITION_RECONCILIATION"
+      ],
+      "required_evidence": [
+        "complete per-position identifiers, side and volume",
+        "entry/SL and valuation inputs",
+        "pending fills, manual/intervening changes and data origin"
+      ],
+      "not_finalized": "position reconciliation, partial-close semantics and shared account concurrency"
+    },
+    {
+      "id": "DS-03",
+      "name": "UNFILLED_AND_DISPATCHING_ORDERS",
+      "critical_for": [
+        "PREORDER_TOTAL",
+        "ORDER_UNCERTAINTY"
+      ],
+      "required_evidence": [
+        "all broker-side unfilled/pending orders plus durable dispatch/in-flight local intents",
+        "execution possibility and reservation/overlap history",
+        "unique operation/attempt IDs and reconciliation status"
+      ],
+      "not_finalized": "simultaneous order reservations, fill/partial fill double counting, uncertain order results and hedged risk treatment"
+    },
+    {
+      "id": "DS-04",
+      "name": "FX_VALUATION_AND_CONVERSION",
+      "critical_for": [
+        "PREORDER_SINGLE",
+        "PREORDER_TOTAL",
+        "DAILY_CURRENT",
+        "DD_UNIT_VALUE"
+      ],
+      "required_evidence": [
+        "symbol and quote currency",
+        "broker pip/tick value and conversion to account/JPY where applicable",
+        "bid/ask side, observation/receipt times and spread/cost assumptions"
+      ],
+      "not_finalized": "exact pair/cross-currency pricing algorithm, broker symbol contract specs, rounding and fees"
+    },
+    {
+      "id": "DS-05",
+      "name": "NY17_OPENING_EQUITY",
+      "critical_for": [
+        "DAILY_FIXED_LIMIT"
+      ],
+      "required_evidence": [
+        "trading-day ID from America/New_York calendar with DST",
+        "single committed day-opening equity amount, account identity and timestamp",
+        "provenance, durability and recovery record"
+      ],
+      "not_finalized": "how to create missing snapshots, downtime at boundary, market holidays, clock jumps and time provider failure"
+    },
+    {
+      "id": "DS-06",
+      "name": "EXTERNAL_CASHFLOW_LEDGER",
+      "critical_for": [
+        "DAILY_NET_EQUITY",
+        "DD_UNIT_VALUE"
+      ],
+      "required_evidence": [
+        "external deposit/withdrawal classification and signed amount",
+        "effective time, settlement versus broker display time, reversals/corrections",
+        "account currency and matching ledger/position events"
+      ],
+      "not_finalized": "which transfers are external versus internal, midnight/NY boundary ordering, delayed booking and double-entry verification"
+    },
+    {
+      "id": "DS-07",
+      "name": "INDEPENDENT_PNL_COST_RECONCILIATION",
+      "critical_for": [
+        "DAILY_NET_EQUITY"
+      ],
+      "required_evidence": [
+        "realized and unrealized PnL components",
+        "commissions, swap, financing and fees without counting twice",
+        "coverage and temporal alignment with equity and cashflow ledger"
+      ],
+      "not_finalized": "tolerance policy, incomplete swap posting, profits offset losses and cause-specific stop rules"
+    },
+    {
+      "id": "DS-08",
+      "name": "DD_UNITIZATION_HISTORY",
+      "critical_for": [
+        "DD_UNIT_VALUE",
+        "DD_HIGH_WATER"
+      ],
+      "required_evidence": [
+        "committed virtual units and unit value across flows",
+        "high-water snapshot and observation history",
+        "equity-at-flow valuation and replay-safe unit adjustments"
+      ],
+      "not_finalized": "initial unit price/units, issuance/redemption formula, zero/negative equity, multiple flows, precision and reset/restore"
+    },
+    {
+      "id": "DS-09",
+      "name": "DATA_INTEGRITY_CLOCK_AND_STOP_STATE",
+      "critical_for": [
+        "ALL"
+      ],
+      "required_evidence": [
+        "data-source identity, reception and origin times and validity flags",
+        "explicit failed/missing/late/ambiguous status",
+        "durable stop-reason latches, operator approvals and order state after restart"
+      ],
+      "not_finalized": "per-domain freshness thresholds except separately adopted DD clearance data <=15 seconds, cross-feed consistency windows and active safety modes"
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "BD-01",
+      "fact": "Current equity for 0.5/1.0% pre-order limits is NOT the daily fixed opening equity used for the 1.5% limit."
+    },
+    {
+      "id": "BD-02",
+      "fact": "Net equity change corrected for external flows is the Q117 daily LOSS measure; the Q118 day-opening EQUITY is the limit denominator and remains fixed during day."
+    },
+    {
+      "id": "BD-03",
+      "fact": "Q119 virtual-unit DD distinguishes deposits/withdrawals from returns and is neither daily cashflow-corrected nominal profit nor the fixed day-loss amount."
+    },
+    {
+      "id": "BD-04",
+      "fact": "The DD monitoring-release observation freshness cap of 15 seconds from Q128 must not be assumed as a universal market-data tolerance for trade risk, FX conversion or day-opening equity."
+    },
+    {
+      "id": "BD-05",
+      "fact": "An API/order response, SQLite DISPATCHING or unchanged position report does not prove no pending execution; Q120 and Q199 uncertainty blocks a new trade."
+    },
+    {
+      "id": "BD-06",
+      "fact": "A daily stop released after the next NY17 boundary does not clear DD4/5, performance LEVEL3 or communication isolation stop latches."
+    },
+    {
+      "id": "BD-07",
+      "fact": "SL estimates exclude unbounded slippage/gaps; upper percentage figures are entry-time risk gates, not a guarantee of realized absolute maximum."
+    }
+  ],
+  "review_outcomes": [
+    {
+      "id": "REJECT_NEW_ORDER",
+      "meaning": "An attempted entry order is not authorized when required risk exposure is not calculable or a limit is violated."
+    },
+    {
+      "id": "HOLD_DATA_RECONCILIATION",
+      "meaning": "Required account/time/ledger/order/unitized DD evidence is missing, inconsistent, stale or not causally ordered; maintain applicable stop latches and block new entries."
+    },
+    {
+      "id": "MAINTAIN_INDEPENDENT_STOP",
+      "meaning": "Data or daily-DD recovery cannot override other still-asserted human-gated or unresolved stop reasons."
+    },
+    {
+      "id": "READY_FOR_FUTURE_FORMULA_REVIEW",
+      "meaning": "Inputs appear coherent in a hypothetical fixture, but no quantitative implementation formula, live broker adapter or order permission is approved."
+    }
+  ],
+  "synthetic_cases": [
+    {
+      "id": "DC-01",
+      "description": "Account current equity stale at new-order sizing time",
+      "affected": [
+        "DS-01"
+      ],
+      "expected": "REJECT_NEW_ORDER",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-02",
+      "description": "Current-equity/positions/FX conversion snapshots refer to different account or causally incompatible epochs",
+      "affected": [
+        "DS-01",
+        "DS-02",
+        "DS-04"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-03",
+      "description": "An unfilled order is missing from risk aggregation",
+      "affected": [
+        "DS-03"
+      ],
+      "expected": "REJECT_NEW_ORDER",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-04",
+      "description": "DISPATCHING outcome unknown and candidate risks a duplicate or overlapping fill",
+      "affected": [
+        "DS-03"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-05",
+      "description": "FX/JPY conversion side or broker pip size is missing for a cross-currency trade",
+      "affected": [
+        "DS-04"
+      ],
+      "expected": "REJECT_NEW_ORDER",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-06",
+      "description": "Minimum broker lot rounding upward would breach single-trade 0.5% exposure",
+      "affected": [
+        "DS-02",
+        "DS-04"
+      ],
+      "expected": "REJECT_NEW_ORDER",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-07",
+      "description": "NY17 opening equity snapshot missing due to downtime; day limit cannot be calculated",
+      "affected": [
+        "DS-05"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-08",
+      "description": "Opening day limit is incorrectly increased after intraday profit or deposit",
+      "affected": [
+        "DS-05",
+        "DS-06"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-09",
+      "description": "External deposit at day boundary has conflicting effective/posted times",
+      "affected": [
+        "DS-05",
+        "DS-06"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-10",
+      "description": "Swap or fee component double-counts in independent PnL reconciliation",
+      "affected": [
+        "DS-07"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-11",
+      "description": "Daily net equity computation disagrees with independent cost/PnL ledger",
+      "affected": [
+        "DS-06",
+        "DS-07"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-12",
+      "description": "Unit issuance/redemption is unknown at withdrawal, making DD high-water invalid",
+      "affected": [
+        "DS-08"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-13",
+      "description": "Trading resumes after restart but stop latches or historical unit states were not restored",
+      "affected": [
+        "DS-08",
+        "DS-09"
+      ],
+      "expected": "MAINTAIN_INDEPENDENT_STOP",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-14",
+      "description": "DD numerically improves but DD4/5 stop lacks explicit human release approval",
+      "affected": [
+        "DS-08",
+        "DS-09"
+      ],
+      "expected": "MAINTAIN_INDEPENDENT_STOP",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-15",
+      "description": "Complete coherent synthetic inputs and no quantification error, but formula and production authorization remain unapproved",
+      "affected": [
+        "DS-01",
+        "DS-02",
+        "DS-03",
+        "DS-04",
+        "DS-05",
+        "DS-06",
+        "DS-07",
+        "DS-08",
+        "DS-09"
+      ],
+      "expected": "READY_FOR_FUTURE_FORMULA_REVIEW",
+      "new_order_permitted": false
+    },
+    {
+      "id": "DC-16",
+      "description": "Disputed market quotation arrives within 15 seconds but lacks separate pre-order conversion freshness validation",
+      "affected": [
+        "DS-04",
+        "DS-09"
+      ],
+      "expected": "HOLD_DATA_RECONCILIATION",
+      "new_order_permitted": false
+    }
+  ],
+  "unresolved_before_implementation": [
+    "Define broker-authoritative equity/symbol/price and position/pending-order reconciliation with account and currency identity, timestamps and validation status.",
+    "Specify same-decision snapshot and reservation/concurrency rules; no unsupported assumption of atomic read across independent broker feeds.",
+    "Define conservative SL loss, spread, fee, pip/tick valuation and JPY conversion with safe quantities and risk upper bounds, including account-currency differences.",
+    "Define NY17:00 UTC/timezone mapping, DST, weekends/holidays and missing or delayed day-opening equity snapshot handling, audited durable record.",
+    "Define external cashflow matching/corrections, independent PnL fees/swaps reconciliation, profit offset policy, clock skew and rounding.",
+    "Define unitization initial conditions, high-water unit price, flows at identical timestamps, zero/negative equity, restarts and history gaps.",
+    "Define freshness thresholds PER DATA DOMAIN, quality and replay validation. Q128 15-second limit applies to DD monitoring-release observations only.",
+    "Define remediation, alerting and stop-reason update rules for incomplete and contradictory data; no automatic approval or startup by default.",
+    "Define and owner-approve mathematical examples and broker-specific exception tests before implementation."
+  ],
+  "not_claimed": [
+    "No new formulas or exception defaults have been formally selected by the user.",
+    "No local private original archive was independently inspected by GitHub.",
+    "No risk calculation, broker connection, live order path, position closure or auto restart is implemented.",
+    "Synthetic scenarios assert draft review classifications, not measured behavior or market loss guarantees."
+  ],
+  "safety_status": {
+    "implementation_approved": false,
+    "human_safety_approval": false,
+    "owner_approved_for_safety": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "live_orders_allowed": false
+  }
+}
