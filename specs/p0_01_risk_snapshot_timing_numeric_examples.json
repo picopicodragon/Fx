@@ -1,0 +1,331 @@
+{
+  "schema_version": 1,
+  "kind": "P0_01_RISK_SNAPSHOT_TIMING_AND_ARITHMETIC_ILLUSTRATIONS",
+  "as_of": "2026-10-23",
+  "status": "HYPOTHETICAL_ILLUSTRATIONS_AND_DATA_CHECKLIST_ONLY",
+  "references": [
+    "specs/safety_foundation.md",
+    "specs/p0_01_risk_data_consistency_draft.json",
+    "specs/p0_01_stop_reason_clearance_matrix_draft.json",
+    "specs/p0_01_closeout_retry_evidence_matrix_draft.json"
+  ],
+  "rules_must_remain": [
+    "Q116: current-equity single 0.5% and combined 1.0% estimated pre-order risk, existing positions plus pending orders plus candidate.",
+    "Q117: external-cashflow-adjusted change since NY17:00 opening equity, crosschecked against PnL and charges.",
+    "Q118: daily limit equals opening equity x 1.5%, fixed throughout day including deposits and profits.",
+    "Q119: unitized drawdown adjusted for external flows, DD4/DD5 human-gated stop reasons never clear on numeric rebound.",
+    "Q121: independent stop latches; unknown data and unresolved order outcomes fail closed.",
+    "Q128: 15 seconds is explicitly for DD2/3 monitoring-release inputs, not a blanket market-quote/account valuation TTL."
+  ],
+  "checks": [
+    {
+      "id": "TD-01",
+      "domain": "CURRENT_EQUITY",
+      "event": "Before approving hypothetical candidate",
+      "required": [
+        "Account, currency, current equity and broker source",
+        "observation and receipt timestamps",
+        "causal ordering relative to positions, orders, price and margin state",
+        "data complete and verified"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "No generic approved pre-order equity maximum age."
+    },
+    {
+      "id": "TD-02",
+      "domain": "OPEN_POSITIONS",
+      "event": "Pre-order exposure or any retry review",
+      "required": [
+        "All matching account positions with IDs/side/volume and server SL",
+        "snapshot provenance, partial fills and independent broker history",
+        "absence of unobserved concurrent intervention must be established"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "Coherent order/position epoch needs broker-specific validation, not a universal value."
+    },
+    {
+      "id": "TD-03",
+      "domain": "PENDING_AND_INFLIGHT",
+      "event": "Before considering hypothetical exposure",
+      "required": [
+        "Broker-side pending list",
+        "local PREPARED/DISPATCHING and OUTCOME_UNKNOWN intents",
+        "order/fill overlap and reservations reconciled"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "Unknown dispatch effects must not be counted as zero risk."
+    },
+    {
+      "id": "TD-04",
+      "domain": "FX_PRICES_AND_JPY_CONVERSION",
+      "event": "Hypothetical SL-based JPY risk conversion",
+      "required": [
+        "Bid/ask, symbol contract and price origin",
+        "all exchange conversion legs and their timestamps",
+        "quote/account-currency coherence and spread/cost assumptions"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "Price freshness thresholds depend on broker market, symbol and execution mode and are unapproved."
+    },
+    {
+      "id": "TD-05",
+      "domain": "NY17_DAY_OPEN_EQUITY",
+      "event": "Daily 1.5% denominator initialization and recovery",
+      "required": [
+        "Trading day identifier in America/New_York and DST",
+        "immutable opening-equity snapshot for the trading day",
+        "provenance, timestamp, durability, startup/backfill integrity"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "Daily opening value is a fixed session anchor; not a rolling 15-second quote."
+    },
+    {
+      "id": "TD-06",
+      "domain": "EXTERNAL_FLOWS",
+      "event": "Cashflow-corrected daily loss and unitization",
+      "required": [
+        "External/internals classification",
+        "effective timestamp, corrections and settlement status",
+        "complete account ledger with signed amounts and causal ordering"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "Late flows and posting changes require reconciliation, not a generic time-to-live."
+    },
+    {
+      "id": "TD-07",
+      "domain": "PNL_AND_FEES_RECONCILIATION",
+      "event": "Independent check of daily net-equity delta",
+      "required": [
+        "Realized/unrealized PnL, commissions, swaps and fees",
+        "no double count, complete time window and matching account",
+        "discrepancy provenance and corrective history"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "Tolerance and booking latency remain unapproved."
+    },
+    {
+      "id": "TD-08",
+      "domain": "DD_UNIT_HISTORY",
+      "event": "Unit price/HWM computation and restart",
+      "required": [
+        "Continuous unit balances and cashflow-priced issuance/redemption records",
+        "unit value, high-water and chronological valuations",
+        "replay-safe restore and source history completeness"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "No generic valuation freshness adopted for all DD computations."
+    },
+    {
+      "id": "TD-09",
+      "domain": "DD2_DD3_MONITOR_RELEASE_SAMPLE",
+      "event": "DD2/3 conditional monitoring-level release only",
+      "required": [
+        "DD observation freshness <= 15 seconds per Q128",
+        "Q129 origin/receipt timestamps",
+        "Q124/125 strict threshold and continuous valid 30-minute samples",
+        "Q130-Q147 clock validity and subsequent watchdog restrictions"
+      ],
+      "allowed_max_age_seconds": 15,
+      "reason": "Specific adopted DD2/3 monitoring-release bound; not a universal pricing/entry data default."
+    },
+    {
+      "id": "TD-10",
+      "domain": "STOP_STATE_AND_CLOCK",
+      "event": "Restart or loss of data continuity",
+      "required": [
+        "Independent durable stop reasons with generation/ordering and failure detection",
+        "clock continuity and Q147 monotonic elapsed-time evidence where applicable",
+        "account/position/order reconciliation before any stop-specific clearance"
+      ],
+      "allowed_max_age_seconds": null,
+      "reason": "Incomplete or unknown stop state denies new orders regardless of numeric timestamps."
+    }
+  ],
+  "numerical_examples": {
+    "currency": "JPY",
+    "explanation": "Pure arithmetic using assumed losses and account values. These are NOT broker SL calculations, adopted conversion/rounding or actual order permissions.",
+    "preorder": [
+      {
+        "id": "EX-RISK-01",
+        "equity": "100000",
+        "existing_estimated_loss": "360",
+        "pending_estimated_loss": "250",
+        "candidate_estimated_loss": "300",
+        "single_limit": "500",
+        "combined_limit": "1000",
+        "combined_exposure": "910",
+        "numeric_verdict": "WITHIN_NUMERIC_LIMITS_ONLY"
+      },
+      {
+        "id": "EX-RISK-02",
+        "equity": "100000",
+        "existing_estimated_loss": "360",
+        "pending_estimated_loss": "250",
+        "candidate_estimated_loss": "450",
+        "single_limit": "500",
+        "combined_limit": "1000",
+        "combined_exposure": "1060",
+        "numeric_verdict": "COMBINED_EXCEEDED"
+      },
+      {
+        "id": "EX-RISK-03",
+        "equity": "100000",
+        "existing_estimated_loss": "0",
+        "pending_estimated_loss": "0",
+        "candidate_estimated_loss": "501",
+        "single_limit": "500",
+        "combined_limit": "1000",
+        "combined_exposure": "501",
+        "numeric_verdict": "SINGLE_EXCEEDED"
+      },
+      {
+        "id": "EX-RISK-04",
+        "equity": "100000",
+        "existing_estimated_loss": "200",
+        "pending_estimated_loss": "300",
+        "candidate_estimated_loss": "500",
+        "single_limit": "500",
+        "combined_limit": "1000",
+        "combined_exposure": "1000",
+        "numeric_verdict": "AT_BOUNDARY_ONLY"
+      },
+      {
+        "id": "EX-RISK-05",
+        "equity": "80000",
+        "existing_estimated_loss": "200",
+        "pending_estimated_loss": "100",
+        "candidate_estimated_loss": "350",
+        "single_limit": "400",
+        "combined_limit": "800",
+        "combined_exposure": "650",
+        "numeric_verdict": "WITHIN_NUMERIC_LIMITS_ONLY"
+      }
+    ],
+    "daily": [
+      {
+        "id": "EX-DAY-01",
+        "day_open_equity": "100000",
+        "net_external_cash_inflow": "10000",
+        "current_equity": "108800",
+        "illustrative_loss": "1200",
+        "fixed_daily_limit": "1500",
+        "numeric_verdict": "BELOW_FIXED_LIMIT"
+      },
+      {
+        "id": "EX-DAY-02",
+        "day_open_equity": "100000",
+        "net_external_cash_inflow": "10000",
+        "current_equity": "108400",
+        "illustrative_loss": "1600",
+        "fixed_daily_limit": "1500",
+        "numeric_verdict": "LIMIT_EXCEEDED"
+      },
+      {
+        "id": "EX-DAY-03",
+        "day_open_equity": "100000",
+        "net_external_cash_inflow": "0",
+        "current_equity": "98500",
+        "illustrative_loss": "1500",
+        "fixed_daily_limit": "1500",
+        "numeric_verdict": "LIMIT_REACHED"
+      },
+      {
+        "id": "EX-DAY-04",
+        "day_open_equity": "100000",
+        "net_external_cash_inflow": "20000",
+        "current_equity": "119000",
+        "illustrative_loss": "1000",
+        "fixed_daily_limit": "1500",
+        "numeric_verdict": "BELOW_FIXED_LIMIT"
+      },
+      {
+        "id": "EX-DAY-05",
+        "day_open_equity": "100000",
+        "net_external_cash_inflow": "-10000",
+        "current_equity": "89000",
+        "illustrative_loss": "1000",
+        "fixed_daily_limit": "1500",
+        "numeric_verdict": "BELOW_FIXED_LIMIT"
+      }
+    ],
+    "unitized_drawdown": {
+      "assumption": "Illustration only: initial virtual unit quantity=1000, initial unit value and HWM=100 JPY; issue new units at illustrative pre-flow unit price of 96, no rounding/costs.",
+      "id": "EX-DD-01",
+      "initial_equity": "100000",
+      "initial_units": "1000",
+      "initial_unit_value": "100",
+      "initial_hwm": "100",
+      "predeposit_equity": "96000",
+      "predeposit_units": "1000",
+      "predeposit_unit_value": "96",
+      "predeposit_dd_pct": "4",
+      "external_deposit": "24000",
+      "units_issued": "250",
+      "postdeposit_equity": "120000",
+      "postdeposit_units": "1250",
+      "postdeposit_unit_value": "96",
+      "postdeposit_dd_pct": "4",
+      "illustrative_recovery_equity": "125000",
+      "illustrative_recovery_unit_value": "100",
+      "illustrative_recovery_dd_pct": "0",
+      "dd4_stop_latch_after_recovery": "REMAINS_UNTIL_EXPLICIT_HUMAN_CLEARANCE",
+      "caution": "The unit issuance/high-water details remain unapproved; the arithmetic is a demonstration of avoiding cashflow-induced false DD recovery."
+    },
+    "monitor_thresholds": [
+      {
+        "id": "EX-MON-01",
+        "dd_pct": "1.50",
+        "dd2_below_1_5": false,
+        "meaning": "At equality, strict release candidate not reached; 30-minute and safety conditions remain necessary even if below."
+      },
+      {
+        "id": "EX-MON-02",
+        "dd_pct": "1.49",
+        "dd2_below_1_5": true,
+        "meaning": "Below-threshold candidate only, not automatic immediate release."
+      },
+      {
+        "id": "EX-MON-03",
+        "dd_pct": "2.50",
+        "dd3_below_2_5": false,
+        "meaning": "At equality, strict release candidate not reached."
+      },
+      {
+        "id": "EX-MON-04",
+        "dd_pct": "2.49",
+        "dd3_below_2_5": true,
+        "meaning": "Below-threshold candidate only; Q125 continuity remains necessary."
+      }
+    ],
+    "new_york_day_boundaries": [
+      {
+        "id": "EX-TIME-EDT",
+        "ny_local": "2026-07-01T17:00:00",
+        "jst": "2026-07-02T06:00:00+09:00",
+        "reason": "EDT (UTC-04) is active in July."
+      },
+      {
+        "id": "EX-TIME-EST",
+        "ny_local": "2026-01-15T17:00:00",
+        "jst": "2026-01-16T07:00:00+09:00",
+        "reason": "EST (UTC-05) is active in January."
+      }
+    ]
+  },
+  "review_examples_are_authorizations": false,
+  "unresolved": [
+    "Actual market-data freshness ceilings for all non-DD-monitor-release domains remain unset; do not invent 15-second universal default.",
+    "Q116 cost/slippage/JPY conversions, lot rounding, position-and-pending snapshot concurrency and conflicting observations need formula and broker-specific verification.",
+    "Daily external-flow classification and exact corrections, profit offset, missing NY17 snapshots, weekend/holiday handling, fee double count and tolerance require user-approved detail.",
+    "Unit issue/redeem conventions, HWM restoration, zero/negative equity handling, precision and flow timestamp order require validated formal formula.",
+    "A mathematical result at/below limits is not authorization to order; independently reconcile broker state, Q121 latches, AI checks, event windows, approvals and PHASE-1 gate."
+  ],
+  "safety_status": {
+    "implementation_approved": false,
+    "human_safety_approval": false,
+    "owner_approved_for_safety": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "live_orders_allowed": false
+  }
+}
