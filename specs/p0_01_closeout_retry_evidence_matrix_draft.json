@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "document_kind": "P0_01_CLOSEOUT_RETRY_EVIDENCE_MATRIX_DRAFT_NOT_AN_ORDER_ENGINE",
+  "as_of": "2026-10-23",
+  "lifecycle_status": "DRAFT_REVIEW_REQUIRED",
+  "question_ids": [
+    "Q9",
+    "Q12",
+    "Q120",
+    "Q121",
+    "Q171",
+    "Q195",
+    "Q196",
+    "Q197",
+    "Q198",
+    "Q199"
+  ],
+  "requirement_ids": [
+    "FX-SAF-003",
+    "FX-SAF-005",
+    "FX-SAF-011",
+    "FX-SAF-013",
+    "FX-SAF-014",
+    "FX-SAF-015"
+  ],
+  "related_sources": [
+    "specs/safety_foundation.md",
+    "specs/p0_01_safety_consistency_crosswalk.json",
+    "specs/p0_01_stop_reason_clearance_matrix_draft.json",
+    "specs/source_excerpts/Q120.md",
+    "specs/source_excerpts/Q195.md",
+    "specs/source_excerpts/Q196.md",
+    "specs/source_excerpts/Q197.md",
+    "specs/source_excerpts/Q198.md",
+    "specs/source_excerpts/Q199.md"
+  ],
+  "purposes": [
+    "Separate a broker response from the final state of its order, fills and positions.",
+    "State the proof required BEFORE an automatic close-out retry can ever be considered under Q120.",
+    "Keep Q195-Q199 no-blind-resend rule and Q121 independent stop latches.",
+    "Generate offline hypothetical cases without issuing, simulating as real, or authorizing any broker order."
+  ],
+  "response_classes": [
+    {
+      "code": "RESPONSE_ACCEPTED",
+      "meaning": "Transport/API accepted or acknowledged; not proof of complete fill, closure or correct residual position.",
+      "safe_conclusion": "RECONCILE_FINAL_STATE_BEFORE_ANY_RETRY"
+    },
+    {
+      "code": "RESPONSE_REJECTED",
+      "meaning": "API explicitly rejected. Without trustworthy broker-order/position/history reconciliation this does not prove nonexecution.",
+      "safe_conclusion": "RECONCILE_FINAL_STATE_BEFORE_ANY_RETRY"
+    },
+    {
+      "code": "OUTCOME_UNKNOWN",
+      "meaning": "Timeout, loss of response, process crash, ambiguous broker code, uncertain send or log/DB discrepancy.",
+      "safe_conclusion": "NO_RETRY_OR_NEW_ORDERS_WHILE_UNRESOLVED"
+    }
+  ],
+  "durable_evidence_order": [
+    "Before side effects: Q195 logical-operation ID and per-attempt ID registered with Q196 uniqueness control; Q197 PREPARED intent committed successfully.",
+    "Immediately before external dispatch: Q198 DISPATCHING recorded and transaction commit confirmed; this records POSSIBILITY of sending, not that a send occurred.",
+    "On return or absence of response: Q199 response class recorded with attempt correlation if reliably known; accepted/rejected do not settle filled and position state. OUTCOME_UNKNOWN must never be treated as no execution.",
+    "Reconcile independent broker orders, executions/fills, open positions, pending/close orders, server-side SL and sufficiently complete history with local persistence for same account and logical close intent.",
+    "Recalculate outstanding quantity/side per position; detect late fills, partial fills, manual intervention, concurrent algorithms, inconsistent timestamps, duplicate or reversal risk.",
+    "Only if every required broker/local proof is complete, internally consistent, sufficiently fresh and retry eligibility is unambiguous may a separate approved policy CONSIDER a new close-out attempt; new UUID alone never suffices."
+  ],
+  "minimum_proofs_for_retry_consideration": [
+    {
+      "id": "EP-01",
+      "name": "CORRELATED_IDS",
+      "description": "Original logical intent ID and previous attempt ID as well as account, instrument, position ticket or unambiguous broker identity can be tracked without collision/ambiguity."
+    },
+    {
+      "id": "EP-02",
+      "name": "BROKER_EXECUTION_HISTORY",
+      "description": "Independent, authoritative broker-side order, deal/fill and pending order states cover the relevant attempt and its possible late effects."
+    },
+    {
+      "id": "EP-03",
+      "name": "CURRENT_POSITION_RECONCILIATION",
+      "description": "Fresh current position(s), quantities and sides agree with fills and are reconciled against the pre-attempt baseline."
+    },
+    {
+      "id": "EP-04",
+      "name": "NO_PENDING_DUPLICATE_OR_LATE_EXECUTION",
+      "description": "No unresolved outstanding close request, delayed response, pending fill or duplicated logical execution could overlap the next attempt."
+    },
+    {
+      "id": "EP-05",
+      "name": "RESIDUAL_AND_SIDE_KNOWN",
+      "description": "Any residual close quantity and trade side are positively identified, never inferred solely from a response code or local request amount; reversal/overclose risk ruled out."
+    },
+    {
+      "id": "EP-06",
+      "name": "SERVER_SL_AND_SAFETY_STATE",
+      "description": "Server-side SL status, other active stop reasons, position management and recovery state have been reconciled and preserved."
+    },
+    {
+      "id": "EP-07",
+      "name": "DB_AND_CLOCK_INTEGRITY",
+      "description": "Durable intent/attempt log and broker snapshot are complete, causal/time consistency and data freshness verified; crash/clock/restart anomalies cannot be misread as no execution."
+    },
+    {
+      "id": "EP-08",
+      "name": "POLICY_AND_OPERATIONAL_GATE",
+      "description": "Retry count, minimum interval, broker rejection category, market hours, allowed atomic transition, error-specific exceptions and operator escalation policy have been explicitly defined and later approved."
+    }
+  ],
+  "draft_review_outcomes": [
+    {
+      "id": "BLOCKED_UNKNOWN",
+      "kind": "SAFETY_REJECT",
+      "meaning": "Unknown or incomplete external effects, position/order state, identity, or durable persistence; maintain new-order and retry stop, alert and escalate under Q120."
+    },
+    {
+      "id": "BLOCKED_NOT_NEEDED",
+      "kind": "SAFETY_REJECT",
+      "meaning": "Independently verified all requested positions closed and no residual quantity; do not send a duplicate close attempt. Stop reasons remain separately latched."
+    },
+    {
+      "id": "ELIGIBLE_FOR_LATER_POLICY_CHECK",
+      "kind": "REVIEW_ONLY_NOT_ORDER_PERMISSION",
+      "meaning": "Verified residual quantity and no pending/late/duplicate/reversal risk; must still pass EP-08 and later approved broker-specific logic before any close attempt. This categorization is not an order or independent approval to retry."
+    },
+    {
+      "id": "BLOCKED_OTHER_STOP",
+      "kind": "SAFETY_REJECT",
+      "meaning": "A dependent infrastructure/approval safety gate blocks action; unknown state or a prohibited automatic restart cannot be overridden by retry eligibility."
+    }
+  ],
+  "synthetic_cases": [
+    {
+      "id": "RT-01",
+      "situation": "DISPATCHING is durable but process crashed before send and no broker history continuity proved",
+      "response": "OUTCOME_UNKNOWN",
+      "proofs_complete": false,
+      "expected": "BLOCKED_UNKNOWN",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-02",
+      "situation": "API returned RESPONSE_ACCEPTED but fill confirmation and residual positions unavailable",
+      "response": "RESPONSE_ACCEPTED",
+      "proofs_complete": false,
+      "expected": "BLOCKED_UNKNOWN",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-03",
+      "situation": "API returned RESPONSE_REJECTED but broker history/positions not independently verified",
+      "response": "RESPONSE_REJECTED",
+      "proofs_complete": false,
+      "expected": "BLOCKED_UNKNOWN",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-04",
+      "situation": "Broker confirms complete liquidation, no residual position or pending close request",
+      "response": "RESPONSE_ACCEPTED",
+      "proofs_complete": true,
+      "expected": "BLOCKED_NOT_NEEDED",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-05",
+      "situation": "Broker confirms failed close with residual exposure, complete order/fill/SL proof and no overlapping execution",
+      "response": "RESPONSE_REJECTED",
+      "proofs_complete": true,
+      "expected": "ELIGIBLE_FOR_LATER_POLICY_CHECK",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-06",
+      "situation": "Partial fill and remaining exact position reconciled with all pending-close and duplicate risks excluded",
+      "response": "RESPONSE_ACCEPTED",
+      "proofs_complete": true,
+      "expected": "ELIGIBLE_FOR_LATER_POLICY_CHECK",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-07",
+      "situation": "Partial fill known but remaining quantities or order history disagree",
+      "response": "OUTCOME_UNKNOWN",
+      "proofs_complete": false,
+      "expected": "BLOCKED_UNKNOWN",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-08",
+      "situation": "Broker response lost and original close may execute late after a new UUID",
+      "response": "OUTCOME_UNKNOWN",
+      "proofs_complete": false,
+      "expected": "BLOCKED_UNKNOWN",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-09",
+      "situation": "Fresh current position is zero but an unconfirmed pending close could create a reversal",
+      "response": "OUTCOME_UNKNOWN",
+      "proofs_complete": false,
+      "expected": "BLOCKED_UNKNOWN",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-10",
+      "situation": "Network isolation failure latch is unresolved even when position snapshot appears consistent",
+      "response": "RESPONSE_REJECTED",
+      "proofs_complete": false,
+      "expected": "BLOCKED_OTHER_STOP",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-11",
+      "situation": "Manual trade or second worker changed the position after the snapshot; stale data",
+      "response": "OUTCOME_UNKNOWN",
+      "proofs_complete": false,
+      "expected": "BLOCKED_UNKNOWN",
+      "automatic_retry_allowed": false
+    },
+    {
+      "id": "RT-12",
+      "situation": "Confirmed complete close after DD5%, but DD5 human-approval stop remains active",
+      "response": "RESPONSE_ACCEPTED",
+      "proofs_complete": true,
+      "expected": "BLOCKED_NOT_NEEDED",
+      "automatic_retry_allowed": false
+    }
+  ],
+  "non_implications": [
+    "No example represents a broker integration, automatic retransmission authorization or guaranteed idempotence/Exactly Once.",
+    "ELIGIBLE_FOR_LATER_POLICY_CHECK is an offline review category, not an order, automatic retry, trading gate unlock or approval.",
+    "Neither an API ACK nor REJECTED proves the final broker fill/position state by itself.",
+    "A complete close does not clear a daily-loss or DD5% stop; Q121 independent stop latches and separate human gates survive.",
+    "A fail-closed retry halt can leave an exposed position. Maintain feasible existing protective SL/management, urgent incident notification and human intervention, not unsafe duplicated trades."
+  ],
+  "unresolved_before_safety_implementation": [
+    "Rakuten MT4 broker-specific order identity, order/deal history completeness, partial fills, rejection codes and delayed executions; demonstrate real or demo semantics before policy finalization.",
+    "Broker-side server SL check and actions when no safe local control is possible, including outages, closed market and position overhang.",
+    "Minimum retry interval, maximum retry count, deduplication/idempotency proof, external manual interventions and concurrent algorithm locks.",
+    "Exact evidence freshness/time-sync windows, history lag, pagination, identifier mapping, restart/DB corruption handling and account consistency.",
+    "Who may authorize a recovered close-out, what approvals and incident escalation are needed, and how authorization is authenticated/revoked; do not infer a blanket human approval requirement absent from original.",
+    "Atomicity boundaries: SQLite transactions cannot be atomic with the broker; identify the single-claim safety boundary and crash-proof replay procedure.",
+    "Integration of real account/position state with Q116 risk review, Q120 Q121 stop conditions and Q195-Q199 persistence; separate independent demo/fault-injection acceptance required."
+  ],
+  "safety_status": {
+    "implementation_approved": false,
+    "human_safety_approval": false,
+    "owner_approved_for_safety": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "live_orders_allowed": false
+  }
+}
