@@ -1,0 +1,153 @@
+{
+  "schema_version": 2,
+  "kind": "MT4_MANUAL_SYMBOL_PROPERTIES_V2",
+  "source_type": "MT4_MARKET_WATCH_SPECIFICATION_MANUAL_ONLY",
+  "data_state": "UNVERIFIED_LOCAL_VALUES",
+  "instructions": "Version 2: keep observed numbers as decimal strings in properties; manually transcribe exact non-sensitive MT4 Specification labels into display_properties; spread_mode FLOATING means spread_points remains null unless a separate timestamped quote observation is independently validated. Never fill absent fields by guesswork; keep completed forms outside Git. No account identifiers, credentials, trades, screenshots or private metadata.",
+  "symbols": [
+    {
+      "symbol": "USD/JPY",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      },
+      "display_properties": {
+        "spread_mode": null,
+        "margin_currency": null,
+        "profit_calculation_mode": null,
+        "margin_calculation_mode": null,
+        "hedged_margin_display": null,
+        "margin_rate_display": null,
+        "trade_mode_display": null,
+        "execution_mode_display": null,
+        "gtc_mode_display": null,
+        "trading_hours_display": {
+          "sunday": null,
+          "monday": null,
+          "tuesday": null,
+          "wednesday": null,
+          "thursday": null,
+          "friday": null,
+          "saturday": null
+        }
+      }
+    },
+    {
+      "symbol": "EUR/JPY",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      },
+      "display_properties": {
+        "spread_mode": null,
+        "margin_currency": null,
+        "profit_calculation_mode": null,
+        "margin_calculation_mode": null,
+        "hedged_margin_display": null,
+        "margin_rate_display": null,
+        "trade_mode_display": null,
+        "execution_mode_display": null,
+        "gtc_mode_display": null,
+        "trading_hours_display": {
+          "sunday": null,
+          "monday": null,
+          "tuesday": null,
+          "wednesday": null,
+          "thursday": null,
+          "friday": null,
+          "saturday": null
+        }
+      }
+    },
+    {
+      "symbol": "GBP/USD",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      },
+      "display_properties": {
+        "spread_mode": null,
+        "margin_currency": null,
+        "profit_calculation_mode": null,
+        "margin_calculation_mode": null,
+        "hedged_margin_display": null,
+        "margin_rate_display": null,
+        "trade_mode_display": null,
+        "execution_mode_display": null,
+        "gtc_mode_display": null,
+        "trading_hours_display": {
+          "sunday": null,
+          "monday": null,
+          "tuesday": null,
+          "wednesday": null,
+          "thursday": null,
+          "friday": null,
+          "saturday": null
+        }
+      }
+    },
+    {
+      "symbol": "AUD/USD",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      },
+      "display_properties": {
+        "spread_mode": null,
+        "margin_currency": null,
+        "profit_calculation_mode": null,
+        "margin_calculation_mode": null,
+        "hedged_margin_display": null,
+        "margin_rate_display": null,
+        "trade_mode_display": null,
+        "execution_mode_display": null,
+        "gtc_mode_display": null,
+        "trading_hours_display": {
+          "sunday": null,
+          "monday": null,
+          "tuesday": null,
+          "wednesday": null,
+          "thursday": null,
+          "friday": null,
+          "saturday": null
+        }
+      }
+    }
+  ]
+}

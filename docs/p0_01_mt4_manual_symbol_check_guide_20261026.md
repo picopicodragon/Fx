@@ -62,3 +62,7 @@ python scripts/validate_mt4_manual_symbol_specs.py --input $reviewFile
 この資料は**入力済みデータを自動提出する運用にはしない**。次工程では非機密の観測結果の本人要約に基づき、契約単位・円換算・最小ロットが0.5%想定損失限度を満たし得るかを、独立した数学的/技術的テストで比較する。
 
 **安全状態不変：** `forward_trading_enabled=false`、`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`、PHASE-1 BLOCKED。**ライブ注文・注文の安全許可は与えない。**
+
+## 更新（2026-10-26）：実際の「仕様」表示に合わせたv2
+
+旧形式の確認票と本スクリプトは継続利用可能。MT4画面の「スプレッド：フローティング」は`spread_points`の数値ではなく、**v2の`display_properties.spread_mode="FLOATING"`**として記録する。`spread_points`は実測値がなければ`null`。画面の証拠金通貨・各種モード・取引時間などもv2で保存できる。すでに入力済みのv1ファイルを上書きせず、別名のv2ファイルを生成する。詳細：[v2の項目対応表と移行コマンド](p0_01_mt4_manual_symbol_v2_migration_20261026.md)。
