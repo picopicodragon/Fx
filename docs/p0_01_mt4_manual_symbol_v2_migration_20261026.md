@@ -137,3 +137,7 @@ python -m scripts.mt4_manual_symbol_v2 migrate --input $reviewFile --output $v2F
 改善後の`check`では、各通貨ペアについて`PENDING DISPLAY FIELDS`（表示欄に未入力がある場合）または`DISPLAY INPUT: ALL_RECORDED_NOT_VERIFIED`（表示欄の全項目に文字列等が入力されている場合）を別途表示する。後者は**入力欄が埋まっているという形式確認のみ**で、端末からの真正な読取や注文の安全認可ではない。
 
 取得できない5項目と、将来のMT4注文を出さない属性読取をどう安全に設計するかは、[MT4読取専用観測・検証計画](p0_01_mt4_readonly_observation_plan_20261026.md)を参照。本PRでは端末通信・自動EA実行を行わない。
+
+## 2026-10-26追記：土曜・日曜が未入力のままの場合
+
+現行の`null`は「画面確認・入力がまだない」という状態。MT4の週末のセッション欄に何も表示されなかったことを**実際に本人が確認した場合に限り**、その曜日の`trading_hours_display`へ`"NO_SESSION_DISPLAYED"`を入力できる。`check`は`WEEKEND DISPLAY`に、未記録なら`UNRECORDED`、無表示を本人が入力済みなら`NO_SESSION_DISPLAYED_UNVERIFIED`、その他の時間文字列なら`DISPLAY_TEXT_RECORDED_UNVERIFIED`を表示する。**画面上の無表示と取引不可は同義ではない。** 詳細：[MT4土日の表示状態](p0_01_mt4_weekend_display_states_20261026.md)。
