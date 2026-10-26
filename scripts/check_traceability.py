@@ -39,6 +39,16 @@ def audit(root: Path) -> list[str]:
     protected = {path for path in source_files if path.startswith(PROTECTED_PREFIXES)}
     covered: set[str] = set()
     seen: set[str] = set()
+    # A read-only MT4 probe is still protected code. Assign each source to
+    # the most-specific registered prefix, so a narrow, tested read-only group
+    # does not activate the broad, still-unimplemented trading-execution group.
+    # This does NOT change PROTECTED_PREFIXES or exempt any new MT4 files.
+    registered_prefixes = [
+        prefix
+        for candidate in groups if isinstance(candidate, dict)
+        for prefix in candidate.get("prefixes", [])
+        if isinstance(prefix, str)
+    ]
 
     for group in groups:
         if not isinstance(group, dict):
@@ -69,7 +79,17 @@ def audit(root: Path) -> list[str]:
             continue
         if status not in ("planned", "active"):
             errors.append(f"{ident}: status must be planned or active")
-        matching = [path for path in protected if path.startswith(tuple(prefixes))]
+        matching = [
+            path for path in protected
+            if any(
+                path.startswith(prefix)
+                and not any(
+                    path.startswith(more_specific) and len(more_specific) > len(prefix)
+                    for more_specific in registered_prefixes
+                )
+                for prefix in prefixes
+            )
+        ]
         covered.update(matching)
         if matching and status != "active":
             errors.append(f"{ident}: critical code exists but group is not active: {matching}")
