@@ -89,6 +89,18 @@ class ManualMt4SymbolCheckTests(unittest.TestCase):
         self.assertTrue(any("PUBLIC_RULE_DIFFERS" in f for f
                             in by_symbol["EUR/JPY"]["findings"]))
 
+    def test_lot_step_and_minimum_maximum_conflicts_require_review(self):
+        d = self.complete_synthetic()
+        self.put(d, "USD/JPY", "lot_step", "0.1")
+        self.put(d, "AUD/USD", "max_lot", "0.001")
+        result = compare_manual_snapshot(d, self.reference)
+        self.assertEqual(result["status"], "REVIEW_REQUIRED")
+        by_symbol = {p["symbol"]: p for p in result["pairs"]}
+        self.assertIn("lot_step:GREATER_THAN_MINIMUM",
+                      by_symbol["USD/JPY"]["findings"])
+        self.assertIn("max_lot:LESS_THAN_MINIMUM",
+                      by_symbol["AUD/USD"]["findings"])
+
     def test_missing_tickvalue_remains_pending_not_zero(self):
         d = self.complete_synthetic()
         self.put(d, "AUD/USD", "tick_value_deposit_currency", None)
