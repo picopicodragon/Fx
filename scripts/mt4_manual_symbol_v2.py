@@ -226,12 +226,19 @@ def check_v2(data: object, official: object) -> dict:
             if not valid_display_text(display["trading_hours_display"][day], 256):
                 findings.append("trading_hours_display." + day + ":INVALID_TEXT")
 
-        pending_row = (
-            any(display[field] is None for field in DISPLAY_FIELDS
-                if field != "trading_hours_display")
-            or any(display["trading_hours_display"][day] is None for day in DAYS)
+        missing_display_fields = sorted(
+            [field for field in DISPLAY_FIELDS
+             if field != "trading_hours_display" and display[field] is None]
+            + ["trading_hours_display." + day for day in DAYS
+               if display["trading_hours_display"][day] is None]
         )
+        pending_row = bool(missing_display_fields)
         pending = pending or pending_row
+        summary["missing_display_fields"] = missing_display_fields
+        summary["display_capture_status"] = (
+            "PENDING_DISPLAY_INPUT" if pending_row else
+            "ALL_DISPLAY_FIELDS_RECORDED_NOT_VERIFIED"
+        )
         summary["findings"] = sorted(set(findings))
         summary["missing_fields"] = list(missing)
         if findings:
@@ -292,6 +299,12 @@ def print_review(result: dict) -> None:
         print(f'{pair["symbol"]}: {pair["status"]}')
         if pair["missing_fields"]:
             print("  PENDING FIELDS: " + ", ".join(pair["missing_fields"]))
+        if "missing_display_fields" in pair:
+            if pair["missing_display_fields"]:
+                print("  PENDING DISPLAY FIELDS: " +
+                      ", ".join(pair["missing_display_fields"]))
+            else:
+                print("  DISPLAY INPUT: ALL_RECORDED_NOT_VERIFIED")
         if pair["findings"]:
             print("  REVIEW FIELDS: " + ", ".join(pair["findings"]))
     if result["findings"]:
