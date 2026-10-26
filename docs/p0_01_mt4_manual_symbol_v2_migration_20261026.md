@@ -108,9 +108,24 @@ python -m scripts.mt4_manual_symbol_v2 diagnose --input $reviewFile
 
 - `INPUT_FILE_MISSING` / `OUTPUT_DIRECTORY_MISSING`：指定パスと保管先の存在を確認
 - `INPUT_INVALID_JSON` / `INPUT_ENCODING_UNSUPPORTED`：JSONの構文や文字コードを確認
-- `V1_SCHEMA_OR_FIELD_TYPES` / `EXPECTED_DECIMAL_STRING_OR_NULL`：v1の11項目は`"3"`など文字列か`null`。JSON数値`3`や余計なキーは形式不整合。**勝手な修正/削除はせず元データを別途控えてから対応**
+- `V1_SCHEMA_OR_FIELD_TYPES` / `EXPECTED_DECIMAL_STRING_OR_NULL`：v1の11項目のうち、**JSON数値の整数・小数は正確な十進表現が保てる場合だけ**v2への移行時に文字列化する（例：JSON数値`3`→`"3"`、`0.01`→`"0.01"`）。`true`/`false`、非有限数、浮動小数点のPythonオブジェクト、配列/辞書や長すぎる数値などは拒否する。余計なキー・項目欠損も拒否する。**旧入力ファイルは変更・削除しない**。
 - `PUBLIC_RULE_DIFFERS`：端末上の契約数量やPOINTが公開ルールと一致しない。ブローカー条件/転記を確認し、矛盾を隠す変更はしない
 - `OUTPUT_ALREADY_EXISTS`：以前作成したv2が既に存在。**自動上書きしない**
 - `INPUT_INSIDE_GIT_OR_INVALID_PATH` / `OUTPUT_INSIDE_GIT_OR_SAME_AS_INPUT`：Git管理外に分離し、入力/出力に別のファイルを使用
 
 問題の判定コードだけを共有すれば、機密の口座情報、実際の価格、ファイル本文をGitHubへ送らずに対処できる。`diagnose`が`INCOMPLETE`でも、スキーマ・入力値に矛盾がなければ`migrate`を別途実行できる。旧v1の値は不変、別名v2のみ新規作成。
+
+## 2026-10-26補足：本人の実データで確認した12項目の型不一致
+
+`diagnose`結果では、4通貨ペアそれぞれの`digits`・`lot_size_base_units`・`stop_level_points`に**JSON数値型**が入力されていた。これは数値の正否とは別の**型の不一致**。旧確認票の説明が「数値は引用符を付ける」というルールだったが、端末画面の整数を自然にJSON数値として保存することは一般的な操作である。
+
+修正版は`migrate`と`diagnose`で、**元のJSONに保存された十進数字を精度を失わず文字列化したコピー**を内部生成する。整数`0`を空欄`null`や`false`と同一視しない。JSONの小数はPythonの2進浮動小数`float`へ変換せず`Decimal`で読み込み、不要な丸めをしない。元の`mt4_symbols_local.json`の生バイト列は変えない。変換された許可済みシンボル名・項目名は`INFO: EXACT_NUMERIC_JSON_VALUES_CONVERTIBLE`として通知するが、**実数値は出力しない**。
+
+公開取引ルール（1ロット100,000通貨など）との差があれば、型を直しても引き続き`REVIEW_REQUIRED`となり、**v2ファイルは作らない**。画面で未確認の内容は引き続き`null`でよい。
+
+```powershell
+python -m scripts.mt4_manual_symbol_v2 diagnose --input $reviewFile
+python -m scripts.mt4_manual_symbol_v2 migrate --input $reviewFile --output $v2File
+```
+
+`migrate`前に`Test-Path $v2File`で既存のv2の有無を確認する。**存在する場合は上書きしない**。失敗時は表示された固定の原因コードやフィールド名だけを確認し、元の入力ファイルを共有/アップロードしない。
