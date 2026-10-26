@@ -27,12 +27,14 @@ MT4が**インストールされていて、画面の確認が可能な状態に
 $reviewDir = Join-Path $env:USERPROFILE "Documents\FxLocalReview"
 New-Item -ItemType Directory -Force -Path $reviewDir | Out-Null
 $reviewFile = Join-Path $reviewDir "mt4_symbols_local.json"
-Copy-Item .\specs\p0_01_mt4_manual_symbol_template.json $reviewFile
+if (-not (Test-Path $reviewFile)) {
+    Copy-Item .\specs\p0_01_mt4_manual_symbol_template.json $reviewFile
+}
 notepad $reviewFile
 python scripts/validate_mt4_manual_symbol_specs.py --input $reviewFile
 ```
 
-`Copy-Item`で既存の観測ファイルを上書きしないこと。**既にファイルを作った場合はCopy-Itemをスキップ**し、既存の`$reviewFile`を利用する。
+既存の観測ファイルがある場合は、条件分岐により**上書きしない**。観測の再入力や更新は本人の意思によるものとする。
 
 本スクリプトはローカルファイルを読み取り、本人が入力した**数値を表示せずに**、`INCOMPLETE`/ `REVIEW_REQUIRED`/ `COMPARED_FIELDS_ONLY`と該当フィールド名だけを表示する。原本や口座情報をGitHubに転送せず、ブローカーに接続せず、ファイルを書き換えない。
 
