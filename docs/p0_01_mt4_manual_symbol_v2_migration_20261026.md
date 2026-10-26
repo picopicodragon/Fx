@@ -129,3 +129,11 @@ python -m scripts.mt4_manual_symbol_v2 migrate --input $reviewFile --output $v2F
 ```
 
 `migrate`前に`Test-Path $v2File`で既存のv2の有無を確認する。**存在する場合は上書きしない**。失敗時は表示された固定の原因コードやフィールド名だけを確認し、元の入力ファイルを共有/アップロードしない。
+
+## 2026-10-26追記：表示欄の入力状況と未取得API属性を分離
+
+4通貨ペアで`min_lot`、`lot_step`、`point_quote`、`tick_size_points`、`tick_value_deposit_currency`が未確認のままなら、引き続き`SUMMARY: INCOMPLETE`になる。MT4「仕様」に表示されない値を推測して埋めることを禁止する。
+
+改善後の`check`では、各通貨ペアについて`PENDING DISPLAY FIELDS`（表示欄に未入力がある場合）または`DISPLAY INPUT: ALL_RECORDED_NOT_VERIFIED`（表示欄の全項目に文字列等が入力されている場合）を別途表示する。後者は**入力欄が埋まっているという形式確認のみ**で、端末からの真正な読取や注文の安全認可ではない。
+
+取得できない5項目と、将来のMT4注文を出さない属性読取をどう安全に設計するかは、[MT4読取専用観測・検証計画](p0_01_mt4_readonly_observation_plan_20261026.md)を参照。本PRでは端末通信・自動EA実行を行わない。
