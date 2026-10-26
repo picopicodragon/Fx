@@ -94,7 +94,7 @@ v2初版では、元のv1の型違い・公開契約の不一致・既存の出�
 
 まずリポジトリルートで次を実行する（読み取り専用）。
 
-\`\`\`powershell
+```powershell
 $reviewDir = Join-Path $env:USERPROFILE "Documents\FxLocalReview"
 $reviewFile = Join-Path $reviewDir "mt4_symbols_local.json"
 $v2File = Join-Path $reviewDir "mt4_symbols_local.v2.json"
@@ -102,15 +102,15 @@ $v2File = Join-Path $reviewDir "mt4_symbols_local.v2.json"
 Test-Path $reviewFile
 Test-Path $v2File
 python -m scripts.mt4_manual_symbol_v2 diagnose --input $reviewFile
-\`\`\`
+```
 
-\`diagnose\`はファイルを作成・変更しない。\`INCOMPLETE\`はMT4画面にない項目が\`null\`のためで、移行そのものを禁止する理由ではない。\`REVIEW_REQUIRED\`は、以下のフィールド名や原因コードを本人が確認する。
+`diagnose`はファイルを作成・変更しない。`INCOMPLETE`はMT4画面にない項目が`null`のためで、移行そのものを禁止する理由ではない。`REVIEW_REQUIRED`は、以下のフィールド名や原因コードを本人が確認する。
 
-- \`INPUT_FILE_MISSING\` / \`OUTPUT_DIRECTORY_MISSING\`：指定パスと保管先の存在を確認
-- \`INPUT_INVALID_JSON\` / \`INPUT_ENCODING_UNSUPPORTED\`：JSONの構文や文字コードを確認
-- \`V1_SCHEMA_OR_FIELD_TYPES\` / \`EXPECTED_DECIMAL_STRING_OR_NULL\`：v1の11項目は\`"3"\`など文字列か\`null\`。JSON数値\`3\`や余計なキーは形式不整合。**勝手な修正/削除はせず元データを別途控えてから対応**
-- \`PUBLIC_RULE_DIFFERS\`：端末上の契約数量やPOINTが公開ルールと一致しない。ブローカー条件/転記を確認し、矛盾を隠す変更はしない
-- \`OUTPUT_ALREADY_EXISTS\`：以前作成したv2が既に存在。**自動上書きしない**
-- \`INPUT_INSIDE_GIT_OR_INVALID_PATH\` / \`OUTPUT_INSIDE_GIT_OR_SAME_AS_INPUT\`：Git管理外に分離し、入力/出力に別のファイルを使用
+- `INPUT_FILE_MISSING` / `OUTPUT_DIRECTORY_MISSING`：指定パスと保管先の存在を確認
+- `INPUT_INVALID_JSON` / `INPUT_ENCODING_UNSUPPORTED`：JSONの構文や文字コードを確認
+- `V1_SCHEMA_OR_FIELD_TYPES` / `EXPECTED_DECIMAL_STRING_OR_NULL`：v1の11項目は`"3"`など文字列か`null`。JSON数値`3`や余計なキーは形式不整合。**勝手な修正/削除はせず元データを別途控えてから対応**
+- `PUBLIC_RULE_DIFFERS`：端末上の契約数量やPOINTが公開ルールと一致しない。ブローカー条件/転記を確認し、矛盾を隠す変更はしない
+- `OUTPUT_ALREADY_EXISTS`：以前作成したv2が既に存在。**自動上書きしない**
+- `INPUT_INSIDE_GIT_OR_INVALID_PATH` / `OUTPUT_INSIDE_GIT_OR_SAME_AS_INPUT`：Git管理外に分離し、入力/出力に別のファイルを使用
 
-問題の判定コードだけを共有すれば、機密の口座情報、実際の価格、ファイル本文をGitHubへ送らずに対処できる。\`diagnose\`が\`INCOMPLETE\`でも、スキーマ・入力値に矛盾がなければ\`migrate\`を別途実行できる。旧v1の値は不変、別名v2のみ新規作成。
+問題の判定コードだけを共有すれば、機密の口座情報、実際の価格、ファイル本文をGitHubへ送らずに対処できる。`diagnose`が`INCOMPLETE`でも、スキーマ・入力値に矛盾がなければ`migrate`を別途実行できる。旧v1の値は不変、別名v2のみ新規作成。
