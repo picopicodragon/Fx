@@ -158,7 +158,7 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
 
     def test_pre_execution_evidence_does_not_approve_mql4_runtime(self):
         record = self.plan["permissions"]["pre_execution_review"]
-        self.assertEqual(record["status"], "PARTIAL_LOCAL_OFFLINE_REVIEW_ONLY")
+        self.assertEqual(record["status"], "VISUAL_DEMO_SYMBOL_NAMES_MATCH_BUT_EXECUTION_REVIEW_BLOCKED")
         self.assertEqual(record["python_unittest_count"], 409)
         self.assertEqual(record["python_unittest_status"], "OWNER_REPORTED_OK")
         self.assertEqual(record["static_source_audit_status"], "OWNER_REPORTED_PASS")
@@ -177,6 +177,39 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
         self.assertFalse(self.plan["permissions"]["broker_queried"])
         self.assertFalse(self.plan["safety_gates"]["forward_trading_enabled"])
         self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
+
+    def test_owner_demo_symbols_match_but_environment_is_unverified(self):
+        record = self.plan["permissions"]["pre_execution_review"]
+        self.assertEqual(record["symbol_names_reported"], {
+            "USDJPY": "USDJPY", "EURJPY": "EURJPY",
+            "GBPUSD": "GBPUSD", "AUDUSD": "AUDUSD",
+        })
+        self.assertEqual(
+            record["symbol_mapping_evidence"],
+            "OWNER_REPORTED_MARKET_WATCH_NAMES_NOT_RUNTIME_ATTESTATION",
+        )
+        self.assertIs(record["terminal_symbol_mapping_checked"], True)
+        self.assertEqual(record["account_type_reported"], "DEMO")
+        self.assertEqual(
+            record["account_type_evidence"],
+            "OWNER_REPORTED_VISUAL_ONLY_NO_ACCOUNT_ID",
+        )
+        self.assertIs(record["terminal_account_type_checked"], True)
+        self.assertEqual(record["connection_display"], "UNKNOWN")
+        self.assertEqual(record["ea_script_running"], "UNKNOWN")
+        self.assertEqual(record["local_mt4_log_handling"], "PENDING")
+        for key in ("connection_display_checked", "ea_script_running_checked",
+                    "terminal_log_handling_checked", "terminal_execution_allowed"):
+            self.assertIs(record[key], False)
+        for key in ("terminal_deployed", "terminal_execution_approved",
+                    "broker_queried", "orders_generated"):
+            self.assertIs(self.plan["permissions"][key], False)
+        for status in self.plan["symbol_status"]:
+            self.assertEqual(status["runtime_observation_status"], "PENDING")
+            self.assertFalse(status["production_usable"])
+            self.assertTrue(all(v is None for v in status["verified_values"].values()))
+        self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
+        self.assertIs(self.plan["safety_gates"]["forward_trading_enabled"], False)
 
     def test_v2_blank_display_fields_are_reported_separately(self):
         data = copy.deepcopy(self.template)
