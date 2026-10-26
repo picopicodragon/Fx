@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "kind": "MT4_MANUAL_SYMBOL_PROPERTIES_DRAFT",
+  "source_type": "MT4_MARKET_WATCH_SPECIFICATION_MANUAL_ONLY",
+  "data_state": "UNVERIFIED_LOCAL_VALUES",
+  "instructions": "Copy outside the Git repository and enter only values visibly present in MT4 Market Watch -> Specification. Leave unavailable values null. No account IDs, personal data, screenshots, credentials or trade history. Never commit completed file.",
+  "symbols": [
+    {
+      "symbol": "USD/JPY",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      }
+    },
+    {
+      "symbol": "EUR/JPY",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      }
+    },
+    {
+      "symbol": "GBP/USD",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      }
+    },
+    {
+      "symbol": "AUD/USD",
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      }
+    }
+  ]
+}
