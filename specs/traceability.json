@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Q109: safety-critical source/test traceability, all planned until implementation",
+  "description": "Q109: source/test coverage by most-specific protected prefix. active means source + registered tests exist, not a safety approval. Trading-order components remain planned.",
   "groups": [
     {
       "group_id": "FX-RISK",
@@ -82,6 +82,23 @@
       ],
       "tests": [],
       "status": "planned"
+    },
+    {
+      "group_id": "FX-MT4-READONLY-OBSERVATION",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109"
+      ],
+      "prefixes": [
+        "mt4/read_only/"
+      ],
+      "tests": [
+        "tests/test_p0_01_mql4_readonly_source_audit.py",
+        "tests/test_p0_01_mt4_readonly_observation_plan.py"
+      ],
+      "status": "active"
     }
   ]
 }
