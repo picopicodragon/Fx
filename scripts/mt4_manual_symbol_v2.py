@@ -179,16 +179,18 @@ def check_v2(data: object, official: object) -> dict:
             if not valid_display_text(display["trading_hours_display"][day], 256):
                 findings.append("trading_hours_display." + day + ":INVALID_TEXT")
 
-        if any(display[field] is None for field in DISPLAY_FIELDS if field != "trading_hours_display"):
-            pending = True
-        if any(display["trading_hours_display"][day] is None for day in DAYS):
-            pending = True
+        pending_row = (
+            any(display[field] is None for field in DISPLAY_FIELDS
+                if field != "trading_hours_display")
+            or any(display["trading_hours_display"][day] is None for day in DAYS)
+        )
+        pending = pending or pending_row
         summary["findings"] = sorted(set(findings))
         summary["missing_fields"] = list(missing)
         if findings:
             summary["status"] = "REVIEW_REQUIRED"
             needs_review = True
-        elif missing or pending:
+        elif missing or pending_row:
             # v2 manual screen transcription is not a complete API attestation.
             summary["status"] = "INCOMPLETE"
     if needs_review:
