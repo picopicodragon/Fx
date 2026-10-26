@@ -148,6 +148,52 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
             self.assertIn("tick_value_deposit_currency", pair["missing_fields"])
             self.assertNotIn("APPROVED", str(pair))
 
+    def test_unentered_weekend_does_not_claim_market_is_closed(self):
+        record = check_v2(copy.deepcopy(self.template), self.official)
+        for pair in record["pairs"]:
+            self.assertEqual(pair["weekend_session_display_status"], {
+                "saturday": "UNRECORDED", "sunday": "UNRECORDED"
+            })
+            self.assertEqual(pair["status"], "INCOMPLETE")
+            self.assertIn("trading_hours_display.saturday",
+                          pair["missing_display_fields"])
+
+    def test_explicitly_observed_no_weekend_session_stays_unverified(self):
+        data = copy.deepcopy(self.template)
+        for item in data["symbols"]:
+            hours = item["display_properties"]["trading_hours_display"]
+            hours["saturday"] = "NO_SESSION_DISPLAYED"
+            hours["sunday"] = "NO_SESSION_DISPLAYED"
+        record = check_v2(data, self.official)
+        self.assertEqual(record["status"], "INCOMPLETE")
+        for pair in record["pairs"]:
+            self.assertEqual(pair["weekend_session_display_status"], {
+                "saturday": "NO_SESSION_DISPLAYED_UNVERIFIED",
+                "sunday": "NO_SESSION_DISPLAYED_UNVERIFIED"
+            })
+            self.assertNotIn("trading_hours_display.saturday",
+                             pair["missing_display_fields"])
+            self.assertIn("tick_value_deposit_currency", pair["missing_fields"])
+
+    def test_weekend_raw_text_is_preserved_but_never_echoed(self):
+        data = copy.deepcopy(self.template)
+        data["symbols"][0]["display_properties"]["trading_hours_display"]["saturday"] = (
+            "呼値(00:00-24:00) / 取引(01:00-23:55)"
+        )
+        data["symbols"][0]["display_properties"]["trading_hours_display"]["sunday"] = (
+            "PRIVATE-DO-NOT-ECHO"
+        )
+        before = copy.deepcopy(data)
+        checked = check_v2(data, self.official)
+        self.assertEqual(data, before)
+        self.assertEqual(
+            checked["pairs"][0]["weekend_session_display_status"],
+            {"saturday": "DISPLAY_TEXT_RECORDED_UNVERIFIED",
+             "sunday": "DISPLAY_TEXT_RECORDED_UNVERIFIED"}
+        )
+        self.assertNotIn("PRIVATE-DO-NOT-ECHO", str(checked))
+        self.assertNotIn("01:00-23:55", str(checked))
+
     def test_v2_cli_prints_only_missing_labels_or_completion_not_entered_text(self):
         data = copy.deepcopy(self.template)
         data["symbols"][0]["display_properties"]["profit_calculation_mode"] = (
