@@ -13,6 +13,7 @@ from scripts.check_reconciliation import check_reconciliation
 from scripts.mt4_manual_symbol_v2 import (
     DAYS, DISPLAY_FIELDS, DISPLAY_TEXT_FIELDS, EXPECTED_PAIRS, OFFICIAL, ROOT,
     V2_TEMPLATE, check_v2, migrate_to_v2, run, safe_location,
+    read_private_json, normalize_v1_numeric_tokens, exact_json_number_as_string,
 )
 
 V1_TEMPLATE = ROOT / "specs/p0_01_mt4_manual_symbol_template.json"
@@ -269,11 +270,11 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
             self.assertIn("SUMMARY: INCOMPLETE", buf.getvalue())
             self.assertEqual(source.read_bytes(), before)
 
-    def test_diagnose_wrong_numeric_json_type_reports_known_field(self):
+    def test_diagnose_boolean_json_type_reports_known_field(self):
         with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
             source = Path(folder) / "v1.json"
             v1 = self.legacy_doc()
-            v1["symbols"][0]["properties"]["digits"] = 3
+            v1["symbols"][0]["properties"]["digits"] = True
             source.write_text(json.dumps(v1), encoding="utf-8")
             destination = Path(folder) / "v2.json"
             buf = io.StringIO()
@@ -331,6 +332,93 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
                 self.assertEqual(code, 1)
                 self.assertIn(expected, buf.getvalue())
                 self.assertNotIn("never-print", buf.getvalue())
+
+    def test_numeric_json_integers_in_all_four_pairs_migrate_losslessly(self):
+        # User-observed Windows case: digits/lot_size/stop_level stored as
+        # JSON numbers, although v1 originally demanded decimal strings.
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-v1-numeric-") as folder:
+            v1_file = Path(folder) / "mt4_symbols_local.json"
+            v2_file = Path(folder) / "mt4_symbols_local.v2.json"
+            v1 = self.legacy_doc()
+            for row in v1["symbols"]:
+                row["properties"]["digits"] = (
+                    3 if row["symbol"].endswith("/JPY") else 5
+                )
+                row["properties"]["lot_size_base_units"] = 100000
+                row["properties"]["stop_level_points"] = 0
+            v1_file.write_text(json.dumps(v1, ensure_ascii=False), encoding="utf-8")
+            original = v1_file.read_bytes()
+            diagnostic = io.StringIO()
+            with contextlib.redirect_stdout(diagnostic):
+                diagnose_code = run(["diagnose", "--input", str(v1_file)])
+            self.assertEqual(diagnose_code, 2)
+            self.assertIn("EXACT_NUMERIC_JSON_VALUES_CONVERTIBLE",
+                          diagnostic.getvalue())
+            self.assertEqual(diagnostic.getvalue().count("CONVERTIBLE FIELD:"), 12)
+            result = io.StringIO()
+            with contextlib.redirect_stdout(result):
+                code = run(["migrate", "--input", str(v1_file),
+                            "--output", str(v2_file)])
+            self.assertEqual(code, 0, result.getvalue())
+            self.assertEqual(original, v1_file.read_bytes())
+            v2 = load(v2_file)
+            for row in v2["symbols"]:
+                expected_digits = "3" if row["symbol"].endswith("/JPY") else "5"
+                self.assertEqual(row["properties"]["digits"], expected_digits)
+                self.assertEqual(row["properties"]["lot_size_base_units"],
+                                 "100000")
+                self.assertEqual(row["properties"]["stop_level_points"], "0")
+                self.assertIsNone(row["display_properties"]["spread_mode"])
+
+    def test_fractional_json_tokens_are_parsed_without_binary_float(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-v1-exact-") as folder:
+            source = Path(folder) / "v1.json"
+            d = self.legacy_doc()
+            d["symbols"][0]["properties"]["min_lot"] = "sentinel-min"
+            d["symbols"][0]["properties"]["lot_step"] = "sentinel-step"
+            txt = json.dumps(d).replace('"sentinel-min"', '0.01').replace(
+                '"sentinel-step"', '0.0100000000000000000000'
+            )
+            source.write_text(txt, encoding="utf-8")
+            parsed = read_private_json(source)
+            before = source.read_bytes()
+            normalized, changed = normalize_v1_numeric_tokens(parsed)
+            props = normalized["symbols"][0]["properties"]
+            self.assertEqual(props["min_lot"], "0.01")
+            self.assertEqual(props["lot_step"], "0.0100000000000000000000")
+            self.assertNotIsInstance(parsed["symbols"][0]["properties"]["min_lot"],
+                                     float)
+            self.assertEqual(len(changed), 2)
+            self.assertEqual(before, source.read_bytes())
+            self.assertEqual(
+                migrate_to_v2(parsed, self.v2)["symbols"][0]["properties"]["lot_step"],
+                "0.0100000000000000000000"
+            )
+
+    def test_json_bool_and_python_float_are_not_converted(self):
+        self.assertIsNone(exact_json_number_as_string(True))
+        self.assertIsNone(exact_json_number_as_string(False))
+        self.assertIsNone(exact_json_number_as_string(0.01))
+        v1 = self.legacy_doc()
+        v1["symbols"][0]["properties"]["digits"] = True
+        with self.assertRaises(ValueError):
+            migrate_to_v2(v1, self.v2)
+
+    def test_numeric_contract_mismatch_is_still_rejected_after_conversion(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-v1-mismatch-") as folder:
+            source = Path(folder) / "v1.json"
+            dest = Path(folder) / "v2.json"
+            v1 = self.legacy_doc()
+            v1["symbols"][0]["properties"]["lot_size_base_units"] = 10000
+            source.write_text(json.dumps(v1), encoding="utf-8")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                result = run(["migrate", "--input", str(source),
+                              "--output", str(dest)])
+            self.assertEqual(result, 1)
+            self.assertIn("lot_size_base_units:PUBLIC_RULE_DIFFERS", out.getvalue())
+            self.assertNotIn("10000", out.getvalue())
+            self.assertFalse(dest.exists())
 
     def test_original_safety_registries_remain_blocked(self):
         reg = load(ROOT / "specs/reconciliation_registry.json")
