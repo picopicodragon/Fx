@@ -270,11 +270,11 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
             self.assertIn("SUMMARY: INCOMPLETE", buf.getvalue())
             self.assertEqual(source.read_bytes(), before)
 
-    def test_diagnose_wrong_numeric_json_type_reports_known_field(self):
+    def test_diagnose_boolean_json_type_reports_known_field(self):
         with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
             source = Path(folder) / "v1.json"
             v1 = self.legacy_doc()
-            v1["symbols"][0]["properties"]["digits"] = 3
+            v1["symbols"][0]["properties"]["digits"] = True
             source.write_text(json.dumps(v1), encoding="utf-8")
             destination = Path(folder) / "v2.json"
             buf = io.StringIO()
