@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "kind": "P0_01_MT4_READONLY_OBSERVATION_PLAN_NO_BROKER_EXECUTION",
+  "checked_on": "2026-10-26",
+  "status": "DESIGN_ONLY_ALL_RUNTIME_VALUES_PENDING",
+  "scope": "Map five remaining v2 broker symbol fields to MQL4 read-only property APIs and define acceptance/denial evidence; no MT4 or broker integration implemented.",
+  "evidence_urls": {
+    "mql4_symbol_constants": "https://docs.mql4.com/constants/environment_state/marketinfoconstants",
+    "mql4_marketinfo": "https://docs.mql4.com/marketinformation/marketinfo",
+    "mql4_quote_sessions": "https://docs.mql4.com/marketinformation/symbolinfosessionquote",
+    "mql4_trade_sessions": "https://docs.mql4.com/marketinformation/symbolinfosessiontrade",
+    "rakuten_mt4_public_rules": "https://www.rakuten-sec.co.jp/web/fx/mt4/rule.html"
+  },
+  "pending_runtime_fields": [
+    {
+      "v2_field": "min_lot",
+      "official_mql4_property": "MODE_MINLOT",
+      "value_unit": "lots",
+      "constraint": "finite_positive_decimal",
+      "data_scope": "ACCOUNT_SYMBOL",
+      "requirement": "FORM-01",
+      "note": "Public 0.01 example cannot replace live terminal evidence."
+    },
+    {
+      "v2_field": "lot_step",
+      "official_mql4_property": "MODE_LOTSTEP",
+      "value_unit": "lots_step",
+      "constraint": "finite_positive_decimal",
+      "data_scope": "ACCOUNT_SYMBOL",
+      "requirement": "FORM-01",
+      "note": "Never round up to minimum or to nearest step solely to place order."
+    },
+    {
+      "v2_field": "point_quote",
+      "official_mql4_property": "MODE_POINT",
+      "value_unit": "quote_currency_price_per_base_unit",
+      "constraint": "finite_positive_decimal",
+      "data_scope": "ACCOUNT_SYMBOL",
+      "requirement": "FORM-01",
+      "note": "Quote price point differs from tick size expressed in points. Compare MODE_DIGITS and public point rule."
+    },
+    {
+      "v2_field": "tick_size_points",
+      "official_mql4_property": "MODE_TICKSIZE",
+      "value_unit": "points_per_tick",
+      "constraint": "finite_positive_decimal",
+      "data_scope": "ACCOUNT_SYMBOL",
+      "requirement": "FORM-01",
+      "note": "For tick price increment multiply point_quote by tick_size_points; do not assume tick_size_points=1."
+    },
+    {
+      "v2_field": "tick_value_deposit_currency",
+      "official_mql4_property": "MODE_TICKVALUE",
+      "value_unit": "deposit_currency_per_tick_at_reported_contract_basis",
+      "constraint": "finite_positive_decimal",
+      "data_scope": "ACCOUNT_SYMBOL_DYNAMIC_CONVERSION_SENSITIVE",
+      "requirement": "FORM-01/FORM-03",
+      "note": "MQL4 docs describe value in account deposit currency; exact symbol/lot basis and independently observed broker results must be corroborated before risk formulas."
+    }
+  ],
+  "crosscheck_fields": [
+    {
+      "property": "MODE_LOTSIZE",
+      "v2_field": "lot_size_base_units",
+      "reason": "Cross-check public lot size 100000 base units with connected account"
+    },
+    {
+      "property": "MODE_DIGITS",
+      "v2_field": "digits",
+      "reason": "Independent quote digit cross-check"
+    },
+    {
+      "property": "MODE_STOPLEVEL",
+      "v2_field": "stop_level_points",
+      "reason": "Zero does not disprove dynamic/floating stop restrictions"
+    },
+    {
+      "property": "MODE_FREEZELEVEL",
+      "v2_field": "freeze_level_points",
+      "reason": "Modification and close restrictions"
+    },
+    {
+      "property": "MODE_BID",
+      "v2_field": null,
+      "reason": "Dynamic quote, cannot be stored as static contract data"
+    },
+    {
+      "property": "MODE_ASK",
+      "v2_field": null,
+      "reason": "Dynamic quote, cannot be stored as static contract data"
+    },
+    {
+      "property": "MODE_TIME",
+      "v2_field": null,
+      "reason": "Last tick server time; NOT local receipt timestamp or time sync proof"
+    },
+    {
+      "property": "MODE_SPREAD",
+      "v2_field": "spread_points",
+      "reason": "Variable market observation not contract constant: remains null for FLOATING without observation timestamp and distinct quote context"
+    },
+    {
+      "property": "SYMBOL_SPREAD_FLOAT",
+      "v2_field": "display_properties.spread_mode",
+      "reason": "MQL4 SymbolInfoInteger flag, not a numeric spread"
+    },
+    {
+      "property": "SYMBOL_CURRENCY_MARGIN",
+      "v2_field": "display_properties.margin_currency",
+      "reason": "Margin denomination must be distinguished from account deposit currency and quote profit currency"
+    },
+    {
+      "property": "AccountCurrency()",
+      "v2_field": null,
+      "reason": "Deposit denomination is account scope; account identifiers must not be collected"
+    }
+  ],
+  "symbol_status": [
+    {
+      "symbol": "USD/JPY",
+      "runtime_observation_status": "PENDING",
+      "verified_values": {
+        "min_lot": null,
+        "lot_step": null,
+        "point_quote": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null
+      },
+      "production_usable": false
+    },
+    {
+      "symbol": "EUR/JPY",
+      "runtime_observation_status": "PENDING",
+      "verified_values": {
+        "min_lot": null,
+        "lot_step": null,
+        "point_quote": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null
+      },
+      "production_usable": false
+    },
+    {
+      "symbol": "GBP/USD",
+      "runtime_observation_status": "PENDING",
+      "verified_values": {
+        "min_lot": null,
+        "lot_step": null,
+        "point_quote": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null
+      },
+      "production_usable": false
+    },
+    {
+      "symbol": "AUD/USD",
+      "runtime_observation_status": "PENDING",
+      "verified_values": {
+        "min_lot": null,
+        "lot_step": null,
+        "point_quote": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null
+      },
+      "production_usable": false
+    }
+  ],
+  "session_design": {
+    "quote_api": "SymbolInfoSessionQuote",
+    "trade_api": "SymbolInfoSessionTrade",
+    "time_unit": "seconds_from_00_00_for_session_time",
+    "weekdays": [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday"
+    ],
+    "allow_multiple_sessions": true,
+    "manual_v2_capture": "raw_text_only",
+    "must_validate_server_timezone_separately": true,
+    "special_time": "24:00 is a display-time boundary, not a timestamp; do not assume UTC or JST",
+    "note": "Quote session availability does not prove trade session availability. Neither alone authorizes an order."
+  },
+  "provenance_requirements": [
+    "symbol_identity_and_suffix_exactly_from_terminal",
+    "account_type_and_deposit_currency_validated_without_storing_account_id",
+    "origin_read_method_manual_or_individually_approved_readonly",
+    "server_tick_timestamp_recorded_separately_from_local_observation_instant",
+    "source_errors_or_missing_fields_marked_UNVERIFIED",
+    "independent_cross_check_of_tickvalue_and_ticksize_against_conservative_quote_currency_profit",
+    "NY17_DST_and_market_session_timezones_not_inferred",
+    "actual_per_order_trading_permission_not_enabled_by_symbol_observation"
+  ],
+  "fail_closed_cases": [
+    {
+      "id": "RC-01",
+      "kind": "MISSING_MINLOT",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-02",
+      "kind": "UNKNOWN_LOTSTEP",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-03",
+      "kind": "MISSING_POINT",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-04",
+      "kind": "TICK_SIZE_ZERO_OR_UNRELIABLE",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-05",
+      "kind": "TICK_VALUE_ZERO_OR_UNRELIABLE",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-06",
+      "kind": "NO_DEPOSIT_CURRENCY_EVIDENCE",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-07",
+      "kind": "PUBLIC_CONTRACT_VS_SERVER_DISAGREE",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-08",
+      "kind": "STALE_OR_CROSS_EPOCH_QUOTE",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-09",
+      "kind": "TRADE_SESSION_UNKNOWN_OR_CLOSED",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-10",
+      "kind": "UNKNOWN_SERVER_TIMEZONE_OR_DST",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-11",
+      "kind": "MT4_NOT_CONNECTED_OR_NO_SAFE_READ",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    },
+    {
+      "id": "RC-12",
+      "kind": "STOPLEVEL_ZERO_WITH_FLOATING_RESTRICTIONS",
+      "decision": "KEEP_UNVERIFIED_NO_ORDER"
+    }
+  ],
+  "permissions": {
+    "terminal_readonly_code_implemented": false,
+    "terminal_connected": false,
+    "broker_queried": false,
+    "orders_generated": false,
+    "manual_v2_input_value_exported": false,
+    "read_only_terminal_execution_requires_separate_owner_security_review": true
+  },
+  "safety_gates": {
+    "formula_01_approved": false,
+    "formula_03_approved": false,
+    "implementation_approved": false,
+    "owner_approved_for_safety": false,
+    "human_safety_approval": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "risk_limits_unchanged": true
+  }
+}
