@@ -50,3 +50,6 @@ local_candidates/
 
 # Unmatched decisions review contains unredacted user and assistant source text
 unmatched_review.json
+
+# MQL4 compiled artifacts are not source or evidence
+*.ex4
