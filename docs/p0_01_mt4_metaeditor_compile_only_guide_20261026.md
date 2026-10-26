@@ -67,3 +67,15 @@ Test-Path $compiled
 - [MetaQuotes MetaEditorのファイルメニュー](https://www.metatrader5.com/en/metaeditor/help/main_menu/main_menu_file)
 - [MQL4コンパイルエラー](https://docs.mql4.com/constants/errorswarnings/errorscompile)
 - [MQL4 OnStartのスクリプト実行定義](https://docs.mql4.com/basis/function/events)
+
+## 2026-10-26：本人によるMetaEditor F7コンパイル結果（申告・未独立検証）
+
+本人からチャットで`0 errors, 0 warnings, 291 msec elapsed`と直接報告を受領した。これは**当該Windows環境のMetaEditorがエラーなし・警告なしでコンパイルを完了したという本人報告**であり、GitHub CIがMQL4をコンパイルしたわけではない。
+
+- 結果の出典：本人の直接報告（2026-10-26）
+- エラー数：0、警告数：0、コンパイル時間：291 ms
+- 今回GitHubに取り込まない証拠：EX4バイナリ、個人の端末ログ、画面写真、ローカル口座情報
+- 追加で確認できていない情報：MetaEditorのビルド番号、ソースハッシュの一致、EX4のファイル現物・起動可否
+- **MT4での実行、実口座5属性の読取、v2への値転記、実売買、FORM-01/03の安全実装承認はいずれも未実施・未承認**
+
+ソースの修正は不要と見込まれるが、**コンパイルが通ることと実行時の安全性は別**。次の実行段階へ進むには、MQL4が情報をローカルのExpertsログに記録する点、銘柄名のマッピング、端末の状態、口座識別情報を収集しないことを再確認し、本人から実行に限定した別の明示承認を得る。

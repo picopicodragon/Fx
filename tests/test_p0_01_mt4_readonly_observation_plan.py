@@ -48,7 +48,7 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
 
     def test_all_four_accounts_have_no_fake_terminal_attestation(self):
         self.assertEqual(
-            self.plan["status"], "READONLY_MQL4_SOURCE_CREATED_UNCOMPILED_ALL_RUNTIME_VALUES_PENDING"
+            self.plan["status"], "READONLY_MQL4_COMPILATION_OWNER_REPORTED_ALL_RUNTIME_VALUES_PENDING"
         )
         statuses = self.plan["symbol_status"]
         self.assertEqual({p["symbol"] for p in statuses}, set(EXPECTED_PAIRS))
@@ -104,8 +104,8 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
         self.assertIs(self.plan["permissions"]["terminal_readonly_source_created"], True)
         self.assertIs(self.plan["permissions"]["one_shot_source_default_disabled"], True)
         self.assertIs(self.plan["permissions"]["read_only_terminal_execution_requires_separate_owner_security_review"], True)
-        for key in ("terminal_connected", "terminal_compiled",
-                    "terminal_deployed", "terminal_execution_approved",
+        for key in ("terminal_connected", "terminal_deployed",
+                    "terminal_execution_approved",
                     "broker_queried", "orders_generated", "manual_v2_input_value_exported"):
             self.assertIs(self.plan["permissions"][key], False)
         for key in ("formula_01_approved", "formula_03_approved",
@@ -117,20 +117,44 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
             check_reconciliation(load(ROOT / "specs/reconciliation_registry.json")), []
         )
 
-    def test_compile_only_approval_does_not_enable_terminal_execution(self):
+    def test_owner_reported_compile_does_not_enable_terminal_execution(self):
         permission = self.plan["permissions"]
         self.assertIs(permission["terminal_compilation_approved"], True)
         self.assertEqual(
             permission["terminal_compile_approval_scope"],
             "METAEDITOR_F7_ONLY_NO_TERMINAL_EXECUTION_2026_10_26",
         )
-        self.assertIs(permission["terminal_compiled"], False)
+        self.assertIs(permission["terminal_compiled"], True)
         self.assertIs(permission["terminal_deployed"], False)
         self.assertIs(permission["terminal_execution_approved"], False)
         self.assertIs(permission["broker_queried"], False)
         self.assertIs(permission["orders_generated"], False)
         self.assertIs(self.plan["safety_gates"]["forward_trading_enabled"], False)
         self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
+
+    def test_owner_compiler_report_is_not_independent_attestation(self):
+        permissions = self.plan["permissions"]
+        self.assertEqual(
+            self.plan["status"],
+            "READONLY_MQL4_COMPILATION_OWNER_REPORTED_ALL_RUNTIME_VALUES_PENDING"
+        )
+        self.assertEqual(
+            permissions["terminal_compilation_evidence_status"],
+            "OWNER_REPORTED_RESULT_NOT_INDEPENDENTLY_VERIFIED"
+        )
+        report = permissions["terminal_compilation_owner_report"]
+        self.assertEqual(report["source"], "DIRECT_OWNER_CHAT_REPORT")
+        self.assertEqual(report["errors"], 0)
+        self.assertEqual(report["warnings"], 0)
+        self.assertEqual(report["elapsed_ms"], 291)
+        self.assertFalse(report["compiled_ex4_attested"])
+        self.assertFalse(report["source_hash_attested"])
+        self.assertFalse(report["compiler_version_attested"])
+        self.assertFalse(permissions["terminal_execution_approved"])
+        for symbol in self.plan["symbol_status"]:
+            self.assertEqual(symbol["runtime_observation_status"], "PENDING")
+            self.assertFalse(symbol["production_usable"])
+            self.assertTrue(all(v is None for v in symbol["verified_values"].values()))
 
     def test_v2_blank_display_fields_are_reported_separately(self):
         data = copy.deepcopy(self.template)
