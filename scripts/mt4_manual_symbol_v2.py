@@ -9,6 +9,7 @@ import argparse
 import copy
 import json
 import re
+from decimal import Decimal
 from pathlib import Path
 
 # Support both:
@@ -19,12 +20,12 @@ from pathlib import Path
 if __package__:
     from .validate_mt4_manual_symbol_specs import (
         EXPECTED_PAIRS, EXPECTED_ROOT_KEYS, OFFICIAL, ROOT, TEMPLATE_FIELDS,
-        compare_manual_snapshot,
+        compare_manual_snapshot, safe_decimal,
     )
 else:
     from validate_mt4_manual_symbol_specs import (
         EXPECTED_PAIRS, EXPECTED_ROOT_KEYS, OFFICIAL, ROOT, TEMPLATE_FIELDS,
-        compare_manual_snapshot,
+        compare_manual_snapshot, safe_decimal,
     )
 
 V2_TEMPLATE = ROOT / "specs/p0_01_mt4_manual_symbol_template_v2.json"
@@ -53,7 +54,41 @@ def read_private_json(path: Path) -> object:
         raise ValueError("Input must be outside Git checkout")
     if path.stat().st_size > MAX_INPUT_BYTES:
         raise ValueError("Input file size exceeds the local review limit")
-    return json.loads(path.read_text(encoding="utf-8-sig"))
+    # JSON fractional numbers must be parsed exactly, never through binary float.
+    return json.loads(path.read_text(encoding="utf-8-sig"), parse_float=Decimal)
+
+
+
+def exact_json_number_as_string(value: object) -> str | None:
+    """Only losslessly parsed JSON numbers: integer or Decimal (never float/bool)."""
+    if type(value) is int or type(value) is Decimal:
+        candidate = str(value)
+        if len(candidate) <= 48 and safe_decimal(candidate) is not None:
+            return candidate
+    return None
+
+
+def normalize_v1_numeric_tokens(data: object) -> tuple[object, list[str]]:
+    """Return an independent copy. Convert only known properties with exact values."""
+    copied = copy.deepcopy(data)
+    converted = []
+    if not isinstance(copied, dict) or not isinstance(copied.get("symbols"), list):
+        return copied, converted
+    for row in copied["symbols"]:
+        if (not isinstance(row, dict)
+            or not isinstance(row.get("symbol"), str)
+            or row["symbol"] not in EXPECTED_PAIRS
+            or not isinstance(row.get("properties"), dict)):
+            continue
+        for field in TEMPLATE_FIELDS:
+            props = row["properties"]
+            if field not in props:
+                continue
+            numeric = exact_json_number_as_string(props[field])
+            if numeric is not None:
+                props[field] = numeric
+                converted.append(f'{row["symbol"]}:{field}')
+    return copied, sorted(converted)
 
 
 def v1_structure_ok(data: object) -> bool:
@@ -82,7 +117,8 @@ def v1_structure_ok(data: object) -> bool:
 
 
 def migrate_to_v2(v1: object, template: object) -> dict:
-    """Copy all old values and keep every new observation null, without guessing."""
+    """Copy old values without altering their numeric meaning; no float guesses."""
+    v1, _ = normalize_v1_numeric_tokens(v1)
     if not v1_structure_ok(v1):
         raise ValueError("Original format or values not recognized; no migration performed")
     if not isinstance(template, dict) or template.get("schema_version") != 2:
@@ -241,7 +277,9 @@ def inspect_v1_structure(data: object) -> list[str]:
         if set(props) != set(TEMPLATE_FIELDS):
             problems.append(f"{name}:V1_FIELD_SET")
         for key in TEMPLATE_FIELDS:
-            if key in props and props[key] is not None and not isinstance(props[key], str):
+            if (key in props and props[key] is not None
+                and not isinstance(props[key], str)
+                and exact_json_number_as_string(props[key]) is None):
                 problems.append(f"{name}:{key}:EXPECTED_DECIMAL_STRING_OR_NULL")
     if len(set(names)) != 4 or set(names) != set(EXPECTED_PAIRS):
         return ["V1_SYMBOL_SET"]
@@ -317,9 +355,15 @@ def run(argv: list[str] | None = None) -> int:
                 print("  REVIEW FIELD: " + issue)
             print("Original file unchanged; v2 not created.")
             return 1
+        normalized, converted_fields = normalize_v1_numeric_tokens(data)
+        if converted_fields:
+            print("INFO: EXACT_NUMERIC_JSON_VALUES_CONVERTIBLE")
+            for name in converted_fields:
+                print("  CONVERTIBLE FIELD: " + name)
+            print("  NOTE: Existing v1 file will not be edited.")
         try:
             official = json.loads(OFFICIAL.read_text(encoding="utf-8"))
-            result = compare_manual_snapshot(data, official)
+            result = compare_manual_snapshot(normalized, official)
         except (OSError, ValueError, TypeError, KeyError, UnicodeError):
             print("REVIEW_REQUIRED: PUBLIC_REFERENCE_READ_OR_FORMAT_ERROR")
             return 1
@@ -333,7 +377,7 @@ def run(argv: list[str] | None = None) -> int:
             return 1
         try:
             template = json.loads(V2_TEMPLATE.read_text(encoding="utf-8"))
-            converted = migrate_to_v2(data, template)
+            converted = migrate_to_v2(normalized, template)
         except (OSError, ValueError, TypeError, KeyError, UnicodeError):
             print("REVIEW_REQUIRED: V2_TEMPLATE_OR_CONVERSION_ERROR")
             return 1
