@@ -290,7 +290,7 @@
       "compiler_version_attested": false
     },
     "pre_execution_review": {
-      "status": "VISUAL_DEMO_SYMBOL_NAMES_MATCH_BUT_EXECUTION_REVIEW_BLOCKED",
+      "status": "OWNER_REPORT_DEMO_CONNECTED_LIKE_MACD_SAMPLE_PRESENT_LOG_PENDING_EXECUTION_BLOCKED",
       "owner_reports_date": "2026-10-26",
       "python_unittest_count": 409,
       "python_unittest_status": "OWNER_REPORTED_OK",
@@ -305,7 +305,7 @@
       "terminal_account_type_checked": true,
       "terminal_log_handling_checked": false,
       "terminal_execution_allowed": false,
-      "note": "Owner reported 4 exact Market Watch symbol names and demo account type. Connection display, existing EA/script execution and local log privacy handling remain unresolved. No live data read, MT4 script run or orders; never upload local terminal logs/account information.",
+      "note": "Owner saw demo account and exact 4 symbol names, connection indicator looked connected, MACD Sample was present. Presence does not verify attachment, trade permissions, running status or order exposure. EA interference and local log privacy are pending; no terminal/script interaction, real MarketInfo reads or trading approval.",
       "owner_visual_report_date": "2026-10-26",
       "symbol_names_reported": {
         "USDJPY": "USDJPY",
@@ -316,11 +316,18 @@
       "symbol_mapping_evidence": "OWNER_REPORTED_MARKET_WATCH_NAMES_NOT_RUNTIME_ATTESTATION",
       "account_type_reported": "DEMO",
       "account_type_evidence": "OWNER_REPORTED_VISUAL_ONLY_NO_ACCOUNT_ID",
-      "connection_display": "UNKNOWN",
-      "ea_script_running": "UNKNOWN",
+      "connection_display": "CONNECTED_LIKE",
+      "ea_script_running": "EXISTS",
       "local_mt4_log_handling": "PENDING",
-      "connection_display_checked": false,
-      "ea_script_running_checked": false
+      "connection_display_checked": true,
+      "ea_script_running_checked": true,
+      "ea_script_name": "MACD Sample",
+      "ea_presence_evidence": "OWNER_REPORTED_VISUAL_PRESENCE_NOT_EXECUTION_PROOF",
+      "ea_attached_to_chart_verified": false,
+      "ea_order_permission_verified": false,
+      "ea_current_activity_verified": false,
+      "open_positions_or_pending_orders_checked": false,
+      "existing_ea_interference_review": "PENDING"
     }
   },
   "safety_gates": {
