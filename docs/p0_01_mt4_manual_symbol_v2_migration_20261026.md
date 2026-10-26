@@ -39,18 +39,26 @@ $reviewDir = Join-Path $env:USERPROFILE "Documents\FxLocalReview"
 $reviewFile = Join-Path $reviewDir "mt4_symbols_local.json"
 $v2File = Join-Path $reviewDir "mt4_symbols_local.v2.json"
 
-python scripts/mt4_manual_symbol_v2.py migrate --input $reviewFile --output $v2File
+python -m scripts.mt4_manual_symbol_v2 migrate --input $reviewFile --output $v2File
 ```
 
 `mt4_symbols_local.json`は読み取り専用で**一切変更しない**。出力が既存の場合、別ファイルであっても上書きせずエラー終了する。入力JSONが想定外の形式/値であれば`REVIEW_REQUIRED`として、v2ファイルを生成せず元のままにする。**v1とv2の個人観測値をGitHubへコミットしない。**
 
 元のv1に`"spread_points": "フローティング"`がある場合、これは数値フィールドとして不正なので**先にv1をローカルで明示的に`null`へ修正**し、移行後に`display_properties.spread_mode`へ`"FLOATING"`を入力する（旧値のバックアップを個人の管理下で保持）。
 
+### Windowsで `ModuleNotFoundError: No module named 'scripts'` が出る場合
+
+v2初版の`python scripts/mt4_manual_symbol_v2.py migrate ...`は、Windowsで直接起動すると内部の`from scripts... import`に失敗する不具合があった。原因は`python <ファイルパス>`と`python -m <パッケージ名>`でPythonのモジュール検索開始位置が異なるためである。
+
+**Fxリポジトリのルート**で`python -m scripts.mt4_manual_symbol_v2 migrate ...`を使用する。修正版では従来の直接起動方法でも同じ処理を行えるよう調整し、両方式のCLI起動・実際のオフライン移行をWindows/Linuxの自動テストで検査する。単に`sys.path`へ任意フォルダーを追加したり、ユーザーのPython設定を変更したりする必要はない。
+
+このImportErrorは移行処理の開始前に発生するため、元のv1入力データは書き換わっていない。既存のv2出力がある場合は**絶対に上書きせず**、どの段階で生成されたか本人が確認する。
+
 ## 3. v2に未入力の画面表示だけを補う
 
 ```powershell
 notepad $v2File
-python scripts/mt4_manual_symbol_v2.py check --input $v2File
+python -m scripts.mt4_manual_symbol_v2 check --input $v2File
 ```
 
 すべての数値は浮動小数型ではなくJSONの文字列（例`"100000"`）とする。追加の表示項目は原文の文字列でよい。日曜～土曜の時間表示は各キーに分ける。存在しない情報を`0`、`"UNKNOWN"`、既存ルールの推定値に置き換えず`null`にする。例えばスプレッド欄が**フローティング**とだけ表示されるペアには：
