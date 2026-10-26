@@ -11,10 +11,21 @@ import json
 import re
 from pathlib import Path
 
-from scripts.validate_mt4_manual_symbol_specs import (
-    EXPECTED_PAIRS, EXPECTED_ROOT_KEYS, OFFICIAL, ROOT, TEMPLATE_FIELDS,
-    compare_manual_snapshot,
-)
+# Support both:
+#   python -m scripts.mt4_manual_symbol_v2 ...
+#   python scripts/mt4_manual_symbol_v2.py ...
+# The latter adds scripts/ rather than the repository root to sys.path.
+# Avoid modifying sys.path or catching unrelated ModuleNotFoundError exceptions.
+if __package__:
+    from .validate_mt4_manual_symbol_specs import (
+        EXPECTED_PAIRS, EXPECTED_ROOT_KEYS, OFFICIAL, ROOT, TEMPLATE_FIELDS,
+        compare_manual_snapshot,
+    )
+else:
+    from validate_mt4_manual_symbol_specs import (
+        EXPECTED_PAIRS, EXPECTED_ROOT_KEYS, OFFICIAL, ROOT, TEMPLATE_FIELDS,
+        compare_manual_snapshot,
+    )
 
 V2_TEMPLATE = ROOT / "specs/p0_01_mt4_manual_symbol_template_v2.json"
 DAYS = ("sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday")
