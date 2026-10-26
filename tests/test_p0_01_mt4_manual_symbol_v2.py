@@ -257,6 +257,81 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
             self.assertFalse(path.exists())
             self.assertIn("Git-external", out.getvalue())
 
+    def test_diagnose_incomplete_old_file_without_printing_values(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            source.write_text(json.dumps(self.legacy_doc()), encoding="utf-8")
+            before = source.read_bytes()
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["diagnose", "--input", str(source)])
+            self.assertEqual(code, 2)
+            self.assertIn("SUMMARY: INCOMPLETE", buf.getvalue())
+            self.assertEqual(source.read_bytes(), before)
+
+    def test_diagnose_wrong_numeric_json_type_reports_known_field(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            v1 = self.legacy_doc()
+            v1["symbols"][0]["properties"]["digits"] = 3
+            source.write_text(json.dumps(v1), encoding="utf-8")
+            destination = Path(folder) / "v2.json"
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["migrate", "--input", str(source),
+                            "--output", str(destination)])
+            self.assertEqual(code, 1)
+            self.assertIn("USD/JPY:digits:EXPECTED_DECIMAL_STRING_OR_NULL",
+                          buf.getvalue())
+            self.assertFalse(destination.exists())
+
+    def test_migrate_wrong_public_value_reports_field_not_raw_value(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            v1 = self.legacy_doc()
+            v1["symbols"][0]["properties"]["lot_size_base_units"] = "123456789"
+            source.write_text(json.dumps(v1), encoding="utf-8")
+            destination = Path(folder) / "v2.json"
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["migrate", "--input", str(source),
+                            "--output", str(destination)])
+            self.assertEqual(code, 1)
+            self.assertIn("lot_size_base_units:PUBLIC_RULE_DIFFERS", buf.getvalue())
+            self.assertNotIn("123456789", buf.getvalue())
+            self.assertFalse(destination.exists())
+
+    def test_explicit_output_exists_cause_and_source_unchanged(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            destination = Path(folder) / "v2.json"
+            source.write_text(json.dumps(self.legacy_doc()), encoding="utf-8")
+            destination.write_text('{"placeholder":"do not overwrite"}', encoding="utf-8")
+            old_source = source.read_bytes()
+            old_output = destination.read_bytes()
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["migrate", "--input", str(source),
+                            "--output", str(destination)])
+            self.assertEqual(code, 1)
+            self.assertIn("OUTPUT_ALREADY_EXISTS", buf.getvalue())
+            self.assertEqual(source.read_bytes(), old_source)
+            self.assertEqual(destination.read_bytes(), old_output)
+
+    def test_malformed_json_and_missing_input_have_distinct_safe_errors(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            bad = Path(folder) / "bad.json"
+            bad.write_text('{"some_private_value":"never-print",', encoding="utf-8")
+            absent = Path(folder) / "absent.json"
+            for path, expected in ((bad, "INPUT_INVALID_JSON"),
+                                   (absent, "INPUT_FILE_MISSING")):
+                buf = io.StringIO()
+                with contextlib.redirect_stdout(buf):
+                    code = run(["diagnose", "--input", str(path)])
+                self.assertEqual(code, 1)
+                self.assertIn(expected, buf.getvalue())
+                self.assertNotIn("never-print", buf.getvalue())
+
     def test_original_safety_registries_remain_blocked(self):
         reg = load(ROOT / "specs/reconciliation_registry.json")
         self.assertEqual(check_reconciliation(reg), [])
