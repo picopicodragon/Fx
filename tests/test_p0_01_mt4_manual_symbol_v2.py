@@ -3,6 +3,8 @@ import contextlib
 import copy
 import io
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -205,6 +207,42 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
             self.assertEqual(code, 2)
             self.assertIn("SUMMARY: INCOMPLETE", buf.getvalue())
             self.assertNotIn("PRIVATE-SYNTHETIC-MARKER", buf.getvalue())
+
+    def test_direct_script_entrypoint_migrates_and_checks_offline(self):
+        # Regression: python scripts/mt4_manual_symbol_v2.py must not fail
+        # importing the sibling validator from Windows (or Linux) script mode.
+        self._check_subprocess_entrypoint([
+            sys.executable, str(ROOT / "scripts/mt4_manual_symbol_v2.py")
+        ])
+
+    def test_package_module_entrypoint_migrates_and_checks_offline(self):
+        self._check_subprocess_entrypoint([
+            sys.executable, "-m", "scripts.mt4_manual_symbol_v2"
+        ])
+
+    def _check_subprocess_entrypoint(self, executable):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-entrypoint-") as tmp:
+            source = Path(tmp) / "input.v1.json"
+            destination = Path(tmp) / "output.v2.json"
+            source.write_text(json.dumps(self.legacy_doc()), encoding="utf-8")
+            original_bytes = source.read_bytes()
+            result = subprocess.run(
+                [*executable, "migrate", "--input", str(source),
+                 "--output", str(destination)],
+                cwd=ROOT, capture_output=True, text=True, timeout=20,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertEqual(load(destination)["schema_version"], 2)
+            self.assertEqual(source.read_bytes(), original_bytes)
+            check = subprocess.run(
+                [*executable, "check", "--input", str(destination)],
+                cwd=ROOT, capture_output=True, text=True, timeout=20,
+                check=False,
+            )
+            self.assertEqual(check.returncode, 2, check.stderr + check.stdout)
+            self.assertIn("SUMMARY: INCOMPLETE", check.stdout)
+            self.assertEqual(source.read_bytes(), original_bytes)
 
     def test_source_or_destination_inside_git_is_refused(self):
         self.assertFalse(safe_location(V1_TEMPLATE))
