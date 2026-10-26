@@ -56,3 +56,7 @@ python -m scripts.mt4_manual_symbol_v2 check --input $v2File
 今後は各シンボルの5数値項目の`PENDING FIELDS`と、手動表示項目の`PENDING DISPLAY FIELDS`（未入力時）または`DISPLAY INPUT: ALL_RECORDED_NOT_VERIFIED`（入力欄すべて記録済み）が分かれて出力される。後者は本人がMT4画面の正確さを証明したものではない。
 
 `FORM-01/03`は未決、`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`、`forward_trading_enabled=false`、PHASE-1 BLOCKED。
+
+## 2026-10-26追補：本人がMQL4ソース作成のみを承認
+
+上記「本PRはMT4読取プログラムを作成しない」は**当時のPR #95の作業範囲**を記述したもの。後続で本人が**4通貨ペア5属性の読取専用MQL4ソース作成のみ**を明示承認したため、別PRで`mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4`を追加した。端末実行・MetaEditorコンパイル・Market Watchへのシンボル追加等の許可ではない。現在の操作可能な範囲、実行停止ガード、未検証事項は[ソースレビュー手順](p0_01_mt4_mql4_source_review_20261026.md)を参照。実端末の5数値観測値は全て保留、PHASE-1 BLOCKED。

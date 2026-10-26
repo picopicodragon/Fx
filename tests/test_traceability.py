@@ -52,6 +52,70 @@ class TraceabilityTests(unittest.TestCase):
         self.write_registry()
         self.assertEqual(audit(self.root), [])
 
+    def test_specific_readonly_group_does_not_activate_trade_group(self):
+        test = self.root / "tests" / "test_probe.py"
+        test.parent.mkdir()
+        test.write_text("import unittest\n", encoding="utf-8")
+        source = self.root / "mt4" / "read_only" / "probe.mq4"
+        source.parent.mkdir(parents=True)
+        source.write_text("// synthetic only\n", encoding="utf-8")
+        self.registry["groups"].append({
+            "group_id": "FX-ORDER-SL", "spec_ids": ["Q26"],
+            "prefixes": ["mt4/"], "tests": [], "status": "planned"
+        })
+        self.registry["groups"].append({
+            "group_id": "FX-MT4-READONLY", "spec_ids": ["Q109"],
+            "prefixes": ["mt4/read_only/"],
+            "tests": ["tests/test_probe.py"], "status": "active"
+        })
+        self.write_registry()
+        self.assertEqual(audit(self.root), [])
+
+    def test_new_order_mql4_under_broad_mt4_still_blocked(self):
+        test = self.root / "tests" / "test_probe.py"
+        test.parent.mkdir()
+        test.write_text("import unittest\n", encoding="utf-8")
+        readonly = self.root / "mt4" / "read_only" / "probe.mq4"
+        readonly.parent.mkdir(parents=True)
+        readonly.write_text("// synthetic only\n", encoding="utf-8")
+        order = self.root / "mt4" / "orders" / "send.mq4"
+        order.parent.mkdir(parents=True)
+        order.write_text("// synthetic only\n", encoding="utf-8")
+        self.registry["groups"].append({
+            "group_id": "FX-ORDER-SL", "spec_ids": ["Q26"],
+            "prefixes": ["mt4/"], "tests": [], "status": "planned"
+        })
+        self.registry["groups"].append({
+            "group_id": "FX-MT4-READONLY", "spec_ids": ["Q109"],
+            "prefixes": ["mt4/read_only/"],
+            "tests": ["tests/test_probe.py"], "status": "active"
+        })
+        self.write_registry()
+        errors = audit(self.root)
+        self.assertTrue(errors)
+        self.assertIn("FX-ORDER-SL: critical code exists but group is not active",
+                      "\n".join(errors))
+
+    def test_readonly_subgroup_without_test_or_active_registration_fails(self):
+        source = self.root / "mt4" / "read_only" / "probe.mq4"
+        source.parent.mkdir(parents=True)
+        source.write_text("// synthetic only\n", encoding="utf-8")
+        self.registry["groups"].append({
+            "group_id": "FX-ORDER-SL", "spec_ids": ["Q26"],
+            "prefixes": ["mt4/"], "tests": [], "status": "planned"
+        })
+        self.registry["groups"].append({
+            "group_id": "FX-MT4-READONLY", "spec_ids": ["Q109"],
+            "prefixes": ["mt4/read_only/"],
+            "tests": [], "status": "planned"
+        })
+        self.write_registry()
+        errors = audit(self.root)
+        self.assertIn("FX-MT4-READONLY: critical code exists but group is not active",
+                      "\n".join(errors))
+        self.assertIn("FX-MT4-READONLY: missing tests for critical code",
+                      "\n".join(errors))
+
     def test_unregistered_critical_code_is_rejected(self):
         path = self.root / "mt4" / "executor.mq4"
         path.parent.mkdir()

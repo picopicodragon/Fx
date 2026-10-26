@@ -48,7 +48,7 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
 
     def test_all_four_accounts_have_no_fake_terminal_attestation(self):
         self.assertEqual(
-            self.plan["status"], "DESIGN_ONLY_ALL_RUNTIME_VALUES_PENDING"
+            self.plan["status"], "READONLY_MQL4_SOURCE_CREATED_UNCOMPILED_ALL_RUNTIME_VALUES_PENDING"
         )
         statuses = self.plan["symbol_status"]
         self.assertEqual({p["symbol"] for p in statuses}, set(EXPECTED_PAIRS))
@@ -100,7 +100,12 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
                          {f"RC-{i:02d}" for i in range(1, 13)})
         self.assertTrue(all(x["decision"] == "KEEP_UNVERIFIED_NO_ORDER"
                             for x in reasons))
-        for key in ("terminal_readonly_code_implemented", "terminal_connected",
+        self.assertIs(self.plan["permissions"]["terminal_readonly_code_implemented"], True)
+        self.assertIs(self.plan["permissions"]["terminal_readonly_source_created"], True)
+        self.assertIs(self.plan["permissions"]["one_shot_source_default_disabled"], True)
+        self.assertIs(self.plan["permissions"]["read_only_terminal_execution_requires_separate_owner_security_review"], True)
+        for key in ("terminal_connected", "terminal_compiled",
+                    "terminal_deployed", "terminal_execution_approved",
                     "broker_queried", "orders_generated", "manual_v2_input_value_exported"):
             self.assertIs(self.plan["permissions"][key], False)
         for key in ("formula_01_approved", "formula_03_approved",

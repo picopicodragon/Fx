@@ -2,8 +2,8 @@
   "schema_version": 1,
   "kind": "P0_01_MT4_READONLY_OBSERVATION_PLAN_NO_BROKER_EXECUTION",
   "checked_on": "2026-10-26",
-  "status": "DESIGN_ONLY_ALL_RUNTIME_VALUES_PENDING",
-  "scope": "Map five remaining v2 broker symbol fields to MQL4 read-only property APIs and define acceptance/denial evidence; no MT4 or broker integration implemented.",
+  "status": "READONLY_MQL4_SOURCE_CREATED_UNCOMPILED_ALL_RUNTIME_VALUES_PENDING",
+  "scope": "Owner authorized source creation only on 2026-10-26. MQL4 script source and offline audits now exist, but MetaEditor compile, copying, deployment, execution and real broker observations remain separately unauthorized/unverified.",
   "evidence_urls": {
     "mql4_symbol_constants": "https://docs.mql4.com/constants/environment_state/marketinfoconstants",
     "mql4_marketinfo": "https://docs.mql4.com/marketinformation/marketinfo",
@@ -257,12 +257,21 @@
     }
   ],
   "permissions": {
-    "terminal_readonly_code_implemented": false,
+    "terminal_readonly_code_implemented": true,
     "terminal_connected": false,
     "broker_queried": false,
     "orders_generated": false,
     "manual_v2_input_value_exported": false,
-    "read_only_terminal_execution_requires_separate_owner_security_review": true
+    "read_only_terminal_execution_requires_separate_owner_security_review": true,
+    "terminal_readonly_source_created": true,
+    "terminal_readonly_source_path": "mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4",
+    "terminal_compiled": false,
+    "terminal_deployed": false,
+    "terminal_execution_approved": false,
+    "one_shot_source_default_disabled": true,
+    "output_sink": "MT4_LOCAL_EXPERTS_LOG_ONLY_IF_SEPARATELY_APPROVED_AND_EXECUTED",
+    "static_audit_script": "scripts/audit_mt4_readonly_source.py",
+    "static_audit_not_compiler": true
   },
   "safety_gates": {
     "formula_01_approved": false,
