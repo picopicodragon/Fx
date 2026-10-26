@@ -493,3 +493,9 @@ python -m unittest discover -s tests -p "test*.py"
 ```
 
 Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタイムゾーンデータを使用する。CIはLinux Python 3.12に加えてWindows Python 3.13で全テストを実行。詳細：[Windows zoneinfo修正手順](docs/windows_zoneinfo_tzdata_fix_20261023.md)。これは実注文・安全仕様の承認や稼働状態を変更しない。
+
+## MT4銘柄仕様の確認票 v2（2026-10-26）
+
+楽天MT4「気配値→仕様」にある**変動スプレッド**、証拠金通貨、計算モード、執行/GTC、曜日別取引時間を区別して記録するv2確認票を追加。旧形式`mt4_symbols_local.json`を変更せず`mt4_symbols_local.v2.json`をGit管理外に別名作成するオフライン移行を用意。手順：[MT4確認票v2への安全な移行](docs/p0_01_mt4_manual_symbol_v2_migration_20261026.md)。
+
+`python scripts/mt4_manual_symbol_v2.py migrate --input <ローカル旧ファイル> --output <別名ローカルv2ファイル>` によって移行。既存ファイルは上書きせず、データ不整合/未確認を取引許可とみなさない。MT4への実接続・発注は行わない。
