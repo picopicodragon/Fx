@@ -8,9 +8,9 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-try:
+if __package__:
     from .audit_mt4_readonly_source import SOURCE, ROOT, audit_mql4_readonly
-except ImportError:
+else:
     from audit_mt4_readonly_source import SOURCE, ROOT, audit_mql4_readonly
 
 MQ4_NAME = "P0_01_ManualSymbolSnapshot_ReadOnly.mq4"
