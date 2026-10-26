@@ -75,7 +75,7 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
         self.assertIn("MODE_ASK", x)
         self.assertIsNone(x["MODE_TIME"]["v2_field"])
         self.assertIn("floating", x["MODE_STOPLEVEL"]["reason"].lower())
-        self.assertIn("dynamic", x["MODE_SPREAD"]["reason"].lower())
+        self.assertIn("variable market observation", x["MODE_SPREAD"]["reason"].lower())
 
     def test_quote_and_trade_sessions_are_two_independent_methods(self):
         t = self.plan["session_design"]
