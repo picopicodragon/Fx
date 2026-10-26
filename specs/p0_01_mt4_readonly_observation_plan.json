@@ -2,8 +2,8 @@
   "schema_version": 1,
   "kind": "P0_01_MT4_READONLY_OBSERVATION_PLAN_NO_BROKER_EXECUTION",
   "checked_on": "2026-10-26",
-  "status": "READONLY_MQL4_SOURCE_CREATED_UNCOMPILED_ALL_RUNTIME_VALUES_PENDING",
-  "scope": "Owner authorized source creation only on 2026-10-26. MQL4 script source and offline audits now exist, but MetaEditor compile, copying, deployment, execution and real broker observations remain separately unauthorized/unverified.",
+  "status": "READONLY_MQL4_COMPILATION_OWNER_REPORTED_ALL_RUNTIME_VALUES_PENDING",
+  "scope": "Owner approved source creation and later MetaEditor F7 compile-only. On 2026-10-26 owner reported 0 errors, 0 warnings, 291 msec elapsed. Compilation has not been independently reproduced, executable binary not collected. Terminal execution, account observation, trading remains prohibited.",
   "evidence_urls": {
     "mql4_symbol_constants": "https://docs.mql4.com/constants/environment_state/marketinfoconstants",
     "mql4_marketinfo": "https://docs.mql4.com/marketinformation/marketinfo",
@@ -265,7 +265,7 @@
     "read_only_terminal_execution_requires_separate_owner_security_review": true,
     "terminal_readonly_source_created": true,
     "terminal_readonly_source_path": "mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4",
-    "terminal_compiled": false,
+    "terminal_compiled": true,
     "terminal_deployed": false,
     "terminal_execution_approved": false,
     "one_shot_source_default_disabled": true,
@@ -275,7 +275,20 @@
     "terminal_compilation_approved": true,
     "terminal_compile_approval_scope": "METAEDITOR_F7_ONLY_NO_TERMINAL_EXECUTION_2026_10_26",
     "compile_only_staging_script": "scripts/stage_mt4_compile_only.py",
-    "compile_only_guide": "docs/p0_01_mt4_metaeditor_compile_only_guide_20261026.md"
+    "compile_only_guide": "docs/p0_01_mt4_metaeditor_compile_only_guide_20261026.md",
+    "terminal_compilation_evidence_status": "OWNER_REPORTED_RESULT_NOT_INDEPENDENTLY_VERIFIED",
+    "terminal_compilation_owner_report": {
+      "reported_on": "2026-10-26",
+      "source": "DIRECT_OWNER_CHAT_REPORT",
+      "compiler": "METAEDITOR_MQL4",
+      "errors": 0,
+      "warnings": 0,
+      "elapsed_ms": 291,
+      "source_file": "mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4",
+      "source_hash_attested": false,
+      "compiled_ex4_attested": false,
+      "compiler_version_attested": false
+    }
   },
   "safety_gates": {
     "formula_01_approved": false,
