@@ -499,3 +499,7 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 楽天MT4「気配値→仕様」にある**変動スプレッド**、証拠金通貨、計算モード、執行/GTC、曜日別取引時間を区別して記録するv2確認票を追加。旧形式`mt4_symbols_local.json`を変更せず`mt4_symbols_local.v2.json`をGit管理外に別名作成するオフライン移行を用意。手順：[MT4確認票v2への安全な移行](docs/p0_01_mt4_manual_symbol_v2_migration_20261026.md)。
 
 `python -m scripts.mt4_manual_symbol_v2 migrate --input <ローカル旧ファイル> --output <別名ローカルv2ファイル>` によって移行。既存ファイルは上書きせず、データ不整合/未確認を取引許可とみなさない。MT4への実接続・発注は行わない。
+
+## MT4属性の読取専用MQL4ソース（作成のみ承認、2026-10-26）
+
+[ソースレビュー手順](docs/p0_01_mt4_mql4_source_review_20261026.md)と`mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4`を追加。本人承認は**ソースコードの作成まで**。初期状態`InpExplicitReadApproval=false`で属性照会を実行しない。MT4端末への配置・MetaEditorコンパイル・実行・口座への接続・自動注文は未承認。現状の4ペア各5数値項目は未取得のまま。静的レビュー用`python scripts/audit_mt4_readonly_source.py`は端末を起動しない。FORM-01/03とPHASE-1 BLOCKEDを維持。
