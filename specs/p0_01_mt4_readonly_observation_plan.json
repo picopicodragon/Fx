@@ -288,6 +288,24 @@
       "source_hash_attested": false,
       "compiled_ex4_attested": false,
       "compiler_version_attested": false
+    },
+    "pre_execution_review": {
+      "status": "PARTIAL_LOCAL_OFFLINE_REVIEW_ONLY",
+      "owner_reports_date": "2026-10-26",
+      "python_unittest_count": 409,
+      "python_unittest_status": "OWNER_REPORTED_OK",
+      "static_source_audit_status": "OWNER_REPORTED_PASS",
+      "repo_to_compile_mq4_sha256": "OWNER_REPORTED_MATCH_HASH_VALUES_NOT_SHARED",
+      "ex4_file_exists": "OWNER_REPORTED_TRUE",
+      "ex4_size_bytes": 13644,
+      "ex4_local_last_write_time": "2026-10-26 15:53:36 (Windows local display, timezone not independently verified)",
+      "ex4_storage": "OUTSIDE_GIT_DOCUMENTS_FXLOCALREVIEW_COMPILEONLY",
+      "ex4_binary_reproducibly_bound_to_source": false,
+      "terminal_symbol_mapping_checked": false,
+      "terminal_account_type_checked": false,
+      "terminal_log_handling_checked": false,
+      "terminal_execution_allowed": false,
+      "note": "No actual runtime MarketInfo reads; original full local paths, usernames, hashes and terminal logs are not sent to the repository."
     }
   },
   "safety_gates": {
