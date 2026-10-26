@@ -156,6 +156,28 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
             self.assertFalse(symbol["production_usable"])
             self.assertTrue(all(v is None for v in symbol["verified_values"].values()))
 
+    def test_pre_execution_evidence_does_not_approve_mql4_runtime(self):
+        record = self.plan["permissions"]["pre_execution_review"]
+        self.assertEqual(record["status"], "PARTIAL_LOCAL_OFFLINE_REVIEW_ONLY")
+        self.assertEqual(record["python_unittest_count"], 409)
+        self.assertEqual(record["python_unittest_status"], "OWNER_REPORTED_OK")
+        self.assertEqual(record["static_source_audit_status"], "OWNER_REPORTED_PASS")
+        self.assertEqual(record["repo_to_compile_mq4_sha256"],
+                         "OWNER_REPORTED_MATCH_HASH_VALUES_NOT_SHARED")
+        self.assertEqual(record["ex4_file_exists"], "OWNER_REPORTED_TRUE")
+        self.assertEqual(record["ex4_size_bytes"], 13644)
+        for key in ("ex4_binary_reproducibly_bound_to_source",
+                    "terminal_symbol_mapping_checked",
+                    "terminal_account_type_checked",
+                    "terminal_log_handling_checked",
+                    "terminal_execution_allowed"):
+            self.assertIs(record[key], False)
+        self.assertFalse(self.plan["permissions"]["terminal_execution_approved"])
+        self.assertFalse(self.plan["permissions"]["terminal_deployed"])
+        self.assertFalse(self.plan["permissions"]["broker_queried"])
+        self.assertFalse(self.plan["safety_gates"]["forward_trading_enabled"])
+        self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
+
     def test_v2_blank_display_fields_are_reported_separately(self):
         data = copy.deepcopy(self.template)
         result = check_v2(data, self.official)
