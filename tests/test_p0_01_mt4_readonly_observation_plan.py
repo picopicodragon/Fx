@@ -117,6 +117,21 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
             check_reconciliation(load(ROOT / "specs/reconciliation_registry.json")), []
         )
 
+    def test_compile_only_approval_does_not_enable_terminal_execution(self):
+        permission = self.plan["permissions"]
+        self.assertIs(permission["terminal_compilation_approved"], True)
+        self.assertEqual(
+            permission["terminal_compile_approval_scope"],
+            "METAEDITOR_F7_ONLY_NO_TERMINAL_EXECUTION_2026_10_26",
+        )
+        self.assertIs(permission["terminal_compiled"], False)
+        self.assertIs(permission["terminal_deployed"], False)
+        self.assertIs(permission["terminal_execution_approved"], False)
+        self.assertIs(permission["broker_queried"], False)
+        self.assertIs(permission["orders_generated"], False)
+        self.assertIs(self.plan["safety_gates"]["forward_trading_enabled"], False)
+        self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
+
     def test_v2_blank_display_fields_are_reported_separately(self):
         data = copy.deepcopy(self.template)
         result = check_v2(data, self.official)
