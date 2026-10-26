@@ -48,7 +48,7 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
 
     def test_all_four_accounts_have_no_fake_terminal_attestation(self):
         self.assertEqual(
-            self.plan["status"], "READONLY_MQL4_SOURCE_CREATED_UNCOMPILED_ALL_RUNTIME_VALUES_PENDING"
+            self.plan["status"], "READONLY_MQL4_COMPILATION_OWNER_REPORTED_ALL_RUNTIME_VALUES_PENDING"
         )
         statuses = self.plan["symbol_status"]
         self.assertEqual({p["symbol"] for p in statuses}, set(EXPECTED_PAIRS))
