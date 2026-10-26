@@ -3,6 +3,8 @@ import contextlib
 import copy
 import io
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -206,6 +208,42 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
             self.assertIn("SUMMARY: INCOMPLETE", buf.getvalue())
             self.assertNotIn("PRIVATE-SYNTHETIC-MARKER", buf.getvalue())
 
+    def test_direct_script_entrypoint_migrates_and_checks_offline(self):
+        # Regression: python scripts/mt4_manual_symbol_v2.py must not fail
+        # importing the sibling validator from Windows (or Linux) script mode.
+        self._check_subprocess_entrypoint([
+            sys.executable, str(ROOT / "scripts/mt4_manual_symbol_v2.py")
+        ])
+
+    def test_package_module_entrypoint_migrates_and_checks_offline(self):
+        self._check_subprocess_entrypoint([
+            sys.executable, "-m", "scripts.mt4_manual_symbol_v2"
+        ])
+
+    def _check_subprocess_entrypoint(self, executable):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-entrypoint-") as tmp:
+            source = Path(tmp) / "input.v1.json"
+            destination = Path(tmp) / "output.v2.json"
+            source.write_text(json.dumps(self.legacy_doc()), encoding="utf-8")
+            original_bytes = source.read_bytes()
+            result = subprocess.run(
+                [*executable, "migrate", "--input", str(source),
+                 "--output", str(destination)],
+                cwd=ROOT, capture_output=True, text=True, timeout=20,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertEqual(load(destination)["schema_version"], 2)
+            self.assertEqual(source.read_bytes(), original_bytes)
+            check = subprocess.run(
+                [*executable, "check", "--input", str(destination)],
+                cwd=ROOT, capture_output=True, text=True, timeout=20,
+                check=False,
+            )
+            self.assertEqual(check.returncode, 2, check.stderr + check.stdout)
+            self.assertIn("SUMMARY: INCOMPLETE", check.stdout)
+            self.assertEqual(source.read_bytes(), original_bytes)
+
     def test_source_or_destination_inside_git_is_refused(self):
         self.assertFalse(safe_location(V1_TEMPLATE))
         with tempfile.TemporaryDirectory(prefix="fx-mt4-v2-") as tmp:
@@ -217,7 +255,82 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
                               "--output", str(path)])
             self.assertEqual(result, 1)
             self.assertFalse(path.exists())
-            self.assertIn("Git-external", out.getvalue())
+            self.assertIn("INPUT_INSIDE_GIT_OR_INVALID_PATH", out.getvalue())
+
+    def test_diagnose_incomplete_old_file_without_printing_values(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            source.write_text(json.dumps(self.legacy_doc()), encoding="utf-8")
+            before = source.read_bytes()
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["diagnose", "--input", str(source)])
+            self.assertEqual(code, 2)
+            self.assertIn("SUMMARY: INCOMPLETE", buf.getvalue())
+            self.assertEqual(source.read_bytes(), before)
+
+    def test_diagnose_wrong_numeric_json_type_reports_known_field(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            v1 = self.legacy_doc()
+            v1["symbols"][0]["properties"]["digits"] = 3
+            source.write_text(json.dumps(v1), encoding="utf-8")
+            destination = Path(folder) / "v2.json"
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["migrate", "--input", str(source),
+                            "--output", str(destination)])
+            self.assertEqual(code, 1)
+            self.assertIn("USD/JPY:digits:EXPECTED_DECIMAL_STRING_OR_NULL",
+                          buf.getvalue())
+            self.assertFalse(destination.exists())
+
+    def test_migrate_wrong_public_value_reports_field_not_raw_value(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            v1 = self.legacy_doc()
+            v1["symbols"][0]["properties"]["lot_size_base_units"] = "123456789"
+            source.write_text(json.dumps(v1), encoding="utf-8")
+            destination = Path(folder) / "v2.json"
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["migrate", "--input", str(source),
+                            "--output", str(destination)])
+            self.assertEqual(code, 1)
+            self.assertIn("lot_size_base_units:PUBLIC_RULE_DIFFERS", buf.getvalue())
+            self.assertNotIn("123456789", buf.getvalue())
+            self.assertFalse(destination.exists())
+
+    def test_explicit_output_exists_cause_and_source_unchanged(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            source = Path(folder) / "v1.json"
+            destination = Path(folder) / "v2.json"
+            source.write_text(json.dumps(self.legacy_doc()), encoding="utf-8")
+            destination.write_text('{"placeholder":"do not overwrite"}', encoding="utf-8")
+            old_source = source.read_bytes()
+            old_output = destination.read_bytes()
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = run(["migrate", "--input", str(source),
+                            "--output", str(destination)])
+            self.assertEqual(code, 1)
+            self.assertIn("OUTPUT_ALREADY_EXISTS", buf.getvalue())
+            self.assertEqual(source.read_bytes(), old_source)
+            self.assertEqual(destination.read_bytes(), old_output)
+
+    def test_malformed_json_and_missing_input_have_distinct_safe_errors(self):
+        with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
+            bad = Path(folder) / "bad.json"
+            bad.write_text('{"some_private_value":"never-print",', encoding="utf-8")
+            absent = Path(folder) / "absent.json"
+            for path, expected in ((bad, "INPUT_INVALID_JSON"),
+                                   (absent, "INPUT_FILE_MISSING")):
+                buf = io.StringIO()
+                with contextlib.redirect_stdout(buf):
+                    code = run(["diagnose", "--input", str(path)])
+                self.assertEqual(code, 1)
+                self.assertIn(expected, buf.getvalue())
+                self.assertNotIn("never-print", buf.getvalue())
 
     def test_original_safety_registries_remain_blocked(self):
         reg = load(ROOT / "specs/reconciliation_registry.json")

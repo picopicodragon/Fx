@@ -39,18 +39,26 @@ $reviewDir = Join-Path $env:USERPROFILE "Documents\FxLocalReview"
 $reviewFile = Join-Path $reviewDir "mt4_symbols_local.json"
 $v2File = Join-Path $reviewDir "mt4_symbols_local.v2.json"
 
-python scripts/mt4_manual_symbol_v2.py migrate --input $reviewFile --output $v2File
+python -m scripts.mt4_manual_symbol_v2 migrate --input $reviewFile --output $v2File
 ```
 
 `mt4_symbols_local.json`は読み取り専用で**一切変更しない**。出力が既存の場合、別ファイルであっても上書きせずエラー終了する。入力JSONが想定外の形式/値であれば`REVIEW_REQUIRED`として、v2ファイルを生成せず元のままにする。**v1とv2の個人観測値をGitHubへコミットしない。**
 
 元のv1に`"spread_points": "フローティング"`がある場合、これは数値フィールドとして不正なので**先にv1をローカルで明示的に`null`へ修正**し、移行後に`display_properties.spread_mode`へ`"FLOATING"`を入力する（旧値のバックアップを個人の管理下で保持）。
 
+### Windowsで `ModuleNotFoundError: No module named 'scripts'` が出る場合
+
+v2初版の`python scripts/mt4_manual_symbol_v2.py migrate ...`は、Windowsで直接起動すると内部の`from scripts... import`に失敗する不具合があった。原因は`python <ファイルパス>`と`python -m <パッケージ名>`でPythonのモジュール検索開始位置が異なるためである。
+
+**Fxリポジトリのルート**で`python -m scripts.mt4_manual_symbol_v2 migrate ...`を使用する。修正版では従来の直接起動方法でも同じ処理を行えるよう調整し、両方式のCLI起動・実際のオフライン移行をWindows/Linuxの自動テストで検査する。単に`sys.path`へ任意フォルダーを追加したり、ユーザーのPython設定を変更したりする必要はない。
+
+このImportErrorは移行処理の開始前に発生するため、元のv1入力データは書き換わっていない。既存のv2出力がある場合は**絶対に上書きせず**、どの段階で生成されたか本人が確認する。
+
 ## 3. v2に未入力の画面表示だけを補う
 
 ```powershell
 notepad $v2File
-python scripts/mt4_manual_symbol_v2.py check --input $v2File
+python -m scripts.mt4_manual_symbol_v2 check --input $v2File
 ```
 
 すべての数値は浮動小数型ではなくJSONの文字列（例`"100000"`）とする。追加の表示項目は原文の文字列でよい。日曜～土曜の時間表示は各キーに分ける。存在しない情報を`0`、`"UNKNOWN"`、既存ルールの推定値に置き換えず`null`にする。例えばスプレッド欄が**フローティング**とだけ表示されるペアには：
@@ -79,3 +87,30 @@ python scripts/mt4_manual_symbol_v2.py check --input $v2File
 v1テンプレート・チェッカーは既存利用者のため残す。新しい`specs/p0_01_mt4_manual_symbol_template_v2.json`と`scripts/mt4_manual_symbol_v2.py`だけを追加する。本人が現行v1入力済みのデータを破壊的に変換しないことを優先する。
 
 **安全状態：** `implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`、`forward_trading_enabled=false`、`PHASE-1 BLOCKED`。FX発注/注文更新・口座の自動読取は実施しない。
+
+## 2026-10-26補足：移行時に原因不明のREVIEW_REQUIREDが出る場合
+
+v2初版では、元のv1の型違い・公開契約の不一致・既存の出力ファイル・パスと読み取り問題等を同一の一般メッセージにまとめていた。修正版では、**入力された数値・原文を表示せず**、原因を固定コードと許可済みフィールド名で区別する。
+
+まずリポジトリルートで次を実行する（読み取り専用）。
+
+```powershell
+$reviewDir = Join-Path $env:USERPROFILE "Documents\FxLocalReview"
+$reviewFile = Join-Path $reviewDir "mt4_symbols_local.json"
+$v2File = Join-Path $reviewDir "mt4_symbols_local.v2.json"
+
+Test-Path $reviewFile
+Test-Path $v2File
+python -m scripts.mt4_manual_symbol_v2 diagnose --input $reviewFile
+```
+
+`diagnose`はファイルを作成・変更しない。`INCOMPLETE`はMT4画面にない項目が`null`のためで、移行そのものを禁止する理由ではない。`REVIEW_REQUIRED`は、以下のフィールド名や原因コードを本人が確認する。
+
+- `INPUT_FILE_MISSING` / `OUTPUT_DIRECTORY_MISSING`：指定パスと保管先の存在を確認
+- `INPUT_INVALID_JSON` / `INPUT_ENCODING_UNSUPPORTED`：JSONの構文や文字コードを確認
+- `V1_SCHEMA_OR_FIELD_TYPES` / `EXPECTED_DECIMAL_STRING_OR_NULL`：v1の11項目は`"3"`など文字列か`null`。JSON数値`3`や余計なキーは形式不整合。**勝手な修正/削除はせず元データを別途控えてから対応**
+- `PUBLIC_RULE_DIFFERS`：端末上の契約数量やPOINTが公開ルールと一致しない。ブローカー条件/転記を確認し、矛盾を隠す変更はしない
+- `OUTPUT_ALREADY_EXISTS`：以前作成したv2が既に存在。**自動上書きしない**
+- `INPUT_INSIDE_GIT_OR_INVALID_PATH` / `OUTPUT_INSIDE_GIT_OR_SAME_AS_INPUT`：Git管理外に分離し、入力/出力に別のファイルを使用
+
+問題の判定コードだけを共有すれば、機密の口座情報、実際の価格、ファイル本文をGitHubへ送らずに対処できる。`diagnose`が`INCOMPLETE`でも、スキーマ・入力値に矛盾がなければ`migrate`を別途実行できる。旧v1の値は不変、別名v2のみ新規作成。
