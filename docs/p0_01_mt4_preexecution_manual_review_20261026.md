@@ -64,3 +64,44 @@ LOCAL MT4 LOG HANDLING: ACKNOWLEDGED / PENDING
 上記の目視確認を行っても **terminal_execution_approved=false**、`terminal_deployed=false`、`broker_queried=false`、`forward_trading_enabled=false`、`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`、**PHASE-1 BLOCKED**。将来の読取実行は新規の明示承認と独立検証が必要。
 
 独立確認が必要：EX4生成元バイナリ証明、実銘柄名4ペア、端末/口座区分、ローカルログのプライバシー、読取失敗時の動作、ティック価値とポイント/ロット/通貨の整合。トレード/スクリプト起動はこのレビューには含まない。
+
+## 2026-10-26：本人の目視結果と未解消ブロッカー
+
+本人が以下を**MT4気配値表示と端末画面を見た結果として**直接報告：
+
+| 論理ペア | MT4目視の実銘柄名 | スクリプト初期入力 | 結果 |
+| --- | --- | --- | --- |
+| USD/JPY | `USDJPY` | `USDJPY` | MATCH_BY_OWNER_REPORT |
+| EUR/JPY | `EURJPY` | `EURJPY` | MATCH_BY_OWNER_REPORT |
+| GBP/USD | `GBPUSD` | `GBPUSD` | MATCH_BY_OWNER_REPORT |
+| AUD/USD | `AUDUSD` | `AUDUSD` | MATCH_BY_OWNER_REPORT |
+
+- `ACCOUNT TYPE: DEMO`（本人目視報告であり、口座番号/サーバー名・接続認証は収集しない）。
+- `CONNECTION DISPLAY: UNKNOWN`。
+- `SCRIPT/EA RUNNING: UNKNOWN`。
+- `LOCAL MT4 LOG HANDLING: PENDING`。
+
+**未解消の3ブロッカーに対する次の非実行確認：**
+
+1. 接続表示：MetaTrader 4の「表示」→「ステータスバー」を開き、画面右下の接続インジケータを**目視のみ**。`CONNECTED_LIKE`、`DISCONNECTED`、`UNKNOWN`から選ぶ。メニュー変更以外の再接続・口座変更はしない。インジケータの見た目だけでAPI接続や`IsConnected()`の応答を保証しない。
+2. 既存EA・スクリプト：**現在開いている各チャート右上**にEA名/動作アイコンがあるかを見て、`EXISTS` / `NONE_OBSERVED` / `UNKNOWN`で答える。ツールバーの`AutoTrading`をクリックしない。MetaQuotesの資料上、`AutoTrading`を無効にしても**取引以外のスクリプト機能は起動できる**ため、このボタンは誤起動防止策の代用ではない。UI上見えないEAを存在しないと保証しない。
+3. ログ保護：今後の`Print()`メッセージはローカル端末のExpertsログ等に残る場合がある。**ログ全文、口座番号、残高、発注記録、認証情報、EX4バイナリはChatGPT/GitHubへ提出しない**。実行が別途承認され、本人が確認する場合も、提出前に必要な`MT4_RO`行を個別に選び口座/識別情報を除去する方針を理解した場合だけ`ACKNOWLEDGED`とする。未確認なら`PENDING`。このレビューでログ自体は生成しない。
+
+MetaQuotes公式：
+- [MT4ステータスバー](https://www.metatrader4.com/ja/trading-platform/help/overview/main_menu/main_menu_view)
+- [EAのチャート上表示](https://www.metatrader4.com/es/trading-platform/help/autotrading/experts/experts_launch)
+- [AutoTradingをオフにしてもスクリプトの実行は防げない](https://www.metatrader4.com/en/trading-platform/help/setup/setup_experts)
+- [MQL4 Print](https://docs.mql4.com/common/print)
+- [MT4 Expertsログ](https://www.metatrader4.com/pt/trading-platform/help/overview/terminal/terminal_experts)
+
+`terminal_execution_approved=false`、`terminal_deployed=false`、`broker_queried=false`、`implementation_approved=false`、`forward_trading_enabled=false`、**PHASE-1 BLOCKED**維持。
+
+### 次回の報告（機密情報不要）
+
+```text
+CONNECTION DISPLAY: CONNECTED_LIKE / DISCONNECTED / UNKNOWN
+SCRIPT/EA RUNNING: EXISTS / NONE_OBSERVED / UNKNOWN
+LOCAL MT4 LOG HANDLING: ACKNOWLEDGED / PENDING
+```
+
+銘柄名・口座区分は上記のとおり記録済みなので、再提出不要。
