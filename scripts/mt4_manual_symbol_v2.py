@@ -239,6 +239,18 @@ def check_v2(data: object, official: object) -> dict:
             "PENDING_DISPLAY_INPUT" if pending_row else
             "ALL_DISPLAY_FIELDS_RECORDED_NOT_VERIFIED"
         )
+        # Read-only transcription statuses. A missing screen row is NOT proof
+        # that the trade server is closed or trading is disallowed.
+        weekend = {}
+        for day in ("saturday", "sunday"):
+            recorded = display["trading_hours_display"][day]
+            if recorded is None:
+                weekend[day] = "UNRECORDED"
+            elif recorded == "NO_SESSION_DISPLAYED":
+                weekend[day] = "NO_SESSION_DISPLAYED_UNVERIFIED"
+            else:
+                weekend[day] = "DISPLAY_TEXT_RECORDED_UNVERIFIED"
+        summary["weekend_session_display_status"] = weekend
         summary["findings"] = sorted(set(findings))
         summary["missing_fields"] = list(missing)
         if findings:
@@ -305,6 +317,9 @@ def print_review(result: dict) -> None:
                       ", ".join(pair["missing_display_fields"]))
             else:
                 print("  DISPLAY INPUT: ALL_RECORDED_NOT_VERIFIED")
+            weekend = pair["weekend_session_display_status"]
+            print("  WEEKEND DISPLAY: saturday=" + weekend["saturday"] +
+                  ", sunday=" + weekend["sunday"])
         if pair["findings"]:
             print("  REVIEW FIELDS: " + ", ".join(pair["findings"]))
     if result["findings"]:
