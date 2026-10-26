@@ -77,6 +77,8 @@ def compare_manual_snapshot(data: object, reference: object) -> dict:
            or not isinstance(r["properties"], dict) for r in symbols):
         return {"status": "REVIEW_REQUIRED", "findings": ["ROW_SCHEMA"], "pairs": []}
     names = [r["symbol"] for r in symbols]
+    if any(not isinstance(name, str) for name in names):
+        return {"status": "REVIEW_REQUIRED", "findings": ["SYMBOL_SET"], "pairs": []}
     if len(set(names)) != 4 or set(names) != set(EXPECTED_PAIRS):
         return {"status": "REVIEW_REQUIRED", "findings": ["SYMBOL_SET"], "pairs": []}
 
