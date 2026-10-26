@@ -213,57 +213,158 @@ def check_v2(data: object, official: object) -> dict:
     return result
 
 
+def inspect_v1_structure(data: object) -> list[str]:
+    """Return only predetermined field names/codes, never private content."""
+    if not isinstance(data, dict) or set(data) != EXPECTED_ROOT_KEYS:
+        return ["V1_ROOT_FIELDS"]
+    if (type(data.get("schema_version")) is not int or data["schema_version"] != 1
+        or data.get("kind") != "MT4_MANUAL_SYMBOL_PROPERTIES_DRAFT"
+        or data.get("source_type") != "MT4_MARKET_WATCH_SPECIFICATION_MANUAL_ONLY"
+        or data.get("data_state") != "UNVERIFIED_LOCAL_VALUES"
+        or not isinstance(data.get("instructions"), str)):
+        return ["V1_DOCUMENT_IDENTITY"]
+    rows = data.get("symbols")
+    if not isinstance(rows, list) or len(rows) != 4:
+        return ["V1_SYMBOL_SET"]
+    problems = []
+    names = []
+    for row in rows:
+        if (not isinstance(row, dict) or set(row) != {"symbol", "properties"}
+            or not isinstance(row.get("symbol"), str)
+            or not isinstance(row.get("properties"), dict)):
+            return ["V1_ROW_SCHEMA"]
+        name = row["symbol"]
+        if name not in EXPECTED_PAIRS:
+            return ["V1_SYMBOL_SET"]
+        names.append(name)
+        props = row["properties"]
+        if set(props) != set(TEMPLATE_FIELDS):
+            problems.append(f"{name}:V1_FIELD_SET")
+        for key in TEMPLATE_FIELDS:
+            if key in props and props[key] is not None and not isinstance(props[key], str):
+                problems.append(f"{name}:{key}:EXPECTED_DECIMAL_STRING_OR_NULL")
+    if len(set(names)) != 4 or set(names) != set(EXPECTED_PAIRS):
+        return ["V1_SYMBOL_SET"]
+    return sorted(set(problems))
+
+
+def print_review(result: dict) -> None:
+    """Only stable known names and validation codes; no entered raw values."""
+    for pair in result["pairs"]:
+        print(f'{pair["symbol"]}: {pair["status"]}')
+        if pair["missing_fields"]:
+            print("  PENDING FIELDS: " + ", ".join(pair["missing_fields"]))
+        if pair["findings"]:
+            print("  REVIEW FIELDS: " + ", ".join(pair["findings"]))
+    if result["findings"]:
+        print("REVIEW: " + ", ".join(result["findings"]))
+    print("SUMMARY: " + result["status"])
+    print("Data validation is not trading authorization; PHASE-1 BLOCKED.")
+
+
 def run(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="MT4 v1 -> v2 manual specification migration or offline v2 check; no trading")
+        description="MT4 v1/v2 manual specifications: offline diagnostics and safe migration")
     sub = parser.add_subparsers(dest="command", required=True)
-    migrate = sub.add_parser("migrate", help="Create new v2 file; source kept unchanged")
+    migrate = sub.add_parser("migrate", help="Create a separate v2 file; never overwrite")
     migrate.add_argument("--input", type=Path, required=True)
     migrate.add_argument("--output", type=Path, required=True)
-    check = sub.add_parser("check", help="Review local v2 data without printing input values")
+    diagnose = sub.add_parser("diagnose", help="Inspect v1 schema/public fields without raw values")
+    diagnose.add_argument("--input", type=Path, required=True)
+    check = sub.add_parser("check", help="Review v2 input without printing raw values")
     check.add_argument("--input", type=Path, required=True)
     args = parser.parse_args(argv)
     print("MT4 manual v2 (OFFLINE ONLY / NO TRADE OR IMPLEMENTATION APPROVAL)")
+
+    if not safe_location(args.input):
+        print("REVIEW_REQUIRED: INPUT_INSIDE_GIT_OR_INVALID_PATH")
+        return 1
+    if args.command == "migrate":
+        if (not safe_location(args.output)
+            or args.input.resolve() == args.output.resolve()):
+            print("REVIEW_REQUIRED: OUTPUT_INSIDE_GIT_OR_SAME_AS_INPUT")
+            return 1
+        if args.output.exists():
+            print("REVIEW_REQUIRED: OUTPUT_ALREADY_EXISTS (no overwrite)")
+            return 1
+        if not args.output.parent.is_dir():
+            print("REVIEW_REQUIRED: OUTPUT_DIRECTORY_MISSING")
+            return 1
+    if not args.input.is_file():
+        print("REVIEW_REQUIRED: INPUT_FILE_MISSING")
+        return 1
+
     try:
-        if args.command == "migrate":
-            if (not safe_location(args.input) or not safe_location(args.output)
-                or args.input.resolve() == args.output.resolve()):
-                print("REVIEW_REQUIRED: Source and output must be different Git-external paths.")
-                return 1
-            data = read_private_json(args.input)
+        data = read_private_json(args.input)
+    except json.JSONDecodeError:
+        print("REVIEW_REQUIRED: INPUT_INVALID_JSON")
+        return 1
+    except UnicodeError:
+        print("REVIEW_REQUIRED: INPUT_ENCODING_UNSUPPORTED")
+        return 1
+    except ValueError:
+        print("REVIEW_REQUIRED: INPUT_TOO_LARGE_OR_INVALID")
+        return 1
+    except OSError:
+        print("REVIEW_REQUIRED: INPUT_READ_ERROR")
+        return 1
+
+    if args.command in ("diagnose", "migrate"):
+        problems = inspect_v1_structure(data)
+        if problems:
+            print("REVIEW_REQUIRED: V1_SCHEMA_OR_FIELD_TYPES")
+            for issue in problems:
+                print("  REVIEW FIELD: " + issue)
+            print("Original file unchanged; v2 not created.")
+            return 1
+        try:
+            official = json.loads(OFFICIAL.read_text(encoding="utf-8"))
+            result = compare_manual_snapshot(data, official)
+        except (OSError, ValueError, TypeError, KeyError, UnicodeError):
+            print("REVIEW_REQUIRED: PUBLIC_REFERENCE_READ_OR_FORMAT_ERROR")
+            return 1
+        if args.command == "diagnose":
+            print_review(result)
+            return {"COMPARED_FIELDS_ONLY": 0, "REVIEW_REQUIRED": 1,
+                    "INCOMPLETE": 2}[result["status"]]
+        if result["status"] == "REVIEW_REQUIRED":
+            print_review(result)
+            print("Original file unchanged; v2 not created.")
+            return 1
+        try:
             template = json.loads(V2_TEMPLATE.read_text(encoding="utf-8"))
             converted = migrate_to_v2(data, template)
-            official = json.loads(OFFICIAL.read_text(encoding="utf-8"))
-            if check_v2(converted, official)["status"] == "REVIEW_REQUIRED":
-                print("REVIEW_REQUIRED: Original values inconsistent with public rules; "
-                      "source unchanged and no v2 file written.")
-                return 1
-            # Exclusive creation is deliberate: never overwrite source or any
-            # existing v2 file, even after crash/repeat invocation.
+        except (OSError, ValueError, TypeError, KeyError, UnicodeError):
+            print("REVIEW_REQUIRED: V2_TEMPLATE_OR_CONVERSION_ERROR")
+            return 1
+        if check_v2(converted, official)["status"] == "REVIEW_REQUIRED":
+            print("REVIEW_REQUIRED: V2_INITIAL_VALIDATION_FAILED")
+            return 1
+        try:
+            # Creation with mode 'x' prevents clobber even if another process
+            # creates the file after the earlier existence check.
             with args.output.open("x", encoding="utf-8") as target:
                 json.dump(converted, target, ensure_ascii=False, indent=2)
                 target.write("\n")
-            print("CREATED: New v2 file at specified Git-external path (source unchanged).")
-            print("PENDING: New display properties remain null until manually transcribed.")
-            return 0
+        except FileExistsError:
+            print("REVIEW_REQUIRED: OUTPUT_ALREADY_EXISTS (no overwrite)")
+            return 1
+        except OSError:
+            print("REVIEW_REQUIRED: OUTPUT_CREATE_OR_WRITE_ERROR")
+            return 1
+        print("CREATED: Separate v2 file; source unchanged, missing values stay null.")
+        print("PENDING: Transcribe only visible MT4 display values.")
+        return 0
 
+    try:
         official = json.loads(OFFICIAL.read_text(encoding="utf-8"))
-        result = check_v2(read_private_json(args.input), official)
-        for pair in result["pairs"]:
-            print(f'{pair["symbol"]}: {pair["status"]}')
-            if pair["missing_fields"]:
-                print("  PENDING FIELDS: " + ", ".join(pair["missing_fields"]))
-            if pair["findings"]:
-                print("  REVIEW FIELDS: " + ", ".join(pair["findings"]))
-        if result["findings"]:
-            print("REVIEW: " + ", ".join(result["findings"]))
-        print("SUMMARY: " + result["status"])
-        print("Even COMPARED_FIELDS_ONLY does not allow FX orders; PHASE-1 BLOCKED.")
-        return {"COMPARED_FIELDS_ONLY": 0, "REVIEW_REQUIRED": 1, "INCOMPLETE": 2}[result["status"]]
+        result = check_v2(data, official)
     except (OSError, ValueError, TypeError, KeyError, UnicodeError):
-        print("REVIEW_REQUIRED: Migration/check failed; no existing file intentionally overwritten. "
-              "Verify schema, paths, public values and write permissions.")
+        print("REVIEW_REQUIRED: V2_CHECK_OR_REFERENCE_ERROR")
         return 1
+    print_review(result)
+    return {"COMPARED_FIELDS_ONLY": 0, "REVIEW_REQUIRED": 1,
+            "INCOMPLETE": 2}[result["status"]]
 
 
 if __name__ == "__main__":
