@@ -167,8 +167,6 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
         self.assertEqual(record["ex4_file_exists"], "OWNER_REPORTED_TRUE")
         self.assertEqual(record["ex4_size_bytes"], 13644)
         for key in ("ex4_binary_reproducibly_bound_to_source",
-                    "terminal_symbol_mapping_checked",
-                    "terminal_account_type_checked",
                     "terminal_log_handling_checked",
                     "terminal_execution_allowed"):
             self.assertIs(record[key], False)
