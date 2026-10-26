@@ -513,3 +513,7 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 ## MetaEditorのコンパイル結果（2026-10-26・本人申告）
 
 読取専用MQL4ソースについて、本人WindowsのMetaEditorから **0 errors / 0 warnings / 291 ms** と報告。これは本人申告として記録し、GitHub側で独立コンパイル・EX4検証を実施した事実はない。[記録・注意事項](docs/p0_01_mt4_metaeditor_compile_only_guide_20261026.md)を参照。MT4実行・価格/口座属性の取得・実売買は**未承認**。FORM-01/03およびPHASE-1 BLOCKEDは継続。
+
+## P0-01 実行前レビュー（2026-10-26、本人Windows報告）
+
+本人から409 tests / OK、静的MQL4監査PASS、Git版MQ4と隔離コピーのSHA-256一致、隔離フォルダーEX4（13,644 bytes、Windows現地表示2026-10-26 15:53:36）の報告を受領。検証の由来と残課題、4銘柄の表示名称確認・口座区分・ローカルログの扱いは[端末を実行しない手動点検](docs/p0_01_mt4_preexecution_manual_review_20261026.md)を参照。これらは**本人報告/未独立検証**であり、EX4のバイナリ生成元、MT4実行、属性値の真正性は未確認。今後もMQL4実行許可・自動売買許可・FORM-01/03承認は付与せずPHASE-1 BLOCKED。
