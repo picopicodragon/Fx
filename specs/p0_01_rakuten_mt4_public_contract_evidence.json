@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "record_kind": "P0_01_RAKUTEN_MT4_PUBLIC_RULE_EVIDENCE_NO_RUNTIME_ATTESTATION",
+  "checked_on": "2026-10-26",
+  "status": "PUBLIC_DOCUMENT_VERIFIED_RUNTIME_MARKETINFO_PENDING",
+  "source_documents": [
+    {
+      "id": "RAKUTEN_RULES",
+      "title": "楽天MT4の取引ルール（楽天証券）",
+      "url": "https://www.rakuten-sec.co.jp/web/fx/mt4/rule.html",
+      "evidence_kind": "BROKER_PUBLIC_RULE",
+      "checked_on": "2026-10-26",
+      "notes": "May change. Public information is not proof of live server values, execution or account settings."
+    },
+    {
+      "id": "METAQUOTES_SYMBOL_PROPERTIES",
+      "title": "Symbol Properties (MQL4 Reference)",
+      "url": "https://docs.mql4.com/constants/environment_state/marketinfoconstants",
+      "evidence_kind": "OFFICIAL_PLATFORM_API_DOC",
+      "checked_on": "2026-10-26",
+      "notes": "MarketInfo MODE_* descriptions, not values from the user's Rakuten terminal."
+    },
+    {
+      "id": "METAQUOTES_SPEC_WINDOW",
+      "title": "Contract Specification (MetaTrader 4 Help)",
+      "url": "https://www.metatrader4.com/en/trading-platform/help/service/symbol_spec",
+      "evidence_kind": "OFFICIAL_PLATFORM_MANUAL",
+      "checked_on": "2026-10-26",
+      "notes": "Read-only symbol properties window. Does not constitute a trade."
+    }
+  ],
+  "public_broker_rules": [
+    {
+      "id": "RR-01",
+      "name": "one_standard_lot_base_units",
+      "value": "100000",
+      "unit": "base_currency_units_per_1.0_lot",
+      "status": "PUBLIC_RULE_VERIFIED",
+      "source": "RAKUTEN_RULES"
+    },
+    {
+      "id": "RR-02",
+      "name": "minimum_trade_unit_base",
+      "value": "1000",
+      "unit": "base_currency_units",
+      "status": "PUBLIC_RULE_VERIFIED",
+      "source": "RAKUTEN_RULES"
+    },
+    {
+      "id": "RR-03",
+      "name": "example_minimum_volume_in_mt4_lots",
+      "value": "0.01",
+      "unit": "lot",
+      "status": "PUBLIC_RULE_VERIFIED",
+      "source": "RAKUTEN_RULES"
+    },
+    {
+      "id": "RR-04",
+      "name": "standard_trade_commission",
+      "value": "0",
+      "unit": "broker_advertised_trading_commission",
+      "status": "PUBLIC_RULE_VERIFIED",
+      "source": "RAKUTEN_RULES",
+      "qualification": "Does not mean spreads, swaps, conversion costs, slippage, or other risk effects are zero."
+    },
+    {
+      "id": "RR-05",
+      "name": "max_per_order_base_units",
+      "value": "2000000",
+      "unit": "base_currency_units",
+      "status": "PUBLIC_RULE_VERIFIED",
+      "source": "RAKUTEN_RULES",
+      "qualification": "Broker maximum is not the system's Q116 allowable risk."
+    },
+    {
+      "id": "RR-06",
+      "name": "hedge_margin_basis",
+      "value": "LARGER_OF_LONG_AND_SHORT",
+      "unit": "margin_only",
+      "status": "PUBLIC_RULE_VERIFIED",
+      "source": "RAKUTEN_RULES",
+      "qualification": "Never infer hedged stop-risk can be netted for Q116."
+    },
+    {
+      "id": "RR-07",
+      "name": "trailing_stop_terminal_requirement",
+      "value": "MT4_MUST_BE_RUNNING_TO_TRAIL",
+      "unit": "platform_behavior",
+      "status": "PUBLIC_RULE_VERIFIED",
+      "source": "RAKUTEN_RULES",
+      "qualification": "Last modified server SL can remain but local trailing updates halt when MT4 stops."
+    }
+  ],
+  "pair_evidence": [
+    {
+      "symbol": "USD/JPY",
+      "base_currency": "USD",
+      "quote_currency": "JPY",
+      "public_trade_increment_base_units": "1000",
+      "public_one_point_quote": "0.001",
+      "public_one_point_unit": "JPY_per_USD",
+      "public_sample_lots": "0.01",
+      "public_sample_base_units": "1000",
+      "source": "RAKUTEN_RULES",
+      "runtime_confirmed": false,
+      "verified_account_tickvalue": null,
+      "verified_account_ticksize": null,
+      "verified_lotstep": null,
+      "verified_minlot": null,
+      "verified_stoplevel": null
+    },
+    {
+      "symbol": "EUR/JPY",
+      "base_currency": "EUR",
+      "quote_currency": "JPY",
+      "public_trade_increment_base_units": "1000",
+      "public_one_point_quote": "0.001",
+      "public_one_point_unit": "JPY_per_EUR",
+      "public_sample_lots": "0.01",
+      "public_sample_base_units": "1000",
+      "source": "RAKUTEN_RULES",
+      "runtime_confirmed": false,
+      "verified_account_tickvalue": null,
+      "verified_account_ticksize": null,
+      "verified_lotstep": null,
+      "verified_minlot": null,
+      "verified_stoplevel": null
+    },
+    {
+      "symbol": "GBP/USD",
+      "base_currency": "GBP",
+      "quote_currency": "USD",
+      "public_trade_increment_base_units": "1000",
+      "public_one_point_quote": "0.00001",
+      "public_one_point_unit": "USD_per_GBP",
+      "public_sample_lots": "0.01",
+      "public_sample_base_units": "1000",
+      "source": "RAKUTEN_RULES",
+      "runtime_confirmed": false,
+      "verified_account_tickvalue": null,
+      "verified_account_ticksize": null,
+      "verified_lotstep": null,
+      "verified_minlot": null,
+      "verified_stoplevel": null
+    },
+    {
+      "symbol": "AUD/USD",
+      "base_currency": "AUD",
+      "quote_currency": "USD",
+      "public_trade_increment_base_units": "1000",
+      "public_one_point_quote": "0.00001",
+      "public_one_point_unit": "USD_per_AUD",
+      "public_sample_lots": "0.01",
+      "public_sample_base_units": "1000",
+      "source": "RAKUTEN_RULES",
+      "runtime_confirmed": false,
+      "verified_account_tickvalue": null,
+      "verified_account_ticksize": null,
+      "verified_lotstep": null,
+      "verified_minlot": null,
+      "verified_stoplevel": null
+    }
+  ],
+  "read_only_mt4_fields": [
+    {
+      "field": "MODE_LOTSIZE",
+      "purpose": "lot contract size in base currency",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_MINLOT",
+      "purpose": "smallest allowed lot in connected terminal",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_LOTSTEP",
+      "purpose": "lot increment in connected terminal",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_MAXLOT",
+      "purpose": "max lot in connected terminal",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_POINT",
+      "purpose": "price unit",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_DIGITS",
+      "purpose": "quote decimal digits",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_TICKVALUE",
+      "purpose": "tick value in deposit currency per API; must be independently corroborated",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_TICKSIZE",
+      "purpose": "tick size in points",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_STOPLEVEL",
+      "purpose": "stop distance; zero may also represent broker floating restrictions",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_FREEZELEVEL",
+      "purpose": "freeze restriction for changes/closures",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_SPREAD",
+      "purpose": "observed spread in points; dynamic",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_BID",
+      "purpose": "bid rate for the same observation interval",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_ASK",
+      "purpose": "ask rate for the same observation interval",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    },
+    {
+      "field": "MODE_TIME",
+      "purpose": "last server quote time; not a substitute for local receive time",
+      "source": "METAQUOTES_SYMBOL_PROPERTIES",
+      "validation_status": "PENDING_LOCAL_READ_ONLY_OBSERVATION"
+    }
+  ],
+  "arithmetic_illustrations": {
+    "status": "HYPOTHETICAL_NOT_BROKER_QUOTED_LOSS_OR_TRADE_PERMISSION",
+    "hypothetical_usd_jpy_conversion": "150",
+    "cases": [
+      {
+        "id": "BI-01",
+        "symbol": "USD/JPY",
+        "volume_lots": "0.01",
+        "volume_base": "1000",
+        "adverse_price_move_quote": "0.01",
+        "loss_quote_currency": "10",
+        "loss_jpy_hypothetical": "10",
+        "notes": "At 1 pip in JPY-quoted pairs, price movement 0.01 JPY times 1000 base units. No spreads, swap or slippage."
+      },
+      {
+        "id": "BI-02",
+        "symbol": "EUR/JPY",
+        "volume_lots": "0.01",
+        "volume_base": "1000",
+        "adverse_price_move_quote": "0.01",
+        "loss_quote_currency": "10",
+        "loss_jpy_hypothetical": "10",
+        "notes": "JPY-quoted pair, same arithmetic; not a guaranteed stop order fill."
+      },
+      {
+        "id": "BI-03",
+        "symbol": "GBP/USD",
+        "volume_lots": "0.01",
+        "volume_base": "1000",
+        "adverse_price_move_quote": "0.0001",
+        "loss_quote_currency": "0.1",
+        "loss_jpy_hypothetical": "15",
+        "notes": "Assumes USDJPY 150 only for illustration; actual conversion side/quote availability unapproved."
+      },
+      {
+        "id": "BI-04",
+        "symbol": "AUD/USD",
+        "volume_lots": "0.01",
+        "volume_base": "1000",
+        "adverse_price_move_quote": "0.0001",
+        "loss_quote_currency": "0.1",
+        "loss_jpy_hypothetical": "15",
+        "notes": "Assumes USDJPY 150 only for illustration; no MT4 tick value measured."
+      },
+      {
+        "id": "BI-05",
+        "symbol": "USD/JPY",
+        "volume_lots": "0.01",
+        "volume_base": "1000",
+        "adverse_price_move_quote": "0.5",
+        "loss_quote_currency": "500",
+        "loss_jpy_hypothetical": "500",
+        "notes": "A 50-pip hypothetical adverse move uses entire 0.5% of 100k JPY equity before costs; never automatically permit entry."
+      },
+      {
+        "id": "BI-06",
+        "symbol": "GBP/USD",
+        "volume_lots": "0.01",
+        "volume_base": "1000",
+        "adverse_price_move_quote": "0.005",
+        "loss_quote_currency": "5",
+        "loss_jpy_hypothetical": "750",
+        "notes": "A 50-pip hypothetical move exceeds 500 JPY when USDJPY assumed 150, even before spread/other costs."
+      }
+    ]
+  },
+  "remaining_form01_and_form03_gates": [
+    "Actual connected Rakuten MT4 server symbol names, contract size and trading rules have not been captured; public rules can change and do not attest account settings.",
+    "MODE_TICKVALUE in deposit currency, MODE_TICKSIZE in points, MODE_POINT, min/max/step/STOPLEVEL/FREEZELEVEL require compatible terminal observations for each pair.",
+    "Read-only terminal specification may not display each MODE_* separately; unobservable required fields stay PENDING, not guessed.",
+    "Quote source/bid-ask and timing, USDJPY cross-conversion for USD-quoted pairs, independently checked broker P&L, account denomination and signs remain unverified.",
+    "Stop/pending execution risk (gap, slippage, spread, swap, partial fills), Q116 0.5% and combined 1.0% need separate implementation-level approvals.",
+    "Even 0.01 lot may exceed 0.5% for a planned stop distance or costs, and minimum volume must not be rounded up to force trading.",
+    "Publicly described hedged-margin MAX method is NOT proof of hedged order loss offset or Q116 risk netting.",
+    "Server-side SL and MT4-dependent trailing stop protection must be distinguished; if terminal is offline trailing adjustment cannot be assumed.",
+    "No automatic data collection from real account or MT4 login is authorized; human may record non-sensitive specification data manually without placing trades."
+  ],
+  "safety_status": {
+    "source_reconciliation_completed": false,
+    "formula_implementation_approved": false,
+    "owner_approved_for_safety": false,
+    "human_safety_approval": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "can_send_orders": false
+  }
+}
