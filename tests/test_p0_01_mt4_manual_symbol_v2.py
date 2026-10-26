@@ -255,7 +255,7 @@ class MT4ManualSymbolV2Tests(unittest.TestCase):
                               "--output", str(path)])
             self.assertEqual(result, 1)
             self.assertFalse(path.exists())
-            self.assertIn("Git-external", out.getvalue())
+            self.assertIn("INPUT_INSIDE_GIT_OR_INVALID_PATH", out.getvalue())
 
     def test_diagnose_incomplete_old_file_without_printing_values(self):
         with tempfile.TemporaryDirectory(prefix="fx-mt4-diagnose-") as folder:
