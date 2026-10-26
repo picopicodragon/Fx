@@ -509,3 +509,7 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 [コンパイル専用の安全な手順](docs/p0_01_mt4_metaeditor_compile_only_guide_20261026.md)を追加。読取専用MQL4ソースの作成は完了済み。追加の本人承認はMetaEditorでの**F7コンパイルと診断確認のみ**。Git管理外かつMT4端末のScripts/Expertsフォルダー外へソースを隔離コピーする`python -m scripts.stage_mt4_compile_only`を用意する。MetaEditorのコンパイル結果はまだ取得していない。
 
 本PRによってMT4への実行配置・属性照会・売買・FORM-01/03の承認は解禁されない。
+
+## MetaEditorのコンパイル結果（2026-10-26・本人申告）
+
+読取専用MQL4ソースについて、本人WindowsのMetaEditorから **0 errors / 0 warnings / 291 ms** と報告。これは本人申告として記録し、GitHub側で独立コンパイル・EX4検証を実施した事実はない。[記録・注意事項](docs/p0_01_mt4_metaeditor_compile_only_guide_20261026.md)を参照。MT4実行・価格/口座属性の取得・実売買は**未承認**。FORM-01/03およびPHASE-1 BLOCKEDは継続。
