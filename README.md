@@ -503,3 +503,9 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 ## MT4属性の読取専用MQL4ソース（作成のみ承認、2026-10-26）
 
 [ソースレビュー手順](docs/p0_01_mt4_mql4_source_review_20261026.md)と`mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4`を追加。本人承認は**ソースコードの作成まで**。初期状態`InpExplicitReadApproval=false`で属性照会を実行しない。MT4端末への配置・MetaEditorコンパイル・実行・口座への接続・自動注文は未承認。現状の4ペア各5数値項目は未取得のまま。静的レビュー用`python scripts/audit_mt4_readonly_source.py`は端末を起動しない。FORM-01/03とPHASE-1 BLOCKEDを維持。
+
+## MetaEditorのコンパイルのみ本人承認（2026-10-26）
+
+[コンパイル専用の安全な手順](docs/p0_01_mt4_metaeditor_compile_only_guide_20261026.md)を追加。読取専用MQL4ソースの作成は完了済み。追加の本人承認はMetaEditorでの**F7コンパイルと診断確認のみ**。Git管理外かつMT4端末のScripts/Expertsフォルダー外へソースを隔離コピーする`python -m scripts.stage_mt4_compile_only`を用意する。MetaEditorのコンパイル結果はまだ取得していない。
+
+本PRによってMT4への実行配置・属性照会・売買・FORM-01/03の承認は解禁されない。

@@ -271,7 +271,11 @@
     "one_shot_source_default_disabled": true,
     "output_sink": "MT4_LOCAL_EXPERTS_LOG_ONLY_IF_SEPARATELY_APPROVED_AND_EXECUTED",
     "static_audit_script": "scripts/audit_mt4_readonly_source.py",
-    "static_audit_not_compiler": true
+    "static_audit_not_compiler": true,
+    "terminal_compilation_approved": true,
+    "terminal_compile_approval_scope": "METAEDITOR_F7_ONLY_NO_TERMINAL_EXECUTION_2026_10_26",
+    "compile_only_staging_script": "scripts/stage_mt4_compile_only.py",
+    "compile_only_guide": "docs/p0_01_mt4_metaeditor_compile_only_guide_20261026.md"
   },
   "safety_gates": {
     "formula_01_approved": false,

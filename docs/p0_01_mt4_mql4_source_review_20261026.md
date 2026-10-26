@@ -59,3 +59,9 @@ python -m unittest discover -s tests -p "test*.py"
 - [MathIsValidNumber](https://docs.mql4.com/math/mathisvalidnumber)
 
 **変わらない安全状態：** FORM-01/FORM-03保留、`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`、`forward_trading_enabled=false`、PHASE-1 BLOCKED。
+
+## 後続承認：MetaEditorでのコンパイル確認だけ（2026-10-26）
+
+本人が追加で**MetaEditorでのMQL4コンパイル確認のみ**を明示承認した。上記の「MetaEditorコンパイルは承認外」という記載は、ソース作成PR #97時点の権限境界である。現在も**MT4での実行は承認外**。
+
+実行配置と混同しないため、[MetaEditorコンパイル専用手順](p0_01_mt4_metaeditor_compile_only_guide_20261026.md)のGit/MT4外隔離コピーとF7による検証だけを行う。MetaEditorの成功ログ/警告はまだ提出されておらず、`terminal_compiled=false`を維持する。
