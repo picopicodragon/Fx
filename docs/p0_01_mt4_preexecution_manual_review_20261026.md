@@ -105,3 +105,30 @@ LOCAL MT4 LOG HANDLING: ACKNOWLEDGED / PENDING
 ```
 
 銘柄名・口座区分は上記のとおり記録済みなので、再提出不要。
+
+## 2026-10-26 続報：接続表示とMACD Sampleの存在報告（実行保留）
+
+本人の新規報告：
+- `CONNECTION DISPLAY: CONNECTED_LIKE`：あくまで画面インジケータ。MQL4の`IsConnected()`呼出しで正常接続を確認した事実ではない。
+- `SCRIPT/EA RUNNING: EXISTS (MACD Sample)`：**MACD Sampleの存在を本人が認識したという報告**。ナビゲーターに登録済みだけか、チャートにアタッチされているか、稼働中か、注文権限が有効か、既存の建玉・指値注文があるかは**依然未確認**。報告形式の`RUNNING: EXISTS`を実際の注文動作の証明とみなさない。MACD SampleはMT4サンプルEAであり、EAは取引操作を行い得るため環境干渉の可能性を保留する。
+- `LOCAL MT4 LOG HANDLING: PENDING`：ログの保護方針を本人が確認するまで解消しない。
+
+### 次の目視限定チェック（変更・操作禁止）
+
+1. **MACD Sampleがどこに表示されているか**だけを確認する。`NAVIGATOR_ONLY`（左のナビゲーターの「エキスパートアドバイザ」の一覧のみ） / `CHART_ATTACHED`（いずれかのチャート右上にMACD Sampleの名称・アイコン） / `BOTH` / `UNKNOWN`。ナビゲーターにあるだけで実行中ではない。[MT4 EA起動の公式ヘルプ](https://www.metatrader4.com/en/trading-platform/help/autotrading/experts/experts_launch)。
+2. ツールバー上部の`AutoTrading`ボタン表示を**クリックせずに**`ON_LIKE` / `OFF_LIKE` / `UNKNOWN`で報告する。緑/赤の見た目だけでEAが取引可能かは断定しない。**ONなら既存EAによる発注の可能性がある**のでスクリプト実行は禁止のまま。[MetaTrader 4公式EA共通設定](https://www.metatrader4.com/en/trading-platform/help/setup/setup_experts)。OFFであってもMQL4のスクリプト処理自体は起動できる。
+3. MT4「ターミナル」→「取引」タブに注文/建玉の行が**あるかどうかのみ**目視。`YES` / `NONE_OBSERVED` / `UNKNOWN`。数量、損益、価格、注文番号、残高、口座番号をこのプロジェクトのログへ送らない。**保有注文・建玉が存在する場合、既存EAを削除したり、停止したりしないで、別の安全審査が必要**。
+4. EAのプロパティ画面を開いたり、チャートを閉じたり、口座切替や自動売買切替をしたりしない。MetaQuotesによればEAはチャートにアタッチされて動作し、他EAをアタッチしたりチャートを閉じることは現在のEAの稼働状態を変更し得る。[MQL4プログラム実行](https://docs.mql4.com/runtime)。
+5. ログは将来実行を別途承認した場合のみ、`MT4_RO`で始まる当該スクリプトの行から必要な**非機密のステータス**だけを局所的に抽出して照合する。Experts/Journalログ全文、口座名義、ログインID、残高、注文履歴はチャット/GitHubへアップロードしない。`ACKNOWLEDGED`は本人が取扱方法を理解・受諾したときのみ。それまでは`PENDING`。[MT4 Expertsログの公式ヘルプ](https://www.metatrader4.com/pt/trading-platform/help/overview/terminal/terminal_experts)。
+6. MACD Sampleは初期搭載のサンプルEA名として知られるが、同名の改造プログラムや端末特性もあり得る。**どのプログラムがどの注文を実行したかは未観測**。安全な実行環境が整うまで、EX4は`FxLocalReview/CompileOnly`に隔離したまま。
+
+**本人からの次回報告は次の分類値だけ**：
+
+```text
+MACD SAMPLE LOCATION: NAVIGATOR_ONLY / CHART_ATTACHED / BOTH / UNKNOWN
+AUTOTRADING DISPLAY: ON_LIKE / OFF_LIKE / UNKNOWN
+OPEN POSITIONS OR PENDING ORDERS: YES / NONE_OBSERVED / UNKNOWN
+LOCAL MT4 LOG HANDLING: ACKNOWLEDGED / PENDING
+```
+
+これらの報告・確認そのものはスクリプトやEAの実行許可、プログラム変更、実売買の承認ではない。`terminal_execution_approved=false`、`terminal_deployed=false`、`broker_queried=false`、`forward_trading_enabled=false`、**PHASE-1 BLOCKED**を維持する。

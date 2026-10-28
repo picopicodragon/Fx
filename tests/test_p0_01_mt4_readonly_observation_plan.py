@@ -158,7 +158,7 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
 
     def test_pre_execution_evidence_does_not_approve_mql4_runtime(self):
         record = self.plan["permissions"]["pre_execution_review"]
-        self.assertEqual(record["status"], "VISUAL_DEMO_SYMBOL_NAMES_MATCH_BUT_EXECUTION_REVIEW_BLOCKED")
+        self.assertEqual(record["status"], "OWNER_REPORT_DEMO_CONNECTED_LIKE_MACD_SAMPLE_PRESENT_LOG_PENDING_EXECUTION_BLOCKED")
         self.assertEqual(record["python_unittest_count"], 409)
         self.assertEqual(record["python_unittest_status"], "OWNER_REPORTED_OK")
         self.assertEqual(record["static_source_audit_status"], "OWNER_REPORTED_PASS")
@@ -193,11 +193,12 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
             "OWNER_REPORTED_VISUAL_ONLY_NO_ACCOUNT_ID",
         )
         self.assertIs(record["terminal_account_type_checked"], True)
-        self.assertEqual(record["connection_display"], "UNKNOWN")
-        self.assertEqual(record["ea_script_running"], "UNKNOWN")
+        self.assertEqual(record["connection_display"], "CONNECTED_LIKE")
+        self.assertEqual(record["ea_script_running"], "EXISTS")
         self.assertEqual(record["local_mt4_log_handling"], "PENDING")
-        for key in ("connection_display_checked", "ea_script_running_checked",
-                    "terminal_log_handling_checked", "terminal_execution_allowed"):
+        self.assertIs(record["connection_display_checked"], True)
+        self.assertIs(record["ea_script_running_checked"], True)
+        for key in ("terminal_log_handling_checked", "terminal_execution_allowed"):
             self.assertIs(record[key], False)
         for key in ("terminal_deployed", "terminal_execution_approved",
                     "broker_queried", "orders_generated"):
@@ -208,6 +209,31 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
             self.assertTrue(all(v is None for v in status["verified_values"].values()))
         self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
         self.assertIs(self.plan["safety_gates"]["forward_trading_enabled"], False)
+
+    def test_existing_macd_sample_is_unverified_order_capable_ea_not_safe(self):
+        record = self.plan["permissions"]["pre_execution_review"]
+        self.assertEqual(record["ea_script_name"], "MACD Sample")
+        self.assertEqual(record["ea_script_running"], "EXISTS")
+        self.assertEqual(
+            record["ea_presence_evidence"],
+            "OWNER_REPORTED_VISUAL_PRESENCE_NOT_EXECUTION_PROOF",
+        )
+        self.assertEqual(record["connection_display"], "CONNECTED_LIKE")
+        self.assertFalse(self.plan["permissions"]["terminal_connected"])
+        self.assertEqual(record["existing_ea_interference_review"], "PENDING")
+        self.assertEqual(record["local_mt4_log_handling"], "PENDING")
+        for key in ("ea_attached_to_chart_verified",
+                    "ea_order_permission_verified",
+                    "ea_current_activity_verified",
+                    "open_positions_or_pending_orders_checked",
+                    "terminal_log_handling_checked",
+                    "terminal_execution_allowed"):
+            self.assertIs(record[key], False)
+        for key in ("terminal_execution_approved", "terminal_deployed",
+                    "broker_queried", "orders_generated"):
+            self.assertIs(self.plan["permissions"][key], False)
+        self.assertIs(self.plan["safety_gates"]["forward_trading_enabled"], False)
+        self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
 
     def test_v2_blank_display_fields_are_reported_separately(self):
         data = copy.deepcopy(self.template)

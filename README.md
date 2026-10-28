@@ -521,3 +521,7 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 ## MT4読取専用スクリプトの実行前目視レビュー（2026-10-26 続報）
 
 本人のMT4画面による直接報告で、デモ口座を選択していること、4ペアの実表示名が`USDJPY/EURJPY/GBPUSD/AUDUSD`でソースの初期入力名と一致することを確認。ただし接続インジケータと他のEA/スクリプト稼働状態は**UNKNOWN**、Expertsログの保護方針は**PENDING**。[継続の非実行確認手順](docs/p0_01_mt4_preexecution_manual_review_20261026.md)に従い画面でのみ確認し、`MQL4`スクリプトや`EX4`を移動・起動しない。デモ口座の確認・銘柄名一致は実行許可ではなく、PHASE-1 BLOCKED、本番取引禁止、FORM-01/03未検証は変わらない。
+
+## P0-01 実行前レビュー続報：既存MACD Sample検知（2026-10-26）
+
+本人目視で`CONNECTION DISPLAY=CONNECTED_LIKE`、`SCRIPT/EA RUNNING=EXISTS (MACD Sample)`、`LOCAL MT4 LOG HANDLING=PENDING`を報告。[無実行の追加レビュー手順](docs/p0_01_mt4_preexecution_manual_review_20261026.md)でMACD Sampleがナビゲーター表示だけかチャート装着か、自動売買表示と既存注文の有無を**目視のみ**で判別する。MACD Sampleの存在は稼働や実注文の証明ではないが、EAによる意図しないデモ注文/環境干渉を排除できないため、新スクリプトの端末実行は禁止したまま。既存EA削除・口座操作・AutoTradingボタン変更も今回の指示には含めない。ログ方針は未確認で、`terminal_execution_approved=false`、FORM-01/03未承認、PHASE-1 BLOCKED継続。
