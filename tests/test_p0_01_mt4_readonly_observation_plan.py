@@ -158,7 +158,7 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
 
     def test_pre_execution_evidence_does_not_approve_mql4_runtime(self):
         record = self.plan["permissions"]["pre_execution_review"]
-        self.assertEqual(record["status"], "OWNER_REPORT_DEMO_CONNECTED_LIKE_MACD_SAMPLE_PRESENT_LOG_PENDING_EXECUTION_BLOCKED")
+        self.assertEqual(record["status"], "BLOCKED_MACD_SAMPLE_CHART_ATTACHED_EXISTING_POSITION_OR_PENDING_ORDER")
         self.assertEqual(record["python_unittest_count"], 409)
         self.assertEqual(record["python_unittest_status"], "OWNER_REPORTED_OK")
         self.assertEqual(record["static_source_audit_status"], "OWNER_REPORTED_PASS")
@@ -167,7 +167,6 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
         self.assertEqual(record["ex4_file_exists"], "OWNER_REPORTED_TRUE")
         self.assertEqual(record["ex4_size_bytes"], 13644)
         for key in ("ex4_binary_reproducibly_bound_to_source",
-                    "terminal_log_handling_checked",
                     "terminal_execution_allowed"):
             self.assertIs(record[key], False)
         self.assertFalse(self.plan["permissions"]["terminal_execution_approved"])
@@ -195,11 +194,11 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
         self.assertIs(record["terminal_account_type_checked"], True)
         self.assertEqual(record["connection_display"], "CONNECTED_LIKE")
         self.assertEqual(record["ea_script_running"], "EXISTS")
-        self.assertEqual(record["local_mt4_log_handling"], "PENDING")
+        self.assertEqual(record["local_mt4_log_handling"], "ACKNOWLEDGED")
         self.assertIs(record["connection_display_checked"], True)
         self.assertIs(record["ea_script_running_checked"], True)
-        for key in ("terminal_log_handling_checked", "terminal_execution_allowed"):
-            self.assertIs(record[key], False)
+        self.assertIs(record["terminal_log_handling_checked"], True)
+        self.assertIs(record["terminal_execution_allowed"], False)
         for key in ("terminal_deployed", "terminal_execution_approved",
                     "broker_queried", "orders_generated"):
             self.assertIs(self.plan["permissions"][key], False)
@@ -216,23 +215,62 @@ class Mt4ReadOnlyObservationDesignTests(unittest.TestCase):
         self.assertEqual(record["ea_script_running"], "EXISTS")
         self.assertEqual(
             record["ea_presence_evidence"],
-            "OWNER_REPORTED_VISUAL_PRESENCE_NOT_EXECUTION_PROOF",
+            "OWNER_REPORTED_VISUAL_CHART_ATTACHMENT_NOT_ACTIVE_TRADING_PROOF",
         )
         self.assertEqual(record["connection_display"], "CONNECTED_LIKE")
         self.assertFalse(self.plan["permissions"]["terminal_connected"])
-        self.assertEqual(record["existing_ea_interference_review"], "PENDING")
-        self.assertEqual(record["local_mt4_log_handling"], "PENDING")
+        self.assertEqual(record["existing_ea_interference_review"], "BLOCKED_EA_ATTACHED_WITH_OPEN_OR_PENDING_ORDERS")
+        self.assertEqual(record["local_mt4_log_handling"], "ACKNOWLEDGED")
         for key in ("ea_attached_to_chart_verified",
-                    "ea_order_permission_verified",
-                    "ea_current_activity_verified",
                     "open_positions_or_pending_orders_checked",
-                    "terminal_log_handling_checked",
+                    "terminal_log_handling_checked"):
+            self.assertIs(record[key], True)
+        for key in ("ea_order_permission_verified",
+                    "ea_current_activity_verified",
                     "terminal_execution_allowed"):
             self.assertIs(record[key], False)
         for key in ("terminal_execution_approved", "terminal_deployed",
                     "broker_queried", "orders_generated"):
             self.assertIs(self.plan["permissions"][key], False)
         self.assertIs(self.plan["safety_gates"]["forward_trading_enabled"], False)
+        self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
+
+    def test_attached_ea_open_orders_and_off_like_toggling_do_not_clear_block(self):
+        review = self.plan["permissions"]["pre_execution_review"]
+        self.assertEqual(review["ea_location_reported"],
+                         "BOTH_NAVIGATOR_AND_CHART_ATTACHED")
+        self.assertEqual(review["autotrading_display"], "OFF_LIKE")
+        self.assertFalse(review["autotrading_actual_permission_verified"])
+        self.assertEqual(review["open_positions_or_pending_orders_reported"], "YES")
+        self.assertTrue(review["open_positions_or_pending_orders_checked"])
+        self.assertFalse(review["existing_orders_origin_verified"])
+        self.assertEqual(
+            review["existing_ea_interference_review"],
+            "BLOCKED_EA_ATTACHED_WITH_OPEN_OR_PENDING_ORDERS",
+        )
+        self.assertTrue(review["terminal_log_handling_checked"])
+        self.assertEqual(
+            review["local_log_acknowledgement_scope"],
+            "LOCAL_STORAGE_ONLY_REDACTED_MT4_RO_STATUS_LINES_IF_SEPARATELY_APPROVED_NO_FULL_LOG_UPLOAD",
+        )
+        self.assertFalse(review["terminal_execution_allowed"])
+        self.assertFalse(self.plan["permissions"]["terminal_execution_approved"])
+        self.assertFalse(self.plan["safety_gates"]["forward_trading_enabled"])
+
+    def test_clean_demo_is_only_a_future_unapproved_recommendation(self):
+        review = self.plan["permissions"]["pre_execution_review"]
+        self.assertFalse(review["isolated_clean_demo_environment_confirmed"])
+        reqs = set(review["future_execution_review_requirements"])
+        self.assertIn(
+            "separate_demo_account_and_terminal_data_directory_or_proven_equivalent_isolation",
+            reqs,
+        )
+        self.assertIn("no_open_positions_or_pending_orders_in_validation_account", reqs)
+        self.assertIn("no_attached_ea_on_target_validation_chart", reqs)
+        self.assertIn("separate_owner_approval_for_one_shot_read_only_run", reqs)
+        self.assertFalse(self.plan["permissions"]["terminal_deployed"])
+        self.assertFalse(self.plan["permissions"]["broker_queried"])
+        self.assertFalse(self.plan["permissions"]["orders_generated"])
         self.assertEqual(self.plan["safety_gates"]["phase_1"], "BLOCKED")
 
     def test_v2_blank_display_fields_are_reported_separately(self):

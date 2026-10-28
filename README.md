@@ -525,3 +525,9 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 ## P0-01 実行前レビュー続報：既存MACD Sample検知（2026-10-26）
 
 本人目視で`CONNECTION DISPLAY=CONNECTED_LIKE`、`SCRIPT/EA RUNNING=EXISTS (MACD Sample)`、`LOCAL MT4 LOG HANDLING=PENDING`を報告。[無実行の追加レビュー手順](docs/p0_01_mt4_preexecution_manual_review_20261026.md)でMACD Sampleがナビゲーター表示だけかチャート装着か、自動売買表示と既存注文の有無を**目視のみ**で判別する。MACD Sampleの存在は稼働や実注文の証明ではないが、EAによる意図しないデモ注文/環境干渉を排除できないため、新スクリプトの端末実行は禁止したまま。既存EA削除・口座操作・AutoTradingボタン変更も今回の指示には含めない。ログ方針は未確認で、`terminal_execution_approved=false`、FORM-01/03未承認、PHASE-1 BLOCKED継続。
+
+## MT4実行前レビュー：MACD Sampleがチャート装着、既存注文あり（2026-10-28）
+
+本人から`MACD SAMPLE LOCATION=BOTH`、`AUTOTRADING DISPLAY=OFF_LIKE`、`OPEN POSITIONS OR PENDING ORDERS=YES`、`LOCAL MT4 LOG HANDLING=ACKNOWLEDGED`と報告された。口座は別途目視で`DEMO`、4通貨ペア表示名も一致済み。**チャート上のEAと建玉/注文が存在するため現在のデモ口座を読取プローブの検証環境として使わない**。OFF表示はスクリプト自体の実行を防ぐ証明ではない。既存注文の起点がMACD Sampleであるとも断定しない。
+
+[安全レビュー記録](docs/p0_01_mt4_preexecution_manual_review_20261026.md)を更新し、当該EAと建玉・注文を変更せず、独立した検証用デモ環境（別の口座/端末データ領域）が設計上必要と整理。環境準備自体と読取実行は**別途本人承認が必要**。`terminal_execution_approved=false`、`broker_queried=false`、`forward_trading_enabled=false`、PHASE-1 BLOCKEDを維持。
