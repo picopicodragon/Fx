@@ -531,3 +531,9 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 本人から`MACD SAMPLE LOCATION=BOTH`、`AUTOTRADING DISPLAY=OFF_LIKE`、`OPEN POSITIONS OR PENDING ORDERS=YES`、`LOCAL MT4 LOG HANDLING=ACKNOWLEDGED`と報告された。口座は別途目視で`DEMO`、4通貨ペア表示名も一致済み。**チャート上のEAと建玉/注文が存在するため現在のデモ口座を読取プローブの検証環境として使わない**。OFF表示はスクリプト自体の実行を防ぐ証明ではない。既存注文の起点がMACD Sampleであるとも断定しない。
 
 [安全レビュー記録](docs/p0_01_mt4_preexecution_manual_review_20261026.md)を更新し、当該EAと建玉・注文を変更せず、独立した検証用デモ環境（別の口座/端末データ領域）が設計上必要と整理。環境準備自体と読取実行は**別途本人承認が必要**。`terminal_execution_approved=false`、`broker_queried=false`、`forward_trading_enabled=false`、PHASE-1 BLOCKEDを維持。
+
+## P0-01：独立した楽天MT4デモ検証環境の設計案（2026-10-28）
+
+既存デモ口座は`MACD Sample`がチャートに装着され、建玉/未約定注文が存在するため、新たな読取用MQL4スクリプトの実行対象にはしない。[条件付きの独立デモ環境設計案](docs/p0_01_isolated_rakuten_mt4_demo_environment_design_20261028.md)を追加。推奨は**独立したもう1つの楽天MT4デモ口座 + 別のMT4インストール先 + 別データ/ログフォルダー**。ただし楽天公式サイトは「デモ口座を何度でも作成可能」としか説明しておらず、**既存口座と同時保有できるか、再作成が元口座に影響しないかは未確認**。楽天へ確認するまで口座を申請しない。同時保有できなければ別口座での検証を中断し、オフラインモック検証を継続する。
+
+楽天MT4デモ初期資金は500万円固定、想定実資金は10万円。本番0.5%リスクをデモ資金の0.5%へ勝手に置き換えない。**設計だけを記録し、新規開設・インストール・ログイン・EX4配置/実行・注文変更はいずれも未承認**。`forward_trading_enabled=false`、`terminal_execution_approved=false`、PHASE-1 BLOCKED維持。

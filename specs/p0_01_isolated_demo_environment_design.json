@@ -1,0 +1,171 @@
+{
+  "schema_version": "1.0",
+  "design_id": "P0-01-MT4-ISOLATED-DEMO-ENV",
+  "reviewed_on": "2026-10-28",
+  "status": "DESIGN_PROPOSAL_ONLY_UNAPPROVED_NO_ENVIRONMENT_ACTIONS",
+  "decision": "PREFER_TWO_SEPARATE_RAKUTEN_MT4_DEMO_ACCOUNTS_AND_TWO_DISTINCT_TERMINAL_INSTALLATIONS_IF_CONCURRENT_DEMO_ACCOUNTS_ALLOWED",
+  "broker": "Rakuten Securities Rakuten MT4 FX Demo",
+  "existing_environment_A": {
+    "account_type": "DEMO_OWNER_VISUAL_REPORT",
+    "market_watch_exact_symbols": [
+      "USDJPY",
+      "EURJPY",
+      "GBPUSD",
+      "AUDUSD"
+    ],
+    "macd_sample_presence": "CHART_ATTACHED_AND_NAVIGATOR_OWNER_VISUAL_REPORT",
+    "autotrading_display": "OFF_LIKE_OWNER_VISUAL_REPORT",
+    "open_positions_or_pending_orders": "YES_OWNER_VISUAL_REPORT",
+    "operation_policy": "NO_CHANGES_TO_EXISTING_TERMINAL_EA_ACCOUNTS_POSITIONS_ORDERS_OR_AUTOTRADING",
+    "use_for_readonly_probe": false
+  },
+  "broker_primary_sources": [
+    {
+      "fact": "repeated_creation_advertised_not_concurrent_holding_proven",
+      "url": "https://www.rakuten-sec.co.jp/web/fx/mt4/demo-account.html"
+    },
+    {
+      "fact": "demo_server_name_and_rakuten_terminal_login",
+      "url": "https://www.rakuten-sec.co.jp/web/fx/mt4/download/"
+    }
+  ],
+  "metatrader_primary_sources": [
+    {
+      "fact": "parallel_terminals_require_distinct_install_directories",
+      "url": "https://www.metatrader4.com/en/trading-platform/help/userguide/installation"
+    },
+    {
+      "fact": "instance_data_directory_per_installation_and_open_data_folder_verification",
+      "url": "https://www.metatrader4.com/ja/trading-platform/help/userguide/start_comm"
+    }
+  ],
+  "unresolved_broker_policy": {
+    "concurrent_independent_demo_accounts_supported": "UNVERIFIED_ASK_RAKUTEN_MT4_SUPPORT",
+    "another_creation_replaces_or_invalidates_previous": "UNVERIFIED_ASK_RAKUTEN_MT4_SUPPORT",
+    "simultaneous_login_to_two_distinct_demo_accounts": "UNVERIFIED_ASK_RAKUTEN_MT4_SUPPORT",
+    "new_demo_opening_currently_authorized": false,
+    "no_account_creation_until_policy_confirmed": true
+  },
+  "candidate_B": {
+    "install_directory": "TO_BE_SELECTED_SEPARATE_FROM_EXISTING_A_AND_GIT",
+    "data_directory": "TO_BE_DISCOVERED_VIA_TERMINAL_FILE_OPEN_DATA_FOLDER_AFTER_SEPARATE_APPROVAL",
+    "initial_deployment_status": "NOT_INSTALLED",
+    "terminal_server_expected": "RakutenSecurities-Demo",
+    "live_server_denied": "RakutenSecurities-Live",
+    "account": "NEW_INDEPENDENT_DEMO_ACCOUNT_ONLY_IF_AVAILABLE_AND_SEPARATELY_APPROVED",
+    "account_id_or_password_storage": "NONE_IN_GITHUB_OR_CHAT_OR_SPEC_JSON",
+    "credentials_required_from_user_for_design": false,
+    "experts": "NO_ATTACHED_EA",
+    "open_positions_or_pending_orders": "MUST_BE_ZERO",
+    "auto_trading": "REMAIN_DISABLED_BUT_NOT_A_SCRIPT_EXECUTION_GUARD",
+    "account_currency": "MUST_BE_VERIFIED_LOCALLY_BEFORE_FORM_03",
+    "symbol_names": [
+      "USDJPY",
+      "EURJPY",
+      "GBPUSD",
+      "AUDUSD"
+    ],
+    "log_storage": "LOCAL_TO_B_ONLY_NO_FULL_LOG_UPLOAD",
+    "mq4_ex4_copy_to_mt4": "PROHIBITED_UNTIL_SEPARATE_OWNER_APPROVAL",
+    "script_execution": "PROHIBITED_UNTIL_SEPARATE_OWNER_APPROVAL",
+    "no_automatic_order_process": true,
+    "no_python_ea_bridge": true
+  },
+  "financial_constraints": {
+    "rakuten_demo_initial_equity_jpy": 5000000,
+    "rakuten_demo_max_leverage": 25,
+    "initial_actual_equity_jpy": 100000,
+    "mismatch": "DEMO_5M_IS_NOT_THE_100K_PRODUCTION_EQUITY",
+    "demo_orders_approved": false,
+    "equity_based_live_sizing_approved": false,
+    "tick_value_and_contract_unit_require_separate_form_01_and_form_03_verification": true
+  },
+  "options": [
+    {
+      "id": "A",
+      "label": "Distinct independent Rakuten demo account plus distinct MT4 install/data folder",
+      "recommended": true,
+      "condition": "CONCURRENT_ACCOUNTS_CONFIRMED_AND_HUMAN_APPROVES_NEW_ENV",
+      "runtime_allowed": false
+    },
+    {
+      "id": "B",
+      "label": "Offline deterministic mocked MarketInfo data and local parser validation without MT4 execution",
+      "recommended_as_fallback": true,
+      "condition": "BROKER_CONCURRENCY_UNKNOWN_OR_UNSUPPORTED",
+      "runtime_allowed": false
+    },
+    {
+      "id": "C",
+      "label": "Additional chart/profile/install but log in same existing demo with MACD and existing orders",
+      "recommended": false,
+      "condition": "SAME_ACCOUNT_TRADING_STATE_SHARED",
+      "runtime_allowed": false
+    }
+  ],
+  "sequential_design_gates": [
+    {
+      "id": "G0",
+      "name": "Source and policy review",
+      "status": "DESIGN_DONE_NOT_OPERATIONAL",
+      "requires_human_approval": false
+    },
+    {
+      "id": "G1",
+      "name": "Verify independent concurrent MT4 demo account availability",
+      "status": "BLOCKED_EXTERNAL_POLICY",
+      "requires_human_approval": false
+    },
+    {
+      "id": "G2",
+      "name": "Authorize creation of additional demo account and MT4 install",
+      "status": "NOT_AUTHORIZED",
+      "requires_human_approval": true
+    },
+    {
+      "id": "G3",
+      "name": "Verify separate install and data folders, independent demo login without disclosing secrets",
+      "status": "NOT_STARTED",
+      "requires_human_approval": true
+    },
+    {
+      "id": "G4",
+      "name": "Inspect B for 0 EAs and 0 open/pending orders, exact four symbols and local logs",
+      "status": "NOT_STARTED",
+      "requires_human_approval": true
+    },
+    {
+      "id": "G5",
+      "name": "Separate one-shot manual read-only script execution approval",
+      "status": "NOT_AUTHORIZED",
+      "requires_human_approval": true
+    },
+    {
+      "id": "G6",
+      "name": "Independent observed 5-value reconciliation; no orders or production approval",
+      "status": "NOT_STARTED",
+      "requires_human_approval": true
+    }
+  ],
+  "forbidden_actions": [
+    "CREATE_DEMO_ACCOUNT",
+    "INSTALL_OR_LAUNCH_SECOND_MT4",
+    "SWITCH_OR_LOGIN_TO_ANY_MT4_ACCOUNT",
+    "CHANGE_EXISTING_MACD_SAMPLE_OR_AUTOTRADING",
+    "MODIFY_OR_CLOSE_EXISTING_POSITIONS_OR_PENDING_ORDERS",
+    "MOVE_OR_EXECUTE_MQL4_EX4",
+    "CALL_BROKER_MARKETINFO_FROM_TERMINAL",
+    "PLACE_MODIFY_CANCEL_OR_CLOSE_TRADES",
+    "UPLOAD_CREDENTIALS_IDS_BALANCES_ORDERS_OR_UNREDACTED_TERMINAL_LOGS"
+  ],
+  "safety_gates": {
+    "implementation_approved": false,
+    "owner_approved_for_safety": false,
+    "human_safety_approval": false,
+    "forward_trading_enabled": false,
+    "phase_1": "BLOCKED",
+    "readonly_terminal_execution_approved": false,
+    "broker_queried": false,
+    "live_orders_enabled": false
+  }
+}
