@@ -70,7 +70,7 @@ class IsolatedRakutenMt4DesignTests(unittest.TestCase):
             "simultaneous_login_to_two_distinct_demo_accounts",
         ):
             self.assertEqual(
-                policy[field], "UNVERIFIED_ASK_RAKUTEN_MT4_SUPPORT"
+                policy[field], "UNVERIFIED_OFFICIAL_MT4_DEMO_SUPPORT_EXCLUDED"
             )
         self.assertFalse(policy["new_demo_opening_currently_authorized"])
         self.assertTrue(policy["no_account_creation_until_policy_confirmed"])
@@ -80,6 +80,28 @@ class IsolatedRakutenMt4DesignTests(unittest.TestCase):
         self.assertTrue(choices["B"]["recommended_as_fallback"])
         self.assertFalse(choices["C"]["recommended"])
         self.assertTrue(all(not x["runtime_allowed"] for x in choices.values()))
+
+    def test_official_mt4_demo_support_exclusion_keeps_g1_blocked(self):
+        policy = self.plan["unresolved_broker_policy"]
+        self.assertEqual(
+            policy["official_demo_support_policy"],
+            "DEMO_ACCOUNT_USAGE_INQUIRIES_OUTSIDE_PUBLISHED_SUPPORT_SCOPE",
+        )
+        self.assertEqual(
+            policy["official_support_policy_source"],
+            "https://www.rakuten-sec.co.jp/web/support/cs/fx_mt4.html",
+        )
+        self.assertTrue(policy["official_public_documentation_still_required"])
+        self.assertFalse(policy["new_demo_opening_currently_authorized"])
+        self.assertEqual(
+            policy["design_fallback"],
+            "OFFLINE_MOCKS_NO_MT4_CONNECTION_NO_DEMO_ACCOUNT_CREATION",
+        )
+        self.assertEqual(
+            self.plan["sequential_design_gates"][1]["status"],
+            "BLOCKED_EXTERNAL_POLICY",
+        )
+        self.assertFalse(self.plan["safety_gates"]["readonly_terminal_execution_approved"])
 
     def test_isolated_terminal_cannot_share_live_server_or_trade(self):
         b = self.plan["candidate_B"]
