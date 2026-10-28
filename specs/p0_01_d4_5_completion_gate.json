@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D4-5-COMPLETION-GATE",
+  "created_on": "2026-10-28",
+  "assessment": "OFFLINE_TEST_SCOPE_COMPLETED_NOT_BROKER_VERIFIED",
+  "pr_evidence": [
+    107,
+    108,
+    109,
+    110,
+    111,
+    112
+  ],
+  "last_owner_local_test": {
+    "count": 470,
+    "result": "OK",
+    "source": "OWNER_REPORTED_PR112"
+  },
+  "offline_scope_completed": true,
+  "broker_verified": false,
+  "terminal_execution_approved": false,
+  "read_only_ex4_execution_approved": false,
+  "orders_generated": false,
+  "forward_trading_enabled": false,
+  "human_safety_approval": false,
+  "phase_1": "BLOCKED",
+  "blocked_gates": [
+    "G1_INDEPENDENT_DEMO_POLICY",
+    "G2_RUNTIME_ISOLATION",
+    "G3_REAL_BROKER_EVIDENCE",
+    "G4_RISK_REVIEW",
+    "G5_SEPARATE_EXPLICIT_OWNER_APPROVAL"
+  ],
+  "eligible_next_action": "OFFLINE_DESIGN_AND_TEST_ONLY",
+  "promotion_from_ci_or_merge_prohibited": true
+}
