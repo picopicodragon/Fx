@@ -91,6 +91,14 @@ class SyntheticD2Tests(unittest.TestCase):
         rows[0]["properties"]["min_lot"] = secret
         self.assertNotIn(secret, repr(report_safe_status_codes_only(rows)))
 
+    def test_reject_unexpected_root_types_without_echo(self):
+        for candidate in (None, {}, (), "PRIVATE_PAYLOAD", 42):
+            with self.subTest(type=type(candidate).__name__):
+                result = report_safe_status_codes_only(candidate)
+                self.assertEqual(result["status"], REVIEW)
+                self.assertFalse(result["production_usable"])
+                self.assertNotIn("PRIVATE_PAYLOAD", repr(result))
+
     def test_no_file_or_network_dependencies(self):
         import inspect
         import scripts.p0_01_offline_five_field_mock as module
