@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-PREEXECUTION-REVIEW",
+  "review_date": "2026-10-28",
+  "review_kind": "DOCUMENT_ONLY_NO_RUNTIME",
+  "status": "OFFLINE_REVIEW_COMPLETE_RUNTIME_BLOCKED",
+  "evidence": [
+    "specs/p0_01_d4_5_completion_gate.json",
+    "specs/p0_01_isolated_demo_environment_design.json",
+    "specs/p0_01_mt4_readonly_observation_plan.json"
+  ],
+  "gates": [
+    {
+      "id": "G1",
+      "status": "BLOCKED_EXTERNAL_POLICY",
+      "unblock_requires": "INDEPENDENT_CONCURRENT_DEMO_ACCOUNT_POLICY_EVIDENCE"
+    },
+    {
+      "id": "G2",
+      "status": "NOT_AUTHORIZED",
+      "unblock_requires": "ISOLATION_PLAN_AND_SEPARATE_OWNER_APPROVAL"
+    },
+    {
+      "id": "G3",
+      "status": "UNVERIFIED",
+      "unblock_requires": "FIVE_FIELD_REAL_OBSERVATIONS_AND_INDEPENDENT_PROVENANCE"
+    },
+    {
+      "id": "G4",
+      "status": "REVIEW_REQUIRED",
+      "unblock_requires": "EQUITY_RISK_AND_CONTRACT_CURRENCY_VALIDATION"
+    },
+    {
+      "id": "G5",
+      "status": "NOT_AUTHORIZED",
+      "unblock_requires": "PER_ACTION_EXPLICIT_HUMAN_APPROVAL"
+    }
+  ],
+  "offline_next_actions_only": true,
+  "broker_verified": false,
+  "verified_values_must_remain_null": true,
+  "orders_generated": false,
+  "terminal_execution_approved": false,
+  "read_only_ex4_execution_approved": false,
+  "forward_trading_enabled": false,
+  "human_safety_approval": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "ci_or_merge_never_authorizes_runtime": true
+}
