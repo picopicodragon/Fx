@@ -132,3 +132,35 @@ LOCAL MT4 LOG HANDLING: ACKNOWLEDGED / PENDING
 ```
 
 これらの報告・確認そのものはスクリプトやEAの実行許可、プログラム変更、実売買の承認ではない。`terminal_execution_approved=false`、`terminal_deployed=false`、`broker_queried=false`、`forward_trading_enabled=false`、**PHASE-1 BLOCKED**を維持する。
+
+## 2026-10-28：MACD Sampleのチャート装着と既存注文あり、実行レビューBLOCKED
+
+本人から次を直接受領した。
+- `MACD SAMPLE LOCATION: BOTH`：ナビゲーター掲載**かつチャートに装着された状態**を本人が目視報告。EAが取引関数を現在呼んでいるか、既存注文を作成したか、EA固有の取引許可があるかは未確認。
+- `AUTOTRADING DISPLAY: OFF_LIKE`：自動売買ボタンはOFFに見える。**本当に自動取引が許可されていないかをAPIで検証した証拠ではない**。OFFでもMQL4プログラムの分析・読取処理が実行され得る。AutoTradingを切り替えない。
+- `OPEN POSITIONS OR PENDING ORDERS: YES`：取引タブに建玉または未約定注文の行があると本人が報告。ポジションか指値かの内訳・銘柄・注文作成者・保護注文の有無は未確認であり、本システムの注文発行を意味しない。
+- `LOCAL MT4 LOG HANDLING: ACKNOWLEDGED`：Experts/Journalログ全文や口座ID等をGitHub/チャットへ提出しない方針を本人が理解・了承。ログ実データの安全な消去や抽出の実施許可ではない。
+
+### 判定
+
+現在のデモ口座には既存の注文/建玉があり、`MACD Sample`がチャート装着されている。読取用MQL4には注文APIを含まないものの、**混在環境での誤操作、ログ混同、EA取引環境への干渉を排除できない**。従って実行承認に進まず、当該端末にEX4を設置しない。`OFF_LIKE`を安全を保証する根拠としない。
+
+**実施しないこと：** `MACD Sample`の停止/削除/置換、`AutoTrading`切替、チャートや口座の切替・強制終了、既存ポジションの決済、未約定注文取消/変更、EX4の配置・実行、ローカル端末ログの送付。既存建玉・注文を残したまま、サーバー側損切りや指値が意図した挙動をするとはここでは保証しない。実際のリスク管理は所有者が別途判断する事項であり、本読取スクリプトの試験と混同しない。
+
+### 次に進める安全な分岐
+
+- **推奨**：現在のデモ口座・EAには触れずに、**別の検証用デモ口座かつ独立したMT4データ領域/端末構成**を用意できるか設計上確認する。そこでEAがアタッチされていないこと、既存建玉・未約定注文がゼロであること、4銘柄が気配値表示に存在すること、ログの保存と秘匿方針を確認する。なお端末の新規インストール・新規デモ口座の開設・ログインは今回の承認外で、本人から別途明示承認を得る。
+- 他のEAがない新しいチャートだけを同じ口座に開いても、**口座の既存注文を分離することにはならない**。別プロファイルを選んだだけでも口座共有を排除できない。
+- 将来、独立した検証環境ができても、本人が新たに**1回限りの読取スクリプト実行を明示承認**するまでは`InpExplicitReadApproval=false`および`terminal_execution_approved=false`を保持し、EX4をMT4へ移動しない。
+
+公式資料：
+- [MetaTrader 4: 自動取引の設定とOFF時もスクリプトが動き得ること](https://www.metatrader4.com/ja/trading-platform/help/autotrading/scripts/scripts_setup)
+- [MetaTrader 4: EAがチャートに装着される仕組み](https://www.metatrader4.com/es/trading-platform/help/autotrading/experts/experts_launch)
+- [MetaTrader 4: 現在の建玉と指値注文がTradeタブに表示](https://www.metatrader4.com/en/trading-platform/help/overview/terminal/terminal_trade)
+- [MetaTrader 4: EAを止める操作は明示的なチャートからの削除](https://www.metatrader4.com/ja/trading-platform/help/autotrading/experts/experts_remove)
+
+**安全フラグ不変：** `terminal_execution_approved=false`、`terminal_deployed=false`、`broker_queried=false`、`implementation_approved=false`、`human_safety_approval=false`、`owner_approved_for_safety=false`、`forward_trading_enabled=false`、PHASE-1 BLOCKED。
+
+### 本人に確認する場合の唯一の次の問い
+
+**今のデモ口座やMACD Sampleを変更せず、別デモ口座・独立MT4環境を新規に準備する方針を検討してよいか。** 検討に賛成してもインストール・ログイン・実行の承認ではない。
