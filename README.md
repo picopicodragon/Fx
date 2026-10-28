@@ -541,3 +541,7 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 ## 楽天MT4デモのサポート範囲に関する追加確認（2026-10-28）
 
 楽天公式の[楽天MT4サポート範囲](https://www.rakuten-sec.co.jp/web/support/cs/fx_mt4.html)では、**「MT4デモ口座の利用に関する内容」はサポート対象外**。また、[楽天MT4デモ口座案内](https://www.rakuten-sec.co.jp/web/fx/mt4/demo-account.html)の「何度でも作成できる」は、別デモ口座の同時保持・既存口座/注文への無影響を保証しない。したがって、G1の解消を通常のカスタマーサポートからの回答に依存せず、新規デモ口座申請・MT4追加インストールは**未承認**で停止。別デモの同時保持に関する確かな根拠が得られるまでは、**Pythonの完全オフラインモックによる検証**を優先する。実口座や既存のデモ環境は変更せず、PHASE-1 BLOCKED維持。
+
+## P0-01：完全オフラインの5属性モック検証設計（2026-10-28）
+
+PR #105のマージ後、本人Windowsで**421件/OK**報告を受領。[モック検証の設計](docs/p0_01_offline_five_field_mock_design_20261028.md)と[機械可読ルール](specs/p0_01_five_field_offline_mock_design.json)を追加。4ペア×5属性を**合成データのみ・Decimal文字列のみ**で検査し、欠損、NaN/無限、0/負値、通貨とtick単位の混同、デモ500万円と仮想本番10万円の混同などを次PRでテストする設計。**モック検証コードの実装・MT4接続・EX4起動は未実施**。合成テスト全PASSでも`verified_values=null`、`FORM-01/03`未承認、PHASE-1 BLOCKEDのまま。
