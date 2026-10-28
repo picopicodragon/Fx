@@ -290,7 +290,7 @@
       "compiler_version_attested": false
     },
     "pre_execution_review": {
-      "status": "OWNER_REPORT_DEMO_CONNECTED_LIKE_MACD_SAMPLE_PRESENT_LOG_PENDING_EXECUTION_BLOCKED",
+      "status": "BLOCKED_MACD_SAMPLE_CHART_ATTACHED_EXISTING_POSITION_OR_PENDING_ORDER",
       "owner_reports_date": "2026-10-26",
       "python_unittest_count": 409,
       "python_unittest_status": "OWNER_REPORTED_OK",
@@ -303,10 +303,10 @@
       "ex4_binary_reproducibly_bound_to_source": false,
       "terminal_symbol_mapping_checked": true,
       "terminal_account_type_checked": true,
-      "terminal_log_handling_checked": false,
+      "terminal_log_handling_checked": true,
       "terminal_execution_allowed": false,
-      "note": "Owner saw demo account and exact 4 symbol names, connection indicator looked connected, MACD Sample was present. Presence does not verify attachment, trade permissions, running status or order exposure. EA interference and local log privacy are pending; no terminal/script interaction, real MarketInfo reads or trading approval.",
-      "owner_visual_report_date": "2026-10-26",
+      "note": "Owner reported MACD Sample shown in Navigator and attached to chart, AutoTrading OFF-like, positions or pending orders YES, log handling acknowledged. This does not show MACD Sample created existing orders, nor does OFF-like prove no script execution. Do not remove or stop EA, change autotrading, modify or close orders, or run the read-only EX4. Require distinct clean demo environment and fresh explicit execution approval.",
+      "owner_visual_report_date": "2026-10-28",
       "symbol_names_reported": {
         "USDJPY": "USDJPY",
         "EURJPY": "EURJPY",
@@ -318,16 +318,31 @@
       "account_type_evidence": "OWNER_REPORTED_VISUAL_ONLY_NO_ACCOUNT_ID",
       "connection_display": "CONNECTED_LIKE",
       "ea_script_running": "EXISTS",
-      "local_mt4_log_handling": "PENDING",
+      "local_mt4_log_handling": "ACKNOWLEDGED",
       "connection_display_checked": true,
       "ea_script_running_checked": true,
       "ea_script_name": "MACD Sample",
-      "ea_presence_evidence": "OWNER_REPORTED_VISUAL_PRESENCE_NOT_EXECUTION_PROOF",
-      "ea_attached_to_chart_verified": false,
+      "ea_presence_evidence": "OWNER_REPORTED_VISUAL_CHART_ATTACHMENT_NOT_ACTIVE_TRADING_PROOF",
+      "ea_attached_to_chart_verified": true,
       "ea_order_permission_verified": false,
       "ea_current_activity_verified": false,
-      "open_positions_or_pending_orders_checked": false,
-      "existing_ea_interference_review": "PENDING"
+      "open_positions_or_pending_orders_checked": true,
+      "existing_ea_interference_review": "BLOCKED_EA_ATTACHED_WITH_OPEN_OR_PENDING_ORDERS",
+      "ea_location_reported": "BOTH_NAVIGATOR_AND_CHART_ATTACHED",
+      "autotrading_display": "OFF_LIKE",
+      "autotrading_actual_permission_verified": false,
+      "open_positions_or_pending_orders_reported": "YES",
+      "existing_orders_origin_verified": false,
+      "local_log_acknowledgement_scope": "LOCAL_STORAGE_ONLY_REDACTED_MT4_RO_STATUS_LINES_IF_SEPARATELY_APPROVED_NO_FULL_LOG_UPLOAD",
+      "isolated_clean_demo_environment_confirmed": false,
+      "future_execution_review_requirements": [
+        "separate_demo_account_and_terminal_data_directory_or_proven_equivalent_isolation",
+        "no_attached_ea_on_target_validation_chart",
+        "no_open_positions_or_pending_orders_in_validation_account",
+        "autotrading_off_state_verified_not_used_as_execution_guard",
+        "local_log_privacy_and_source_integrity_reconfirmed",
+        "separate_owner_approval_for_one_shot_read_only_run"
+      ]
     }
   },
   "safety_gates": {
