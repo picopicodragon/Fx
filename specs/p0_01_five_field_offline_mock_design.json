@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-MT4-FIVE-FIELD-OFFLINE-MOCK-DESIGN",
+  "documented_on": "2026-10-28",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED_AND_NOT_AUTHORIZED_FOR_MT4_RUNTIME",
+  "objective": "Pure Python, deterministic in-memory synthetic 4-symbol x 5-property validation that can never authenticate broker or authorize orders.",
+  "reference_module": "scripts/mt4_manual_symbol_v2.py",
+  "reference_numeric_validation": "scripts/validate_mt4_manual_symbol_specs.py",
+  "existing_mql4_static_source": "mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4",
+  "scope": {
+    "pairs": [
+      "USD/JPY",
+      "EUR/JPY",
+      "GBP/USD",
+      "AUD/USD"
+    ],
+    "fields": {
+      "min_lot": "MODE_MINLOT",
+      "lot_step": "MODE_LOTSTEP",
+      "point_quote": "MODE_POINT",
+      "tick_size_points": "MODE_TICKSIZE",
+      "tick_value_deposit_currency": "MODE_TICKVALUE"
+    },
+    "fixture_count": 20,
+    "input_type": "IN_MEMORY_SYNTHETIC_FIXTURES_ONLY",
+    "allowed_pure_functions": [
+      "validate_fixture_shape",
+      "validate_positive_decimal_tokens",
+      "compare_synthetic_field_invariants",
+      "report_safe_status_codes_only"
+    ],
+    "dependency_policy": "PYTHON_STDLIB_DECIMAL_ONLY_NO_MT4_APIS",
+    "fixture_identity": "SYNTHETIC_NON_BROKER_VALUES_DO_NOT_EXPORT",
+    "output": "SAFE_STATUS_CODES_AND_FIELD_NAMES_ONLY",
+    "always_production_usable": false
+  },
+  "safety": {
+    "terminal_execution_approved": false,
+    "terminal_deployed": false,
+    "broker_queried": false,
+    "orders_generated": false,
+    "forward_trading_enabled": false,
+    "implementation_approved": false,
+    "human_safety_approval": false,
+    "owner_approved_for_safety": false,
+    "phase_1": "BLOCKED",
+    "never_import_modules": [
+      "MetaTrader5",
+      "win32com",
+      "requests",
+      "socket",
+      "subprocess",
+      "mql4",
+      "mt4_connector"
+    ],
+    "never_call": [
+      "MarketInfo",
+      "SymbolInfoInteger",
+      "OrderSend",
+      "OrderModify",
+      "OrderClose",
+      "WebRequest",
+      "FileOpen"
+    ],
+    "never_read_paths": [
+      "Documents/FxLocalReview",
+      "MQL4/Logs",
+      "MQL4/Scripts"
+    ],
+    "never_write_paths": [
+      "specs/p0_01_mt4_readonly_observation_plan.json",
+      "any_real_mt4_symbols_local.v2.json",
+      "MQL4/Scripts",
+      "MQL4/Experts"
+    ],
+    "no_implicit_promotion_from_valid_mock": true
+  },
+  "requirements": [
+    {
+      "id": "F01",
+      "check": "Exact 4 unique pair names and 5 known fields per pair, unknown/duplicate rejected",
+      "on_failure": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "F02",
+      "check": "Decimal string only, nonempty <=48 chars, finite, strictly positive; reject numbers floats bool NaN Infinity zero negative and oversized exponents",
+      "on_failure": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "F03",
+      "check": "Missing null property yields INCOMPLETE, never truthy default or inferred public broker values",
+      "on_failure": "INCOMPLETE"
+    },
+    {
+      "id": "F04",
+      "check": "lot_step cannot exceed min_lot when both known, but any failure remains synthetic and unverified",
+      "on_failure": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "F05",
+      "check": "point_quote and tick_size_points are distinct units; price_increment=point_quote*tick_size_points only inside synthetic example",
+      "on_failure": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "F06",
+      "check": "tick_value_deposit_currency requires explicit account-currency and contract-basis provenance to become verified; synthetic fixture cannot provide it",
+      "on_failure": "UNVERIFIED"
+    },
+    {
+      "id": "F07",
+      "check": "Tie 100k JPY example to 0.5%/1.0%/1.5%/5.0%; never substitute 5m JPY Rakuten demo equity",
+      "on_failure": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "F08",
+      "check": "No fixture values, simulated 5-field observations or private logs are written into Git repo or live local v2 file",
+      "on_failure": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "F09",
+      "check": "Even all synthetics valid: SYNTHETIC_CHECKS_PASS_NEVER_VERIFIED; leave form-01/form-03, runtime and live-trade permission false",
+      "on_failure": "UNVERIFIED"
+    },
+    {
+      "id": "F10",
+      "check": "Reject unknown status/code or exception with sanitized non-numeric error code; no full input echo",
+      "on_failure": "REVIEW_REQUIRED"
+    }
+  ],
+  "synthetic_scenarios": [
+    "VALID_SHAPE_ALL_POSITIVE_DECIMAL_STRINGS",
+    "MISSING_EACH_OF_5_PROPERTIES_PER_PAIR",
+    "ZERO_NEGATIVE_INVALID_NONFINITE_INFINITE_SCIENTIFIC_EXTREMES",
+    "JSON_NUMERIC_OR_BOOLEAN_INSTEAD_OF_DECIMAL_TEXT",
+    "DUPLICATE_MISSING_UNKNOWN_SYMBOL_AND_FIELD",
+    "LOT_STEP_GREATER_THAN_MIN_LOT",
+    "POINT_AND_TICK_SIZE_UNITS_NOT_INTERCHANGEABLE",
+    "TICK_VALUE_WITHOUT_CURRENCY_OR_CONTRACT_PROVENANCE",
+    "DEMO_EQUITY_5M_VS_VIRTUAL_100K_MISMATCH",
+    "ALL_SYNTHETIC_PASS_BUT_RUNTIME_STILL_BLOCKED",
+    "FAILURE_OUTPUT_NEVER_ECHOES_INPUT_VALUES"
+  ],
+  "proposal_sequence": [
+    {
+      "id": "D1",
+      "name": "Approve design review in GitHub; no actual validation engine added",
+      "status": "DESIGN_PENDING_SELF_REVIEW"
+    },
+    {
+      "id": "D2",
+      "name": "Implement pure Python in-memory fixture and validator as a separate PR with tests; no MT4 interaction",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "D3",
+      "name": "CI Linux Python3.12 and Windows Python3.13, inspect Q109 traceability impact",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "D4",
+      "name": "Independent future broker observation and reconciliation only after separate owner approval",
+      "status": "NOT_AUTHORIZED"
+    }
+  ],
+  "non_goals": [
+    "MQL4_EX4_EXECUTION",
+    "MT4_LOGIN",
+    "NEW_DEMO_ACCOUNT",
+    "EA_CHANGES",
+    "ORDER_CREATION",
+    "REAL_TICKVALUE_ATTESTATION",
+    "FORM_01_03_PRODUCTION_APPROVAL"
+  ]
+}
