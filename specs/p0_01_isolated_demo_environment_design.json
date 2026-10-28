@@ -27,6 +27,10 @@
     {
       "fact": "demo_server_name_and_rakuten_terminal_login",
       "url": "https://www.rakuten-sec.co.jp/web/fx/mt4/download/"
+    },
+    {
+      "fact": "rakuten_mt4_demo_account_use_not_supported_by_customer_service",
+      "url": "https://www.rakuten-sec.co.jp/web/support/cs/fx_mt4.html"
     }
   ],
   "metatrader_primary_sources": [
@@ -40,11 +44,16 @@
     }
   ],
   "unresolved_broker_policy": {
-    "concurrent_independent_demo_accounts_supported": "UNVERIFIED_ASK_RAKUTEN_MT4_SUPPORT",
-    "another_creation_replaces_or_invalidates_previous": "UNVERIFIED_ASK_RAKUTEN_MT4_SUPPORT",
-    "simultaneous_login_to_two_distinct_demo_accounts": "UNVERIFIED_ASK_RAKUTEN_MT4_SUPPORT",
+    "concurrent_independent_demo_accounts_supported": "UNVERIFIED_OFFICIAL_MT4_DEMO_SUPPORT_EXCLUDED",
+    "another_creation_replaces_or_invalidates_previous": "UNVERIFIED_OFFICIAL_MT4_DEMO_SUPPORT_EXCLUDED",
+    "simultaneous_login_to_two_distinct_demo_accounts": "UNVERIFIED_OFFICIAL_MT4_DEMO_SUPPORT_EXCLUDED",
     "new_demo_opening_currently_authorized": false,
-    "no_account_creation_until_policy_confirmed": true
+    "no_account_creation_until_policy_confirmed": true,
+    "official_demo_support_policy": "DEMO_ACCOUNT_USAGE_INQUIRIES_OUTSIDE_PUBLISHED_SUPPORT_SCOPE",
+    "official_support_policy_source": "https://www.rakuten-sec.co.jp/web/support/cs/fx_mt4.html",
+    "official_public_documentation_still_required": true,
+    "optional_general_policy_question_only_no_answer_guaranteed": true,
+    "design_fallback": "OFFLINE_MOCKS_NO_MT4_CONNECTION_NO_DEMO_ACCOUNT_CREATION"
   },
   "candidate_B": {
     "install_directory": "TO_BE_SELECTED_SEPARATE_FROM_EXISTING_A_AND_GIT",
@@ -112,7 +121,7 @@
     },
     {
       "id": "G1",
-      "name": "Verify independent concurrent MT4 demo account availability",
+      "name": "Verify concurrent independent MT4 demo accounts with definitive public policy evidence; ordinary customer support excludes demo usage inquiries",
       "status": "BLOCKED_EXTERNAL_POLICY",
       "requires_human_approval": false
     },
