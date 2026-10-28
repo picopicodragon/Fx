@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-1-PREFLIGHT",
+  "created_on": "2026-10-28",
+  "review_type": "OFFLINE_DESIGN_ONLY",
+  "status": "PREFLIGHT_PLAN_DRAFT_RUNTIME_BLOCKED",
+  "existing_terminal_a_must_be_unchanged": true,
+  "candidate_b_installed": false,
+  "concurrent_demo_policy_confirmed": false,
+  "items": [
+    {
+      "id": "PF1",
+      "status": "BLOCKED_EXTERNAL_POLICY",
+      "runtime_authorized": false
+    },
+    {
+      "id": "PF2",
+      "status": "DESIGN_ONLY",
+      "runtime_authorized": false
+    },
+    {
+      "id": "PF3",
+      "status": "NOT_STARTED",
+      "runtime_authorized": false
+    },
+    {
+      "id": "PF4",
+      "status": "NOT_STARTED",
+      "runtime_authorized": false
+    },
+    {
+      "id": "PF5",
+      "status": "NOT_AUTHORIZED",
+      "runtime_authorized": false
+    },
+    {
+      "id": "PF6",
+      "status": "UNVERIFIED",
+      "runtime_authorized": false
+    },
+    {
+      "id": "PF7",
+      "status": "REVIEW_REQUIRED",
+      "runtime_authorized": false
+    },
+    {
+      "id": "PF8",
+      "status": "NOT_AUTHORIZED",
+      "runtime_authorized": false
+    }
+  ],
+  "approved_next_actions": [
+    "OFFLINE_DOCUMENT_REVIEW",
+    "SYNTHETIC_TESTS"
+  ],
+  "forbidden_operations": [
+    "CREATE_DEMO_ACCOUNT",
+    "INSTALL_OR_LAUNCH_SECOND_MT4",
+    "SWITCH_OR_LOGIN_TO_ANY_MT4_ACCOUNT",
+    "CHANGE_EXISTING_EA_OR_POSITIONS_OR_ORDERS",
+    "DEPLOY_OR_RUN_EX4",
+    "QUERY_REAL_BROKER_DATA",
+    "PLACE_MODIFY_CANCEL_OR_CLOSE_ORDER",
+    "UPLOAD_SECRETS_OR_UNREDACTED_LOGS"
+  ],
+  "broker_verified": false,
+  "production_usable": false,
+  "read_only_ex4_execution_approved": false,
+  "terminal_execution_approved": false,
+  "orders_generated": false,
+  "forward_trading_enabled": false,
+  "human_safety_approval": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "merge_is_not_approval": true
+}
