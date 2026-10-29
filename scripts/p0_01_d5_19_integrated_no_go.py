@@ -57,13 +57,12 @@ def _iso_day(value: object) -> bool:
 def _safe_result(result: object, allowed: frozenset[str]) -> bool:
     if type(result) is not dict or result.get("status") not in allowed:
         return False
-    return (result.get("phase_1") == "BLOCKED"
-            and all(result.get(k) is False for k in _DENY_FLAGS)
-            and type(result.get("daily_stop_latched")) is bool
-            if "daily_stop_latched" in result else
-            result.get("phase_1") == "BLOCKED"
-            and all(result.get(k) is False for k in _DENY_FLAGS)
-            and result.get("runtime_go_no_go") == "NO_GO"
+    if (result.get("phase_1") != "BLOCKED"
+            or any(result.get(k) is not False for k in _DENY_FLAGS)):
+        return False
+    if "daily_stop_latched" in result:
+        return type(result["daily_stop_latched"]) is bool
+    return (result.get("runtime_go_no_go") == "NO_GO"
             and result.get("verified_values", "MISSING") is None
             and result.get("read_only_ex4_execution_approved") is False)
 
