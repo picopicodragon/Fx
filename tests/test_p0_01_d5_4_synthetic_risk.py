@@ -49,9 +49,10 @@ class SyntheticRiskTests(unittest.TestCase):
         self.assertNotEqual(check(f)["status"],"HARD_STOP_DD5")
 
     def test_limit_scales_down_with_equity(self):
-        f=fixture();f["equity_jpy"]="80000";f["peak_equity_jpy"]="80000"
+        f=fixture();f["equity_jpy"]="80000";f["peak_equity_jpy"]="80000";f["daily_loss_jpy"]="1199"
+        # Daily loss must be below 1.5% of 80,000 (1,200) to isolate trade/aggregate caps.
         self.assertEqual(check(f)["status"],"RISK_LIMIT_EXCEEDED")
-        f["single_trade_risk_jpy"]="400";f["aggregate_risk_jpy"]="800";f["daily_loss_jpy"]="1199"
+        f["single_trade_risk_jpy"]="400";f["aggregate_risk_jpy"]="800"
         self.assertEqual(check(f)["status"],"SYNTHETIC_WITHIN_LIMITS_NEVER_AUTHORIZED")
 
     def test_priority_drawdown_over_daily_over_trade(self):
