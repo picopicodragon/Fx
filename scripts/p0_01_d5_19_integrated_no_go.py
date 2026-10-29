@@ -73,15 +73,14 @@ def _result(
     daily_status: str = "NOT_EVALUATED",
     recovery_status: str = "NOT_EVALUATED",
     daily_stop_latched: bool = True,
-    safety_hold_latched: bool = True,
-) -> dict[str, object]:
+ ) -> dict[str, object]:
     return {
         "status": status,
         "evidence_status": evidence_status,
         "daily_status": daily_status,
         "recovery_status": recovery_status,
         "daily_stop_latched": daily_stop_latched,
-        "safety_hold_latched": safety_hold_latched,
+        "safety_hold_latched": True,  # Synthetic inputs cannot release policy hold.
         "runtime_go_no_go": "NO_GO",
         "verified_values": None,
         "broker_verified": False,
@@ -159,7 +158,7 @@ def evaluate_offline_integrated_no_go(payload: object) -> dict[str, object]:
         # Even this "clean" synthetic scenario NEVER authorizes execution.
         return _result(
             "INTEGRATED_SYNTHETIC_COHERENT_NEVER_AUTHORIZED",
-            daily_stop_latched=False, safety_hold_latched=False, **base,
+            daily_stop_latched=False, **base,
         )
     except Exception:
         return rejected
