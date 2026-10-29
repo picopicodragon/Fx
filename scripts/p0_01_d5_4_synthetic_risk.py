@@ -8,6 +8,13 @@ from __future__ import annotations
 from decimal import Decimal, localcontext
 from scripts.p0_01_offline_five_field_mock import parse_positive_token
 
+
+def _nonnegative_yen(value: object) -> Decimal | None:
+    """Zero is valid for hypothetical loss/risk only, never for equity."""
+    if type(value) is str and value == "0":
+        return Decimal(0)
+    return parse_positive_token(value)
+
 LIMITS = {"trade": Decimal("0.005"), "aggregate": Decimal("0.01"),
           "daily": Decimal("0.015"), "drawdown": Decimal("0.05")}
 FIELDS = frozenset(("origin", "equity_jpy", "peak_equity_jpy",
@@ -22,7 +29,9 @@ def evaluate_synthetic_limits(fixture: object) -> dict[str, object]:
     status = REVIEW
     try:
         if type(fixture) is dict and set(fixture) == FIELDS and fixture["origin"] == "SYNTHETIC_ONLY":
-            v = {name: parse_positive_token(fixture[name]) for name in FIELDS - {"origin"}}
+            v = {name: (parse_positive_token(fixture[name]) if name in ("equity_jpy", "peak_equity_jpy")
+                        else _nonnegative_yen(fixture[name]))
+                 for name in FIELDS - {"origin"}}
             if all(x is not None for x in v.values()) and v["peak_equity_jpy"] >= v["equity_jpy"]:
                 with localcontext() as ctx:
                     ctx.prec = 48
