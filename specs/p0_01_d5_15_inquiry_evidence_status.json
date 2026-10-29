@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-15-INQUIRY-EVIDENCE",
+  "created_on_local_date": "2026-10-29",
+  "scope": "RAKUTEN_MT4_FX_DEMO_ONLY",
+  "inquiry_status": "DRAFT_NOT_SENT",
+  "answer_received": false,
+  "claims": [
+    {
+      "claim_id": "E1",
+      "title": "CONCURRENT_DISTINCT_DEMO_ACCOUNTS",
+      "status": "NOT_ESTABLISHED",
+      "source_reference": null,
+      "answer_received_at_utc": null,
+      "answer_summary_redacted": null,
+      "limitations": "repeatable_creation_does_not_establish_concurrent_hold"
+    },
+    {
+      "claim_id": "E2",
+      "title": "NO_IMPACT_ON_EXISTING_DEMO_A_POSITIONS_AND_ORDERS",
+      "status": "NOT_ESTABLISHED",
+      "source_reference": null,
+      "answer_received_at_utc": null,
+      "answer_summary_redacted": null,
+      "limitations": "noninterference_not_confirmed"
+    },
+    {
+      "claim_id": "E3",
+      "title": "SIMULTANEOUS_DISTINCT_MT4_LOGINS",
+      "status": "NOT_ESTABLISHED",
+      "source_reference": null,
+      "answer_received_at_utc": null,
+      "answer_summary_redacted": null,
+      "limitations": "session_and_password_effects_not_confirmed"
+    }
+  ],
+  "account_identifiers_stored": false,
+  "real_account_or_demo_access_approved": false,
+  "inquiry_send_approved": false,
+  "demo_b_creation_approved": false,
+  "mt4_operation_approved": false,
+  "verified_values": null,
+  "broker_verified": false,
+  "production_usable": false,
+  "orders_generated": false,
+  "terminal_execution_approved": false,
+  "forward_trading_enabled": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO"
+}
