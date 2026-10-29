@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-16-SINGLE-MT4-PREFLIGHT",
+  "created_on": "2026-10-29",
+  "stage": "OFFLINE_DESIGN_ONLY",
+  "policy": "SINGLE_MT4_ENVIRONMENT_ONLY",
+  "inquiry_policy": "DO_NOT_CONTACT_RAKUTEN",
+  "additional_demo_b": "OUT_OF_SCOPE",
+  "account_report_latest": {
+    "source": "USER_REPORTED",
+    "usage": "DORMANT",
+    "positions_and_orders": "NONE_REPORTED",
+    "verified": false
+  },
+  "previous_demo_a_report": {
+    "source": "PRIOR_USER_VISUAL_REPORT",
+    "macd_sample": "OBSERVED_PREVIOUSLY",
+    "positions_or_pending_orders": "OBSERVED_PREVIOUSLY",
+    "current_applicability": "UNVERIFIED"
+  },
+  "account_identity_consistency": "NOT_RECONCILED",
+  "checks": [
+    {
+      "id": "S16-01",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-02",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-03",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-04",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-05",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-06",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-07",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-08",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-09",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-10",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-11",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    },
+    {
+      "id": "S16-12",
+      "status": "NOT_PERFORMED",
+      "evidence": null,
+      "authorization": false
+    }
+  ],
+  "approvals": {
+    "visual_review": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "read_only_query": false,
+    "ea_or_ex4_execution": false,
+    "order_action": false,
+    "live_trading": false
+  },
+  "verified_values": null,
+  "broker_verified": false,
+  "production_usable": false,
+  "orders_generated": false,
+  "read_only_ex4_execution_approved": false,
+  "terminal_execution_approved": false,
+  "forward_trading_enabled": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO"
+}
