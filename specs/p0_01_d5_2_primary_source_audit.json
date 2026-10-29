@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-2-SOURCE-AUDIT",
+  "checked_on": "2026-10-29",
+  "review_kind": "PUBLIC_PRIMARY_SOURCE_DESK_REVIEW",
+  "status": "DESK_REVIEW_DONE_POLICY_NOT_ESTABLISHED",
+  "claims": [
+    {
+      "id": "E1",
+      "claim": "CONCURRENT_DISTINCT_DEMO_ACCOUNTS",
+      "status": "NOT_ESTABLISHED",
+      "source": "https://www.rakuten-sec.co.jp/web/fx/mt4/demo-account.html"
+    },
+    {
+      "id": "E2",
+      "claim": "NEW_DEMO_DOES_NOT_AFFECT_OLD_ACCOUNT_ORDERS",
+      "status": "NOT_ESTABLISHED",
+      "source": "https://www.rakuten-sec.co.jp/web/fx/mt4/demo-account.html"
+    },
+    {
+      "id": "E3",
+      "claim": "SIMULTANEOUS_LOGIN",
+      "status": "NOT_ESTABLISHED",
+      "source": "https://www.rakuten-sec.co.jp/web/fx/mt4/demo-account.html"
+    },
+    {
+      "id": "E4",
+      "claim": "SEPARATE_INSTALL_DIRECTORIES",
+      "status": "DOCUMENTED_DESIGN_ONLY",
+      "source": "https://www.metatrader4.com/ja/trading-platform/help/userguide/installation"
+    },
+    {
+      "id": "E5",
+      "claim": "INSTANCE_DATA_FOLDER",
+      "status": "DOCUMENTED_DESIGN_ONLY",
+      "source": "https://www.metatrader4.com/en/trading-platform/help/userguide/start_comm"
+    },
+    {
+      "id": "E6",
+      "claim": "DEMO_VS_LIVE_SERVER_DISTINCTION",
+      "status": "DOCUMENTED_DESIGN_ONLY",
+      "source": "https://www.rakuten-sec.co.jp/web/fx/mt4/download/"
+    }
+  ],
+  "g1": "BLOCKED_EXTERNAL_POLICY",
+  "pf1": "BLOCKED",
+  "existing_environment_a_unchanged": true,
+  "creation_or_installation_approved": false,
+  "broker_verified": false,
+  "terminal_execution_approved": false,
+  "read_only_ex4_execution_approved": false,
+  "forward_trading_enabled": false,
+  "orders_generated": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "next_action": "OFFLINE_MOCKS_OR_PUBLIC_DOCUMENT_REVIEW_ONLY"
+}
