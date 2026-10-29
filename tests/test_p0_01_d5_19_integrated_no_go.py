@@ -232,12 +232,22 @@ class D519IntegratedNoGoTests(unittest.TestCase):
         f["daily_fixture"]["risk_fixture"]["equity_jpy"] = "0"
         r = check(f)
         self.assertEqual(r["status"],
-                         "INTEGRATED_INPUT_REJECTED_FAIL_CLOSED")
+                         "INTEGRATED_COMPONENT_REJECTED_FAIL_CLOSED")
         self.deny(r)
 
     def test_corrupted_recovery_chain_rejected(self):
         f = fixture()
         f["snapshots"][-1]["schema_version"] = 9
+        r = check(f)
+        self.assertEqual(r["status"],
+                         "INTEGRATED_COMPONENT_REJECTED_FAIL_CLOSED")
+        self.deny(r)
+
+    def test_sequence_gap_rejected(self):
+        f = fixture()
+        first = copy.deepcopy(f["snapshots"][0])
+        first["sequence"] = 8
+        f["snapshots"].insert(0, first)
         r = check(f)
         self.assertEqual(r["status"],
                          "INTEGRATED_COMPONENT_REJECTED_FAIL_CLOSED")
