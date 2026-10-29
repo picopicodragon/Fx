@@ -73,7 +73,7 @@ def _result(
     daily_status: str = "NOT_EVALUATED",
     recovery_status: str = "NOT_EVALUATED",
     daily_stop_latched: bool = True,
- ) -> dict[str, object]:
+) -> dict[str, object]:
     return {
         "status": status,
         "evidence_status": evidence_status,
