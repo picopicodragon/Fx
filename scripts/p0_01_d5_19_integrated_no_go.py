@@ -5,7 +5,7 @@ Even fully consistent synthetic fixtures never grant runtime authority.
 """
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime, timezone
 
 from scripts.p0_01_d5_7_daily_latch import evaluate_daily_latch
 from scripts.p0_01_d5_10_recovery_gate import evaluate_synthetic_recovery_gate
@@ -51,6 +51,19 @@ def _iso_day(value: object) -> bool:
     try:
         return date.fromisoformat(value).isoformat() == value
     except (TypeError, ValueError, OverflowError):
+        return False
+
+
+def _coherent_evidence_matches_daily_instant(payload: dict[str, object]) -> bool:
+    """Only compare already validated synthetic timestamps; do not read clocks."""
+    try:
+        observed = payload["evidence"]["records"][0]["observed_at_utc"]
+        clock = datetime.fromisoformat(payload["daily_fixture"]["utc_timestamp"])
+        if clock.tzinfo is None or clock.utcoffset() is None or clock.microsecond:
+            return False
+        return (clock.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                == observed)
+    except (TypeError, ValueError, KeyError, IndexError, OverflowError):
         return False
 
 
@@ -142,6 +155,13 @@ def evaluate_offline_integrated_no_go(payload: object) -> dict[str, object]:
                 or daily_status == "REVIEW_REQUIRED"
                 or recovery_status == "INTEGRATION_REJECTED_FAIL_CLOSED"):
             return _result("INTEGRATED_COMPONENT_REJECTED_FAIL_CLOSED", **base)
+        # D5-10 permits a structurally valid earlier-day snapshot.
+        # At this integration boundary, an old snapshot is not "current".
+        latest = payload["snapshots"][-1]
+        if (type(latest) is not dict
+                or latest.get("trading_day_start_ny_date")
+                != payload["expected_day"]):
+            return _result("INTEGRATED_STALE_STOP_RECORD_FAIL_CLOSED", **base)
         if daily_latched != recovered_latched:
             return _result("INTEGRATED_STOP_DISAGREEMENT_FAIL_CLOSED", **base)
         if daily_latched or recovered_latched or daily_status != "SYNTHETIC_MONITORING_ONLY":
@@ -153,6 +173,11 @@ def evaluate_offline_integrated_no_go(payload: object) -> dict[str, object]:
         if evidence_status != "SYNTHETIC_INTERNALLY_CONSISTENT_NO_GO":
             return _result(
                 "INTEGRATED_EVIDENCE_BLOCKED_NO_GO",
+                daily_stop_latched=False, **base,
+            )
+        if not _coherent_evidence_matches_daily_instant(payload):
+            return _result(
+                "INTEGRATED_EVIDENCE_TIME_MISMATCH_NO_GO",
                 daily_stop_latched=False, **base,
             )
         # Even this "clean" synthetic scenario NEVER authorizes execution.
