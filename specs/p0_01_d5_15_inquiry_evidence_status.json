@@ -3,7 +3,7 @@
   "id": "P0-01-D5-15-INQUIRY-EVIDENCE",
   "created_on_local_date": "2026-10-29",
   "scope": "RAKUTEN_MT4_FX_DEMO_ONLY",
-  "inquiry_status": "DRAFT_NOT_SENT",
+  "inquiry_status": "CANCELLED_DO_NOT_SEND",
   "answer_received": false,
   "claims": [
     {
@@ -13,7 +13,9 @@
       "source_reference": null,
       "answer_received_at_utc": null,
       "answer_summary_redacted": null,
-      "limitations": "repeatable_creation_does_not_establish_concurrent_hold"
+      "limitations": "repeatable_creation_does_not_establish_concurrent_hold",
+      "current_scope_required": false,
+      "policy_disposition": "NOT_REQUIRED_NO_PARALLEL_ENV"
     },
     {
       "claim_id": "E2",
@@ -22,7 +24,9 @@
       "source_reference": null,
       "answer_received_at_utc": null,
       "answer_summary_redacted": null,
-      "limitations": "noninterference_not_confirmed"
+      "limitations": "noninterference_not_confirmed",
+      "current_scope_required": false,
+      "policy_disposition": "NOT_REQUIRED_NO_PARALLEL_ENV"
     },
     {
       "claim_id": "E3",
@@ -31,7 +35,9 @@
       "source_reference": null,
       "answer_received_at_utc": null,
       "answer_summary_redacted": null,
-      "limitations": "session_and_password_effects_not_confirmed"
+      "limitations": "session_and_password_effects_not_confirmed",
+      "current_scope_required": false,
+      "policy_disposition": "NOT_REQUIRED_NO_PARALLEL_ENV"
     }
   ],
   "account_identifiers_stored": false,
@@ -46,5 +52,14 @@
   "terminal_execution_approved": false,
   "forward_trading_enabled": false,
   "phase_1": "BLOCKED",
-  "runtime_go_no_go": "NO_GO"
+  "runtime_go_no_go": "NO_GO",
+  "user_policy_revision_date": "2026-10-29",
+  "multi_account_or_parallel_environment_requested": false,
+  "single_environment_policy": "ADOPTED_USER_DECISION",
+  "rakuten_account_latest_user_report": {
+    "account_usage": "DORMANT_NOT_IN_USE",
+    "positions_and_pending_orders": "NONE_REPORTED_BY_USER",
+    "account_identity_vs_prior_demo_a": "NOT_RECONCILED",
+    "broker_observation_verification": "NOT_PERFORMED"
+  }
 }
