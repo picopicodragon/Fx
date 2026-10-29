@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-17-ACCOUNT-EVIDENCE-RECONCILIATION",
+  "created_on": "2026-10-29",
+  "scope": "SINGLE_MT4_ENVIRONMENT_DESIGN_ONLY",
+  "source_policy": "PRIOR_USER_REPORT_AND_LATEST_USER_REPORT_UNVERIFIED",
+  "evidence": [
+    {
+      "id": "EV-OLD",
+      "source_type": "PRIOR_USER_VISUAL_REPORT",
+      "scope_label": "PRIOR_MT4_DEMO_A",
+      "reported_at_utc": null,
+      "observed_at_utc": null,
+      "macd_sample": "OBSERVED_PREVIOUSLY",
+      "positions_or_pending_orders": "PRESENT_REPORTED_PREVIOUSLY",
+      "connection_display": "CONNECTED_LIKE",
+      "autotrading_display": "OFF_LIKE",
+      "broker_confirmed": false,
+      "current_state_verified": false
+    },
+    {
+      "id": "EV-NEW",
+      "source_type": "LATEST_USER_REPORTED",
+      "scope_label": "EXISTING_RAKUTEN_ACCOUNT_UNSPECIFIED",
+      "reported_at_utc": null,
+      "observed_at_utc": null,
+      "usage": "DORMANT_REPORTED",
+      "positions_and_orders": "NONE_REPORTED",
+      "broker_confirmed": false,
+      "current_state_verified": false
+    }
+  ],
+  "account_identity_consistency": "NOT_RECONCILED",
+  "account_product_scope": "UNKNOWN",
+  "terminal_identity": "UNVERIFIED",
+  "server_scope": "UNVERIFIED",
+  "positions_status": "UNKNOWN",
+  "pending_orders_status": "UNKNOWN",
+  "ea_running_status": "UNKNOWN",
+  "check_states": [
+    {
+      "id": "S17-01",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    },
+    {
+      "id": "S17-02",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    },
+    {
+      "id": "S17-03",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    },
+    {
+      "id": "S17-04",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    },
+    {
+      "id": "S17-05",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    },
+    {
+      "id": "S17-06",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    },
+    {
+      "id": "S17-07",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    },
+    {
+      "id": "S17-08",
+      "status": "NOT_PERFORMED",
+      "evidence": null
+    }
+  ],
+  "approvals": {
+    "visual_inspection": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "account_read_only_query": false,
+    "ea_or_ex4_execution": false,
+    "order_actions": false,
+    "live_trading": false
+  },
+  "inquiry_status": "CANCELLED_DO_NOT_SEND",
+  "multiple_demo_accounts": "OUT_OF_SCOPE",
+  "verified_values": null,
+  "broker_verified": false,
+  "production_usable": false,
+  "read_only_ex4_execution_approved": false,
+  "terminal_execution_approved": false,
+  "orders_generated": false,
+  "forward_trading_enabled": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO"
+}
