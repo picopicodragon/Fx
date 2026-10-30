@@ -1,0 +1,56 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "simulated_only": true,
+  "publication_surfaces": [
+    {
+      "surface": "DESIGN_RECORD",
+      "public_json": "{\"check_id\":\"D530-G2-01\",\"design_state\":\"NOT_PERFORMED\",\"origin\":\"SYNTHETIC_ONLY\",\"schema_version\":1,\"simulation_only\":true}",
+      "private_payload_present": false,
+      "private_export_requested": false,
+      "real_scan_claim": false
+    },
+    {
+      "surface": "STATUS_SUMMARY",
+      "public_json": "{\"check_id\":\"D530-G2-01\",\"design_state\":\"NOT_PERFORMED\",\"origin\":\"SYNTHETIC_ONLY\",\"schema_version\":1,\"simulation_only\":true}",
+      "private_payload_present": false,
+      "private_export_requested": false,
+      "real_scan_claim": false
+    },
+    {
+      "surface": "REVIEW_SUMMARY",
+      "public_json": "{\"check_id\":\"D530-G2-01\",\"design_state\":\"NOT_PERFORMED\",\"origin\":\"SYNTHETIC_ONLY\",\"schema_version\":1,\"simulation_only\":true}",
+      "private_payload_present": false,
+      "private_export_requested": false,
+      "real_scan_claim": false
+    }
+  ],
+  "transition": {
+    "origin": "SYNTHETIC_ONLY",
+    "schema_version": 1,
+    "event": "NO_CHANGE",
+    "prior_issuer": "SYNTHETIC_ISSUER_A",
+    "next_issuer": "SYNTHETIC_ISSUER_A",
+    "prior_epoch": 1,
+    "next_epoch": 1,
+    "prior_generation": 1,
+    "next_generation": 1,
+    "prior_sequence": 3,
+    "next_sequence": 3,
+    "prior_key_state": "SYNTHETIC_UNVERIFIED",
+    "next_key_state": "SYNTHETIC_UNVERIFIED",
+    "revocation_before": true,
+    "revocation_after": true,
+    "stop_latched": true,
+    "simulated_reference_tick": 100,
+    "observed_tick": 98,
+    "independent_handoff_attested": false,
+    "independent_revocation_attested": false,
+    "signature_verified": false,
+    "epoch_pinned": false,
+    "durable_tombstone_verified": false,
+    "human_approved": false
+  },
+  "real_operation_claim": false,
+  "stop_release_claim": false
+}

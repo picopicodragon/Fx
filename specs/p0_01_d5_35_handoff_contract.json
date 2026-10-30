@@ -1,0 +1,40 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D535_G2_G6_KEY_HANDOFF_SYNTHETIC_ONLY",
+  "g2": {
+    "synthetic_public_surfaces": [
+      "DESIGN_RECORD",
+      "STATUS_SUMMARY",
+      "REVIEW_SUMMARY"
+    ],
+    "real_secret_scan_implemented": false,
+    "real_git_hook_implemented": false,
+    "private_export_authorized": false
+  },
+  "g6": {
+    "handoff_states": [
+      "NO_CHANGE",
+      "ROTATION",
+      "KEY_REVOCATION",
+      "EMERGENCY_STOP"
+    ],
+    "key_states": [
+      "SYNTHETIC_UNVERIFIED",
+      "SYNTHETIC_ACTIVE_CLAIM",
+      "SYNTHETIC_REVOKED_CLAIM",
+      "SYNTHETIC_UNKNOWN"
+    ],
+    "independent_key_authority_implemented": false,
+    "actual_revocation_proof_verified": false,
+    "actual_issuer_handoff_verified": false,
+    "actual_epoch_pin_verified": false,
+    "real_storage_replay_checked": false,
+    "real_clock_approved": false,
+    "actual_signature_verified": false,
+    "actual_anchor_available": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
