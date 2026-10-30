@@ -1,0 +1,430 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "scope": "D544_LABEL_ONLY_JOURNAL_NO_PERSISTENCE",
+  "journal_entries": [
+    {
+      "sequence": 1,
+      "entry_id": "GENESIS",
+      "previous_tag": "GENESIS_PARENT_DESIGN_ONLY",
+      "entry_tag": "TAG_DESIGN_01",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 2,
+      "entry_id": "ISSUER_REGISTER",
+      "previous_tag": "TAG_DESIGN_01",
+      "entry_tag": "TAG_DESIGN_02",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 3,
+      "entry_id": "WRITER_FENCE",
+      "previous_tag": "TAG_DESIGN_02",
+      "entry_tag": "TAG_DESIGN_03",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 4,
+      "entry_id": "JOURNAL_COMMIT",
+      "previous_tag": "TAG_DESIGN_03",
+      "entry_tag": "TAG_DESIGN_04",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 5,
+      "entry_id": "KEY_ROTATION_PREPARE",
+      "previous_tag": "TAG_DESIGN_04",
+      "entry_tag": "TAG_DESIGN_05",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 6,
+      "entry_id": "KEY_ROTATION_COMMIT",
+      "previous_tag": "TAG_DESIGN_05",
+      "entry_tag": "TAG_DESIGN_06",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 7,
+      "entry_id": "KEY_REVOKE_TOMBSTONE",
+      "previous_tag": "TAG_DESIGN_06",
+      "entry_tag": "TAG_DESIGN_07",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 8,
+      "entry_id": "ISSUER_REVOKE_TOMBSTONE",
+      "previous_tag": "TAG_DESIGN_07",
+      "entry_tag": "TAG_DESIGN_08",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 9,
+      "entry_id": "STOP_LATCH",
+      "previous_tag": "TAG_DESIGN_08",
+      "entry_tag": "TAG_DESIGN_09",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 10,
+      "entry_id": "RESTART_CHECKPOINT",
+      "previous_tag": "TAG_DESIGN_09",
+      "entry_tag": "TAG_DESIGN_10",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 11,
+      "entry_id": "AUDIT_MARKER",
+      "previous_tag": "TAG_DESIGN_10",
+      "entry_tag": "TAG_DESIGN_11",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    },
+    {
+      "sequence": 12,
+      "entry_id": "HANDOFF_REJECTED",
+      "previous_tag": "TAG_DESIGN_11",
+      "entry_tag": "TAG_DESIGN_12",
+      "issuer_alias": "SYNTHETIC_ISSUER_ALPHA",
+      "epoch_label": "SYNTHETIC_EPOCH_1",
+      "record_class": "DESIGN_ONLY",
+      "private_payload": null,
+      "actual_signature": null,
+      "real_timestamp": null,
+      "real_persisted": false,
+      "real_witness_verified": false
+    }
+  ],
+  "controls": [
+    {
+      "control_id": "APPEND_ONLY_HISTORY",
+      "future_proof": "FUTURE_STORAGE_REJECTS_OVERWRITE_AND_DELETE",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "TOTAL_SEQUENCE",
+      "future_proof": "FUTURE_VERIFY_STRICT_SEQUENCE_NO_GAPS_OR_DUPLICATES",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "PREDECESSOR_BINDING",
+      "future_proof": "FUTURE_VERIFY_AUTHENTICATED_PREVIOUS_LINK",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "GENESIS_IDENTITY",
+      "future_proof": "FUTURE_PIN_TRUSTED_GENESIS_OUT_OF_BAND",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "INDEPENDENT_TIP_COMPARISON",
+      "future_proof": "FUTURE_PROVE_REMOTE_WITNESS_TIP_AND_FRESHNESS",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "TOMBSTONE_NON_ERASURE",
+      "future_proof": "FUTURE_PROVE_KEY_AND_ISSUER_REVOCATION_DURABLE",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "SINGLE_WRITER_COMPATIBILITY",
+      "future_proof": "FUTURE_FENCE_WRITER_EPOCH_FOR_G6_05",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "ATOMIC_PERSISTENCE_COMPATIBILITY",
+      "future_proof": "FUTURE_VERIFY_CRASH_CONSISTENCY_FOR_G6_06",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "RESTART_ROLLBACK_DEFENSE",
+      "future_proof": "FUTURE_PROVE_POST_RESTART_HISTORY_AND_STOP",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "PRIVATE_CONTENT_SEPARATION",
+      "future_proof": "FUTURE_KEEP_RAW_ACCOUNT_KEYS_LOGS_OUT_OF_GIT",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "ISSUER_EPOCH_AUTHORITY",
+      "future_proof": "FUTURE_PROVE_ISSUER_AND_EPOCH_WITH_G6_03",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    },
+    {
+      "control_id": "NO_STOP_RELEASE_ON_GAP",
+      "future_proof": "FUTURE_DENY_TRADING_AND_RELEASE_ON_UNKNOWN_HISTORY",
+      "review_state": "DESIGN_REQUIRED",
+      "real_evidence": null,
+      "real_control_verified": false
+    }
+  ],
+  "threats": [
+    {
+      "threat_id": "RECORD_DELETION",
+      "attack": "MISSING_INTERIOR_RECORD",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "PREFIX_TRUNCATION",
+      "attack": "HISTORY_PREFIX_ERASED",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "RECORD_REORDER",
+      "attack": "SEQUENCE_OUT_OF_ORDER",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "RECORD_DUPLICATE",
+      "attack": "DUPLICATE_SEQUENCE_OR_TAG",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "SEQUENCE_GAP",
+      "attack": "NONCONTIGUOUS_SEQUENCE",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "PREVIOUS_LINK_REBIND",
+      "attack": "UNAUTHENTICATED_PREDECESSOR",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "GENESIS_REWRITE",
+      "attack": "MUTATED_TRUST_ROOT",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "KEY_TOMBSTONE_LOSS",
+      "attack": "REVOKED_KEY_REACTIVATED",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "ISSUER_TOMBSTONE_LOSS",
+      "attack": "REVOKED_ISSUER_REACTIVATED",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "FORKED_TIP",
+      "attack": "DUAL_COMPETING_HISTORY_HEADS",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "PARTIAL_CRASH_WRITE",
+      "attack": "TORN_OR_UNCOMMITTED_RECORD",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "RESTART_ROLLBACK",
+      "attack": "OLD_PREFIX_ACCEPTED_AS_CURRENT",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "PRIVATE_DATA_EGRESS",
+      "attack": "SECRET_OR_ACCOUNT_ID_IN_PUBLIC_METADATA",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "FENCE_EPOCH_BYPASS",
+      "attack": "CONCURRENT_WRITER_REPLACES_TIP",
+      "simulated_outcome": "UNTESTED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "real_fault_executed": false,
+      "real_attack_detected": false,
+      "real_recovery_verified": false,
+      "stop_release_authorized": false
+    }
+  ],
+  "trusted_genesis": null,
+  "independent_tip": null,
+  "real_private_journal_path": null,
+  "real_observed_utc": null,
+  "real_history_read": false,
+  "real_history_write": false,
+  "real_history_delete": false,
+  "real_secret_scan": false,
+  "real_attestation_collected": false,
+  "real_stop_release_requested": false,
+  "real_mt4_requested": false,
+  "account_identity_consistency": "NOT_RECONCILED",
+  "current_positions": "UNKNOWN",
+  "current_pending_orders": "UNKNOWN",
+  "current_ea_state": "UNKNOWN",
+  "unresolved_gates": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "safety_hold_latched": true
+}
