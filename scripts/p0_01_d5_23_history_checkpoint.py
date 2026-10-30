@@ -196,7 +196,8 @@ def audit_synthetic_history_checkpoint(bundle: object) -> dict[str, object]:
         downstream = audit_synthetic_lifecycle_with_authority(
             bundle["integrated_fixture"], lifecycle,
         )
-        if not _closed_downstream(downstream):
+        if (not _closed_downstream(downstream)
+                or downstream.get("lifecycle_status") != lifecycle_status):
             return _closed("HISTORY_DOWNSTREAM_REJECTED_FAIL_CLOSED",
                            lifecycle_status=lifecycle_status, events_checked=count)
         return _closed(
