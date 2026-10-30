@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-21-AUTHORITY-AUDIT",
+  "created_on": "2026-10-30",
+  "origin": "OFFLINE_SYNTHETIC_ONLY",
+  "environment_policy": "SINGLE_MT4_ENVIRONMENT_ONLY",
+  "rakuten_inquiry": "CANCELLED_DO_NOT_SEND",
+  "additional_demo_account": "OUT_OF_SCOPE",
+  "evidence_reconciled": false,
+  "stop_history_authenticity_verified": false,
+  "real_approval_mechanism_implemented": false,
+  "actions": {
+    "visual_review": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "read_only_query": false,
+    "ea_execution": false,
+    "order_action": false,
+    "stop_release": false,
+    "live_trading": false
+  },
+  "synthetic_claims_can_grant_runtime_authority": false,
+  "test_count_previous": 668,
+  "new_test_count_expected": 35,
+  "total_test_count_expected": 703,
+  "gaps": [
+    {
+      "id": "G1",
+      "severity": "CRITICAL",
+      "status": "UNRESOLVED",
+      "limitation": "Four pairs x five broker contract fields not measured"
+    },
+    {
+      "id": "G2",
+      "severity": "CRITICAL",
+      "status": "UNRESOLVED_SINGLE_ENV_SCOPE",
+      "limitation": "Old demo A vs dormant account identity/EA/positions/orders not reconciled; demo B approach superseded"
+    },
+    {
+      "id": "G3",
+      "severity": "CRITICAL",
+      "status": "UNRESOLVED",
+      "limitation": "Real MT4/EA/Python order stop and fail-safe execution not verified"
+    },
+    {
+      "id": "G4",
+      "severity": "CRITICAL",
+      "status": "UNRESOLVED",
+      "limitation": "Order retry/rejection/latency/disconnect/position reconciliation unverified"
+    },
+    {
+      "id": "G5",
+      "severity": "HIGH",
+      "status": "UNRESOLVED",
+      "limitation": "Realized/unrealized PnL, fees, swap and NY17 loss reconstruction unverified"
+    },
+    {
+      "id": "G6",
+      "severity": "HIGH",
+      "status": "UNRESOLVED",
+      "limitation": "Durable atomic signed stop records, rollback and concurrent writer protection unverified"
+    },
+    {
+      "id": "G7",
+      "severity": "HIGH",
+      "status": "UNRESOLVED",
+      "limitation": "Real monotonic clock continuity, UTC sync and Windows restart/DST anomalies unverified"
+    },
+    {
+      "id": "G8",
+      "severity": "HIGH",
+      "status": "UNRESOLVED",
+      "limitation": "Real human identity, scoped approval, revocation, stop release and LINE/email notification unimplemented/unverified"
+    },
+    {
+      "id": "G9",
+      "severity": "HIGH",
+      "status": "UNRESOLVED",
+      "limitation": "Broker session hours and holiday calendar unverified"
+    }
+  ],
+  "verified_values": null,
+  "broker_verified": false,
+  "production_usable": false,
+  "approval_verified": false,
+  "read_only_ex4_execution_approved": false,
+  "terminal_execution_approved": false,
+  "orders_generated": false,
+  "forward_trading_enabled": false,
+  "safety_hold_latched": true,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "evidence_sources": "PRIOR_USER_REPORT_AND_LATEST_USER_REPORT_NOT_RECONCILED"
+}
