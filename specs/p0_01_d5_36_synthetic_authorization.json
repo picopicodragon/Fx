@@ -1,0 +1,20 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "scope": "D536_NO_ACTION_REQUEST",
+  "approvals": {
+    "visual_review": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "mt4_read_only": false,
+    "host_io": false,
+    "ea_ex4_execution": false,
+    "order_execution": false,
+    "stop_release": false,
+    "live_trading": false,
+    "public_export": false,
+    "private_evidence_collection": false,
+    "independent_trust_anchor_operation": false
+  },
+  "simulation_only": true
+}
