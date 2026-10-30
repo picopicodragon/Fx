@@ -9,6 +9,9 @@ from scripts.p0_01_d5_23_history_checkpoint import (
     audit_synthetic_history_checkpoint as audit,
     build_synthetic_history_chain as build,
 )
+from scripts.p0_01_d5_22_approval_lifecycle import (
+    audit_synthetic_lifecycle_with_authority as downstream_authority,
+)
 
 
 def lifecycle():
@@ -465,6 +468,17 @@ class D523HistoryCheckpointTests(unittest.TestCase):
             return_value={"status": "LIFECYCLE_AND_AUTHORITY_NO_GO",
                           "runtime_go_no_go": "NO_GO",
                           "action_authorized": True},
+        ):
+            self.assert_status(p, "HISTORY_DOWNSTREAM_REJECTED_FAIL_CLOSED")
+
+    def test_downstream_mismatched_lifecycle_status_rejected(self):
+        p = bundle()
+        downstream = downstream_authority(p["integrated_fixture"], p["lifecycle"])
+        self.assertEqual(downstream["status"], "LIFECYCLE_AND_AUTHORITY_NO_GO")
+        downstream["lifecycle_status"] = "LIFECYCLE_EXPIRED_NO_GO"
+        with patch(
+            "scripts.p0_01_d5_23_history_checkpoint.audit_synthetic_lifecycle_with_authority",
+            return_value=downstream,
         ):
             self.assert_status(p, "HISTORY_DOWNSTREAM_REJECTED_FAIL_CLOSED")
 
