@@ -11,6 +11,7 @@ from scripts.p0_01_d5_27_g2_g6_offline_preflight import (
 )
 
 _ROOT = Path(__file__).resolve().parents[1]
+_UNSET = object()
 
 
 def load(relative):
@@ -63,12 +64,12 @@ class D527G2G6OfflinePreflightTests(unittest.TestCase):
             self.assertIs(result[key], False)
         return result
 
-    def check(self, expected, d=None, old=None, m=None, s=None):
+    def check(self, expected, d=_UNSET, old=_UNSET, m=_UNSET, s=_UNSET):
         result = self.denied(audit_d527_offline_preflight(
-            design() if d is None else d,
-            original() if old is None else old,
-            matrix() if m is None else m,
-            scenario() if s is None else s,
+            design() if d is _UNSET else d,
+            original() if old is _UNSET else old,
+            matrix() if m is _UNSET else m,
+            scenario() if s is _UNSET else s,
         ))
         self.assertEqual(result["status"], expected)
         return result
