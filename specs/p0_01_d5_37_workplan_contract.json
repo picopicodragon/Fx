@@ -1,0 +1,355 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D537_G2_G6_PLANNING_ONLY",
+  "source_spec": "D536_G2_G6_ACCEPTANCE_READINESS_DESIGN_ONLY",
+  "selection_rule": "PROTECTION_AND_TRUST_DESIGN_BEFORE_OPERATIONAL_EVIDENCE",
+  "work_packages": [
+    {
+      "task_id": "D537-WP-01",
+      "criterion_id": "G2-06",
+      "planning_rank": 1,
+      "gate": "G2",
+      "design_deliverable": "DESIGN_PRIVATE_VAULT_AND_RETENTION",
+      "future_acceptance_evidence": "VAULT_ACCESS_CONTROL_RETENTION_DELETION_REPORT",
+      "future_verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-02",
+      "criterion_id": "G2-07",
+      "planning_rank": 2,
+      "gate": "G2",
+      "design_deliverable": "DESIGN_SAFE_EXPORT_AND_GIT_GUARD",
+      "future_acceptance_evidence": "GIT_EGRESS_ENFORCEMENT_AND_LEAKAGE_NEGATIVE_TEST",
+      "future_verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PUBLIC_METADATA_ONLY",
+      "depends_on": [
+        "G2-06"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-03",
+      "criterion_id": "G6-01",
+      "planning_rank": 3,
+      "gate": "G6",
+      "design_deliverable": "DESIGN_EXTERNAL_TRUST_BOUNDARY",
+      "future_acceptance_evidence": "THREAT_MODEL_AND_INDEPENDENT_AUTHORITY_REVIEW",
+      "future_verification_boundary": "FUTURE_DESIGN_REVIEW",
+      "privacy_class": "DESIGN_ONLY",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-04",
+      "criterion_id": "G6-02",
+      "planning_rank": 4,
+      "gate": "G6",
+      "design_deliverable": "COMPARE_INDEPENDENT_ANCHOR_CANDIDATES",
+      "future_acceptance_evidence": "OUT_OF_BAND_ANCHOR_MONOTONICITY_AND_OWNERSHIP_PROOF",
+      "future_verification_boundary": "FUTURE_EXTERNAL_ATTESTATION",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-01"
+      ],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-05",
+      "criterion_id": "G6-04",
+      "planning_rank": 5,
+      "gate": "G6",
+      "design_deliverable": "DESIGN_APPEND_ONLY_REVOCATION_RECORD",
+      "future_acceptance_evidence": "DURABLE_JOURNAL_AND_TOMBSTONE_CRASH_EVIDENCE",
+      "future_verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-01"
+      ],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-06",
+      "criterion_id": "G6-05",
+      "planning_rank": 6,
+      "gate": "G6",
+      "design_deliverable": "DESIGN_SINGLE_WRITER_FENCE",
+      "future_acceptance_evidence": "FENCE_TOKEN_RACE_AND_RECOVERY_TEST_RESULTS",
+      "future_verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-04"
+      ],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-07",
+      "criterion_id": "G2-01",
+      "planning_rank": 7,
+      "gate": "G2",
+      "design_deliverable": "PREPARE_ACCOUNT_SCOPE_REVIEW",
+      "future_acceptance_evidence": "AUTHORITATIVE_ACCOUNT_AND_TERMINAL_IDENTITY",
+      "future_verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-08",
+      "criterion_id": "G2-02",
+      "planning_rank": 8,
+      "gate": "G2",
+      "design_deliverable": "PREPARE_SESSION_SERVER_REVIEW",
+      "future_acceptance_evidence": "SAME_SESSION_SERVER_IDENTITY_EVIDENCE",
+      "future_verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-09",
+      "criterion_id": "G2-03",
+      "planning_rank": 9,
+      "gate": "G2",
+      "design_deliverable": "PREPARE_NON_EXECUTING_EA_VISUAL_CHECK",
+      "future_acceptance_evidence": "TIME_SCOPED_EA_AUTOTRADING_VISUAL_EVIDENCE",
+      "future_verification_boundary": "FUTURE_VISUAL_REVIEW",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-10",
+      "criterion_id": "G2-04",
+      "planning_rank": 10,
+      "gate": "G2",
+      "design_deliverable": "PREPARE_READ_ONLY_ORDER_RECONCILIATION",
+      "future_acceptance_evidence": "CURRENT_POSITIONS_PENDING_ORDERS_AND_ACCOUNT_SCOPE",
+      "future_verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01",
+        "G2-02"
+      ],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-11",
+      "criterion_id": "G2-05",
+      "planning_rank": 11,
+      "gate": "G2",
+      "design_deliverable": "DEFINE_TIMED_PROVENANCE_CAPTURE",
+      "future_acceptance_evidence": "TRUSTED_CLOCK_AND_EVIDENCE_PROVENANCE",
+      "future_verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [
+        "G7"
+      ],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-12",
+      "criterion_id": "G6-03",
+      "planning_rank": 12,
+      "gate": "G6",
+      "design_deliverable": "DESIGN_KEY_REVOCATION_HANDOFF",
+      "future_acceptance_evidence": "INDEPENDENT_KEY_ISSUER_AND_REVOCATION_ATTESTATION",
+      "future_verification_boundary": "FUTURE_EXTERNAL_ATTESTATION",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-01",
+        "G6-02"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-13",
+      "criterion_id": "G6-06",
+      "planning_rank": 13,
+      "gate": "G6",
+      "design_deliverable": "DESIGN_ATOMIC_CROSS_BOUNDARY_RECOVERY",
+      "future_acceptance_evidence": "INTERRUPTED_WRITE_DURABLE_REPLAY_TEST_RESULTS",
+      "future_verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-02",
+        "G6-04",
+        "G6-05"
+      ],
+      "external_gate_dependencies": [],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-14",
+      "criterion_id": "G6-07",
+      "planning_rank": 14,
+      "gate": "G6",
+      "design_deliverable": "DESIGN_RESTART_MONOTONIC_CLOCK_REVIEW",
+      "future_acceptance_evidence": "RESTART_AND_UTC_MONOTONIC_TIME_ATTESTATION",
+      "future_verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-06"
+      ],
+      "external_gate_dependencies": [
+        "G7"
+      ],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    },
+    {
+      "task_id": "D537-WP-15",
+      "criterion_id": "G6-08",
+      "planning_rank": 15,
+      "gate": "G6",
+      "design_deliverable": "DESIGN_STOP_APPROVAL_RECOVERY_AUTHORITY",
+      "future_acceptance_evidence": "HUMAN_APPROVAL_REVOCATION_AND_STOP_LATCH_PROOF",
+      "future_verification_boundary": "FUTURE_EXTERNAL_ATTESTATION",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-03",
+        "G6-06",
+        "G6-07"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "separate_human_approval_required": true,
+      "preparation_state": "DESIGN_NOT_STARTED",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false
+    }
+  ],
+  "unresolved_gates": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "allow_real_io": false,
+  "allow_mt4_observation": false,
+  "allow_ea_execution": false,
+  "allow_broker_access": false,
+  "allow_stop_release": false,
+  "allow_real_trading": false,
+  "human_approvals_recorded": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
