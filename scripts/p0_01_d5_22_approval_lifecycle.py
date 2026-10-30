@@ -37,6 +37,13 @@ _IDENTIFIER = re.compile(r"SYNTH_APPROVAL_[A-Z0-9_]{1,32}\Z")
 _ACCOUNT = re.compile(r"SYNTHETIC_ACCOUNT_[A-Z0-9_]{1,24}\Z")
 _TERMINAL = re.compile(r"SYNTHETIC_TERMINAL_[A-Z0-9_]{1,24}\Z")
 _MAX_DURATION_SECONDS = 3600  # synthetic fixture bound, NOT a live policy
+_AUTHORITY_DENIAL_STATUSES = frozenset((
+    "AUTHORITY_INPUT_REJECTED_FAIL_CLOSED",
+    "EVIDENCE_OR_STOP_BLOCKED_NO_GO",
+    "STOP_RELEASE_CLAIM_DENIED_NO_GO",
+    "UNTRUSTED_APPROVAL_CLAIM_DENIED_NO_GO",
+    "EXPLICIT_APPROVAL_NOT_PRESENT_NO_GO",
+))
 
 
 def _denied(
@@ -190,7 +197,6 @@ def audit_synthetic_lifecycle_with_authority(
     if lifecycle["status"] == "LIFECYCLE_INPUT_REJECTED_FAIL_CLOSED":
         return invalid
     try:
-        record = lifecycle_fixture["record"]
         request = lifecycle_fixture["request"]
         claim = {
             "origin": "SYNTHETIC_ONLY",
@@ -208,7 +214,7 @@ def audit_synthetic_lifecycle_with_authority(
             integrated_fixture, claim,
         )
         if (type(authority) is not dict
-                or type(authority.get("status")) is not str
+                or authority.get("status") not in _AUTHORITY_DENIAL_STATUSES
                 or authority.get("runtime_go_no_go") != "NO_GO"
                 or authority.get("phase_1") != "BLOCKED"
                 or authority.get("safety_hold_latched") is not True
