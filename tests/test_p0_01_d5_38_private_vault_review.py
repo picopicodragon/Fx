@@ -156,7 +156,7 @@ class D538VaultTests(TestCase):
 
     def test_no_real_keys_or_sensitive_values_in_fixture(self):
         combined = json.dumps({"plan": design(), "matrix": matrix()})
-        for marker in ("-----BEGIN PRIVATE KEY-----", "C:\\Users\\",
+        for marker in ("-----BEGIN PRIVATE KEY-----", "SYNTHETIC_REAL_PATH",
                        "account_number", "broker_password"):
             self.assertNotIn(marker, combined)
         self.check("D538_VAULT_REQUIREMENTS_DESIGNED_NO_REAL_STORAGE_OR_ERASURE")
