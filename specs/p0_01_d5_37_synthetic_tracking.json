@@ -1,0 +1,124 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "scope": "D537_NO_ACTIONS_REVIEW_ONLY",
+  "work_packages": [
+    {
+      "criterion_id": "G2-06",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G2-07",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-01",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-02",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-04",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-05",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G2-01",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G2-02",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G2-03",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G2-04",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G2-05",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-03",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-06",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-07",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    },
+    {
+      "criterion_id": "G6-08",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "evidence_state": "NOT_COLLECTED",
+      "approval_state": "NOT_GRANTED",
+      "acceptance_state": "BLOCKED"
+    }
+  ],
+  "external_g7_verified": false,
+  "external_g8_verified": false,
+  "account_identity_consistency": "NOT_RECONCILED",
+  "current_positions": "UNKNOWN",
+  "current_pending_orders": "UNKNOWN",
+  "current_ea_state": "UNKNOWN",
+  "actual_start_requested": false,
+  "actual_evidence_collection_requested": false,
+  "stop_release_requested": false,
+  "mt4_operation_requested": false,
+  "private_export_requested": false,
+  "simulation_only": true
+}
