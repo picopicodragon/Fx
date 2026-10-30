@@ -11,6 +11,7 @@ import re
 from scripts.p0_01_d5_27_g2_g6_offline_preflight import (
     _gaps_are_unresolved, _original_evidence_is_unverified,
 )
+from scripts.p0_01_d5_31_protocol_privacy_gate import _APPROVED_NONE
 from scripts.p0_01_d5_32_crash_matrix_privacy import (
     _OUTPUT_FALSE as _D532_FALSE, _public_json_valid,
     review_d532_crash_matrix,
