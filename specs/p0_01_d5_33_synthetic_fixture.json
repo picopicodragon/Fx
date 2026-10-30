@@ -1,0 +1,95 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "public_json": "{\"check_id\":\"D530-G2-01\",\"design_state\":\"NOT_PERFORMED\",\"origin\":\"SYNTHETIC_ONLY\",\"schema_version\":1,\"simulation_only\":true}",
+  "private_envelope": {
+    "origin": "SYNTHETIC_ONLY",
+    "schema_version": 1,
+    "account_token": "SYNTHETIC_ACCOUNT_A",
+    "source_ids": [
+      "EV-OLD",
+      "EV-NEW"
+    ],
+    "raw_payload_present": false,
+    "private_export_requested": false,
+    "provenance_authenticated": false,
+    "account_identity_verified": false,
+    "observed_at_verified": false,
+    "simulated_only": true
+  },
+  "synthetic_proofs": [
+    {
+      "witness": "LOCAL_JOURNAL",
+      "record_id": "SYNTHETIC_RECORD_CASE_A",
+      "generation": 1,
+      "sequence": 3,
+      "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_tick": 98,
+      "source_boundary": "SYNTHETIC_SEPARATE_LABEL_ONLY",
+      "revocation_tombstone": true,
+      "stop_latched": true,
+      "real_independence_verified": false,
+      "real_signature_verified": false,
+      "simulated_only": true
+    },
+    {
+      "witness": "INDEPENDENT_ANCHOR",
+      "record_id": "SYNTHETIC_RECORD_CASE_A",
+      "generation": 1,
+      "sequence": 3,
+      "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_tick": 98,
+      "source_boundary": "SYNTHETIC_SEPARATE_LABEL_ONLY",
+      "revocation_tombstone": true,
+      "stop_latched": true,
+      "real_independence_verified": false,
+      "real_signature_verified": false,
+      "simulated_only": true
+    },
+    {
+      "witness": "REVOCATION_REGISTER",
+      "record_id": "SYNTHETIC_RECORD_CASE_A",
+      "generation": 1,
+      "sequence": 3,
+      "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_tick": 98,
+      "source_boundary": "SYNTHETIC_SEPARATE_LABEL_ONLY",
+      "revocation_tombstone": true,
+      "stop_latched": true,
+      "real_independence_verified": false,
+      "real_signature_verified": false,
+      "simulated_only": true
+    },
+    {
+      "witness": "SIGNATURE_KEY_VERIFIER",
+      "record_id": "SYNTHETIC_RECORD_CASE_A",
+      "generation": 1,
+      "sequence": 3,
+      "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_tick": 98,
+      "source_boundary": "SYNTHETIC_SEPARATE_LABEL_ONLY",
+      "revocation_tombstone": true,
+      "stop_latched": true,
+      "real_independence_verified": false,
+      "real_signature_verified": false,
+      "simulated_only": true
+    },
+    {
+      "witness": "MONOTONIC_CLOCK_WITNESS",
+      "record_id": "SYNTHETIC_RECORD_CASE_A",
+      "generation": 1,
+      "sequence": 3,
+      "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "observed_tick": 98,
+      "source_boundary": "SYNTHETIC_SEPARATE_LABEL_ONLY",
+      "revocation_tombstone": true,
+      "stop_latched": true,
+      "real_independence_verified": false,
+      "real_signature_verified": false,
+      "simulated_only": true
+    }
+  ],
+  "simulated_reference_tick": 100,
+  "stop_release_claim": false,
+  "real_operation_claim": false
+}
