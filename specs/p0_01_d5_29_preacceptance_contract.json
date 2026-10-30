@@ -1,0 +1,25 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "g2_source_ids": [
+    "EV-OLD",
+    "EV-NEW"
+  ],
+  "g6_acceptance_ids": [
+    "G6-AC-01",
+    "G6-AC-02",
+    "G6-AC-03",
+    "G6-AC-04",
+    "G6-AC-05",
+    "G6-AC-06",
+    "G6-AC-07",
+    "G6-AC-08",
+    "G6-AC-09",
+    "G6-AC-10"
+  ],
+  "scope": "G2_G6_SYNTHETIC_PREACCEPTANCE_ONLY",
+  "no_real_verification": true,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
