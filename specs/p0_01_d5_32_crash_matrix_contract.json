@@ -1,0 +1,34 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D532_G2_G6_CRASH_MATRIX_SYNTHETIC_ONLY",
+  "g2_public_max_bytes": 384,
+  "g2_public_json_encoding": "ASCII_CANONICAL",
+  "g2_canonical_json_required": true,
+  "g6_crash_cutpoints": [
+    "D532-CUT-00",
+    "D532-CUT-01",
+    "D532-CUT-02",
+    "D532-CUT-03",
+    "D532-CUT-04",
+    "D532-CUT-05",
+    "D532-CUT-06",
+    "D532-CUT-07"
+  ],
+  "g6_expected_healthy_statuses": [
+    "D531_G6_PARTIAL_COMMIT_STOP_HELD_NO_GO",
+    "D531_G6_PARTIAL_COMMIT_STOP_HELD_NO_GO",
+    "D531_G6_PARTIAL_COMMIT_STOP_HELD_NO_GO",
+    "D531_G6_PARTIAL_COMMIT_STOP_HELD_NO_GO",
+    "D531_G6_PARTIAL_COMMIT_STOP_HELD_NO_GO",
+    "D531_G6_PARTIAL_COMMIT_STOP_HELD_NO_GO",
+    "D531_G6_PARTIAL_COMMIT_STOP_HELD_NO_GO",
+    "D531_SYNTHETIC_PROTOCOL_COHERENT_NEVER_AUTHORIZED"
+  ],
+  "g6_independent_trust_anchor_verified": false,
+  "g6_actual_crash_test_performed": false,
+  "host_io_approved": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
