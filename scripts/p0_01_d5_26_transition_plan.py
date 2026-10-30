@@ -198,6 +198,13 @@ def evaluate_offline_transition_plan(
         issue = _plan_valid(plan)
         if issue is not None:
             return _deny(issue)
+        # A self-consistent but rewritten plan is not proof that its claimed
+        # real-evidence requirements match the original D5-25 gap inventory.
+        by_id = {item["id"]: item for item in baseline["gaps"]}
+        for item in plan["gates"]:
+            if item["external_evidence_required"] != by_id[item["id"]][
+                    "external_or_real_evidence_required"]:
+                return _deny("PLAN_BASELINE_ALIGNMENT_REJECTED_FAIL_CLOSED")
         return _deny("PLAN_DESIGN_VALIDATED_REAL_TRANSITIONS_BLOCKED_NO_GO")
     except Exception:
         return _deny("PLAN_INPUT_REJECTED_FAIL_CLOSED")
