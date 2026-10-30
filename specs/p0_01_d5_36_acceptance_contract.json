@@ -1,0 +1,207 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D536_G2_G6_ACCEPTANCE_READINESS_DESIGN_ONLY",
+  "gate_scope": [
+    "G2",
+    "G6"
+  ],
+  "criteria": [
+    {
+      "criterion_id": "G2-01",
+      "gate": "G2",
+      "verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "success_condition": "ACCOUNT_TERMINAL_SCOPE",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G2-02",
+      "gate": "G2",
+      "verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [],
+      "success_condition": "SESSION_AND_SERVER_IDENTITY",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G2-03",
+      "gate": "G2",
+      "verification_boundary": "FUTURE_VISUAL_REVIEW",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [],
+      "success_condition": "EA_AND_AUTOTRADING_STATE",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G2-04",
+      "gate": "G2",
+      "verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01",
+        "G2-02"
+      ],
+      "external_gate_dependencies": [],
+      "success_condition": "POSITIONS_PENDING_ORDERS",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G2-05",
+      "gate": "G2",
+      "verification_boundary": "FUTURE_READ_ONLY",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [
+        "G7"
+      ],
+      "success_condition": "OBSERVATION_PROVENANCE_TIME",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G2-06",
+      "gate": "G2",
+      "verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "success_condition": "PRIVATE_EVIDENCE_RETENTION",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G2-07",
+      "gate": "G2",
+      "verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PUBLIC_METADATA_ONLY",
+      "depends_on": [
+        "G2-06"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "success_condition": "PUBLICATION_BLOCKING_AND_SCAN",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-01",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_DESIGN_REVIEW",
+      "privacy_class": "DESIGN_ONLY",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "success_condition": "TRUST_BOUNDARY_AND_ISSUER_AUTHORITY",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-02",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_EXTERNAL_ATTESTATION",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-01"
+      ],
+      "external_gate_dependencies": [],
+      "success_condition": "INDEPENDENT_TRUST_ANCHOR",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-03",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_EXTERNAL_ATTESTATION",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-01",
+        "G6-02"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "success_condition": "KEY_CUSTODY_ROTATION_REVOCATION",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-04",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-01"
+      ],
+      "external_gate_dependencies": [],
+      "success_condition": "APPEND_ONLY_JOURNAL_TOMBSTONES",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-05",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-04"
+      ],
+      "external_gate_dependencies": [],
+      "success_condition": "SINGLE_WRITER_FENCE",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-06",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-02",
+        "G6-04",
+        "G6-05"
+      ],
+      "external_gate_dependencies": [],
+      "success_condition": "ATOMIC_COMMIT_AND_CRASH_RECOVERY",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-07",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_HOST_IO",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-06"
+      ],
+      "external_gate_dependencies": [
+        "G7"
+      ],
+      "success_condition": "RESTART_MONOTONIC_CLOCK_CONTINUITY",
+      "requires_separate_user_approval": true
+    },
+    {
+      "criterion_id": "G6-08",
+      "gate": "G6",
+      "verification_boundary": "FUTURE_EXTERNAL_ATTESTATION",
+      "privacy_class": "PRIVATE_ONLY",
+      "depends_on": [
+        "G6-03",
+        "G6-06",
+        "G6-07"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "success_condition": "APPROVAL_REVOCATION_RECOVERY_ATTESTATION",
+      "requires_separate_user_approval": true
+    }
+  ],
+  "real_g2_resolved": false,
+  "real_g6_resolved": false,
+  "mt4_and_host_approved": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
