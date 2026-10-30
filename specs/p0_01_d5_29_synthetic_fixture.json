@@ -1,0 +1,97 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "acceptance_case": {
+    "origin": "SYNTHETIC_ONLY",
+    "schema_version": 1,
+    "g2_records": [
+      {
+        "report_id": "EV-OLD",
+        "provenance_class": "UNVERIFIED_SYNTHETIC_REPORT",
+        "account_token": "SYNTHETIC_ACCOUNT_A",
+        "terminal_token": "SYNTHETIC_TERMINAL_A",
+        "observed_at_utc": "2026-07-01T21:00:00Z",
+        "recorded_at_utc": "2026-07-01T21:01:00Z",
+        "positions": "ABSENT",
+        "pending_orders": "ABSENT",
+        "ea_attachment": "ABSENT",
+        "autotrading": "ABSENT"
+      },
+      {
+        "report_id": "EV-NEW",
+        "provenance_class": "UNVERIFIED_SYNTHETIC_REPORT",
+        "account_token": "SYNTHETIC_ACCOUNT_A",
+        "terminal_token": "SYNTHETIC_TERMINAL_A",
+        "observed_at_utc": "2026-07-01T21:00:00Z",
+        "recorded_at_utc": "2026-07-01T21:01:00Z",
+        "positions": "ABSENT",
+        "pending_orders": "ABSENT",
+        "ea_attachment": "ABSENT",
+        "autotrading": "ABSENT"
+      }
+    ],
+    "g6_scenario": {
+      "threat": "NONE",
+      "persist_state": "SYNTHETIC_CONSISTENT",
+      "anchor_state": "SYNTHETIC_MATCH",
+      "revocation_state": "SYNTHETIC_NO_REVOCATION",
+      "clock_state": "SYNTHETIC_STABLE",
+      "simulated_io_only": true
+    },
+    "simulated_stop_release_claim": false
+  },
+  "evidence_envelopes": [
+    {
+      "report_id": "EV-OLD",
+      "source_kind": "PRIOR_USER_VISUAL_REPORT",
+      "account_token": "SYNTHETIC_ACCOUNT_A",
+      "terminal_token": "SYNTHETIC_TERMINAL_A",
+      "observed_at_utc": "2026-07-01T21:00:00Z",
+      "recorded_at_utc": "2026-07-01T21:01:00Z",
+      "provenance_attested": false,
+      "account_attested": false,
+      "real_world_verified": false,
+      "synthetic_only": true
+    },
+    {
+      "report_id": "EV-NEW",
+      "source_kind": "LATEST_USER_REPORTED",
+      "account_token": "SYNTHETIC_ACCOUNT_A",
+      "terminal_token": "SYNTHETIC_TERMINAL_A",
+      "observed_at_utc": "2026-07-01T21:00:00Z",
+      "recorded_at_utc": "2026-07-01T21:01:00Z",
+      "provenance_attested": false,
+      "account_attested": false,
+      "real_world_verified": false,
+      "synthetic_only": true
+    }
+  ],
+  "restoration": {
+    "origin": "SYNTHETIC_ONLY",
+    "schema_version": 1,
+    "baseline": {
+      "record_id": "SYNTHETIC_RECORD_TEST",
+      "generation": 1,
+      "sequence": 3,
+      "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "revocation_tombstone": false,
+      "stop_latched": true
+    },
+    "restored": {
+      "record_id": "SYNTHETIC_RECORD_TEST",
+      "generation": 1,
+      "sequence": 3,
+      "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "revocation_tombstone": false,
+      "stop_latched": true
+    },
+    "write_state": "SYNTHETIC_CONFIRMED",
+    "read_state": "SYNTHETIC_CONFIRMED",
+    "clock_state": "SYNTHETIC_CLOCK_STABLE",
+    "writer_state": "SYNTHETIC_SINGLE_WRITER",
+    "revocation_index_state": "SYNTHETIC_CONFIRMED",
+    "fault_injected": "NONE",
+    "simulated_stop_release_claim": false,
+    "simulated_only": true
+  }
+}
