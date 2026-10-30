@@ -1,0 +1,286 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "G2_G6_ARCHITECTURE_NO_RUNTIME",
+  "source_ledger_id": "P0-01-D5-17-ACCOUNT-EVIDENCE-RECONCILIATION",
+  "gap_matrix_id": "P0-01-D5-25-GAP-VERIFICATION-MATRIX",
+  "g2": {
+    "account_identity_consistency": "NOT_RECONCILED",
+    "current_positions": "UNKNOWN",
+    "current_pending_orders": "UNKNOWN",
+    "current_ea_state": "UNKNOWN",
+    "report_ids": [
+      "EV-OLD",
+      "EV-NEW"
+    ],
+    "collection_state": "NOT_PERFORMED",
+    "collection_steps": [
+      {
+        "id": "D530-G2-01",
+        "topic": "TERMINAL_IDENTITY",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "将来、端末を実際に確認する行為を開始する前に対象単一MT4端末と操作範囲を個別承認"
+      },
+      {
+        "id": "D530-G2-02",
+        "topic": "ACCOUNT_AND_SERVER_IDENTITY",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "口座・サーバーの識別は個別承認後にローカル限定で照合。ID・画面・ログをGitに記録しない"
+      },
+      {
+        "id": "D530-G2-03",
+        "topic": "CONNECTION_AND_SESSION",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "既存の単一セッションを前提に接続状態の目視範囲を個別承認。新規ログインを含めない"
+      },
+      {
+        "id": "D530-G2-04",
+        "topic": "EA_ATTACHMENT_AND_AUTOTRADING",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "既存MACD Sample/AutoTrading表示の個別確認案。EA/EX4を起動・変更しない"
+      },
+      {
+        "id": "D530-G2-05",
+        "topic": "POSITIONS",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "建玉の観測範囲を個別承認。過去の「建玉または注文あり」は現在の建玉を示さない"
+      },
+      {
+        "id": "D530-G2-06",
+        "topic": "PENDING_ORDERS",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "未約定注文を建玉と分けて記録する案。閲覧による注文操作を認可しない"
+      },
+      {
+        "id": "D530-G2-07",
+        "topic": "TIMESTAMP_AND_SOURCE_PROVENANCE",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "観測UTC・記録UTC・出典・対象をローカル保管し、時刻推定しない"
+      },
+      {
+        "id": "D530-G2-08",
+        "topic": "LOCAL_LOG_HANDLING",
+        "state": "NOT_PERFORMED",
+        "future_manual_approval_required": true,
+        "operation_performed": false,
+        "evidence_collected": false,
+        "instruction": "OS/MT4ログの取扱いは個別の保管・機密レビュー承認後。自動ログ収集なし"
+      }
+    ],
+    "private_only_categories": [
+      "ACCOUNT_NUMBER",
+      "SERVER_IDENTITY",
+      "TERMINAL_PATH",
+      "SCREENSHOT_BYTES",
+      "RAW_MT4_LOG",
+      "IP_OR_DEVICE_IDENTIFIER",
+      "API_KEY_OR_SECRET",
+      "REAL_ORDER_OR_POSITION_DETAILS",
+      "REAL_OBSERVATION_TIMESTAMP"
+    ],
+    "git_allowed_metadata_fields": [
+      "check_id",
+      "design_state",
+      "simulation_only"
+    ],
+    "git_raw_evidence_allowed": false,
+    "real_receipt_created": false,
+    "redaction_review_performed": false,
+    "local_private_storage_implemented": false
+  },
+  "g6": {
+    "architecture_state": "PROPOSED_NOT_IMPLEMENTED",
+    "components": [
+      {
+        "id": "D530-G6-C01",
+        "name": "STOP_LATCH_AUTHORITY",
+        "responsibility": "停止ラッチは常に解除不能の初期状態で保持。承認と監査が実証されるまでNO_GO",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C02",
+        "name": "SINGLE_WRITER_FENCE",
+        "responsibility": "単一書込み主体・世代fence。競合または不明時はSTOP維持",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C03",
+        "name": "APPEND_ONLY_JOURNAL",
+        "responsibility": "停止・変更・取消しイベントの順序記録。実署名/永続化は将来別実装",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C04",
+        "name": "REVOCATION_TOMBSTONES",
+        "responsibility": "取消し墓標を追記して削除・復元巻戻しを拒否する将来の設計",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C05",
+        "name": "ATOMIC_COMMIT_COORDINATOR",
+        "responsibility": "ローカルコミット境界を管理し、異常時は未確定としてSTOP維持",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C06",
+        "name": "INDEPENDENT_MONOTONIC_ANCHOR",
+        "responsibility": "同一書込み主体から独立した世代基準。合成ハッシュ照合は代替不可",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C07",
+        "name": "KEY_AND_SIGNATURE_VERIFIER",
+        "responsibility": "独立鍵管理・署名検証・鍵失効。実暗号機構は未実装",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C08",
+        "name": "RECOVERY_VERIFIER",
+        "responsibility": "クラッシュ復旧でラッチ・墓標・世代・連番を照合し、不確実ならNO_GO",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      },
+      {
+        "id": "D530-G6-C09",
+        "name": "MONOTONIC_CLOCK_ADAPTER",
+        "responsibility": "Windows単調時計とUTCの分離、再起動連続性喪失時はNO_GO",
+        "implementation_state": "DESIGN_ONLY",
+        "real_world_verified": false
+      }
+    ],
+    "commit_sequence": [
+      "LATCH_STOP_BEFORE_ACTION",
+      "PREPARE_JOURNAL_AND_TOMBSTONE",
+      "FLUSH_DURABLE_LOCAL_STATE",
+      "VERIFY_CHECKPOINT_AND_WRITER_FENCE",
+      "PUBLISH_INDEPENDENT_ANCHOR",
+      "FINALIZE_LOCAL_CHECKPOINT",
+      "VERIFY_RECOVERY_WITH_STOP_STILL_LATCHED"
+    ],
+    "critical_limits": {
+      "cross_resource_atomicity_guaranteed": false,
+      "coordinated_forgery_detectable": false,
+      "actual_monotonic_anchor_available": false,
+      "actual_cryptographic_signatures_available": false
+    },
+    "failure_scenarios": [
+      {
+        "id": "D530-G6-F01",
+        "threat": "ATOMIC_COMMIT_TORN",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F02",
+        "threat": "POWER_LOSS_MID_WRITE",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F03",
+        "threat": "REFERENCE_ROLLBACK",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F04",
+        "threat": "CO_EDIT_ALL_REFERENCES",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F05",
+        "threat": "REVOCATION_ERASURE",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F06",
+        "threat": "CONCURRENT_WRITER",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F07",
+        "threat": "CLOCK_RESTART_OR_ANOMALY",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F08",
+        "threat": "SIGNATURE_KEY_TAMPER",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F09",
+        "threat": "STORAGE_UNAVAILABLE",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      },
+      {
+        "id": "D530-G6-F10",
+        "threat": "STALE_BACKUP_RESTORE",
+        "design_outcome": "STOP_LATCHED_NO_GO",
+        "real_fault_injected": false,
+        "independent_proof_required": true
+      }
+    ],
+    "recovery_policy": "DEFAULT_STOP_UNLESS_INDEPENDENT_PROOFS_AND_EXPLICIT_APPROVAL",
+    "host_io_implemented": false,
+    "host_io_approved": false,
+    "stop_release_approved": false
+  },
+  "approvals": {
+    "visual_review": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "mt4_read_only_query": false,
+    "ea_ex4_execution": false,
+    "order_action": false,
+    "stop_release": false,
+    "host_io": false,
+    "message_send": false,
+    "live_trading": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
