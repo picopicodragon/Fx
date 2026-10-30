@@ -1,0 +1,76 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D542_G6_02_HARD_KNOCKOUT_SELECTION_RULES_ONLY",
+  "target_criterion": "G6-02",
+  "predecessor": "D541_EVIDENCE_MATRIX_COMPLETE_NO_SELECTION_OR_REAL_PROOF",
+  "candidate_ids": [
+    "LOCAL_HARDWARE_ROOT_CANDIDATE",
+    "REMOTE_SEPARATE_WITNESS_CANDIDATE"
+  ],
+  "noncompensable_axes": [
+    "ADMIN_BOUNDARY",
+    "WRITE_BOUNDARY",
+    "CREDENTIAL_BOUNDARY",
+    "ROLLBACK_RESISTANCE",
+    "FRESHNESS_SOURCE",
+    "REVOCATION_DURABILITY",
+    "KEY_ROTATION_AUTHORITY",
+    "SPLIT_BRAIN_DETECTION",
+    "STOP_LATCH_CONTINUITY",
+    "PRIVACY_NON_EXPOSURE",
+    "FAILURE_RECOVERY",
+    "DATA_RESIDENCY"
+  ],
+  "secondary_axes": [
+    "LIFECYCLE_COST",
+    "OPERATIONAL_BURDEN"
+  ],
+  "knockout_ids": [
+    "COMMON_ROOT_OR_ADMIN",
+    "REPLAY_OR_ROLLBACK_ACCEPTED",
+    "REVOCATION_LOSS_ACCEPTED",
+    "WITNESS_OUTAGE_REENABLES_TRADING",
+    "FORK_ACCEPTED_AS_CURRENT",
+    "PRIVATE_RECORDS_EXPORTED",
+    "UNAUTHENTICATED_ISSUER_ACCEPTED",
+    "CRASH_RECOVERY_UNLATCHES_STOP"
+  ],
+  "approval_stages": [
+    "G2_PRIVATE_PROTECTION_REVIEW",
+    "INDEPENDENT_ROOT_OWNER_PROVENANCE_REVIEW",
+    "ALL_HARD_GATES_EXTERNAL_ATTESTATION_REVIEW",
+    "KNOCKOUT_FAULT_RESULTS_REVIEW",
+    "SECONDARY_COST_OPERATIONS_REVIEW",
+    "SEPARATE_HUMAN_DESIGN_DECISION"
+  ],
+  "hard_gate_rule": "ALL_TWELVE_REAL_INDEPENDENTLY_VERIFIED_OR_NOT_ELIGIBLE",
+  "knockout_rule": "ANY_REAL_KNOCKOUT_DISQUALIFIES_NO_OVERRIDE",
+  "secondary_rule": "ONLY_AFTER_ALL_HARD_GATES_AND_NO_KNOCKOUT",
+  "synthetic_rule": "SYNTHETIC_PASS_IS_NEVER_REAL_EVIDENCE",
+  "approval_rule": "SEPARATE_HUMAN_DESIGN_SELECTION_AND_SEPARATE_RUNTIME_APPROVAL",
+  "unknown_rule": "UNKNOWN_OR_MISSING_MEANS_NO_GO",
+  "privacy_dependencies": [
+    "G2-06",
+    "G2-07"
+  ],
+  "upstream_gates": [
+    "G6-01",
+    "G8"
+  ],
+  "chosen_architecture": null,
+  "real_human_design_approved": false,
+  "real_runtime_approved": false,
+  "real_proof_collected": false,
+  "real_issuer_verified": false,
+  "actual_hardware_selected": false,
+  "actual_remote_witness_connected": false,
+  "actual_anchor_constructed": false,
+  "real_key_operation_approved": false,
+  "real_network_io_approved": false,
+  "real_host_io_approved": false,
+  "real_mt4_io_approved": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
