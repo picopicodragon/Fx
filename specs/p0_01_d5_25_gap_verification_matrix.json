@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "id": "P0-01-D5-25-GAP-VERIFICATION-MATRIX",
+  "created_on": "2026-10-30",
+  "origin": "OFFLINE_SYNTHETIC_ONLY",
+  "method": "EVIDENCE_SEPARATION_NO_GO",
+  "coverage_semantics": "OFFLINE_SYNTHETIC_COVERAGE_IS_NOT_REAL_WORLD_VERIFICATION",
+  "implementation_status": "UNRESOLVED",
+  "environment_policy": "SINGLE_MT4_ENVIRONMENT_ONLY",
+  "rakuten_inquiry": "CANCELLED_DO_NOT_SEND",
+  "additional_demo_account": "OUT_OF_SCOPE",
+  "real_mt4_access_approved": false,
+  "real_order_execution_approved": false,
+  "verified_values": null,
+  "broker_verified": false,
+  "terminal_execution_approved": false,
+  "forward_trading_enabled": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "gaps": [
+    {
+      "id": "G1",
+      "severity": "CRITICAL",
+      "subject": "4通貨ペア×5項目のブローカー契約属性",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "FXリスク計算式と合成例の境界検証"
+      ],
+      "external_or_real_evidence_required": [
+        "USD/JPY、EUR/JPY、GBP/USD、AUD/USDの20項目について実口座側から出典・時刻を付した契約値を将来別途許可された方法で確認"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G2",
+      "severity": "CRITICAL",
+      "subject": "単一MT4口座の同一性、既存EA、建玉・予約注文の未照合",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "D5-17/18の未照合証拠と合成口座スコープ矛盾の検査",
+        "D5-25横断口座ラベル照合"
+      ],
+      "external_or_real_evidence_required": [
+        "旧デモAと休眠口座の同一性・対象時間・EA装着・建玉・予約注文を将来別途許可された範囲で照合"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G3",
+      "severity": "CRITICAL",
+      "subject": "実MT4/EA/Pythonの緊急停止と発注遮断の強制力",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "D5-7〜10/19〜20の合成日次停止、復元、STOP遷移の検査",
+        "D5-21〜25の拒否専用ゲート"
+      ],
+      "external_or_real_evidence_required": [
+        "実端末・EA・Python間で停止が注文経路に強制されることを、別途許可された手順で検証"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G4",
+      "severity": "CRITICAL",
+      "subject": "実注文の遅延、拒否、再送、切断、建玉不整合",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "合成障害入力の拒否側処理と発注権限非昇格を検証"
+      ],
+      "external_or_real_evidence_required": [
+        "将来の明示承認と隔離条件のもとで実接続の障害・照合・冪等性を検証"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G5",
+      "severity": "HIGH",
+      "subject": "実現損益・含み損益・手数料・スワップとNY17日次損失",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "合成資金/損益境界値とNY17の暦日区切りに関するテスト"
+      ],
+      "external_or_real_evidence_required": [
+        "実約定・損益・費用・ロールオーバーの定義と出典を将来別途検証"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G6",
+      "severity": "HIGH",
+      "subject": "原子的永続化・改ざん防止・巻戻し・同時書込み",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "D5-8〜10のインメモリ復元",
+        "D5-23ハッシュ連鎖、D5-24未信頼基準値と模擬保存異常"
+      ],
+      "external_or_real_evidence_required": [
+        "独立Trust Anchor、クラッシュ整合性、署名/鍵管理、単調な外部基準、原子的永続化、実ストレージ障害を別途実証"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G7",
+      "severity": "HIGH",
+      "subject": "単調増加時計・UTC同期・再起動連続性・DST",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "NY17/時区間の合成DST試験",
+        "D5-22期限判定とD5-24時計異常申告の拒否"
+      ],
+      "external_or_real_evidence_required": [
+        "Windows実時計、同期誤差、再起動時の連続性、停止からの復帰禁止を実装・検証"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G8",
+      "severity": "HIGH",
+      "subject": "本人認証・個別操作承認・取消し・通知",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "D5-21拒否専用承認境界",
+        "D5-22失効・取消し・スコープ",
+        "D5-23/24未信頼履歴/基準点の比較"
+      ],
+      "external_or_real_evidence_required": [
+        "本人確認・署名付き権限・確実な取消しとリプレイ対策・LINEとメールの通知の実証"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    },
+    {
+      "id": "G9",
+      "severity": "HIGH",
+      "subject": "ブローカー営業日/セッション・休場とNY17境界",
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "offline_synthetic_coverage": [
+        "NY17日付境界とDSTを模した合成試験"
+      ],
+      "external_or_real_evidence_required": [
+        "楽天MT4の実取引時間、祝日、休場、日跨ぎ判定と例外の検証"
+      ],
+      "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+    }
+  ]
+}
