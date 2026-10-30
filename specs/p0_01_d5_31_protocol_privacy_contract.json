@@ -1,0 +1,71 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D531_G2_G6_SYNTHETIC_PROTOCOL_ONLY",
+  "g2": {
+    "check_ids": [
+      "D530-G2-01",
+      "D530-G2-02",
+      "D530-G2-03",
+      "D530-G2-04",
+      "D530-G2-05",
+      "D530-G2-06",
+      "D530-G2-07",
+      "D530-G2-08"
+    ],
+    "public_fields": [
+      "check_id",
+      "design_state",
+      "origin",
+      "schema_version",
+      "simulation_only"
+    ],
+    "raw_evidence_approved": false,
+    "private_storage_implemented": false,
+    "real_collection_performed": false
+  },
+  "g6": {
+    "commit_stages": [
+      "LATCH_STOP_BEFORE_ACTION",
+      "PREPARE_JOURNAL_AND_TOMBSTONE",
+      "FLUSH_DURABLE_LOCAL_STATE",
+      "VERIFY_CHECKPOINT_AND_WRITER_FENCE",
+      "PUBLISH_INDEPENDENT_ANCHOR",
+      "FINALIZE_LOCAL_CHECKPOINT",
+      "VERIFY_RECOVERY_WITH_STOP_STILL_LATCHED"
+    ],
+    "faults": [
+      "ATOMIC_COMMIT_TORN",
+      "POWER_LOSS_MID_WRITE",
+      "REFERENCE_ROLLBACK",
+      "CO_EDIT_ALL_REFERENCES",
+      "REVOCATION_ERASURE",
+      "CONCURRENT_WRITER",
+      "CLOCK_RESTART_OR_ANOMALY",
+      "SIGNATURE_KEY_TAMPER",
+      "STORAGE_UNAVAILABLE",
+      "STALE_BACKUP_RESTORE"
+    ],
+    "independent_anchor_available": false,
+    "atomic_storage_implemented": false,
+    "recovery_verified": false,
+    "signatures_implemented": false,
+    "cross_store_atomicity_verified": false,
+    "host_io_approved": false,
+    "stop_release_approved": false
+  },
+  "approvals": {
+    "mt4_launch": false,
+    "account_login": false,
+    "visual_review": false,
+    "mt4_read_only": false,
+    "host_io": false,
+    "ea_ex4_execution": false,
+    "orders": false,
+    "stop_release": false,
+    "live_trading": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
