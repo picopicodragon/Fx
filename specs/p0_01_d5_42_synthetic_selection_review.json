@@ -1,0 +1,418 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "scope": "D542_HYPOTHETICAL_SELECTION_CASES_NO_REAL_PROOF",
+  "hard_checks": [
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "ADMIN_BOUNDARY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "WRITE_BOUNDARY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "CREDENTIAL_BOUNDARY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "ROLLBACK_RESISTANCE",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "FRESHNESS_SOURCE",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "REVOCATION_DURABILITY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "KEY_ROTATION_AUTHORITY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "SPLIT_BRAIN_DETECTION",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "STOP_LATCH_CONTINUITY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "PRIVACY_NON_EXPOSURE",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "FAILURE_RECOVERY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "DATA_RESIDENCY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "ADMIN_BOUNDARY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "WRITE_BOUNDARY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "CREDENTIAL_BOUNDARY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "ROLLBACK_RESISTANCE",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "FRESHNESS_SOURCE",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "REVOCATION_DURABILITY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "KEY_ROTATION_AUTHORITY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "SPLIT_BRAIN_DETECTION",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "STOP_LATCH_CONTINUITY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "PRIVACY_NON_EXPOSURE",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "FAILURE_RECOVERY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "DATA_RESIDENCY",
+      "classification": "NON_COMPENSABLE",
+      "simulated_outcome": "UNVERIFIED",
+      "real_independent_proof": null,
+      "real_approval_granted": false
+    }
+  ],
+  "secondary_checks": [
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "LIFECYCLE_COST",
+      "simulated_outcome": "UNVERIFIED",
+      "real_quotation": null,
+      "real_human_review": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "axis": "OPERATIONAL_BURDEN",
+      "simulated_outcome": "UNVERIFIED",
+      "real_quotation": null,
+      "real_human_review": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "LIFECYCLE_COST",
+      "simulated_outcome": "UNVERIFIED",
+      "real_quotation": null,
+      "real_human_review": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "axis": "OPERATIONAL_BURDEN",
+      "simulated_outcome": "UNVERIFIED",
+      "real_quotation": null,
+      "real_human_review": false
+    }
+  ],
+  "knockout_cases": [
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "COMMON_ROOT_OR_ADMIN",
+      "related_axis": "SHARED_ADMIN_AUTHORITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "REPLAY_OR_ROLLBACK_ACCEPTED",
+      "related_axis": "ROLLBACK_RESISTANCE",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "REVOCATION_LOSS_ACCEPTED",
+      "related_axis": "REVOCATION_DURABILITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "WITNESS_OUTAGE_REENABLES_TRADING",
+      "related_axis": "STOP_LATCH_CONTINUITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "FORK_ACCEPTED_AS_CURRENT",
+      "related_axis": "SPLIT_BRAIN_DETECTION",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "PRIVATE_RECORDS_EXPORTED",
+      "related_axis": "PRIVACY_NON_EXPOSURE",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "UNAUTHENTICATED_ISSUER_ACCEPTED",
+      "related_axis": "KEY_ROTATION_AUTHORITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "knockout_id": "CRASH_RECOVERY_UNLATCHES_STOP",
+      "related_axis": "FAILURE_RECOVERY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "COMMON_ROOT_OR_ADMIN",
+      "related_axis": "SHARED_ADMIN_AUTHORITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "REPLAY_OR_ROLLBACK_ACCEPTED",
+      "related_axis": "ROLLBACK_RESISTANCE",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "REVOCATION_LOSS_ACCEPTED",
+      "related_axis": "REVOCATION_DURABILITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "WITNESS_OUTAGE_REENABLES_TRADING",
+      "related_axis": "STOP_LATCH_CONTINUITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "FORK_ACCEPTED_AS_CURRENT",
+      "related_axis": "SPLIT_BRAIN_DETECTION",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "PRIVATE_RECORDS_EXPORTED",
+      "related_axis": "PRIVACY_NON_EXPOSURE",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "UNAUTHENTICATED_ISSUER_ACCEPTED",
+      "related_axis": "KEY_ROTATION_AUTHORITY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "knockout_id": "CRASH_RECOVERY_UNLATCHES_STOP",
+      "related_axis": "FAILURE_RECOVERY",
+      "simulated_outcome": "NOT_TESTED",
+      "real_fault_executed": false,
+      "real_disqualification_proven": false
+    }
+  ],
+  "approval_steps": [
+    {
+      "stage": "G2_PRIVATE_PROTECTION_REVIEW",
+      "review_state": "PENDING",
+      "real_evidence_reference": null,
+      "real_human_signoff": false
+    },
+    {
+      "stage": "INDEPENDENT_ROOT_OWNER_PROVENANCE_REVIEW",
+      "review_state": "PENDING",
+      "real_evidence_reference": null,
+      "real_human_signoff": false
+    },
+    {
+      "stage": "ALL_HARD_GATES_EXTERNAL_ATTESTATION_REVIEW",
+      "review_state": "PENDING",
+      "real_evidence_reference": null,
+      "real_human_signoff": false
+    },
+    {
+      "stage": "KNOCKOUT_FAULT_RESULTS_REVIEW",
+      "review_state": "PENDING",
+      "real_evidence_reference": null,
+      "real_human_signoff": false
+    },
+    {
+      "stage": "SECONDARY_COST_OPERATIONS_REVIEW",
+      "review_state": "PENDING",
+      "real_evidence_reference": null,
+      "real_human_signoff": false
+    },
+    {
+      "stage": "SEPARATE_HUMAN_DESIGN_DECISION",
+      "review_state": "PENDING",
+      "real_evidence_reference": null,
+      "real_human_signoff": false
+    }
+  ],
+  "actual_chosen_candidate": null,
+  "real_design_approval": false,
+  "real_runtime_permission": false,
+  "actual_evidence_collected": false,
+  "real_fault_tests_executed": false,
+  "account_identity_consistency": "NOT_RECONCILED",
+  "current_positions": "UNKNOWN",
+  "current_pending_orders": "UNKNOWN",
+  "current_ea_state": "UNKNOWN",
+  "unresolved_gates": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "safety_hold_latched": true
+}
