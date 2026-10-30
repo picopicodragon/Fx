@@ -61,3 +61,7 @@ D5-33の5系統の合成証拠、D5-34のJournal/Anchor/Revocationの3役割を�
 - [ ] GitHub Repository checksとWindows Python 3.13 / IANA time zones CI成功。
 - [ ] 本人Windowsの全1,747件成功。
 - [ ] PR差分を本人が目視し、本人が手動マージ。テスト/マージは実機・本番運用の許可ではない。
+
+### PRメタデータの検証条件
+
+GitHub CIのRepository checksはPRイベントに記録された本文の「関連仕様ID」「テスト結果」「本人確認」の3見出しを必須とする。本文を変更しただけで既存CIを再実行しても、最初のイベントペイロードが使われる場合があるため、変更後のPRイベントで改めて照合する。このCIは実MT4や鍵・口座の安全性を保証しない。
