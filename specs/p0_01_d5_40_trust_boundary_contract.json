@@ -1,0 +1,62 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D540_G6_01_TRUST_AUTHORITY_THREAT_MODEL_ONLY",
+  "target_criterion": "G6-01",
+  "next_criterion": "G6-02",
+  "privacy_dependencies": [
+    "G2-06",
+    "G2-07"
+  ],
+  "authority_roles": [
+    "EVIDENCE_PRODUCER",
+    "TRUST_ANCHOR_CUSTODIAN",
+    "INDEPENDENT_VERIFIER",
+    "REVOCATION_AUTHORITY",
+    "HUMAN_APPROVER"
+  ],
+  "candidate_ids": [
+    "SAME_PROCESS_MIRROR",
+    "SAME_HOST_DIFFERENT_USER",
+    "LOCAL_HARDWARE_ROOT_CANDIDATE",
+    "REMOTE_SEPARATE_WITNESS_CANDIDATE"
+  ],
+  "threat_ids": [
+    "SHARED_ADMIN_AUTHORITY",
+    "JOURNAL_ANCHOR_COORDINATED_FORGERY",
+    "LOCAL_ROLLBACK_AND_REPLAY",
+    "ISSUER_EPOCH_REBINDING",
+    "REVOCATION_TOMBSTONE_ERASURE",
+    "SPLIT_BRAIN_WITNESS",
+    "ANCHOR_TIMEOUT_OR_OUTAGE",
+    "FALSE_TIME_FRESHNESS",
+    "PRIVATE_DATA_IN_ANCHOR",
+    "SINGLE_WRITER_FENCE_BYPASS",
+    "HOST_REBOOT_WITHOUT_PROOF",
+    "APPROVAL_OR_KEY_REVOCATION_SPOOF"
+  ],
+  "mandatory_independence_tests": [
+    "ADMIN_BOUNDARY",
+    "WRITE_BOUNDARY",
+    "CREDENTIAL_BOUNDARY",
+    "ROLLBACK_RESISTANCE",
+    "FRESHNESS_SOURCE",
+    "REVOCATION_DURABILITY",
+    "KEY_ROTATION_AUTHORITY",
+    "SPLIT_BRAIN_DETECTION",
+    "STOP_LATCH_CONTINUITY",
+    "PRIVACY_NON_EXPOSURE"
+  ],
+  "chosen_architecture": null,
+  "external_provider_selected": false,
+  "independent_anchor_implemented": false,
+  "real_key_generated": false,
+  "real_signature_verified": false,
+  "real_issuer_authenticated": false,
+  "actual_human_approved": false,
+  "host_io_approved": false,
+  "mt4_access_approved": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}

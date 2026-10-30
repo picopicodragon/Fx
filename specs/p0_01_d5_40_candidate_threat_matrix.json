@@ -1,0 +1,209 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "scope": "D540_CANDIDATE_COMPARE_NO_REAL_AUTHORITY",
+  "candidates": [
+    {
+      "candidate_id": "SAME_PROCESS_MIRROR",
+      "domain": "SAME_PROCESS",
+      "principal": "SAME_PRINCIPAL",
+      "storage": "LOCAL_MUTABLE",
+      "assessment": "NOT_INDEPENDENT",
+      "limitation": "SHARED_WRITER_CAN_REWRITE_BOTH",
+      "real_operator_identity": null,
+      "real_anchor_address": null,
+      "actual_trust_boundary_proven": false,
+      "real_crypto_attested": false,
+      "real_rollback_prevention_attested": false,
+      "human_selection_approved": false
+    },
+    {
+      "candidate_id": "SAME_HOST_DIFFERENT_USER",
+      "domain": "SAME_HOST",
+      "principal": "SEPARATE_OS_PRINCIPAL_UNVERIFIED",
+      "storage": "LOCAL_MUTABLE",
+      "assessment": "INSUFFICIENT_EXTERNAL_INDEPENDENCE",
+      "limitation": "HOST_ADMIN_OR_DISK_ROLLBACK",
+      "real_operator_identity": null,
+      "real_anchor_address": null,
+      "actual_trust_boundary_proven": false,
+      "real_crypto_attested": false,
+      "real_rollback_prevention_attested": false,
+      "human_selection_approved": false
+    },
+    {
+      "candidate_id": "LOCAL_HARDWARE_ROOT_CANDIDATE",
+      "domain": "LOCAL_HARDWARE",
+      "principal": "HARDWARE_POLICY_UNVERIFIED",
+      "storage": "HARDWARE_PLUS_LOCAL",
+      "assessment": "CONDITIONAL_DESIGN_ONLY",
+      "limitation": "ROLLBACK_CLOCK_AND_RECOVERY_REQUIRE_EXTERNAL_PROOF",
+      "real_operator_identity": null,
+      "real_anchor_address": null,
+      "actual_trust_boundary_proven": false,
+      "real_crypto_attested": false,
+      "real_rollback_prevention_attested": false,
+      "human_selection_approved": false
+    },
+    {
+      "candidate_id": "REMOTE_SEPARATE_WITNESS_CANDIDATE",
+      "domain": "SEPARATE_REMOTE_DOMAIN",
+      "principal": "INDEPENDENT_ADMIN_UNVERIFIED",
+      "storage": "REMOTE_APPEND_ONLY_UNVERIFIED",
+      "assessment": "CONDITIONAL_DESIGN_ONLY",
+      "limitation": "REMOTE_ADMIN_COLLUSION_SPLIT_BRAIN_AND_OUTAGE",
+      "real_operator_identity": null,
+      "real_anchor_address": null,
+      "actual_trust_boundary_proven": false,
+      "real_crypto_attested": false,
+      "real_rollback_prevention_attested": false,
+      "human_selection_approved": false
+    }
+  ],
+  "threats": [
+    {
+      "threat_id": "SHARED_ADMIN_AUTHORITY",
+      "attack": "COMMON_CONTROL_OF_BOTH_ROOTS",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "JOURNAL_ANCHOR_COORDINATED_FORGERY",
+      "attack": "SAME_ACTOR_CAN_REWRITE_ALL_RECORDS",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "LOCAL_ROLLBACK_AND_REPLAY",
+      "attack": "OLD_SIGNED_STATE_REPLAY",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "ISSUER_EPOCH_REBINDING",
+      "attack": "UNTRUSTED_ROTATION_OR_KEY_CHANGE",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "REVOCATION_TOMBSTONE_ERASURE",
+      "attack": "LOST_REVOCATION_AFTER_RESTART",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "SPLIT_BRAIN_WITNESS",
+      "attack": "CONFLICTING_FORKS_BOTH_CLAIM_HEAD",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "ANCHOR_TIMEOUT_OR_OUTAGE",
+      "attack": "INDEPENDENT_REFERENCE_UNAVAILABLE",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "FALSE_TIME_FRESHNESS",
+      "attack": "FAKE_CLOCK_OR_STALE_TICK",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "PRIVATE_DATA_IN_ANCHOR",
+      "attack": "SECRET_OR_ACCOUNT_IDENTIFIER_EXPORTED",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "SINGLE_WRITER_FENCE_BYPASS",
+      "attack": "MULTIPLE_WRITERS_SAME_EPOCH",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "HOST_REBOOT_WITHOUT_PROOF",
+      "attack": "UNPROVEN_CLOCK_OR_STORAGE_CONTINUITY",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    },
+    {
+      "threat_id": "APPROVAL_OR_KEY_REVOCATION_SPOOF",
+      "attack": "UNAUTHENTICATED_HUMAN_APPROVAL",
+      "denial": "DENY_AND_HOLD_STOP",
+      "mitigation_state": "REQUIRES_DESIGN_AND_INDEPENDENT_PROOF",
+      "real_fault_injection_performed": false,
+      "independent_detection_verified": false,
+      "stop_release_requested": false,
+      "actual_leakage_justified": false
+    }
+  ],
+  "observed_at_utc": null,
+  "broker_verified": false,
+  "external_anchor_verified": false,
+  "real_host_io_requested": false,
+  "real_mt4_access_requested": false,
+  "real_signature_operation_requested": false,
+  "real_stop_release_requested": false,
+  "real_trade_requested": false,
+  "account_identity_consistency": "NOT_RECONCILED",
+  "current_positions": "UNKNOWN",
+  "current_pending_orders": "UNKNOWN",
+  "current_ea_state": "UNKNOWN",
+  "unresolved_gates": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "safety_hold_latched": true
+}
