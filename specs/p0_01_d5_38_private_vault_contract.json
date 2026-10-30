@@ -1,0 +1,52 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D538_G2_06_PRIVATE_EVIDENCE_VAULT_REQUIREMENTS_ONLY",
+  "target_criterion": "G2-06",
+  "dependent_criterion": "G2-07",
+  "independent_boundary": "G6-02",
+  "privacy_classes": [
+    "ACCOUNT_TERMINAL_IDENTIFIERS",
+    "BROKER_SESSION_AND_SERVER",
+    "EA_POSITION_ORDER_EVIDENCE",
+    "RAW_LOG_AND_SCREENSHOT",
+    "SECRET_MATERIAL",
+    "OBSERVATION_PROVENANCE"
+  ],
+  "zones": [
+    "PRIVATE_EVIDENCE_ZONE_DESIGN",
+    "SYNTHETIC_PUBLIC_METADATA_ZONE",
+    "INDEPENDENT_ANCHOR_ZONE_DESIGN",
+    "REJECT_OR_QUARANTINE_ZONE_DESIGN"
+  ],
+  "controls": {
+    "encryption_algorithm": "UNDECIDED_REQUIRES_HUMAN_REVIEW",
+    "key_custody": "UNDECIDED_REQUIRES_HUMAN_REVIEW",
+    "retention_schedule": "UNDECIDED_REQUIRES_HUMAN_REVIEW",
+    "deletion_semantics": "DELETE_REQUEST_NOT_ERASURE_PROOF",
+    "backup_policy": "UNDECIDED_REQUIRES_HUMAN_REVIEW",
+    "audit_provenance": "NOT_IMPLEMENTED",
+    "public_export": "NO_REAL_PUBLIC_EXPORT",
+    "g6_anchor": "SEPARATE_TRUST_BOUNDARY_NOT_IMPLEMENTED"
+  },
+  "permissions": {
+    "real_evidence_collect": false,
+    "real_host_read": false,
+    "real_host_write": false,
+    "real_secret_scan": false,
+    "real_git_hook": false,
+    "real_git_history_scan": false,
+    "real_backup_restore": false,
+    "real_crypto": false,
+    "real_key_management": false,
+    "real_anchor_operation": false,
+    "real_erasure_claim": false,
+    "real_mt4_access": false,
+    "real_order_execution": false,
+    "real_stop_release": false,
+    "real_public_export": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
