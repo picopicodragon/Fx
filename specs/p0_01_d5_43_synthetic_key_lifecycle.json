@@ -1,0 +1,377 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "scope": "D543_KEY_CUSTODY_ROTATION_REVOCATION_DESIGN_ONLY",
+  "required_controls": [
+    {
+      "control_id": "CUSTODIAN_ISOLATION",
+      "future_proof": "KEY_CUSTODIAN_NOT_SOLE_APPROVER",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "NON_EXPORTABILITY",
+      "future_proof": "PROVE_SECRET_NOT_COPIED_TO_GIT_LOG_OR_ANCHOR",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "ISSUER_AUTHENTICATION",
+      "future_proof": "ISSUER_ORIGIN_VERIFIED_OUT_OF_BAND",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "EPOCH_MONOTONICITY",
+      "future_proof": "OLD_EPOCH_OR_FORK_NEVER_AUTO_ACCEPTED",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "REVOCATION_TOMBSTONE",
+      "future_proof": "REVOCATION_RECORDED_INDEPENDENTLY_AND_DURABLY",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "RESTART_REVOCATION_MEMORY",
+      "future_proof": "RESTORE_CANNOT_REENABLE_REVOKED_ISSUER",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "REPLAY_PREVENTION",
+      "future_proof": "REUSED_KEY_NONCE_AND_OLD_SIGNATURE_DENIED",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "ATOMIC_HANDOVER",
+      "future_proof": "OLD_NEW_ISSUER_AND_ANCHOR_COMMIT_COHERENCE",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "INDEPENDENT_ROTATION_APPROVAL",
+      "future_proof": "SEPARATE_HUMAN_AND_ANCHOR_AUTHORITIES",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "APPROVAL_EXPIRY_AND_SCOPE",
+      "future_proof": "SINGLE_SCOPED_REVOCABLE_APPROVAL_PROOF",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "EMERGENCY_STOP_LATCH",
+      "future_proof": "KEY_FAULT_NEVER_RELEASES_STOP",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    },
+    {
+      "control_id": "PRIVATE_EVIDENCE_SEPARATION",
+      "future_proof": "NO_REAL_KEYS_OR_ACCOUNT_IDENTIFIERS_IN_PUBLIC_RECORD",
+      "verification_boundary": "FUTURE_INDEPENDENT_PRIVATE_ATTESTATION",
+      "design_state": "REQUIREMENT_ONLY",
+      "real_evidence": null,
+      "real_attestation_verified": false,
+      "human_signoff": false
+    }
+  ],
+  "lifecycle_cases": [
+    {
+      "transition_id": "NO_CHANGE",
+      "expected_safety": "PRESERVE_STOP_UNTIL_EXTERNALLY_PROVEN",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "ROTATION_PREPARE",
+      "expected_safety": "NO_KEY_USE_OR_GO_DURING_PREPARATION",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "ROTATION_COMMIT",
+      "expected_safety": "ATOMIC_ISSUER_EPOCH_HANDOVER_REQUIRED",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "KEY_REVOCATION",
+      "expected_safety": "TOMBSTONE_MUST_SURVIVE_RESTART",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "ISSUER_REVOCATION",
+      "expected_safety": "ALL_REVOKED_ISSUER_EPOCHS_DENIED",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "EMERGENCY_FREEZE",
+      "expected_safety": "LATCH_STOP_AND_REQUIRE_SEPARATE_RELEASE",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "RESTART_RECONCILE",
+      "expected_safety": "UNPROVEN_CONTINUITY_REMAINS_BLOCKED",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "OLD_KEY_REPLAY",
+      "expected_safety": "NEVER_REAUTHORIZE_REVOKED_KEY",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "TOMBSTONE_ROLLBACK",
+      "expected_safety": "NEVER_ACCEPT_MISSING_REVOCATION",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    },
+    {
+      "transition_id": "UNAPPROVED_ISSUER_REBIND",
+      "expected_safety": "NEVER_ACCEPT_UNVERIFIED_ISSUER",
+      "simulated_event": "NOT_RUN",
+      "simulated_issuer": "SYNTHETIC_ISSUER_ALPHA",
+      "simulated_key": "SYNTHETIC_KEY_ALPHA",
+      "simulated_epoch": 1,
+      "design_only": true,
+      "real_key_operation": false,
+      "real_transition_committed": false,
+      "real_independent_proof": false,
+      "real_human_approval": false
+    }
+  ],
+  "threat_cases": [
+    {
+      "threat_id": "SHARED_CUSTODIAN_AND_APPROVER",
+      "attack": "SINGLE_PRINCIPAL_CAN_FORGE_ROTATION",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "FAKE_ISSUER_CERTIFICATE",
+      "attack": "UNVERIFIED_ISSUER_CLAIMS_AUTHORITY",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "REVOKED_KEY_REPLAY",
+      "attack": "OLD_SIGNATURE_CAN_REAPPEAR",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "EPOCH_REWIND",
+      "attack": "OLD_EPOCH_ACCEPTED_AS_NEW",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "TOMBSTONE_LOSS",
+      "attack": "REVOCATION_ERASED_AFTER_RESTORE",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "DUAL_ACTIVE_ISSUERS",
+      "attack": "OLD_AND_NEW_BOTH_AUTHORITATIVE",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "PARTIAL_COMMIT",
+      "attack": "ANCHOR_JOURNAL_AND_ISSUER_INCONSISTENT",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "OUTAGE_AUTO_RELEASE",
+      "attack": "MISSING_ANCHOR_CLEARS_STOP",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "SECRET_EXPORT",
+      "attack": "REAL_KEYS_EXPOSED_IN_PUBLIC_OR_LOCAL_LOG",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    },
+    {
+      "threat_id": "APPROVAL_REUSE",
+      "attack": "STALE_HUMAN_APPROVAL_REPLAYED",
+      "expected_reaction": "DENY_AND_HOLD_STOP",
+      "simulated_outcome": "UNTESTED",
+      "real_attack_performed": false,
+      "real_detection_verified": false,
+      "stop_release_authorized": false
+    }
+  ],
+  "issuer_chain": {
+    "current_alias": "SYNTHETIC_ISSUER_ALPHA",
+    "next_alias": "SYNTHETIC_ISSUER_BETA",
+    "current_epoch": 1,
+    "next_epoch": 2,
+    "previous_key_alias": "SYNTHETIC_KEY_ALPHA",
+    "proposed_key_alias": "SYNTHETIC_KEY_BETA",
+    "revocation_tombstone": "DESIGN_ONLY_NOT_PERSISTED",
+    "actual_issuer_id": null,
+    "actual_key_id": null,
+    "actual_signature": null,
+    "actual_external_attestation": null,
+    "real_atomic_commit_verified": false
+  },
+  "real_keys_present": false,
+  "real_issuer_present": false,
+  "real_observation_utc": null,
+  "actual_key_operations_requested": false,
+  "actual_anchor_network_requested": false,
+  "actual_host_io_requested": false,
+  "actual_mt4_requested": false,
+  "actual_stop_release_requested": false,
+  "account_identity_consistency": "NOT_RECONCILED",
+  "current_positions": "UNKNOWN",
+  "current_pending_orders": "UNKNOWN",
+  "current_ea_state": "UNKNOWN",
+  "unresolved_gates": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "safety_hold_latched": true
+}
