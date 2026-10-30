@@ -1,0 +1,78 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D543_G6_03_KEY_LIFECYCLE_REQUIREMENTS_ONLY",
+  "target_criterion": "G6-03",
+  "upstream_criteria": [
+    "G6-01",
+    "G6-02"
+  ],
+  "external_gate_dependencies": [
+    "G8"
+  ],
+  "privacy_dependencies": [
+    "G2-06",
+    "G2-07"
+  ],
+  "required_controls": [
+    "CUSTODIAN_ISOLATION",
+    "NON_EXPORTABILITY",
+    "ISSUER_AUTHENTICATION",
+    "EPOCH_MONOTONICITY",
+    "REVOCATION_TOMBSTONE",
+    "RESTART_REVOCATION_MEMORY",
+    "REPLAY_PREVENTION",
+    "ATOMIC_HANDOVER",
+    "INDEPENDENT_ROTATION_APPROVAL",
+    "APPROVAL_EXPIRY_AND_SCOPE",
+    "EMERGENCY_STOP_LATCH",
+    "PRIVATE_EVIDENCE_SEPARATION"
+  ],
+  "transition_ids": [
+    "NO_CHANGE",
+    "ROTATION_PREPARE",
+    "ROTATION_COMMIT",
+    "KEY_REVOCATION",
+    "ISSUER_REVOCATION",
+    "EMERGENCY_FREEZE",
+    "RESTART_RECONCILE",
+    "OLD_KEY_REPLAY",
+    "TOMBSTONE_ROLLBACK",
+    "UNAPPROVED_ISSUER_REBIND"
+  ],
+  "threat_ids": [
+    "SHARED_CUSTODIAN_AND_APPROVER",
+    "FAKE_ISSUER_CERTIFICATE",
+    "REVOKED_KEY_REPLAY",
+    "EPOCH_REWIND",
+    "TOMBSTONE_LOSS",
+    "DUAL_ACTIVE_ISSUERS",
+    "PARTIAL_COMMIT",
+    "OUTAGE_AUTO_RELEASE",
+    "SECRET_EXPORT",
+    "APPROVAL_REUSE"
+  ],
+  "lifecycle_rule": "REVOKED_KEYS_AND_ISSUERS_NEVER_REENTER_ACTIVE_STATE",
+  "epoch_rule": "STRICT_FUTURE_EPOCH_AND_INDEPENDENT_CUSTODY_PROOF_REQUIRED",
+  "tombstone_rule": "NO_REVOCATION_ERASURE_ON_RESTART_ROLLBACK_OR_DISASTER_RECOVERY",
+  "approval_rule": "DESIGN_REVIEW_NOT_RUNTIME_OR_STOP_RELEASE_AUTHORITY",
+  "atomicity_rule": "NO_PARTIAL_ROTATION_OR_MIXED_ISSUER_ANCHOR_COMMIT",
+  "private_key_rule": "NO_REAL_SECRET_OR_PRIVATE_KEY_MATERIAL_IN_SYNTHETIC_OR_GIT",
+  "unknown_rule": "MISSING_OR_UNTRUSTED_EVIDENCE_MEANS_NO_GO",
+  "real_key_custodian_selected": false,
+  "real_key_generated": false,
+  "real_keys_rotated": false,
+  "real_keys_revoked": false,
+  "real_issuer_authenticated": false,
+  "real_independent_anchor_verified": false,
+  "real_tombstone_persisted": false,
+  "real_human_design_approval": false,
+  "real_runtime_approval": false,
+  "real_stop_release_approval": false,
+  "real_host_io_approved": false,
+  "real_network_io_approved": false,
+  "real_mt4_io_approved": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
