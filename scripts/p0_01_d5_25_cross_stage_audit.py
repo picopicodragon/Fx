@@ -140,22 +140,18 @@ def _denial_contract(stage: str, obj: object) -> bool:
     return True
 
 
-def _synthetic_claim(lifecycle: object) -> dict[str, object] | None:
+def _synthetic_claim(lifecycle: object, lifecycle_state: object) -> dict[str, object] | None:
     if type(lifecycle) is not dict or type(lifecycle.get("request")) is not dict:
         return None
     action = lifecycle["request"].get("action")
     if type(action) is not str or action not in _ACTIONS:
         return None
-    events = lifecycle.get("events")
-    if type(events) is not list:
+    if type(lifecycle_state) is not str:
         return None
     return {
         "origin": "SYNTHETIC_ONLY", "schema_version": 1,
         "requested_action": action,
-        "claimed_human_approval": any(
-            type(e) is dict and e.get("event_type") == "APPROVAL_CLAIMED"
-            for e in events
-        ),
+        "claimed_human_approval": lifecycle_state == "CLAIMED_NOT_VERIFIED",
         "claimed_safety_review_passed": False,
         "claimed_stop_release": False,
         "approval_reference": None,
@@ -186,10 +182,13 @@ def audit_synthetic_cross_stage_no_go(payload: object) -> dict[str, object]:
         if type(lifecycle) is not dict or type(integrated_fixture) is not dict:
             return rejected
         integrated = evaluate_offline_integrated_no_go(integrated_fixture)
-        authority = audit_offline_authority_separation(
-            integrated_fixture, _synthetic_claim(lifecycle)
-        )
         lifecycle_result = audit_synthetic_approval_lifecycle(lifecycle)
+        authority = audit_offline_authority_separation(
+            integrated_fixture, _synthetic_claim(
+                lifecycle, lifecycle_result.get("lifecycle_state")
+                if type(lifecycle_result) is dict else None,
+            )
+        )
         history = audit_synthetic_history_checkpoint(history_bundle)
         anchor = audit_synthetic_reference_and_failures(anchor_fixture)
         outputs = {
