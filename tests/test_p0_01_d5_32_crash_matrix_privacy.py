@@ -129,7 +129,8 @@ class D532CrashMatrixPrivacyTests(TestCase):
 
     def test_canonical_public_json_rejects_reordered_fields(self):
         p = json.loads(fixture()["public_json"])
-        noncanonical = json.dumps(p, sort_keys=False, separators=(",", ":"))
+        noncanonical = json.dumps(dict(reversed(list(p.items()))),
+                                  sort_keys=False, separators=(",", ":"))
         self.assertNotEqual(noncanonical, fixture()["public_json"])
         self.check("D532_G2_PUBLIC_JSON_REJECTED_FAIL_CLOSED",
                    public=noncanonical)
