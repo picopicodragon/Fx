@@ -1,0 +1,212 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "SINGLE_MT4_ENVIRONMENT_NO_RUNTIME",
+  "evidence_ledger_id": "P0-01-D5-17-ACCOUNT-EVIDENCE-RECONCILIATION",
+  "gap_matrix_id": "P0-01-D5-25-GAP-VERIFICATION-MATRIX",
+  "g2": {
+    "account_identity_consistency": "NOT_RECONCILED",
+    "current_positions": "UNKNOWN",
+    "current_pending_orders": "UNKNOWN",
+    "current_ea_state": "UNKNOWN",
+    "report_ids": [
+      "EV-OLD",
+      "EV-NEW"
+    ],
+    "checklist": [
+      {
+        "id": "P27-G2-01",
+        "topic": "TERMINAL_IDENTITY",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "将来の個別承認後、利用端末の識別と証拠元・観測時刻を照合する。端末の起動許可は本仕様から発生しない"
+      },
+      {
+        "id": "P27-G2-02",
+        "topic": "ACCOUNT_AND_SERVER_IDENTITY",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "旧デモAと休眠口座の同一性を将来別途確認。口座番号やサーバー秘密情報はGitHubに記録しない"
+      },
+      {
+        "id": "P27-G2-03",
+        "topic": "CONNECTION_AND_SESSION",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "単一MT4環境、非同時ログイン、接続表示・観測時刻と対象を将来別途確認"
+      },
+      {
+        "id": "P27-G2-04",
+        "topic": "EA_ATTACHMENT_AND_AUTOTRADING",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "MACD Sampleの装着場所と自動売買表示の別観測。ファイルやEAを起動・解除・変更しない"
+      },
+      {
+        "id": "P27-G2-05",
+        "topic": "POSITIONS",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "以前の建玉または未約定注文ありの申告と後の保有なし申告の違いを現在値と混同せず将来別途確認"
+      },
+      {
+        "id": "P27-G2-06",
+        "topic": "PENDING_ORDERS",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "建玉と未約定注文を別々に判定し、いずれの現在状態も未確認として維持"
+      },
+      {
+        "id": "P27-G2-07",
+        "topic": "TIMESTAMP_AND_SOURCE_PROVENANCE",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "EV-OLD・EV-NEWの原申告、観測日時、口座対象、証拠の更新時刻を別々に記録。推定日時は禁止"
+      },
+      {
+        "id": "P27-G2-08",
+        "topic": "LOCAL_LOG_HANDLING",
+        "state": "NOT_PERFORMED",
+        "evidence_reference": null,
+        "real_world_verified": false,
+        "future_operation_approved": false,
+        "future_proof_required": "既存ログの取扱いはポリシー確認まで未実施。生ログ・ID・認証情報はGitHubへ登録しない"
+      }
+    ]
+  },
+  "g6": {
+    "independent_trust_anchor_implemented": false,
+    "atomic_persistence_verified": false,
+    "revocation_durable": false,
+    "host_io_approved": false,
+    "scenarios": [
+      {
+        "id": "P27-G6-01",
+        "threat": "ATOMIC_COMMIT_TORN",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "原子的切替前後で停止ラッチとジャーナルの整合が確定しない場合は必ず保持。実ディスクの故障注入には個別承認が必要"
+      },
+      {
+        "id": "P27-G6-02",
+        "threat": "POWER_LOSS_MID_WRITE",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "電源喪失を合成し、停止記録の再開・復元が不完全なら自動解除しない"
+      },
+      {
+        "id": "P27-G6-03",
+        "threat": "REFERENCE_ROLLBACK",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "古い参照値へ巻戻したケースを独立な単調基準で将来検出する受入条件を設計"
+      },
+      {
+        "id": "P27-G6-04",
+        "threat": "CO_EDIT_ALL_REFERENCES",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "UNDETECTABLE_WITH_UNTRUSTED_INPUTS",
+        "future_proof_required": "履歴・チェックポイント・基準点の同時改ざんは未信頼入力だけでは検知不可。独立署名/保存/外部基準を別設計"
+      },
+      {
+        "id": "P27-G6-05",
+        "threat": "REVOCATION_ERASURE",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "取消し墓標が欠落・巻戻し・再利用された場合、永久保存と照合が実証されるまでNO_GO"
+      },
+      {
+        "id": "P27-G6-06",
+        "threat": "CONCURRENT_WRITER",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "単一書込み主体のロックとプロセス競合検出、故障時の拒否を将来の別承認OS試験で実証"
+      },
+      {
+        "id": "P27-G6-07",
+        "threat": "CLOCK_RESTART_OR_ANOMALY",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "UTCと単調時計の役割を分離し、再起動・DST・時刻補正で継続性不明なら自動解除しない"
+      },
+      {
+        "id": "P27-G6-08",
+        "threat": "SIGNATURE_KEY_TAMPER",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "署名鍵の窃取・偽造・失効、鍵保護と信頼された検証経路の脅威モデルを作成"
+      },
+      {
+        "id": "P27-G6-09",
+        "threat": "STORAGE_UNAVAILABLE",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "容量枯渇・アクセス拒否・I/Oエラー・媒体破損でも停止ラッチ保持、取引禁止"
+      },
+      {
+        "id": "P27-G6-10",
+        "threat": "STALE_BACKUP_RESTORE",
+        "simulation_mode": "SYNTHETIC_ONLY",
+        "expected_outcome": "SAFETY_HOLD_LATCHED_NO_GO",
+        "real_world_verified": false,
+        "host_io_approved": false,
+        "detection_limit": "SYNTHETIC_REJECTION_ONLY",
+        "future_proof_required": "古いバックアップ復元で停止履歴/墓標の巻戻しを信頼済み外部世代値との比較で拒否"
+      }
+    ]
+  },
+  "approvals": {
+    "visual_review": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "mt4_read_only_query": false,
+    "ea_execution": false,
+    "order_action": false,
+    "stop_release": false,
+    "host_io": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
