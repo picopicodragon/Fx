@@ -1,0 +1,52 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "simulated_only": true,
+  "public_export": {
+    "public_json": "{\"check_id\":\"D530-G2-01\",\"design_state\":\"NOT_PERFORMED\",\"origin\":\"SYNTHETIC_ONLY\",\"schema_version\":1,\"simulation_only\":true}",
+    "private_reference_label": "SYNTHETIC_PRIVATE_REF_A",
+    "private_payload_attached": false,
+    "private_export_requested": false,
+    "git_write_requested": false,
+    "real_redaction_verified": false
+  },
+  "lineage": {
+    "origin": "SYNTHETIC_ONLY",
+    "schema_version": 1,
+    "simulated_reference_tick": 100,
+    "journal": {
+      "generation": 1,
+      "sequence": 3,
+      "observed_tick": 98,
+      "issuer_id": "SYNTHETIC_ISSUER_A",
+      "issuer_epoch": 1,
+      "stop_latched": true,
+      "revocation_tombstone": true
+    },
+    "anchor": {
+      "generation": 1,
+      "sequence": 3,
+      "observed_tick": 98,
+      "issuer_id": "SYNTHETIC_ISSUER_A",
+      "issuer_epoch": 1,
+      "stop_latched": true,
+      "revocation_tombstone": true
+    },
+    "revocation": {
+      "generation": 1,
+      "sequence": 3,
+      "observed_tick": 98,
+      "issuer_id": "SYNTHETIC_ISSUER_A",
+      "issuer_epoch": 1,
+      "stop_latched": true,
+      "revocation_tombstone": true
+    },
+    "previous_issuer_id": "SYNTHETIC_ISSUER_A",
+    "previous_issuer_epoch": 1,
+    "rotation_claim": "NONE",
+    "real_handoff_verified": false,
+    "independent_witness_authenticated": false
+  },
+  "real_operation_claim": false,
+  "stop_release_claim": false
+}
