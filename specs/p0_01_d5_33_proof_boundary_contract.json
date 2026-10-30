@@ -1,0 +1,59 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D533_INDEPENDENT_PROOF_REQUIREMENTS_SYNTHETIC",
+  "g2": {
+    "public_fields": [
+      "check_id",
+      "design_state",
+      "origin",
+      "schema_version",
+      "simulation_only"
+    ],
+    "private_categories": [
+      "ACCOUNT_NUMBER",
+      "SERVER_IDENTITY",
+      "TERMINAL_PATH",
+      "SCREENSHOT_BYTES",
+      "RAW_MT4_LOG",
+      "IP_OR_DEVICE_IDENTIFIER",
+      "API_KEY_OR_SECRET",
+      "REAL_ORDER_OR_POSITION_DETAILS",
+      "REAL_OBSERVATION_TIMESTAMP"
+    ],
+    "private_export_approved": false,
+    "git_hook_implemented": false,
+    "real_evidence_collected": false
+  },
+  "g6": {
+    "required_witnesses": [
+      "LOCAL_JOURNAL",
+      "INDEPENDENT_ANCHOR",
+      "REVOCATION_REGISTER",
+      "SIGNATURE_KEY_VERIFIER",
+      "MONOTONIC_CLOCK_WITNESS"
+    ],
+    "max_synthetic_tick_age": 5,
+    "independent_boundary_implemented": false,
+    "actual_anchor_verified": false,
+    "real_signature_verified": false,
+    "real_clock_verified": false,
+    "actual_persistence_verified": false,
+    "real_recovery_verified": false,
+    "acceptance_rule": "SYNTHETIC_COHERENCE_IS_NEVER_REAL_AUTHORIZATION"
+  },
+  "approvals": {
+    "visual_review": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "mt4_read_only": false,
+    "host_io": false,
+    "ea_ex4": false,
+    "orders": false,
+    "stop_release": false,
+    "live_trading": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
