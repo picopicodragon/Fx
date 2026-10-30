@@ -1,0 +1,34 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D534_G2_G6_SYNTHETIC_LINEAGE_ONLY",
+  "g2": {
+    "allowed_public_fields": [
+      "check_id",
+      "design_state",
+      "origin",
+      "schema_version",
+      "simulation_only"
+    ],
+    "real_private_export_allowed": false,
+    "real_git_hook_installed": false,
+    "real_file_scan_performed": false
+  },
+  "g6": {
+    "lineage_roles": [
+      "journal",
+      "anchor",
+      "revocation"
+    ],
+    "synthetic_freshness_limit_ticks": 5,
+    "issuer_rotation_requires_external_authority": true,
+    "actual_issuer_authentication_verified": false,
+    "real_anchor_independent": false,
+    "actual_revocation_durable": false,
+    "actual_clock_validated": false,
+    "real_rollback_protection": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
