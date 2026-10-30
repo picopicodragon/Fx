@@ -1,0 +1,181 @@
+{
+  "origin": "SYNTHETIC_ONLY",
+  "schema_version": 1,
+  "scope": "D538_THREAT_MATRIX_DESIGN_ONLY",
+  "zones": [
+    {
+      "zone": "PRIVATE_EVIDENCE_ZONE_DESIGN",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "real_path": null,
+      "real_read_allowed": false,
+      "real_write_allowed": false,
+      "git_export_allowed": false
+    },
+    {
+      "zone": "SYNTHETIC_PUBLIC_METADATA_ZONE",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "real_path": null,
+      "real_read_allowed": false,
+      "real_write_allowed": false,
+      "git_export_allowed": false
+    },
+    {
+      "zone": "INDEPENDENT_ANCHOR_ZONE_DESIGN",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "real_path": null,
+      "real_read_allowed": false,
+      "real_write_allowed": false,
+      "git_export_allowed": false
+    },
+    {
+      "zone": "REJECT_OR_QUARANTINE_ZONE_DESIGN",
+      "implementation_state": "NOT_IMPLEMENTED",
+      "real_path": null,
+      "real_read_allowed": false,
+      "real_write_allowed": false,
+      "git_export_allowed": false
+    }
+  ],
+  "threats": [
+    {
+      "threat_id": "ACCIDENTAL_GIT_COMMIT",
+      "synthetic_only": true,
+      "classification": "ACCOUNT_TERMINAL_IDENTIFIERS",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "GIT_HISTORY_REUSE",
+      "synthetic_only": true,
+      "classification": "BROKER_SESSION_AND_SERVER",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "CI_ARTIFACT_EXPORT",
+      "synthetic_only": true,
+      "classification": "EA_POSITION_ORDER_EVIDENCE",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "DEBUG_LOG_EGRESS",
+      "synthetic_only": true,
+      "classification": "RAW_LOG_AND_SCREENSHOT",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "TEMP_WAL_SWAP_LEAK",
+      "synthetic_only": true,
+      "classification": "SECRET_MATERIAL",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "BACKUP_OR_SNAPSHOT_LEAK",
+      "synthetic_only": true,
+      "classification": "OBSERVATION_PROVENANCE",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "CRASH_DUMP_LEAK",
+      "synthetic_only": true,
+      "classification": "ACCOUNT_TERMINAL_IDENTIFIERS",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "JUNCTION_SYMLINK_ESCAPE",
+      "synthetic_only": true,
+      "classification": "BROKER_SESSION_AND_SERVER",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "UNAUTHORIZED_READER",
+      "synthetic_only": true,
+      "classification": "EA_POSITION_ORDER_EVIDENCE",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "RETENTION_UNKNOWN",
+      "synthetic_only": true,
+      "classification": "RAW_LOG_AND_SCREENSHOT",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "DELETION_WITH_REPLICA",
+      "synthetic_only": true,
+      "classification": "SECRET_MATERIAL",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    },
+    {
+      "threat_id": "SHARED_TRUST_ROOT",
+      "synthetic_only": true,
+      "classification": "OBSERVATION_PROVENANCE",
+      "requested_action": "DENY_ONLY",
+      "destination": "DENY_SINK",
+      "control_implemented": false,
+      "real_evidence_observed": false,
+      "mitigation_state": "DESIGN_REQUIRED"
+    }
+  ],
+  "retention_approved": false,
+  "erasure_verified": false,
+  "external_anchor_verified": false,
+  "observed_at_utc": null,
+  "account_identity_consistency": "NOT_RECONCILED",
+  "current_positions": "UNKNOWN",
+  "current_pending_orders": "UNKNOWN",
+  "current_ea_state": "UNKNOWN",
+  "unresolved_gates": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "safety_hold_latched": true
+}
