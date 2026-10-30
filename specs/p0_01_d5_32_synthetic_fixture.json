@@ -1,0 +1,296 @@
+{
+  "public_json": "{\"check_id\":\"D530-G2-01\",\"design_state\":\"NOT_PERFORMED\",\"origin\":\"SYNTHETIC_ONLY\",\"schema_version\":1,\"simulation_only\":true}",
+  "matrix": [
+    {
+      "id": "D532-CUT-00",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    },
+    {
+      "id": "D532-CUT-01",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [
+          "LATCH_STOP_BEFORE_ACTION"
+        ],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    },
+    {
+      "id": "D532-CUT-02",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [
+          "LATCH_STOP_BEFORE_ACTION",
+          "PREPARE_JOURNAL_AND_TOMBSTONE"
+        ],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    },
+    {
+      "id": "D532-CUT-03",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [
+          "LATCH_STOP_BEFORE_ACTION",
+          "PREPARE_JOURNAL_AND_TOMBSTONE",
+          "FLUSH_DURABLE_LOCAL_STATE"
+        ],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    },
+    {
+      "id": "D532-CUT-04",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [
+          "LATCH_STOP_BEFORE_ACTION",
+          "PREPARE_JOURNAL_AND_TOMBSTONE",
+          "FLUSH_DURABLE_LOCAL_STATE",
+          "VERIFY_CHECKPOINT_AND_WRITER_FENCE"
+        ],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    },
+    {
+      "id": "D532-CUT-05",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [
+          "LATCH_STOP_BEFORE_ACTION",
+          "PREPARE_JOURNAL_AND_TOMBSTONE",
+          "FLUSH_DURABLE_LOCAL_STATE",
+          "VERIFY_CHECKPOINT_AND_WRITER_FENCE",
+          "PUBLISH_INDEPENDENT_ANCHOR"
+        ],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    },
+    {
+      "id": "D532-CUT-06",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [
+          "LATCH_STOP_BEFORE_ACTION",
+          "PREPARE_JOURNAL_AND_TOMBSTONE",
+          "FLUSH_DURABLE_LOCAL_STATE",
+          "VERIFY_CHECKPOINT_AND_WRITER_FENCE",
+          "PUBLISH_INDEPENDENT_ANCHOR",
+          "FINALIZE_LOCAL_CHECKPOINT"
+        ],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    },
+    {
+      "id": "D532-CUT-07",
+      "recovery": {
+        "origin": "SYNTHETIC_ONLY",
+        "schema_version": 1,
+        "completed_stages": [
+          "LATCH_STOP_BEFORE_ACTION",
+          "PREPARE_JOURNAL_AND_TOMBSTONE",
+          "FLUSH_DURABLE_LOCAL_STATE",
+          "VERIFY_CHECKPOINT_AND_WRITER_FENCE",
+          "PUBLISH_INDEPENDENT_ANCHOR",
+          "FINALIZE_LOCAL_CHECKPOINT",
+          "VERIFY_RECOVERY_WITH_STOP_STILL_LATCHED"
+        ],
+        "before": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "after": {
+          "record_id": "SYNTHETIC_RECORD_CASE_A",
+          "generation": 1,
+          "sequence": 3,
+          "head_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "revocation_tombstone": true,
+          "stop_latched": true
+        },
+        "fault": "NONE",
+        "anchor_claim": "SYNTHETIC_MATCH",
+        "storage_claim": "SYNTHETIC_CONFIRMED",
+        "writer_claim": "SYNTHETIC_SINGLE_WRITER",
+        "clock_claim": "SYNTHETIC_CLOCK_STABLE",
+        "revocation_claim": "SYNTHETIC_INDEX_MATCH",
+        "simulated_stop_release_claim": false,
+        "simulated_only": true
+      }
+    }
+  ]
+}
