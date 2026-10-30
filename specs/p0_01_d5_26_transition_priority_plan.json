@@ -1,0 +1,282 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null,
+  "environment_policy": "SINGLE_MT4_ENVIRONMENT_ONLY",
+  "rakuten_inquiry": "CANCELLED_DO_NOT_SEND",
+  "additional_demo_account": "OUT_OF_SCOPE",
+  "account_identity_consistency": "NOT_RECONCILED",
+  "approval_state": "NO_REAL_ACTION_APPROVED",
+  "next_offline_focus": [
+    "G2",
+    "G6"
+  ],
+  "gates": [
+    {
+      "id": "G2",
+      "rank": 1,
+      "severity": "CRITICAL",
+      "depends_on": [],
+      "offline_next": [
+        "既存2系統の申告の日時/口座同一性を照合する非操作型チェックリストと不一致記録様式の設計",
+        "単一MT4のV1目視確認手順を『実行未承認』として文書化"
+      ],
+      "external_evidence_required": [
+        "旧デモAと休眠口座の同一性・対象時間・EA装着・建玉・予約注文を将来別途許可された範囲で照合"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G6",
+      "rank": 2,
+      "severity": "HIGH",
+      "depends_on": [],
+      "offline_next": [
+        "独立したTrust Anchorの脅威モデルと責務分離の設計",
+        "クラッシュ整合性、原子的保存、反巻き戻し、取消し墓標のオフライン故障注入仕様"
+      ],
+      "external_evidence_required": [
+        "独立Trust Anchor、クラッシュ整合性、署名/鍵管理、単調な外部基準、原子的永続化、実ストレージ障害を別途実証"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G8",
+      "rank": 3,
+      "severity": "HIGH",
+      "depends_on": [
+        "G6"
+      ],
+      "offline_next": [
+        "操作別承認・失効・再利用禁止・停止解除の拒否条件の設計",
+        "本人確認と通知経路の将来設計。ただし実際の同意・送信を行わない"
+      ],
+      "external_evidence_required": [
+        "本人確認・署名付き権限・確実な取消しとリプレイ対策・LINEとメールの通知の実証"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G7",
+      "rank": 4,
+      "severity": "HIGH",
+      "depends_on": [
+        "G6"
+      ],
+      "offline_next": [
+        "再起動・単調時計・UTC・DSTを分離した合成障害マトリクスの設計"
+      ],
+      "external_evidence_required": [
+        "Windows実時計、同期誤差、再起動時の連続性、停止からの復帰禁止を実装・検証"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G3",
+      "rank": 5,
+      "severity": "CRITICAL",
+      "depends_on": [
+        "G2",
+        "G6",
+        "G8",
+        "G7"
+      ],
+      "offline_next": [
+        "実発注経路を呼ばないSTOP/EA/Python順序のオフライン状態機械設計"
+      ],
+      "external_evidence_required": [
+        "実端末・EA・Python間で停止が注文経路に強制されることを、別途許可された手順で検証"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G1",
+      "rank": 6,
+      "severity": "CRITICAL",
+      "depends_on": [
+        "G2"
+      ],
+      "offline_next": [
+        "4通貨ペア×5項目の入力仕様、値の出典・観測時刻と未確認時NO_GOの設計"
+      ],
+      "external_evidence_required": [
+        "USD/JPY、EUR/JPY、GBP/USD、AUD/USDの20項目について実口座側から出典・時刻を付した契約値を将来別途許可された方法で確認"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G5",
+      "rank": 7,
+      "severity": "HIGH",
+      "depends_on": [
+        "G1",
+        "G7"
+      ],
+      "offline_next": [
+        "実現/未実現損益・費用・スワップとNY17の合成集計仕様"
+      ],
+      "external_evidence_required": [
+        "実約定・損益・費用・ロールオーバーの定義と出典を将来別途検証"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G9",
+      "rank": 8,
+      "severity": "HIGH",
+      "depends_on": [
+        "G1",
+        "G7"
+      ],
+      "offline_next": [
+        "休日・時間外・市場再開時の合成セッション拒否条件を設計"
+      ],
+      "external_evidence_required": [
+        "楽天MT4の実取引時間、祝日、休場、日跨ぎ判定と例外の検証"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    },
+    {
+      "id": "G4",
+      "rank": 9,
+      "severity": "CRITICAL",
+      "depends_on": [
+        "G3",
+        "G5",
+        "G9"
+      ],
+      "offline_next": [
+        "再送・重複注文・通信断・不整合の合成フォールト仕様を設計"
+      ],
+      "external_evidence_required": [
+        "将来の明示承認と隔離条件のもとで実接続の障害・照合・冪等性を検証"
+      ],
+      "readiness": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false
+    }
+  ],
+  "transition_proposals": [
+    {
+      "id": "OFFLINE_SPEC_REVIEW",
+      "status": "DESIGN_ONLY",
+      "requires_explicit_approval": false,
+      "prior_transition": null,
+      "requires_verified_gates": [],
+      "target_gaps": [
+        "G2",
+        "G6",
+        "G8",
+        "G7",
+        "G3",
+        "G1",
+        "G5",
+        "G9",
+        "G4"
+      ],
+      "scope_rule": "DOCUMENTATION_ONLY_NO_RUNTIME"
+    },
+    {
+      "id": "SINGLE_ENV_VISUAL_REVIEW",
+      "status": "NOT_APPROVED",
+      "requires_explicit_approval": true,
+      "prior_transition": "OFFLINE_SPEC_REVIEW",
+      "requires_verified_gates": [],
+      "target_gaps": [
+        "G2"
+      ],
+      "scope_rule": "SEPARATE_APPROVAL_NO_MT4_ACTION_IMPLIED"
+    },
+    {
+      "id": "MT4_READ_ONLY_PREFLIGHT",
+      "status": "NOT_APPROVED",
+      "requires_explicit_approval": true,
+      "prior_transition": "SINGLE_ENV_VISUAL_REVIEW",
+      "requires_verified_gates": [],
+      "target_gaps": [
+        "G1",
+        "G2",
+        "G9"
+      ],
+      "scope_rule": "SEPARATE_APPROVAL_NO_EA_OR_ORDERS"
+    },
+    {
+      "id": "OFFLINE_PERSISTENCE_LAB",
+      "status": "NOT_APPROVED",
+      "requires_explicit_approval": true,
+      "prior_transition": "OFFLINE_SPEC_REVIEW",
+      "requires_verified_gates": [],
+      "target_gaps": [
+        "G6",
+        "G7"
+      ],
+      "scope_rule": "SEPARATE_APPROVAL_FOR_HOST_IO_NO_BROKER"
+    },
+    {
+      "id": "DEMO_EXECUTION_EVALUATION",
+      "status": "NOT_APPROVED",
+      "requires_explicit_approval": true,
+      "prior_transition": "MT4_READ_ONLY_PREFLIGHT",
+      "requires_verified_gates": [
+        "G1",
+        "G2",
+        "G6",
+        "G7",
+        "G8"
+      ],
+      "target_gaps": [
+        "G3",
+        "G4",
+        "G5"
+      ],
+      "scope_rule": "FUTURE_DESIGN_ONLY_SEPARATE_APPROVAL"
+    },
+    {
+      "id": "LIVE_ACTIVATION",
+      "status": "NOT_APPROVED",
+      "requires_explicit_approval": true,
+      "prior_transition": "DEMO_EXECUTION_EVALUATION",
+      "requires_verified_gates": [
+        "G2",
+        "G6",
+        "G8",
+        "G7",
+        "G3",
+        "G1",
+        "G5",
+        "G9",
+        "G4"
+      ],
+      "target_gaps": [
+        "G2",
+        "G6",
+        "G8",
+        "G7",
+        "G3",
+        "G1",
+        "G5",
+        "G9",
+        "G4"
+      ],
+      "scope_rule": "FUTURE_DESIGN_ONLY_SEPARATE_ACTIVATION_APPROVAL"
+    }
+  ]
+}
