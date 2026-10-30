@@ -1,0 +1,35 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "scope": "D539_G2_07_EGRESS_MANIFEST_DESIGN_ONLY",
+  "target_criterion": "G2-07",
+  "depends_on": [
+    "G2-06"
+  ],
+  "external_gate_dependencies": [
+    "G8"
+  ],
+  "channels": [
+    "GIT_STAGE",
+    "COMMIT_DIFF",
+    "PULL_REQUEST_BODY",
+    "PULL_REQUEST_COMMENT",
+    "CI_JOB_LOG",
+    "CI_ARTIFACT",
+    "RELEASE_ASSET",
+    "GIT_HISTORY"
+  ],
+  "allowed_candidate_kind": "FIXED_CANONICAL_JSON",
+  "allowed_data_class": "SYNTHETIC_PUBLIC_METADATA",
+  "review_mode": "NO_REAL_EGRESS",
+  "real_guard_implemented": false,
+  "real_git_hook_installed": false,
+  "real_ci_scan_installed": false,
+  "real_history_scanned": false,
+  "real_public_export_approved": false,
+  "real_private_export_approved": false,
+  "actual_leakage_ruled_out": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
