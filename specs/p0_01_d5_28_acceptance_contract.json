@@ -1,0 +1,130 @@
+{
+  "origin": "OFFLINE_DESIGN_ONLY",
+  "schema_version": 1,
+  "g2": {
+    "required_fields": [
+      "report_id",
+      "provenance_class",
+      "account_token",
+      "terminal_token",
+      "observed_at_utc",
+      "recorded_at_utc",
+      "positions",
+      "pending_orders",
+      "ea_attachment",
+      "autotrading"
+    ],
+    "required_checks": [
+      "PROVENANCE",
+      "SCOPE",
+      "CHRONOLOGY",
+      "POSITIONS",
+      "PENDING_ORDERS",
+      "EA_ATTACHMENT",
+      "AUTOTRADING"
+    ],
+    "provenance_policy": "UNTRUSTED_SYNTHETIC_ONLY",
+    "identity_policy": "NO_REAL_ACCOUNT_IDENTIFIER_IN_GIT",
+    "no_current_state_verified": true
+  },
+  "g6": {
+    "no_real_storage": true,
+    "independent_anchor_verified": false,
+    "acceptance": [
+      {
+        "id": "P28-G6-01",
+        "threat": "ATOMIC_COMMIT_TORN",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-01",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-02",
+        "threat": "POWER_LOSS_MID_WRITE",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-02",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-03",
+        "threat": "REFERENCE_ROLLBACK",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-03",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-04",
+        "threat": "CO_EDIT_ALL_REFERENCES",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-04",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-05",
+        "threat": "REVOCATION_ERASURE",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-05",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-06",
+        "threat": "CONCURRENT_WRITER",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-06",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-07",
+        "threat": "CLOCK_RESTART_OR_ANOMALY",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-07",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-08",
+        "threat": "SIGNATURE_KEY_TAMPER",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-08",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-09",
+        "threat": "STORAGE_UNAVAILABLE",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-09",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      },
+      {
+        "id": "P28-G6-10",
+        "threat": "STALE_BACKUP_RESTORE",
+        "expected_status": "SAFETY_HOLD_LATCHED_NO_GO",
+        "acceptance_id": "G6-AC-10",
+        "future_real_test_required": true,
+        "real_world_verified": false
+      }
+    ]
+  },
+  "approvals": {
+    "visual_review": false,
+    "mt4_launch": false,
+    "account_login": false,
+    "mt4_read_only_query": false,
+    "ea_execution": false,
+    "order_action": false,
+    "stop_release": false,
+    "host_io": false,
+    "live_trading": false
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "verified_values": null
+}
