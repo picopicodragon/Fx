@@ -17,8 +17,8 @@
   "real_approval_mechanism_implemented": false,
   "synthetic_hash_consistency_is_authorization": false,
   "test_count_previous": 755,
-  "new_test_count_expected": 49,
-  "total_test_count_expected": 804,
+  "new_test_count_expected": 50,
+  "total_test_count_expected": 805,
   "unresolved_gates": [
     "G1",
     "G2",
