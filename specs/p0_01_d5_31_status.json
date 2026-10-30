@@ -69,5 +69,6 @@
   "verified_values": null,
   "safety_hold_latched": true,
   "phase_1": "BLOCKED",
-  "runtime_go_no_go": "NO_GO"
+  "runtime_go_no_go": "NO_GO",
+  "host_io_approved": false
 }
