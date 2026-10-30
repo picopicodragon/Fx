@@ -247,7 +247,7 @@ class D521AuthoritySeparationTests(unittest.TestCase):
 
     def test_corrupted_stop_chain_blocks(self):
         p = fixture()
-        p["snapshots"][-1]["sequence"] = 99
+        p["snapshots"][-1]["schema_version"] = 9
         r = audit(p, claim(claimed_human_approval=True))
         self.assertEqual(r["integrated_status"],
                          "INTEGRATED_COMPONENT_REJECTED_FAIL_CLOSED")
