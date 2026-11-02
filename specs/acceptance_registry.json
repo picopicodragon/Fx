@@ -208,6 +208,51 @@
       "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md", "https://github.com/picopicodragon/Fx/pull/164", "https://github.com/picopicodragon/Fx/actions/runs/41378361162"],
       "approval": null,
       "scope_note": "Repository checks and 3375 offline tests passed locally; PR opened and GitHub CI evidence linked. No original-source, safety or phase acceptance."
+    },
+    {
+      "id": "H1-F",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
+      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "specs/h1_post147_local_source_status.json"],
+      "approval": null,
+      "scope_note": "Metadata-only inventory of the previously authorized Git-external originals folder found only two known snapshots and no new source. No new file content was opened."
+    },
+    {
+      "id": "H1-G",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q112", "Q113", "Q114", "Q115", "Q148", "Q199"],
+      "evidence": ["specs/h1_post147_local_source_status.json", "docs/phase1_h1_post147_source_recovery_audit_20261102.md"],
+      "approval": null,
+      "scope_note": "No newer original was present in the specified folder. Q148-Q199 local-archive recovery awaits an identified new file and separate scoped permission."
+    },
+    {
+      "id": "H1-H",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q111", "Q112", "Q115", "FX-SAF-001", "FX-SAF-002", "FX-SAF-003", "FX-SAF-004", "FX-SAF-005", "FX-SAF-006", "FX-SAF-007", "FX-SAF-008", "FX-SAF-009", "FX-SAF-010", "FX-SAF-011", "FX-SAF-012", "FX-SAF-013", "FX-SAF-014", "FX-SAF-015"],
+      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "specs/h1_post147_local_source_status.json"],
+      "approval": null,
+      "scope_note": "Offline candidate-to-draft impact and test proposals mapped for all 15 requirements. Q148-Q199 local source and owner semantic comparison remain unavailable."
+    },
+    {
+      "id": "H1-I",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q109", "Q110", "Q112", "Q113", "Q115"],
+      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "specs/h1_post147_local_source_status.json"],
+      "approval": null,
+      "scope_note": "Only metadata and generalized issues are registered. Source, comparison, safety approval, NO_GO and latch states remain unchanged."
+    },
+    {
+      "id": "H1-J",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
+      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "https://github.com/picopicodragon/Fx/pull/166", "https://github.com/picopicodragon/Fx/actions/runs/41397310027"],
+      "approval": null,
+      "scope_note": "Eight structural checks and 3377 offline tests passed; PR and GitHub CI evidence linked. Owner source reconciliation, safety acceptance and manual main merge remain pending."
     }
   ],
   "modules": [
@@ -232,7 +277,12 @@
         "H1-B",
         "H1-C",
         "H1-D",
-        "H1-E"
+        "H1-E",
+        "H1-F",
+        "H1-G",
+        "H1-H",
+        "H1-I",
+        "H1-J"
       ],
       "evidence": [
         "docs/p1_06_acceptance_audit.md",
