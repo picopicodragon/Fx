@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Q110: design-only P1-01–P1-06 tracking; no MODULE/PHASE acceptance, safety implementation or live trading authorization",
+  "description": "Q110: P1-01–P1-06 and Way E offline TASK tracking; no MODULE/PHASE acceptance, safety implementation or live trading authorization",
   "tasks": [
     {
       "id": "P1-01",
@@ -109,6 +109,60 @@
       ],
       "approval": null,
       "scope_note": "Acceptance audit drafted; owner review, unresolved safety prerequisites and PHASE-1 acceptance outstanding."
+    },
+    {
+      "id": "E-GATE-01",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q109", "Q110", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"],
+      "evidence": ["docs/phase1_way_e_gate_audit.md", "specs/phase1_way_e_gate_register.json", "tests/test_phase1_way_e_audit.py"],
+      "approval": null,
+      "scope_note": "Offline gate/source inventory only; all nine real gates and fifteen real work packages remain blocked."
+    },
+    {
+      "id": "E-GATE-02",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q111", "Q112", "Q113", "Q114", "Q115"],
+      "evidence": ["docs/phase1_way_e_source_difference_register.md", "tests/test_phase1_way_e_audit.py"],
+      "approval": null,
+      "scope_note": "Existing source status and unresolved issues inventoried; no complete original-source review or safety approval."
+    },
+    {
+      "id": "E-GATE-03",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q197", "Q198", "Q199", "G6-05", "G6-06"],
+      "evidence": ["tests/test_phase1_way_e_audit.py", "tests/test_phase1_way_e_synthetic_review.py", "tests/test_phase1_synthetic_persistence.py"],
+      "approval": null,
+      "scope_note": "Synthetic denials and isolated SQLite fixtures only; 26+27 planned scenarios and real durability/broker tests remain NOT_EXECUTED."
+    },
+    {
+      "id": "E-GATE-04",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "IN_PROGRESS",
+      "spec_ids": ["Q110", "Q112", "Q171"],
+      "evidence": ["docs/phase1_way_e_evidence_approval_packages.md"],
+      "approval": null,
+      "scope_note": "H1-H6 future evidence/approval drafts only; owner review and every real operation remain pending."
+    },
+    {
+      "id": "E-GATE-05",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
+      "evidence": ["docs/phase1_way_e_progress.md", "tests/test_phase1_way_e_audit.py", "https://github.com/picopicodragon/Fx/actions/runs/41373801456"],
+      "approval": null,
+      "scope_note": "3374 offline tests and GitHub CI passed before this registry update; final head CI must be checked separately."
+    },
+    {
+      "id": "E-GATE-06",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "IN_PROGRESS",
+      "spec_ids": ["Q109", "Q110"],
+      "evidence": ["https://github.com/picopicodragon/Fx/pull/162"],
+      "approval": null,
+      "scope_note": "Integrated PR open for sole maintainer self-review and manual merge; no MODULE/PHASE approval."
     }
   ],
   "modules": [
@@ -122,7 +176,13 @@
         "P1-03",
         "P1-04",
         "P1-05",
-        "P1-06"
+        "P1-06",
+        "E-GATE-01",
+        "E-GATE-02",
+        "E-GATE-03",
+        "E-GATE-04",
+        "E-GATE-05",
+        "E-GATE-06"
       ],
       "evidence": [
         "docs/p1_06_acceptance_audit.md",

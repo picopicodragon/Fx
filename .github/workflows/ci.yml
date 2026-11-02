@@ -38,6 +38,8 @@ jobs:
         run: python scripts/check_source_evidence.py
       - name: Validate Q115 safety-first evidence review plan
         run: python scripts/check_source_review_priority.py
+      - name: Validate Phase 1 Way E gate snapshot and blocked states
+        run: python scripts/check_phase1_way_e.py
       - name: Compile available Python sources
         shell: bash
         run: |
