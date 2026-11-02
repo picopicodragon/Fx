@@ -57,8 +57,11 @@ class GenerationFenceModelTests(unittest.TestCase):
         for state in (SyntheticState(True), SyntheticState(-1),
                       SyntheticState(0, ""), SyntheticState(tip=-1),
                       SyntheticState(hold_latched=False), object()):
-            self.assert_held(acquire(state, "A", 0))
-            self.assertFalse(acquire(state, "A", 0).accepted)
+            denied = acquire(state, "A", 0)
+            self.assertFalse(denied.accepted)
+            self.assertIsNone(denied.state)
+            self.assertEqual(denied.runtime_go_no_go, "NO_GO")
+            self.assertFalse(acquire(denied.state, "A", 0).accepted)
             self.assertFalse(append(state, "A", 0, 0).accepted)
             self.assertFalse(recover(state, 0, 0, commit_outcome="COMMITTED").accepted)
 

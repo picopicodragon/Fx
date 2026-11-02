@@ -18,7 +18,7 @@ class SyntheticState:
 
 @dataclass(frozen=True)
 class Review:
-    state: SyntheticState
+    state: SyntheticState | None
     accepted: bool
     reason: str
     runtime_go_no_go: str = "NO_GO"
@@ -42,7 +42,7 @@ def acquire(state: object, writer: object, observed_generation: object,
     attestation. All results retain BLOCKED/NO_GO and the hold latch.
     """
     if not _valid(state):
-        return Review(SyntheticState(), False, "INVALID_STATE")
+        return Review(None, False, "INVALID_STATE")
     if type(writer) is not str or not writer:
         return Review(state, False, "INVALID_WRITER")
     if type(observed_generation) is not int or observed_generation != state.generation:
@@ -61,7 +61,7 @@ def append(state: object, writer: object, generation: object,
            observed_tip: object) -> Review:
     """Model one append under an active generation and expected tip."""
     if not _valid(state):
-        return Review(SyntheticState(), False, "INVALID_STATE")
+        return Review(None, False, "INVALID_STATE")
     if state.writer is None or type(writer) is not str or writer != state.writer:
         return Review(state, False, "WRITER_NOT_ACTIVE")
     if type(generation) is not int or generation != state.generation:
@@ -76,7 +76,7 @@ def recover(state: object, observed_generation: object,
             observed_tip: object, *, commit_outcome: str) -> Review:
     """Reject ambiguous persistence; a visible commit remains untrusted."""
     if not _valid(state):
-        return Review(SyntheticState(), False, "INVALID_STATE")
+        return Review(None, False, "INVALID_STATE")
     if (type(observed_generation) is not int
             or observed_generation != state.generation
             or type(observed_tip) is not int or observed_tip != state.tip):
