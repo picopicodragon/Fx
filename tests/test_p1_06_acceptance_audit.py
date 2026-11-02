@@ -45,7 +45,10 @@ class PhaseOneAuditTests(unittest.TestCase):
                                  "IN_PROGRESS" if i in (4, 6) else "TESTED")
                 self.assertTrue(task["evidence"])
                 self.assertIsNone(task["approval"])
-        for letter in "ABCD":
+        self.assertEqual(tasks["H1-A"]["status"], "TESTED")
+        self.assertTrue(tasks["H1-A"]["evidence"])
+        self.assertIsNone(tasks["H1-A"]["approval"])
+        for letter in "BCD":
             with self.subTest(h1_task=letter):
                 task = tasks[f"H1-{letter}"]
                 self.assertEqual(task["status"], "BLOCKED")

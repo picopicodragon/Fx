@@ -1,16 +1,16 @@
 # H1 原議照合・本人確認シート（候補、2026-11-02）
 
-**状態：PREPARATION_READY / SOURCE_UNAVAILABLE / OWNER_REVIEW_PENDING。原議本文は未閲覧。以下の「現行草稿」は原議との一致判定でも実装承認でもない。** 原議アーカイブの所在と限定閲覧許可が確認できず、推奨例の保存先も存在しなかった。原本・抽出候補はGit管理外に置き、ここには原文、ローカル絶対パス、会話ID、個人情報を記録しない。
+**状態：CANDIDATES_PREPARED / OWNER_REVIEW_PENDING。対象FX会話の機械抽出と限定比較は実施済み。本人による原議の逐語確認・差分解決・仕様承認は未実施。以下の「現行草稿」は承認済み実装仕様ではない。** 本人が指定したGit管理外の原本と閲覧範囲だけを使用した。原本・抽出候補はGit管理外に置き、ここには原文、ローカル絶対パス、会話ID、個人情報を記録しない。候補数・不足Q・限定比較の結果は `docs/phase1_h1_local_candidate_audit_20261102.md` を参照。
 
 ## 照合の入力と判定手順
 
-1. 本人がGit外の対象フォルダ・対象会話と閲覧範囲を指定する。Codexは明示許可後に対象のみローカルで読み、原本を変更しない。所在が不明なら `SOURCE_UNAVAILABLE` を維持する。`scripts/list_export_conversations.py` と `scripts/extract_original_decisions.py` は入力形式・会話ID・Git外の出力先を確定してから使う。
+1. 本人がGit外の対象フォルダ・対象会話と閲覧範囲を指定済み。Codexは指定範囲だけをローカルで読み、原本を変更しなかった。`scripts/list_export_conversations.py` と `scripts/extract_original_decisions.py` で候補をGit外へ出力済み。原本が欠けるQには `SOURCE_UNAVAILABLE` を維持する。
 2. 各行のQ番号について、**ユーザー発言、直前の設問、後続の修正発言**を本人が並べる。短い選択回答には周辺文脈を付ける。新しい決定が古い回答を修正したかを判定する。本人が原本位置と機密性を確認するまで、候補を逐語確認済みにしない。
 3. 比較元は `MASTER_SPEC.md`、`specs/safety_foundation.md`、`DECISIONS.md`、`TRACEABILITY.md`、`specs/reconciliation_registry.json`。既存の `specs/source_evidence.json` の Q116〜Q122 などの直接回答抜粋と、本人報告の文字列一致は、元メッセージID・前後文脈・後続修正の確認に代わらない。
 4. 各IDごとに出典位置、草稿版、`一致 / 相違 / 欠落 / 判断不能`、算式・境界・例外・Fail Closed、影響先、試験、本人決定を記録する。**現時点では全件「判断不能」**。検証できない数値や例外を補わない。原本のハッシュはファイルの同一性補助であり、発言の真正性の証明ではない。
 5. 本人が必要最小限の抜粋を機密審査した後に限り、`specs/source_excerpts/` と証拠台帳の更新案を別PRで審査する。`source_kind=ORIGINAL`、`comparison_status=MATCH/RESOLVED`、`implementation_approved`、`human_safety_approval`、MODULE/PHASE受入れ、停止解除、実口座許可は自動更新しない。
 
-各行の「出典」は `specs/source_review_priority.json` の探索キーであり、原本で確認したロケーターではない。現行草稿は `specs/safety_foundation.md` の「確定済みハード条件」表とその後続Q補記。全行の原本位置、引用、原議比較結果、本人決定、承認対象版は**未記入**。現行の `specs/reconciliation_registry.json` は全件 `SUMMARY_ONLY`、実装承認 `false`、本人承認 `null`。同台帳の `NEEDS_CLARIFICATION` は原議比較済みを意味しない。
+各行の「出典」は `specs/source_review_priority.json` の探索キーであり、本人が検証した原本ロケーターではない。現行草稿は `specs/safety_foundation.md` の「確定済みハード条件」表とその後続Q補記。各行の本人検証済み原本位置、引用、最終比較結果、本人決定、承認対象版は**未記入**。現行の `specs/reconciliation_registry.json` は全件 `SUMMARY_ONLY`、実装承認 `false`、本人承認 `null`。同台帳の `NEEDS_CLARIFICATION` は原議比較済みを意味しない。
 
 ## P0-01 損失制限・純資産・DD（先行確認）
 

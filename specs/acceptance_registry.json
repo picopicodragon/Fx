@@ -167,38 +167,38 @@
     {
       "id": "H1-A",
       "module_id": "M-P1-FOUNDATION-DESIGN",
-      "status": "BLOCKED",
+      "status": "TESTED",
       "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
-      "evidence": ["docs/phase1_h1_original_source_review_handoff_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "evidence": ["docs/phase1_h1_original_source_review_handoff_20261102.md", "docs/phase1_h1_local_candidate_audit_20261102.md"],
       "approval": null,
-      "scope_note": "Latest main and clean branch checked; recommended archive example absent. Actual archive location and scoped reading permission remain unconfirmed. No original content was opened."
+      "scope_note": "Owner specified a Git-external archive and granted scoped local reading; two archive snapshots and one FX conversation inventoried without altering originals. No owner source authentication or safety approval."
     },
     {
       "id": "H1-B",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
       "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
-      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
       "approval": null,
-      "scope_note": "All 15 source-to-draft comparison questions and candidate differences prepared from repository summaries; original extraction and verbatim comparison await source location and scoped permission."
+      "scope_note": "126 explicit-Q candidates, 41 unmatched user messages and a 15-item local owner packet prepared outside Git. Q116-Q147 excerpt strings match locally; parent context, later amendments and 24 Qs absent from the archive block final reconciliation."
     },
     {
       "id": "H1-C",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
       "spec_ids": ["Q111", "Q112", "Q115", "FX-SAF-001", "FX-SAF-002", "FX-SAF-003", "FX-SAF-004", "FX-SAF-005", "FX-SAF-006", "FX-SAF-007", "FX-SAF-008", "FX-SAF-009", "FX-SAF-010", "FX-SAF-011", "FX-SAF-012", "FX-SAF-013", "FX-SAF-014", "FX-SAF-015"],
-      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
       "approval": null,
-      "scope_note": "P0-01 through P0-05 owner-review candidate rows and offline test proposals prepared; all original-source comparisons remain undecidable."
+      "scope_note": "P0-01 through P0-05 source candidate coverage and draft differences prepared for all 15; short-answer assignment, absent Q148-Q171, semantic comparison and owner verification remain blocked."
     },
     {
       "id": "H1-D",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
       "spec_ids": ["Q110", "Q112", "Q115"],
-      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
       "approval": null,
-      "scope_note": "Single owner decision table and version/evidence fields prepared; no original-source authentication or safety implementation approval inferred."
+      "scope_note": "Owner decision table and local message-pointer packet prepared; owner source authentication, confidentiality review, unresolved formulas and safety implementation approval remain pending."
     },
     {
       "id": "H1-E",
