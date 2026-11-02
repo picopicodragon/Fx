@@ -248,11 +248,11 @@
     {
       "id": "H1-J",
       "module_id": "M-P1-FOUNDATION-DESIGN",
-      "status": "IN_PROGRESS",
+      "status": "TESTED",
       "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
-      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md"],
+      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "https://github.com/picopicodragon/Fx/pull/166", "https://github.com/picopicodragon/Fx/actions/runs/41397310027"],
       "approval": null,
-      "scope_note": "Final offline checks, full tests, PR and final-head GitHub CI are pending."
+      "scope_note": "Eight structural checks and 3377 offline tests passed; PR and GitHub CI evidence linked. Owner source reconciliation, safety acceptance and manual main merge remain pending."
     }
   ],
   "modules": [
