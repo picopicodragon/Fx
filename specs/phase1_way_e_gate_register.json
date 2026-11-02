@@ -1,0 +1,793 @@
+{
+  "schema_version": 1,
+  "origin": "OFFLINE_SOURCE_DERIVED_NO_REAL_EVIDENCE",
+  "base_main_sha": "44433ecda3201745d673984c283bb6f330db914c",
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "gates": [
+    {
+      "id": "G2",
+      "subject": "\u5358\u4e00MT4\u53e3\u5ea7\u306e\u540c\u4e00\u6027\u3001\u65e2\u5b58EA\u3001\u5efa\u7389\u30fb\u4e88\u7d04\u6ce8\u6587\u306e\u672a\u7167\u5408",
+      "severity": "CRITICAL",
+      "depends_on": [],
+      "rank": 1,
+      "external_or_real_evidence_required": [
+        "\u65e7\u30c7\u30e2A\u3068\u4f11\u7720\u53e3\u5ea7\u306e\u540c\u4e00\u6027\u30fb\u5bfe\u8c61\u6642\u9593\u30fbEA\u88c5\u7740\u30fb\u5efa\u7389\u30fb\u4e88\u7d04\u6ce8\u6587\u3092\u5c06\u6765\u5225\u9014\u8a31\u53ef\u3055\u308c\u305f\u7bc4\u56f2\u3067\u7167\u5408"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G6",
+      "subject": "\u539f\u5b50\u7684\u6c38\u7d9a\u5316\u30fb\u6539\u3056\u3093\u9632\u6b62\u30fb\u5dfb\u623b\u3057\u30fb\u540c\u6642\u66f8\u8fbc\u307f",
+      "severity": "HIGH",
+      "depends_on": [],
+      "rank": 2,
+      "external_or_real_evidence_required": [
+        "\u72ec\u7acbTrust Anchor\u3001\u30af\u30e9\u30c3\u30b7\u30e5\u6574\u5408\u6027\u3001\u7f72\u540d/\u9375\u7ba1\u7406\u3001\u5358\u8abf\u306a\u5916\u90e8\u57fa\u6e96\u3001\u539f\u5b50\u7684\u6c38\u7d9a\u5316\u3001\u5b9f\u30b9\u30c8\u30ec\u30fc\u30b8\u969c\u5bb3\u3092\u5225\u9014\u5b9f\u8a3c"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G8",
+      "subject": "\u672c\u4eba\u8a8d\u8a3c\u30fb\u500b\u5225\u64cd\u4f5c\u627f\u8a8d\u30fb\u53d6\u6d88\u3057\u30fb\u901a\u77e5",
+      "severity": "HIGH",
+      "depends_on": [
+        "G6"
+      ],
+      "rank": 3,
+      "external_or_real_evidence_required": [
+        "\u672c\u4eba\u78ba\u8a8d\u30fb\u7f72\u540d\u4ed8\u304d\u6a29\u9650\u30fb\u78ba\u5b9f\u306a\u53d6\u6d88\u3057\u3068\u30ea\u30d7\u30ec\u30a4\u5bfe\u7b56\u30fbLINE\u3068\u30e1\u30fc\u30eb\u306e\u901a\u77e5\u306e\u5b9f\u8a3c"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G7",
+      "subject": "\u5358\u8abf\u5897\u52a0\u6642\u8a08\u30fbUTC\u540c\u671f\u30fb\u518d\u8d77\u52d5\u9023\u7d9a\u6027\u30fbDST",
+      "severity": "HIGH",
+      "depends_on": [
+        "G6"
+      ],
+      "rank": 4,
+      "external_or_real_evidence_required": [
+        "Windows\u5b9f\u6642\u8a08\u3001\u540c\u671f\u8aa4\u5dee\u3001\u518d\u8d77\u52d5\u6642\u306e\u9023\u7d9a\u6027\u3001\u505c\u6b62\u304b\u3089\u306e\u5fa9\u5e30\u7981\u6b62\u3092\u5b9f\u88c5\u30fb\u691c\u8a3c"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G3",
+      "subject": "\u5b9fMT4/EA/Python\u306e\u7dca\u6025\u505c\u6b62\u3068\u767a\u6ce8\u906e\u65ad\u306e\u5f37\u5236\u529b",
+      "severity": "CRITICAL",
+      "depends_on": [
+        "G2",
+        "G6",
+        "G8",
+        "G7"
+      ],
+      "rank": 5,
+      "external_or_real_evidence_required": [
+        "\u5b9f\u7aef\u672b\u30fbEA\u30fbPython\u9593\u3067\u505c\u6b62\u304c\u6ce8\u6587\u7d4c\u8def\u306b\u5f37\u5236\u3055\u308c\u308b\u3053\u3068\u3092\u3001\u5225\u9014\u8a31\u53ef\u3055\u308c\u305f\u624b\u9806\u3067\u691c\u8a3c"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G1",
+      "subject": "4\u901a\u8ca8\u30da\u30a2\u00d75\u9805\u76ee\u306e\u30d6\u30ed\u30fc\u30ab\u30fc\u5951\u7d04\u5c5e\u6027",
+      "severity": "CRITICAL",
+      "depends_on": [
+        "G2"
+      ],
+      "rank": 6,
+      "external_or_real_evidence_required": [
+        "USD/JPY\u3001EUR/JPY\u3001GBP/USD\u3001AUD/USD\u306e20\u9805\u76ee\u306b\u3064\u3044\u3066\u5b9f\u53e3\u5ea7\u5074\u304b\u3089\u51fa\u5178\u30fb\u6642\u523b\u3092\u4ed8\u3057\u305f\u5951\u7d04\u5024\u3092\u5c06\u6765\u5225\u9014\u8a31\u53ef\u3055\u308c\u305f\u65b9\u6cd5\u3067\u78ba\u8a8d"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G5",
+      "subject": "\u5b9f\u73fe\u640d\u76ca\u30fb\u542b\u307f\u640d\u76ca\u30fb\u624b\u6570\u6599\u30fb\u30b9\u30ef\u30c3\u30d7\u3068NY17\u65e5\u6b21\u640d\u5931",
+      "severity": "HIGH",
+      "depends_on": [
+        "G1",
+        "G7"
+      ],
+      "rank": 7,
+      "external_or_real_evidence_required": [
+        "\u5b9f\u7d04\u5b9a\u30fb\u640d\u76ca\u30fb\u8cbb\u7528\u30fb\u30ed\u30fc\u30eb\u30aa\u30fc\u30d0\u30fc\u306e\u5b9a\u7fa9\u3068\u51fa\u5178\u3092\u5c06\u6765\u5225\u9014\u691c\u8a3c"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G9",
+      "subject": "\u30d6\u30ed\u30fc\u30ab\u30fc\u55b6\u696d\u65e5/\u30bb\u30c3\u30b7\u30e7\u30f3\u30fb\u4f11\u5834\u3068NY17\u5883\u754c",
+      "severity": "HIGH",
+      "depends_on": [
+        "G1",
+        "G7"
+      ],
+      "rank": 8,
+      "external_or_real_evidence_required": [
+        "\u697d\u5929MT4\u306e\u5b9f\u53d6\u5f15\u6642\u9593\u3001\u795d\u65e5\u3001\u4f11\u5834\u3001\u65e5\u8de8\u304e\u5224\u5b9a\u3068\u4f8b\u5916\u306e\u691c\u8a3c"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    },
+    {
+      "id": "G4",
+      "subject": "\u5b9f\u6ce8\u6587\u306e\u9045\u5ef6\u3001\u62d2\u5426\u3001\u518d\u9001\u3001\u5207\u65ad\u3001\u5efa\u7389\u4e0d\u6574\u5408",
+      "severity": "CRITICAL",
+      "depends_on": [
+        "G3",
+        "G5",
+        "G9"
+      ],
+      "rank": 9,
+      "external_or_real_evidence_required": [
+        "\u5c06\u6765\u306e\u660e\u793a\u627f\u8a8d\u3068\u9694\u96e2\u6761\u4ef6\u306e\u3082\u3068\u3067\u5b9f\u63a5\u7d9a\u306e\u969c\u5bb3\u30fb\u7167\u5408\u30fb\u51aa\u7b49\u6027\u3092\u691c\u8a3c"
+      ],
+      "implementation_status": "UNRESOLVED",
+      "release_blocker": true,
+      "real_world_verified": false,
+      "source_definition": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "source_dependency": "specs/p0_01_d5_26_transition_priority_plan.json"
+    }
+  ],
+  "work_packages": [
+    {
+      "task_id": "D537-WP-01",
+      "criterion_id": "G2-06",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "VAULT_ACCESS_CONTROL_RETENTION_DELETION_REPORT",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-02",
+      "criterion_id": "G2-07",
+      "depends_on": [
+        "G2-06"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "future_acceptance_evidence": "GIT_EGRESS_ENFORCEMENT_AND_LEAKAGE_NEGATIVE_TEST",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-03",
+      "criterion_id": "G6-01",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "THREAT_MODEL_AND_INDEPENDENT_AUTHORITY_REVIEW",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-04",
+      "criterion_id": "G6-02",
+      "depends_on": [
+        "G6-01"
+      ],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "OUT_OF_BAND_ANCHOR_MONOTONICITY_AND_OWNERSHIP_PROOF",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-05",
+      "criterion_id": "G6-04",
+      "depends_on": [
+        "G6-01"
+      ],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "DURABLE_JOURNAL_AND_TOMBSTONE_CRASH_EVIDENCE",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-06",
+      "criterion_id": "G6-05",
+      "depends_on": [
+        "G6-04"
+      ],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "FENCE_TOKEN_RACE_AND_RECOVERY_TEST_RESULTS",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-07",
+      "criterion_id": "G2-01",
+      "depends_on": [],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "AUTHORITATIVE_ACCOUNT_AND_TERMINAL_IDENTITY",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-08",
+      "criterion_id": "G2-02",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "SAME_SESSION_SERVER_IDENTITY_EVIDENCE",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-09",
+      "criterion_id": "G2-03",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "TIME_SCOPED_EA_AUTOTRADING_VISUAL_EVIDENCE",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-10",
+      "criterion_id": "G2-04",
+      "depends_on": [
+        "G2-01",
+        "G2-02"
+      ],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "CURRENT_POSITIONS_PENDING_ORDERS_AND_ACCOUNT_SCOPE",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-11",
+      "criterion_id": "G2-05",
+      "depends_on": [
+        "G2-01"
+      ],
+      "external_gate_dependencies": [
+        "G7"
+      ],
+      "future_acceptance_evidence": "TRUSTED_CLOCK_AND_EVIDENCE_PROVENANCE",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-12",
+      "criterion_id": "G6-03",
+      "depends_on": [
+        "G6-01",
+        "G6-02"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "future_acceptance_evidence": "INDEPENDENT_KEY_ISSUER_AND_REVOCATION_ATTESTATION",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-13",
+      "criterion_id": "G6-06",
+      "depends_on": [
+        "G6-02",
+        "G6-04",
+        "G6-05"
+      ],
+      "external_gate_dependencies": [],
+      "future_acceptance_evidence": "INTERRUPTED_WRITE_DURABLE_REPLAY_TEST_RESULTS",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-14",
+      "criterion_id": "G6-07",
+      "depends_on": [
+        "G6-06"
+      ],
+      "external_gate_dependencies": [
+        "G7"
+      ],
+      "future_acceptance_evidence": "RESTART_AND_UTC_MONOTONIC_TIME_ATTESTATION",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    },
+    {
+      "task_id": "D537-WP-15",
+      "criterion_id": "G6-08",
+      "depends_on": [
+        "G6-03",
+        "G6-06",
+        "G6-07"
+      ],
+      "external_gate_dependencies": [
+        "G8"
+      ],
+      "future_acceptance_evidence": "HUMAN_APPROVAL_REVOCATION_AND_STOP_LATCH_PROOF",
+      "implementation_allowed": false,
+      "real_evidence_collected": false,
+      "review_approved": false,
+      "acceptance_allowed": false,
+      "execution_allowed": false,
+      "separate_human_approval_required": true,
+      "source": "specs/p0_01_d5_37_workplan_contract.json"
+    }
+  ],
+  "safety_requirements": [
+    {
+      "requirement_id": "FX-SAF-001",
+      "question_ids": [
+        "Q5",
+        "Q6",
+        "Q13",
+        "Q116"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-002",
+      "question_ids": [
+        "Q7",
+        "Q116"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-003",
+      "question_ids": [
+        "Q8",
+        "Q9",
+        "Q13",
+        "Q14",
+        "Q117",
+        "Q118",
+        "Q120",
+        "Q121"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "NEEDS_CLARIFICATION",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-004",
+      "question_ids": [
+        "Q10",
+        "Q45",
+        "Q121"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-005",
+      "question_ids": [
+        "Q11",
+        "Q12",
+        "Q119",
+        "Q120",
+        "Q121",
+        "Q122"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "NEEDS_CLARIFICATION",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-006",
+      "question_ids": [
+        "Q80",
+        "Q119",
+        "Q121",
+        "Q122",
+        "Q123",
+        "Q124",
+        "Q125",
+        "Q126",
+        "Q127",
+        "Q128",
+        "Q129",
+        "Q130",
+        "Q131",
+        "Q132",
+        "Q133",
+        "Q134",
+        "Q135",
+        "Q136",
+        "Q137",
+        "Q138",
+        "Q139",
+        "Q140",
+        "Q141",
+        "Q142",
+        "Q143",
+        "Q144",
+        "Q145",
+        "Q146",
+        "Q147",
+        "Q148",
+        "Q149",
+        "Q150",
+        "Q151",
+        "Q152",
+        "Q153",
+        "Q154",
+        "Q155",
+        "Q156",
+        "Q157",
+        "Q158",
+        "Q159",
+        "Q160",
+        "Q161",
+        "Q162",
+        "Q163",
+        "Q164",
+        "Q165",
+        "Q166",
+        "Q167",
+        "Q168",
+        "Q169",
+        "Q170",
+        "Q171"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-010",
+      "question_ids": [
+        "Q35",
+        "Q36",
+        "Q37",
+        "Q38",
+        "Q39",
+        "Q40",
+        "Q41",
+        "Q42"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-013",
+      "question_ids": [
+        "Q55",
+        "Q56",
+        "Q57",
+        "Q121"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-011",
+      "question_ids": [
+        "Q43",
+        "Q44",
+        "Q45",
+        "Q121"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-012",
+      "question_ids": [
+        "Q46",
+        "Q47"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-007",
+      "question_ids": [
+        "Q21",
+        "Q22",
+        "Q23",
+        "Q24"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-008",
+      "question_ids": [
+        "Q26",
+        "Q27",
+        "Q28",
+        "Q29"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-009",
+      "question_ids": [
+        "Q31",
+        "Q32"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "NEEDS_CLARIFICATION",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-014",
+      "question_ids": [
+        "Q104"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    },
+    {
+      "requirement_id": "FX-SAF-015",
+      "question_ids": [
+        "Q107",
+        "Q108",
+        "Q109",
+        "Q110"
+      ],
+      "source_review": "PENDING_ORIGINAL",
+      "source_kind": "SUMMARY_ONLY",
+      "comparison_status": "SOURCE_UNAVAILABLE",
+      "implementation_approved": false,
+      "human_safety_approval": false,
+      "owner_approval": null,
+      "source_review_register": "specs/source_review_priority.json",
+      "source_reconciliation": "specs/reconciliation_registry.json"
+    }
+  ],
+  "q109_q115_evidence": [
+    {
+      "question_id": "Q109",
+      "registered_original_excerpt": false,
+      "source_kind": "UNREGISTERED",
+      "archive_locator_status": null,
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q110",
+      "registered_original_excerpt": false,
+      "source_kind": "UNREGISTERED",
+      "archive_locator_status": null,
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q111",
+      "registered_original_excerpt": false,
+      "source_kind": "UNREGISTERED",
+      "archive_locator_status": null,
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q112",
+      "registered_original_excerpt": false,
+      "source_kind": "UNREGISTERED",
+      "archive_locator_status": null,
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q113",
+      "registered_original_excerpt": true,
+      "source_kind": "ORIGINAL",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q114",
+      "registered_original_excerpt": true,
+      "source_kind": "ORIGINAL",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "owner_approved_for_safety": false
+    },
+    {
+      "question_id": "Q115",
+      "registered_original_excerpt": true,
+      "source_kind": "ORIGINAL",
+      "archive_locator_status": "PENDING_LOCAL_ARCHIVE",
+      "owner_approved_for_safety": false
+    }
+  ],
+  "planned_case_status": {
+    "p1_04": {
+      "count": 26,
+      "not_executed": 26,
+      "source": "specs/p1_04_fault_matrix.json"
+    },
+    "p1_05": {
+      "count": 27,
+      "not_executed": 27,
+      "source": "specs/p1_05_mock_broker_scenarios.json"
+    }
+  },
+  "acceptance": {
+    "module": "BLOCKED",
+    "phase": "BLOCKED",
+    "source": "specs/acceptance_registry.json"
+  }
+}
