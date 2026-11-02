@@ -67,6 +67,32 @@ class GenerationFenceModelTests(unittest.TestCase):
 
 
 class IsolatedSqliteFaultTests(unittest.TestCase):
+    def test_serialized_generation_compare_and_swap_rejects_stale_writer(self):
+        """One isolated SQLite serialization; not an OS-wide writer fence."""
+        with tempfile.TemporaryDirectory(prefix="fx-g6-synthetic-") as folder:
+            db = Path(folder) / "fence.sqlite3"
+            with closing(sqlite3.connect(db)) as connection:
+                with connection:
+                    connection.execute(
+                        "CREATE TABLE fence (id INTEGER PRIMARY KEY, generation INTEGER, writer TEXT)")
+                    connection.execute("INSERT INTO fence VALUES (1, 1, 'A')")
+            with closing(sqlite3.connect(db)) as connection:
+                with connection:
+                    fresh = connection.execute(
+                        "UPDATE fence SET generation = 2, writer = 'B' "
+                        "WHERE id = 1 AND generation = 1 AND writer = 'A'")
+                    self.assertEqual(fresh.rowcount, 1)
+            with closing(sqlite3.connect(db)) as connection:
+                with connection:
+                    stale = connection.execute(
+                        "UPDATE fence SET generation = 2, writer = 'C' "
+                        "WHERE id = 1 AND generation = 1 AND writer = 'A'")
+                    self.assertEqual(stale.rowcount, 0)
+                self.assertEqual(connection.execute(
+                    "SELECT generation, writer FROM fence WHERE id = 1").fetchone(),
+                    (2, "B"))
+            self.assertFalse(append(SyntheticState(2, "B", 0), "A", 1, 0).accepted)
+
     def test_transaction_rollback_and_restart_visibility(self):
         """Synthetic SQLite rollback; not a power-loss or fsync test."""
         with tempfile.TemporaryDirectory(prefix="fx-g6-synthetic-") as folder:

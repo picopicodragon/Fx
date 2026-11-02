@@ -8,7 +8,7 @@
 - PR #159 は未マージ、head `c8cb37f3feb660eff5df38fc5fe0ee9470801073`、6コミット・6追加ファイル。両CIジョブは成功。6ファイルをGitHub連携からローカルに取得し、Git blob SHAを照合した。PR #159 自体とその履歴は変更・削除していない。
 - `git fetch origin` はローカルのGit認証情報を取得できず失敗。リモートの最新性はGitHub APIで別途確認。以後のGit同期にはこの制約がある。
 - 開始時のWindows Python 3.13.11全件: **3,188件 OK**。PR #159の6ファイルを加えた基準: **3,351件 OK**。一時ディレクトリをリポジトリ外へ設定した。これらはオフライン試験であり実口座安全性の証明ではない。
-- 今回の合成モデル6件を追加した全件: **3,357件 OK**。`check_repository`、`check_traceability`、`check_acceptance`、`check_master_spec`、`check_reconciliation`、`check_source_evidence`、`check_source_review_priority` はすべて成功。SQLiteテスト初回はWindowsで接続が閉じず一時DB削除に失敗したため、明示的な接続クローズへ修正して再実行した。実機・本番・デモ試験は0件。
+- 今回の合成モデル7件を追加した全件: **3,358件 OK**。`check_repository`、`check_traceability`、`check_acceptance`、`check_master_spec`、`check_reconciliation`、`check_source_evidence`、`check_source_review_priority` はすべて成功。SQLiteテスト初回はWindowsで接続が閉じず一時DB削除に失敗したため、明示的な接続クローズへ修正して再実行した。実機・本番・デモ試験は0件。
 
 ## 工程と依存関係
 
@@ -27,7 +27,7 @@
 
 ## 今回の実装と限界
 
-`scripts/phase1_synthetic_persistence.py` は、整数世代の直列化CASを**仮定した**純粋状態モデル。競合writer、古い世代、古いtip、結果不明・巻戻しを拒否し、全返値で `BLOCKED` / `NO_GO` / 停止ラッチを維持する。`independently_reconciled=True` は合成入力で、実際の独立証明ではない。`tests/test_phase1_synthetic_persistence.py` は競合と再起動相当の状態確認、および隔離した合成SQLiteのトランザクション例外時ロールバックを検査する。実並列プロセス、OSロック、独立Trust Anchor、電源断、fsync、Atomic Rename、実Journal/墓標、鍵、MT4、注文、停止解除は検証していない。
+`scripts/phase1_synthetic_persistence.py` は、整数世代の直列化CASを**仮定した**純粋状態モデル。競合writer、古い世代、古いtip、結果不明・巻戻しを拒否し、全返値で `BLOCKED` / `NO_GO` / 停止ラッチを維持する。`independently_reconciled=True` は合成入力で、実際の独立証明ではない。`tests/test_phase1_synthetic_persistence.py` は競合と再起動相当の状態確認、隔離した合成SQLiteの旧世代比較更新拒否・トランザクション例外時ロールバックを検査する。実並列プロセス、OSロック、独立Trust Anchor、電源断、fsync、Atomic Rename、実Journal/墓標、鍵、MT4、注文、停止解除は検証していない。
 
 関連仕様ID: `G6-05`、`G6-06`、`G6-02`、`G6-04`、`Q109`〜`Q115`、`Q197`〜`Q199`。安全重要な本番ソース群は変更しない。トレース登録の安全受入件数は増やさない。API費用は発生していない。
 
