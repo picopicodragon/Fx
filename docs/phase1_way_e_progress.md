@@ -13,11 +13,13 @@
 
 ## テスト・失敗と修正
 
-- 開始基準：Windows Python 3.13.11、3,358件 OK。今回16件追加後：**3,374件 OK**。SQLite実機耐久試験、MT4、EA、デモ・本番取引テストは0件。
+- 開始基準：Windows Python 3.13.11、3,358件 OK。今回17件追加後：**3,375件 OK**。SQLite実機耐久試験、MT4、EA、デモ・本番取引テストは0件。
 - `doctor_development_environment.py` の初回実行はサンドボックス既定TEMPへの書込み不可で失敗。許可済みのリポジトリ外一時領域を `TEMP`/`TMP` に指定して再実行しPASS。テストも同じ一時領域を使用。
 - 台帳JSONの初回生成はPowerShellのリダイレクト文字コードでUTF-8として読めず失敗。PythonからUTF-8で直接保存し直し、Way E監査とテストで再検証した。台帳の安全状態は変更していない。
 - `doctor_development_environment`、`check_repository`、`check_traceability`、`check_acceptance`、`check_master_spec`、`check_reconciliation`、`check_source_evidence`、`check_source_review_priority`、`check_phase1_way_e`：PASS。`scripts`のcompileallと差分・簡易秘密情報検査もPASS。GitHub CIはPR作成後に確認する。
 - 仕様対応は `specs/traceability.json` の `offline_synthetic_mappings` に出典ID→合成コード→自動テストを記載した。Q109の保護対象フォルダや本番安全コードの承認状態は変えていない。
+- Q110の `specs/acceptance_registry.json` にE-GATE-01〜06をTASKとして追記。01/02/03/05はオフライン範囲の`TESTED`、04/06は本人確認・手動マージ待ちの`IN_PROGRESS`。MODULE/PHASEは`BLOCKED`、全approvalはnullを維持。
+- TASK追加後の全件回帰で、P1-06の旧テストが「TASKは6件のみ」と固定していたため1件失敗。P1-01〜06にE-GATE-01〜06を加えた**正確な12件**と各状態・証拠・未承認を検査するよう更新し、弱い部分集合判定にはしていない。
 
 ## 不変条件と次回の再開点
 

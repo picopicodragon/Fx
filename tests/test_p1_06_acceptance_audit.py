@@ -25,7 +25,9 @@ class PhaseOneAuditTests(unittest.TestCase):
     def test_design_tasks_do_not_count_as_accepted_modules(self):
         d = read_json("specs/acceptance_registry.json")
         tasks = {t["id"]: t for t in d["tasks"]}
-        self.assertEqual(set(tasks), {f"P1-0{i}" for i in range(1, 7)})
+        self.assertEqual(set(tasks),
+                         {f"P1-0{i}" for i in range(1, 7)}
+                         | {f"E-GATE-{i:02}" for i in range(1, 7)})
         self.assertEqual(tasks["P1-01"]["status"], "BLOCKED")
         self.assertEqual(tasks["P1-06"]["status"], "IN_PROGRESS")
         for i in range(2, 6):
@@ -35,11 +37,19 @@ class PhaseOneAuditTests(unittest.TestCase):
                 self.assertTrue(task["evidence"])
                 self.assertIn("only", task["scope_note"])
                 self.assertIsNone(task["approval"])
+        for i in range(1, 7):
+            with self.subTest(way_e_task=i):
+                task = tasks[f"E-GATE-{i:02}"]
+                self.assertEqual(task["status"],
+                                 "IN_PROGRESS" if i in (4, 6) else "TESTED")
+                self.assertTrue(task["evidence"])
+                self.assertIsNone(task["approval"])
         modules = d["modules"]
         self.assertEqual(len(modules), 1)
         self.assertTrue(modules[0]["safety_critical"])
         self.assertEqual(modules[0]["status"], "BLOCKED")
         self.assertIsNone(modules[0]["approval"])
+        self.assertEqual(set(modules[0]["task_ids"]), set(tasks))
 
     def test_planned_fault_and_mock_cases_are_not_misreported_as_run(self):
         expected = {

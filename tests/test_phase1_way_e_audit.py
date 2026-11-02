@@ -104,6 +104,24 @@ class WayEGateAuditTests(unittest.TestCase):
                 self.assertIs(row["production_authorized"], False)
                 self.assertTrue(all((ROOT / path).is_file() for path in row["tests"]))
 
+    def test_way_e_tasks_are_tracked_without_module_or_phase_acceptance(self):
+        acceptance = gate._read(ROOT, "specs/acceptance_registry.json")
+        tasks = {row["id"]: row for row in acceptance["tasks"]}
+        module = next(row for row in acceptance["modules"]
+                      if row["id"] == "M-P1-FOUNDATION-DESIGN")
+        phase = next(row for row in acceptance["phases"]
+                     if row["id"] == "PHASE-1")
+        for i in range(1, 7):
+            ident = f"E-GATE-{i:02}"
+            self.assertIn(ident, tasks)
+            self.assertIn(ident, module["task_ids"])
+            self.assertIn(tasks[ident]["status"], {"TESTED", "IN_PROGRESS"})
+            self.assertIsNone(tasks[ident]["approval"])
+        self.assertEqual(module["status"], "BLOCKED")
+        self.assertIsNone(module["approval"])
+        self.assertEqual(phase["status"], "BLOCKED")
+        self.assertIsNone(phase["approval"])
+
 
 if __name__ == "__main__":
     unittest.main()
