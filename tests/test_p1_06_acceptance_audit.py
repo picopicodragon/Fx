@@ -28,7 +28,7 @@ class PhaseOneAuditTests(unittest.TestCase):
         self.assertEqual(set(tasks),
                          {f"P1-0{i}" for i in range(1, 7)}
                          | {f"E-GATE-{i:02}" for i in range(1, 7)}
-                         | {f"H1-{letter}" for letter in "ABCDE"})
+                         | {f"H1-{letter}" for letter in "ABCDEFGHIJ"})
         self.assertEqual(tasks["P1-01"]["status"], "BLOCKED")
         self.assertEqual(tasks["P1-06"]["status"], "IN_PROGRESS")
         for i in range(2, 6):
@@ -57,6 +57,16 @@ class PhaseOneAuditTests(unittest.TestCase):
         self.assertEqual(tasks["H1-E"]["status"], "TESTED")
         self.assertTrue(tasks["H1-E"]["evidence"])
         self.assertIsNone(tasks["H1-E"]["approval"])
+        for letter in "FHI":
+            with self.subTest(h1_post147_task=letter):
+                task = tasks[f"H1-{letter}"]
+                self.assertEqual(task["status"], "TESTED")
+                self.assertTrue(task["evidence"])
+                self.assertIsNone(task["approval"])
+        self.assertEqual(tasks["H1-G"]["status"], "BLOCKED")
+        self.assertIsNone(tasks["H1-G"]["approval"])
+        self.assertEqual(tasks["H1-J"]["status"], "IN_PROGRESS")
+        self.assertIsNone(tasks["H1-J"]["approval"])
         modules = d["modules"]
         self.assertEqual(len(modules), 1)
         self.assertTrue(modules[0]["safety_critical"])

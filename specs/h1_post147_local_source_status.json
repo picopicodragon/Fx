@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "scope": "H1-F–H1-J metadata-only inventory of previously authorized archive folder on 2026-11-02",
+  "status": "SOURCE_UNAVAILABLE_IN_SCOPED_LOCAL_ARCHIVE",
+  "new_archive_files_found": 0,
+  "notes": [
+    "No new original file was opened or extracted.",
+    "DIRECT_CHAT evidence in the repository is not a match to the scoped local archive.",
+    "All 15 safety requirements remain unapproved; no stop or live permission changed."
+  ],
+  "question_statuses": [
+    {
+      "question_id": "Q148",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q149",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q150",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q151",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q152",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q153",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q154",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q155",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q156",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q157",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q158",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q159",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q160",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q161",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q162",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q163",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q164",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q165",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q166",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q167",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q168",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q169",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q170",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q171",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q172",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q173",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q174",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q175",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q176",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q177",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q178",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q179",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q180",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q181",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q182",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q183",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q184",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q185",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q186",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q187",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q188",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q189",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q190",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q191",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q192",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q193",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q194",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q195",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q196",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q197",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q198",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "DIRECT_CHAT_LOCAL_ARCHIVE_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    },
+    {
+      "question_id": "Q199",
+      "local_archive_candidate": "SOURCE_UNAVAILABLE",
+      "existing_repository_evidence": "SUMMARY_ONLY_PENDING",
+      "owner_context_review": "PENDING",
+      "safety_implementation_approved": false
+    }
+  ]
+}
