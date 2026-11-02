@@ -163,6 +163,51 @@
       "evidence": ["https://github.com/picopicodragon/Fx/pull/162"],
       "approval": null,
       "scope_note": "Integrated PR open for sole maintainer self-review and manual merge; no MODULE/PHASE approval."
+    },
+    {
+      "id": "H1-A",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
+      "evidence": ["docs/phase1_h1_original_source_review_handoff_20261102.md", "docs/phase1_h1_local_candidate_audit_20261102.md"],
+      "approval": null,
+      "scope_note": "Owner specified a Git-external archive and granted scoped local reading; two archive snapshots and one FX conversation inventoried without altering originals. No owner source authentication or safety approval."
+    },
+    {
+      "id": "H1-B",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
+      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "126 explicit-Q candidates, 41 unmatched user messages and a 15-item local owner packet prepared outside Git. Q116-Q147 excerpt strings match locally; parent context, later amendments and 24 Qs absent from the archive block final reconciliation."
+    },
+    {
+      "id": "H1-C",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q111", "Q112", "Q115", "FX-SAF-001", "FX-SAF-002", "FX-SAF-003", "FX-SAF-004", "FX-SAF-005", "FX-SAF-006", "FX-SAF-007", "FX-SAF-008", "FX-SAF-009", "FX-SAF-010", "FX-SAF-011", "FX-SAF-012", "FX-SAF-013", "FX-SAF-014", "FX-SAF-015"],
+      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "P0-01 through P0-05 source candidate coverage and draft differences prepared for all 15; short-answer assignment, absent Q148-Q171, semantic comparison and owner verification remain blocked."
+    },
+    {
+      "id": "H1-D",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q110", "Q112", "Q115"],
+      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "Owner decision table and local message-pointer packet prepared; owner source authentication, confidentiality review, unresolved formulas and safety implementation approval remain pending."
+    },
+    {
+      "id": "H1-E",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "TESTED",
+      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
+      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md", "https://github.com/picopicodragon/Fx/pull/164", "https://github.com/picopicodragon/Fx/actions/runs/41378361162"],
+      "approval": null,
+      "scope_note": "Repository checks and 3375 offline tests passed locally; PR opened and GitHub CI evidence linked. No original-source, safety or phase acceptance."
     }
   ],
   "modules": [
@@ -182,7 +227,12 @@
         "E-GATE-03",
         "E-GATE-04",
         "E-GATE-05",
-        "E-GATE-06"
+        "E-GATE-06",
+        "H1-A",
+        "H1-B",
+        "H1-C",
+        "H1-D",
+        "H1-E"
       ],
       "evidence": [
         "docs/p1_06_acceptance_audit.md",
