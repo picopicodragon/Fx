@@ -163,6 +163,51 @@
       "evidence": ["https://github.com/picopicodragon/Fx/pull/162"],
       "approval": null,
       "scope_note": "Integrated PR open for sole maintainer self-review and manual merge; no MODULE/PHASE approval."
+    },
+    {
+      "id": "H1-A",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
+      "evidence": ["docs/phase1_h1_original_source_review_handoff_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "Latest main and clean branch checked; recommended archive example absent. Actual archive location and scoped reading permission remain unconfirmed. No original content was opened."
+    },
+    {
+      "id": "H1-B",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
+      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "All 15 source-to-draft comparison questions and candidate differences prepared from repository summaries; original extraction and verbatim comparison await source location and scoped permission."
+    },
+    {
+      "id": "H1-C",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q111", "Q112", "Q115", "FX-SAF-001", "FX-SAF-002", "FX-SAF-003", "FX-SAF-004", "FX-SAF-005", "FX-SAF-006", "FX-SAF-007", "FX-SAF-008", "FX-SAF-009", "FX-SAF-010", "FX-SAF-011", "FX-SAF-012", "FX-SAF-013", "FX-SAF-014", "FX-SAF-015"],
+      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "P0-01 through P0-05 owner-review candidate rows and offline test proposals prepared; all original-source comparisons remain undecidable."
+    },
+    {
+      "id": "H1-D",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "BLOCKED",
+      "spec_ids": ["Q110", "Q112", "Q115"],
+      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "Single owner decision table and version/evidence fields prepared; no original-source authentication or safety implementation approval inferred."
+    },
+    {
+      "id": "H1-E",
+      "module_id": "M-P1-FOUNDATION-DESIGN",
+      "status": "IN_PROGRESS",
+      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
+      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "approval": null,
+      "scope_note": "Repository checks and 3375 offline tests passed locally; final PR and GitHub CI are pending. No safety or phase acceptance."
     }
   ],
   "modules": [
@@ -182,7 +227,12 @@
         "E-GATE-03",
         "E-GATE-04",
         "E-GATE-05",
-        "E-GATE-06"
+        "E-GATE-06",
+        "H1-A",
+        "H1-B",
+        "H1-C",
+        "H1-D",
+        "H1-E"
       ],
       "evidence": [
         "docs/p1_06_acceptance_audit.md",
