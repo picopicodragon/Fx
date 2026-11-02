@@ -203,11 +203,11 @@
     {
       "id": "H1-E",
       "module_id": "M-P1-FOUNDATION-DESIGN",
-      "status": "IN_PROGRESS",
+      "status": "TESTED",
       "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
-      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md", "https://github.com/picopicodragon/Fx/pull/164", "https://github.com/picopicodragon/Fx/actions/runs/41378361162"],
       "approval": null,
-      "scope_note": "Repository checks and 3375 offline tests passed locally; final PR and GitHub CI are pending. No safety or phase acceptance."
+      "scope_note": "Repository checks and 3375 offline tests passed locally; PR opened and GitHub CI evidence linked. No original-source, safety or phase acceptance."
     }
   ],
   "modules": [

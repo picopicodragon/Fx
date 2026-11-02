@@ -51,7 +51,8 @@ class PhaseOneAuditTests(unittest.TestCase):
                 self.assertEqual(task["status"], "BLOCKED")
                 self.assertTrue(task["evidence"])
                 self.assertIsNone(task["approval"])
-        self.assertEqual(tasks["H1-E"]["status"], "IN_PROGRESS")
+        self.assertEqual(tasks["H1-E"]["status"], "TESTED")
+        self.assertTrue(tasks["H1-E"]["evidence"])
         self.assertIsNone(tasks["H1-E"]["approval"])
         modules = d["modules"]
         self.assertEqual(len(modules), 1)
