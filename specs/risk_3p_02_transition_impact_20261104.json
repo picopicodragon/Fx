@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-02-TRANSITION-IMPACT-20261104",
+  "recorded_on": "2026-11-04",
+  "origin": "GITHUB_MAIN_SOURCE_AUDIT_AND_USER_20261104_DESIGN_DIRECTION",
+  "source_main_sha": "95cea668504b1377e5e6e3e5d12ef666bc8049dd",
+  "scope": "DESIGN_IMPACT_ANALYSIS_ONLY",
+  "target_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "historical_q3_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "GBP/USD",
+    "AUD/USD"
+  ],
+  "legacy_exclusions": [
+    "GBP/USD",
+    "AUD/USD"
+  ],
+  "target_g1_fields_per_pair": 5,
+  "target_g1_attribute_count": 15,
+  "historical_g1_attribute_count": 20,
+  "target_g1_status": "DESIGN_TARGET_UNVERIFIED_NOT_G1_ACCEPTANCE",
+  "implementation_authorized": false,
+  "production_authorized": false,
+  "broker_connection_authorized": false,
+  "stop_release_authorized": false,
+  "verified_values": null,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "status": "INVENTORIED_NOT_MIGRATED",
+  "legacy_code_paths": [
+    "scripts/audit_mt4_readonly_source.py",
+    "scripts/validate_mt4_manual_symbol_specs.py",
+    "scripts/mt4_manual_symbol_v2.py",
+    "scripts/p0_01_offline_five_field_mock.py",
+    "scripts/p0_01_d5_3_synthetic_contract.py",
+    "mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4"
+  ],
+  "inventory": [
+    {
+      "path": "scripts/audit_mt4_readonly_source.py",
+      "category": "LEGACY_4P_CODE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "既存read-only MQL4ソースの旧4シンボル検査。新3ペア版MQL4の静的拒否監査は別版で追加。"
+    },
+    {
+      "path": "scripts/validate_mt4_manual_symbol_specs.py",
+      "category": "LEGACY_4P_CODE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "4ペア固定EXPECTED_PAIRS、公開資料4件と手入力4件を要求。EUR/USDの実契約値を未確認のまま新3ペアとして受入不可。"
+    },
+    {
+      "path": "scripts/mt4_manual_symbol_v2.py",
+      "category": "LEGACY_4P_CODE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "旧EXPECTED_PAIRSから移行範囲と行数4を継承。旧v1/v2の非破壊変換はそのまま保存。"
+    },
+    {
+      "path": "scripts/p0_01_offline_five_field_mock.py",
+      "category": "LEGACY_4P_CODE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "旧PAIRSを4件固定。新3ペアの有効性証明に流用しない。"
+    },
+    {
+      "path": "scripts/p0_01_d5_3_synthetic_contract.py",
+      "category": "LEGACY_4P_CODE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "GBP/USD・AUD/USDのquote currencyを含む固定マップ。EUR/USDのJPY換算経路追加が必要。"
+    },
+    {
+      "path": "mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4",
+      "category": "LEGACY_4P_CODE",
+      "next_action": "SEPARATE_AUTHORIZATION_REQUIRED",
+      "finding": "4つの入力と全4ペアの実装。将来の3ペア版は別ソース審査・明示許可が必要。現EA/MT4実行禁止。"
+    },
+    {
+      "path": "tests/test_p0_01_mt4_manual_symbol_spec_checker.py",
+      "category": "LEGACY_4P_TEST",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "旧4ペア手入力チェッカーを検証。新3ペア版の受入テストを別に追加する。"
+    },
+    {
+      "path": "tests/test_p0_01_mt4_manual_symbol_v2.py",
+      "category": "LEGACY_4P_TEST",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "旧4ペアの破壊防止・精度保持テスト。既存テストを過去の事実と混同しない。"
+    },
+    {
+      "path": "tests/test_p0_01_d5_3_synthetic_contract.py",
+      "category": "LEGACY_4P_TEST",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "旧4ペアの5属性合成例。EUR/USD含む新3ペアfixtureを別版作成。"
+    },
+    {
+      "path": "tests/test_p0_01_mt4_readonly_observation_plan.py",
+      "category": "LEGACY_4P_TEST",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "旧Market Watch4ペア報告と実機未検証の境界のテスト。"
+    },
+    {
+      "path": "tests/test_p0_01_mql4_readonly_source_audit.py",
+      "category": "LEGACY_4P_TEST",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "既存MQL4ソースの4入力・発注不可の監査。改変せず新ソースは別監査。"
+    },
+    {
+      "path": "tests/test_p0_01_rakuten_mt4_public_contract_evidence.py",
+      "category": "LEGACY_4P_TEST",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "旧4ペアに対する公開根拠のテスト。EUR/USDの実口座証拠ではない。"
+    },
+    {
+      "path": "specs/p0_01_mt4_manual_symbol_template.json",
+      "category": "LEGACY_4P_TEMPLATE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "旧手入力フォーマット。旧原本を上書きしない。"
+    },
+    {
+      "path": "specs/p0_01_mt4_manual_symbol_template_v2.json",
+      "category": "LEGACY_4P_TEMPLATE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "旧4ペア属性テンプレ。新3ペア版は別名で作成。"
+    },
+    {
+      "path": "specs/p0_01_five_field_offline_mock_design.json",
+      "category": "LEGACY_4P_SPEC",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "4x5検査が設計固定。新3x5検査は別契約を作る。"
+    },
+    {
+      "path": "specs/p0_01_d5_25_gap_verification_matrix.json",
+      "category": "GATE_CURRENT_LEGACY_SCOPE",
+      "next_action": "OWNER_REVIEW_REQUIRED",
+      "finding": "正式G1の4x5/20属性はUNRESOLVEDのまま。将来本人審査で3x5改版し受入証拠を再取得。"
+    },
+    {
+      "path": "specs/p0_01_d5_26_transition_priority_plan.json",
+      "category": "GATE_CURRENT_LEGACY_SCOPE",
+      "next_action": "OWNER_REVIEW_REQUIRED",
+      "finding": "G1の20属性依存順は旧範囲を参照。G1以外のG2/G6等を緩和しない。"
+    },
+    {
+      "path": "specs/p0_01_risk_formula_open_decisions.json",
+      "category": "LEGACY_4P_SPEC",
+      "next_action": "OWNER_REVIEW_REQUIRED",
+      "finding": "旧GBP/AUD USD換算ルートが記載。EUR/USDを加えたJPY換算のside/time/cross確認が必要。"
+    },
+    {
+      "path": "specs/p0_01_rakuten_mt4_public_contract_evidence.json",
+      "category": "HISTORICAL_EXTERNAL_EVIDENCE",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "旧4ペアの公開条件の記録のみ。EUR/USDや口座契約仕様を捏造しない。"
+    },
+    {
+      "path": "specs/p0_01_mt4_readonly_observation_plan.json",
+      "category": "HISTORICAL_REAL_STATE_PENDING",
+      "next_action": "OWNER_REVIEW_REQUIRED",
+      "finding": "旧4ペアの時点/端末表示報告あり。新EUR/USDは同一性も契約属性も未取得。"
+    },
+    {
+      "path": "docs/p0_01_risk_formula_open_decisions_20261023.md",
+      "category": "HISTORICAL_DESIGN",
+      "next_action": "KEEP_HISTORICAL",
+      "finding": "旧GBP/AUD換算経路を含む履歴。リスク計算の決定文を消さない。"
+    },
+    {
+      "path": "scripts/phase1_three_pair_synthetic_risk.py",
+      "category": "CURRENT_3P_SYNTHETIC",
+      "next_action": "KEEP_OFFLINE_ONLY",
+      "finding": "USD/JPY・EUR/JPY・EUR/USDの合成値専用。EUR/USD実銘柄/JPY換算リスクの承認に使わない。"
+    },
+    {
+      "path": "tests/test_phase1_three_pair_synthetic_risk.py",
+      "category": "CURRENT_3P_SYNTHETIC_TEST",
+      "next_action": "KEEP_OFFLINE_ONLY",
+      "finding": "旧ペアの負試験は意図的な拒否条件。旧ペアを取引対象に戻さない。"
+    },
+    {
+      "path": "docs/three_pair_aggregate_currency_risk_design_20261104.md",
+      "category": "CURRENT_3P_DESIGN",
+      "next_action": "KEEP_DESIGN_ONLY",
+      "finding": "2026-11-04の3ペア本人方針。数値的通貨集中上限は未決。"
+    },
+    {
+      "path": "docs/risk_3p_01_synthetic_net_gross_verification_20261104.md",
+      "category": "CURRENT_3P_DESIGN",
+      "next_action": "KEEP_DESIGN_ONLY",
+      "finding": "ネットゼロでも最大想定損失を相殺しない合成検証。"
+    },
+    {
+      "path": "README.md",
+      "category": "CURRENT_DESIGN_INDEX",
+      "next_action": "KEEP_DESIGN_ONLY",
+      "finding": "新3ペアの設計対象と既存4ペアの履歴を区別。"
+    },
+    {
+      "path": "DECISIONS.md",
+      "category": "CURRENT_DESIGN_INDEX",
+      "next_action": "KEEP_DESIGN_ONLY",
+      "finding": "後続の本人方針と歴史的Q3の履歴を両立。"
+    },
+    {
+      "path": "MASTER_SPEC.md",
+      "category": "CURRENT_DESIGN_INDEX",
+      "next_action": "KEEP_DESIGN_ONLY",
+      "finding": "歴史的Q3はそのまま。3ペアの後続指示を末尾に追記済み。"
+    }
+  ],
+  "stage_order": [
+    {
+      "stage": "A",
+      "action": "Create separate 3P schema/fixture with EUR/USD and explicit unknown broker values; do not overwrite user local v1/v2 JSON",
+      "approval": "OFFLINE DESIGN ONLY"
+    },
+    {
+      "stage": "B",
+      "action": "Create 3P validation and backward-compatible historical 4P input review; unknown EUR/USD values fail closed",
+      "approval": "SAFETY_CRITICAL_SPEC_OWNER_REVIEW"
+    },
+    {
+      "stage": "C",
+      "action": "Align G1 target 3x5, evidence/traceability, EUR/USD actual contract observation plan; preserve G1 BLOCKED",
+      "approval": "GATE_SCOPE_OWNER_REVIEW"
+    },
+    {
+      "stage": "D",
+      "action": "Q116 account-level and per-currency net/gross/stress math with conservative bid/ask and lot rounding; no netting of SL loss",
+      "approval": "FX_SAF_OWNER_APPROVAL_REQUIRED"
+    },
+    {
+      "stage": "E",
+      "action": "Separate authorized single MT4 read-only observation + later H4 and human approvals",
+      "approval": "INDIVIDUAL_REAL_ENVIRONMENT_APPROVAL_REQUIRED"
+    }
+  ],
+  "unresolved": [
+    "EUR/USD on Rakuten MT4: exact terminal symbol, min_lot, lot_step, contract_size, tick_value, stop_level, session, quote/cross timestamp",
+    "Quote direction, spread/fees, JPY conversion when EUR/USD quote currency is USD, consistent price snapshot",
+    "Independent broker equity and all position/pending-order reconciliation, partial fills, unknown status",
+    "Per-currency concentration and stress shock thresholds, signed exposure with contract units",
+    "Owner approval of versioned FX-SAF-001/002 specifications and G1 3x5 scope; current formal G1 still 4x5 BLOCKED"
+  ]
+}
