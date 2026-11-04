@@ -311,7 +311,7 @@
     {
       "id": "P18-05",
       "check": "本人による独立した閲覧手順/証拠保管/安全上の停止条件の明示承認が必要",
-      "current_status": "OWNER_DECISION_PENDING",
+      "current_status": "OWNER_PROTOCOL_METHOD_APPROVED_P05_NOT_CHECKED",
       "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
     },
     {
@@ -399,5 +399,8 @@
   "runtime_go_no_go": "NO_GO",
   "safety_hold_latched": true,
   "verified_values": null,
-  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "p04_readonly_protocol_method_owner_approved": true,
+  "p02_p04_owner_method_decision_ref": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "p05_environment_precheck_status": "BLOCKED_SAFETY_CONDITIONS_UNKNOWN"
 }
