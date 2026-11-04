@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "LEGACY-G1-FOUR-PAIR-SCOPE-20261030",
+  "original_matrix_id": "P0-01-D5-25-GAP-VERIFICATION-MATRIX",
+  "original_matrix_date": "2026-10-30",
+  "captured_on": "2026-11-04",
+  "role": "IMMUTABLE_HISTORICAL_PRE_SCOPE_APPROVAL_REFERENCE",
+  "superseded_by_owner_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "historical_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "GBP/USD",
+    "AUD/USD"
+  ],
+  "historical_major_field_count": 20,
+  "g1_before_scope_approval": {
+    "id": "G1",
+    "severity": "CRITICAL",
+    "subject": "4通貨ペア×5項目のブローカー契約属性",
+    "implementation_status": "UNRESOLVED",
+    "release_blocker": true,
+    "real_world_verified": false,
+    "offline_synthetic_coverage": [
+      "FXリスク計算式と合成例の境界検証"
+    ],
+    "external_or_real_evidence_required": [
+      "USD/JPY、EUR/JPY、GBP/USD、AUD/USDの20項目について実口座側から出典・時刻を付した契約値を将来別途許可された方法で確認"
+    ],
+    "next_action": "DESIGN_AND_OFFLINE_REVIEW_ONLY_UNTIL_SEPARATE_EXPLICIT_AUTHORIZATION"
+  },
+  "original_verification_status": "UNRESOLVED",
+  "prior_real_world_evidence_verified": false,
+  "has_no_release_authority": true
+}
