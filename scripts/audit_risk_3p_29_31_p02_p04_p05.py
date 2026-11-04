@@ -1,0 +1,248 @@
+"""RISK-3P-29..31: P02/P04 procedural approvals and P05 safety preflight.
+
+An owner-approved *method* is not performed reconciliation or a terminal
+session grant. The only successful result is a blocked documentary register.
+This module reads local JSON; no MT4, broker, filesystem writes, or credentials.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from scripts.review_mt4_manual_symbol_3p_v3 import PAIRS, FIVE
+
+ROOT = Path(__file__).resolve().parents[1]
+PLAN = "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json"
+PATH = "specs/risk_3p_23_26_owner_decision_critical_path_20261104.json"
+PROTOCOL = "specs/risk_3p_18_19_g1_readonly_provenance_protocol_20261104.json"
+UPSTREAM = "specs/risk_3p_16_17_owner_g1_readiness_preflight_20261104.json"
+SCOPE = "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"
+GATES = "specs/p0_01_d5_25_gap_verification_matrix.json"
+SAFETY = "specs/source_review_priority.json"
+DOCKET = "specs/risk_3p_22_form43_owner_review_docket_20261104.json"
+P05_IDS = tuple(f"P05-{i:02d}" for i in range(1, 9))
+P05_STATES = (
+    "CURRENT_STATE_UNKNOWN_PRIOR_DEMO_EVIDENCE_ONLY",
+    "CURRENT_STATE_UNKNOWN_PRIOR_MACD_SAMPLE_ATTACHED",
+    "CURRENT_STATE_UNKNOWN_PRIOR_POSITIONS_OR_ORDERS_YES",
+    "CURRENT_SESSION_UNVERIFIED",
+    "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
+    "LOCAL_GIT_EXTERNAL_STORAGE_NOT_CONFIRMED",
+    "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
+    "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
+)
+EXPECTED_METHODS = (
+    ("P02", "ORIGINAL_SOURCE_RECONCILIATION_METHOD_ONLY",
+     "APPROVED_NOT_EXECUTED"),
+    ("P04", "NONDESTRUCTIVE_MT4_OBSERVATION_PROTOCOL_DESIGN_ONLY",
+     "APPROVED_P05_PRECHECK_REQUIRED"),
+)
+P02_STATUS = "OWNER_APPROVED_METHOD_ONLY_ORIGINALS_NOT_REVIEWED"
+P04_STATUS = "OWNER_APPROVED_PROTOCOL_ONLY_P05_PRECHECK_PENDING"
+UNAUTHORIZED = (
+    "p05_real_world_environment_evaluated",
+    "p05_human_safety_signoff",
+    "p06_observation_authorized",
+    "p07_independent_broker_evidence_verified",
+    "read_only_mt4_login_authorized_now",
+    "terminal_script_execution_authorized",
+    "private_account_info_collected",
+    "additional_demo_account_authorized",
+    "parallel_session_authorized",
+    "existing_ea_change_authorized",
+    "position_or_pending_order_change_authorized",
+    "trading_authorized",
+    "g1_accepted",
+    "stop_release_authorized",
+    "auto_merge_authorized",
+)
+HAZARDS = (
+    "MACD_SAMPLE_REPORTED_ON_CHART_AND_NAVIGATOR",
+    "OPEN_POSITIONS_OR_PENDING_ORDERS_REPORTED_YES",
+    "AUTOTRADING_DISPLAY_OFF_LIKE_NOT_AN_EXECUTION_PROOF",
+)
+
+
+def _read(root: Path, path: str) -> dict:
+    return json.loads((root / path).read_text(encoding="utf-8"))
+
+
+def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
+    errors: list[str] = []
+    try:
+        docs = {
+            k: (injected[k] if injected is not None and k in injected
+                else _read(root, k))
+            for k in (PLAN, PATH, PROTOCOL, UPSTREAM, SCOPE, GATES, SAFETY, DOCKET)
+        }
+        plan = docs[PLAN]
+        if type(plan) is not dict:
+            return ["INVALID_PROCEDURAL_APPROVAL_PLAN"]
+        if (type(plan.get("schema_version")) is not int
+                or plan.get("schema_version") != 1
+                or plan.get("id") !=
+                "RISK-3P-29-31-P02-P04-APPROVAL-AND-P05-PREFLIGHT-20261104"
+                or plan.get("source") !=
+                "DIRECT_USER_CHAT_APPROVAL_P02_AND_P04_DATE_ONLY_NO_PRIVATE_QUOTE"
+                or plan.get("date_jst") != "2026-11-04"
+                or plan.get("scope") !=
+                "OWNER_APPROVED_OFFLINE_REVIEW_METHODS_WITH_P05_REAL_ENVIRONMENT_HOLD"
+                or plan.get("previous_owner_g1_scope_ref") != SCOPE
+                or plan.get("prior_protocol_ref") != PROTOCOL
+                or plan.get("prior_critical_path_ref") != PATH):
+            errors.append("OWNER_APPROVAL_IDENTITY_OR_SOURCE_DRIFT")
+        decisions = plan.get("decisions")
+        if (type(decisions) is not list or len(decisions) != 2
+                or [(r.get("id"), r.get("approved_component"), r.get("method_status"))
+                    for r in decisions if type(r) is dict] != list(EXPECTED_METHODS)
+                or any(r.get("owner_approved") is not True
+                       or type(r.get("authorized_scope")) is not str
+                       or not r["authorized_scope"] for r in decisions)):
+            errors.append("OWNER_P02_P04_METHOD_DECISION_INVALID")
+        else:
+            p02, p04 = decisions
+            if (p02.get("no_auto_original_certification") is not True
+                    or p02.get("fx_saf_original_verified_count") != 0
+                    or p02.get("form_implementation_approvals_recorded") != 0
+                    or p02.get("original_source_access_performed") is not False):
+                errors.append("P02_FALSE_ORIGINAL_SOURCE_VERIFICATION")
+            if (p04.get("no_blanket_terminal_access") is not True
+                    or p04.get("real_mt4_login_authorized_now") is not False
+                    or p04.get("script_or_ea_execution_authorized") is not False
+                    or p04.get("order_or_position_changes_authorized") is not False):
+                errors.append("P04_FALSE_TERMINAL_SESSION_PERMISSION")
+        if (plan.get("g1_scope_owner_approved") is not True
+                or plan.get("g1_actual_broker_fields_verified") != 0
+                or plan.get("fx_saf_originals_verified") != 0
+                or plan.get("form_implementation_choices_approved") != 0
+                or plan.get("historical_existing_account_hazards") != list(HAZARDS)):
+            errors.append("EVIDENCE_COUNT_OR_PRIOR_ACCOUNT_HAZARD_DRIFT")
+        if (plan.get("p05_gate_status") !=
+                "BLOCKED_AWAITING_INDEPENDENT_ENVIRONMENT_SAFETY_CHECK"
+                or plan.get("p05_total_checks") != 8
+                or plan.get("p05_passed_checks") != 0):
+            errors.append("P05_UNJUSTIFIED_PRECHECK_PASS")
+        checks = plan.get("p05_checks")
+        if (type(checks) is not list or len(checks) != len(P05_IDS)
+                or [x.get("check_id") for x in checks if type(x) is dict]
+                != list(P05_IDS)):
+            errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
+        else:
+            for i, row in enumerate(checks):
+                if (row.get("current_status") != P05_STATES[i]
+                        or type(row.get("title")) is not str or not row["title"]
+                        or type(row.get("known_historical_condition")) is not str
+                        or not row["known_historical_condition"]
+                        or type(row.get("required_for_future")) is not str
+                        or not row["required_for_future"]
+                        or any(row.get(name, "MISSING") is not None for name in (
+                            "evidence_reference", "observation_at_utc",
+                            "reviewer_reference"))
+                        or row.get("safe_to_proceed") is not False
+                        or row.get("p05_accepted") is not False):
+                    errors.append("P05_PREMATURE_OR_UNVERIFIED:" + P05_IDS[i])
+        for key in UNAUTHORIZED:
+            if plan.get(key) is not False:
+                errors.append("FALSE_REAL_OPERATION_AUTHORITY:" + key)
+        if (plan.get("phase_1") != "BLOCKED"
+                or plan.get("runtime_go_no_go") != "NO_GO"
+                or plan.get("safety_hold_latched") is not True
+                or plan.get("verified_values", "MISSING") is not None):
+            errors.append("SAFETY_HOLD_OR_NO_GO_PROMOTED")
+        g1 = docs[SCOPE]
+        if (g1.get("authorized_scope") != list(PAIRS)
+                or g1.get("five_required_fields") != list(FIVE)
+                or g1.get("real_verified_field_count") != 0
+                or g1.get("decision_status") != "OWNER_APPROVED_SCOPE_ONLY"):
+            errors.append("G1_OWNER_SCOPE_SOURCE_PROMOTED")
+        path = docs[PATH]
+        nodes = {x["id"]: x for x in path["proposed_dependency_nodes"]}
+        if (nodes["P02_OWNER_VERIFY_SOURCE_ORIGINALS"].get("status") != P02_STATUS
+                or nodes["P04_OWNER_READONLY_PROTOCOL_DECISION"].get("status")
+                != P04_STATUS
+                or nodes["P05_SAFE_ENVIRONMENT_PRECHECK"].get("status")
+                != "PENDING_ENVIRONMENT_PRECHECK"
+                or any(nodes[name].get("execution_permitted") is not False
+                       for name in nodes)
+                or path.get("p02_reconciliation_method_owner_approved") is not True
+                or path.get("p04_readonly_protocol_method_owner_approved") is not True
+                or path.get("p02_p04_owner_method_decision_ref") != PLAN
+                or path.get("p02_actual_originals_reviewed") is not False
+                or path.get("p04_real_terminal_session_authorized") is not False
+                or path.get("p05_environment_safety_verified") is not False):
+            errors.append("CRITICAL_PATH_P02_P04_METHOD_APPROVAL_DRIFT")
+        protocol = docs[PROTOCOL]
+        if (protocol.get("p04_readonly_protocol_method_owner_approved") is not True
+                or protocol.get("p02_p04_owner_method_decision_ref") != PLAN
+                or protocol.get("p05_environment_precheck_status") !=
+                "BLOCKED_SAFETY_CONDITIONS_UNKNOWN"
+                or protocol.get("owner_approved_real_read") is not False
+                or protocol.get("evidence_collected") is not False
+                or any(x.get("status") != "NOT_AUTHORIZED"
+                       for x in protocol["environment_readonly_steps"])):
+            errors.append("READONLY_PROTOCOL_METHOD_MISTAKEN_FOR_OBSERVATION")
+        prev = docs[UPSTREAM]
+        if (prev.get("p02_reconciliation_method_owner_approved") is not True
+                or prev.get("p04_readonly_protocol_method_owner_approved") is not True
+                or prev.get("p02_p04_method_decision_ref") != PLAN
+                or prev.get("p05_environment_precheck_status") != "BLOCKED_NOT_PERFORMED"
+                or prev.get("current_readiness")
+                != "BLOCKED_MISSING_ORIGINALS_AND_REAL_EVIDENCE"
+                or prev.get("g1_real_world_verified") is not False):
+            errors.append("UPSTREAM_EVIDENCE_STATUS_PROMOTED")
+        gates = docs[GATES]
+        if (gates.get("g1_evidence_verified") is not False
+                or gates.get("real_mt4_access_approved") is not False
+                or gates.get("real_order_execution_approved") is not False
+                or gates.get("runtime_go_no_go") != "NO_GO"
+                or any(x.get("release_blocker") is not True
+                       or x.get("real_world_verified") is not False
+                       or x.get("implementation_status") != "UNRESOLVED"
+                       for x in gates["gaps"])):
+            errors.append("FORMAL_GATES_OR_MT4_ACCESS_PROMOTED")
+        safety = docs[SAFETY]
+        if (len(safety["items"]) != 15
+                or any(x.get("source_review") != "PENDING_ORIGINAL"
+                       or x.get("human_safety_approval") is not False
+                       for x in safety["items"])):
+            errors.append("UNREVIEWED_SOURCE_FALSELY_ACCEPTED")
+        docket = docs[DOCKET]
+        if (len(docket["decisions"]) != 43
+                or any(x.get("owner_decision") != "NOT_RECORDED"
+                       or x.get("implementation_approved") is not False
+                       for x in docket["decisions"])):
+            errors.append("FORM43_FALSELY_ACCEPTED")
+    except (OSError, ValueError, TypeError, KeyError, StopIteration, AttributeError):
+        errors.append("MALFORMED_OR_MISSING_METHOD_OR_EVIDENCE_REGISTER")
+    return errors
+
+
+def snapshot(root: Path = ROOT) -> dict:
+    errors = audit(root)
+    return {
+        "audit_status": "PASS_DOCUMENT_ONLY" if not errors else "FAIL_CLOSED",
+        "p02_method_owner_approved": not errors,
+        "p02_actual_fx_saf_originals_verified": 0,
+        "p04_method_owner_approved": not errors,
+        "p04_real_mt4_session_allowed": False,
+        "p05_checks_passed": 0,
+        "p05_total_checks": 8,
+        "p05_readiness": "BLOCKED",
+        "g1_verified": "0/15",
+        "form_decisions_approved": "0/43",
+        "runtime_go_no_go": "NO_GO",
+        "phase_1": "BLOCKED",
+        "safety_hold_latched": True,
+        "errors": errors,
+    }
+
+
+def main() -> None:
+    state = snapshot()
+    print(json.dumps(state, ensure_ascii=False, indent=2))
+    if state["audit_status"] != "PASS_DOCUMENT_ONLY":
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()
