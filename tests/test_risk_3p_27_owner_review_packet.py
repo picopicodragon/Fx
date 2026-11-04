@@ -21,7 +21,10 @@ class OwnerPacketPrinterTests(unittest.TestCase):
                 self.assertEqual(output.count(mark), 1)
         for decision in d["decisions"]:
             self.assertIn(decision["original_question"], output)
-            self.assertIn(decision["source_recommendation"], output)
+            if decision["source_recommendation"] is not None:
+                self.assertIn(decision["source_recommendation"], output)
+            else:
+                self.assertIn("元ドラフトの個別提案：未設定（本人判断待ち）", output)
 
     def test_review_order_matches_1_2_5_6_3_4_7_8_9_10(self):
         output = mod.render()
