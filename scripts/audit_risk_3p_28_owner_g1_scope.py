@@ -69,7 +69,7 @@ def audit(root: Path = ROOT, *, formal: object = None,
                 or old.get("release_blocker") is not True
                 or old.get("real_world_verified") is not False
                 or old.get("external_or_real_evidence_required") != [
-                    "USD/JPY、EUR/JPY、GBP/USD、AUD/USDの20項目について実口座側から出典・時刻を付した契約値を将来別途許可された方法で確認"
+                    ("、".join(HISTORY) + "の20項目について実口座側から出典・時刻を付した契約値を将来別途許可された方法で確認")
                 ]):
             issues.append("LEGACY_G1_ORIGINAL_SCOPE_CORRUPTED")
         # All existing history source strings stay in a JSON snapshot; the
