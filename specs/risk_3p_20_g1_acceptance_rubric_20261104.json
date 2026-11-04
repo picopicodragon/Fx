@@ -19,7 +19,7 @@
   "source_v3": "specs/mt4_manual_symbol_3p_v3_template.json",
   "source_observation_protocol": "specs/risk_3p_18_19_g1_readonly_provenance_protocol_20261104.json",
   "historical_g1": "4_PAIRS_X_5_FIELDS_UNRESOLVED_PRESERVED",
-  "proposed_g1": "3_PAIRS_X_5_FIELDS_NOT_APPROVED",
+  "proposed_g1": "3_PAIRS_X_5_FIELDS_OWNER_SCOPE_APPROVED_UNVERIFIED",
   "criteria_status": "PROPOSED_FOR_OWNER_REVIEW_ONLY",
   "common_required_checks": [
     "SEPARATELY_AUTHORIZED_READ_ONLY_OBSERVATION",
@@ -618,7 +618,6 @@
   },
   "explicit_non_approvals": {
     "human_review_signoff": false,
-    "g1_formal_scope_approved": false,
     "market_watch_access_approved": false,
     "real_account_verification": false,
     "broker_contract_verified": false,
@@ -630,5 +629,7 @@
   "phase_1": "BLOCKED",
   "runtime_go_no_go": "NO_GO",
   "safety_hold_latched": true,
-  "verified_values": null
+  "verified_values": null,
+  "g1_formal_scope_approved": true,
+  "scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"
 }
