@@ -109,14 +109,16 @@
         "G2"
       ],
       "offline_next": [
-        "4通貨ペア×5項目の入力仕様、値の出典・観測時刻と未確認時NO_GOの設計"
+        "3通貨ペア×5主要属性の正式承認済み対象について、出典・UTC観測時刻・実銘柄/口座同一性と未確認時NO_GOの設計"
       ],
       "external_evidence_required": [
-        "USD/JPY、EUR/JPY、GBP/USD、AUD/USDの20項目について実口座側から出典・時刻を付した契約値を将来別途許可された方法で確認"
+        "USD/JPY、EUR/JPY、EUR/USD各5属性（計15項目）と契約サイズ・入金通貨・tick換算等の補助属性の実口座原証拠を、将来別途許可された手順で確認"
       ],
       "readiness": "UNRESOLVED",
       "release_blocker": true,
-      "real_world_verified": false
+      "real_world_verified": false,
+      "scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+      "scope_approved": true
     },
     {
       "id": "G5",
