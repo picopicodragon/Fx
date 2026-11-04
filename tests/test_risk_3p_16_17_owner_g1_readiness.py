@@ -38,8 +38,10 @@ class G1OwnerReadinessTests(unittest.TestCase):
                  "MANUAL_MAIN_MERGE_POLICY_CHANGED")
 
     def test_all_owner_and_live_authority_flags_remain_false(self):
+        self.bad(mod.DRAFT, lambda x: x.update(g1_scope_revision_approved=False),
+                 "SCOPE_APPROVAL_RECORD_MISSING")
         for field in (
-            "owner_approval_recorded", "g1_scope_revision_approved",
+            "owner_approval_recorded",
             "g1_real_world_verified", "fx_saf_implementation_approved",
             "module_acceptance_approved", "phase_acceptance_approved",
             "production_authorized", "real_market_data_verified",
@@ -126,7 +128,7 @@ class G1OwnerReadinessTests(unittest.TestCase):
     def test_hist_g1_4x5_and_all_nine_gates_stay_blocked(self):
         self.bad(mod.GATES, lambda x: x["gaps"][0].update(
             implementation_status="VERIFIED"),
-            "HISTORICAL_G1_GATE_PROMOTED_OR_REWRITTEN")
+            "FORMAL_G1_SCOPE_OR_G1_STATUS_DRIFT")
         self.bad(mod.GATES, lambda x: x["gaps"][8].update(
             release_blocker=False), "ONE_OR_MORE_G1_G9_GATES_RELEASED")
         self.bad(mod.GATES, lambda x: x["gaps"][0].update(
