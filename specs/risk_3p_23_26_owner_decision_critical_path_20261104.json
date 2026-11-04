@@ -110,7 +110,7 @@
       "requires": [
         "P01_DOCUMENTARY_REVIEW_PACKET"
       ],
-      "status": "PENDING_EXPLICIT_SCOPE_DECISION",
+      "status": "OWNER_APPROVED_SCOPE_ONLY_NO_EVIDENCE",
       "needs_owner": true,
       "needs_real_env": false,
       "execution_permitted": false
@@ -225,8 +225,8 @@
   "source_original_safety_requirements": 15,
   "g1_target_field_count": 15,
   "g1_fields_proved": 0,
-  "existing_g1_scope_status": "LEGACY_4x5_UNRESOLVED",
-  "proposed_g1_scope_status": "3x5_NOT_APPROVED",
+  "existing_g1_scope_status": "LEGACY_4x5_ARCHIVED_UNRESOLVED",
+  "proposed_g1_scope_status": "FORMAL_OWNER_APPROVED_3x5_UNVERIFIED",
   "pr_merge_is_not_form_approval": true,
   "potential_subsequent_branch_release_prohibited": true,
   "real_mt4_observation_authorized": false,
@@ -246,5 +246,6 @@
   "phase_1": "BLOCKED",
   "runtime_go_no_go": "NO_GO",
   "safety_hold_latched": true,
-  "verified_values": null
+  "verified_values": null,
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"
 }
