@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-28-G1-3X5-OWNER-SCOPE-DECISION-20261104",
+  "date_jst": "2026-11-04",
+  "decision_kind": "EXPLICIT_OWNER_SCOPE_APPROVAL_ONLY",
+  "owner_decision_origin": "DIRECT_USER_IN_CURRENT_CHAT_TURN_NOT_ARCHIVED_ORIGINAL_SOURCE",
+  "source_traceability": "current conversation explicit statement 2026-11-04 JST; local full chat remains outside Git",
+  "decision_subject": "G1_FORMAL_EVIDENCE_SCOPE_3_PAIRS_FIVE_ATTRIBUTES",
+  "decision_status": "OWNER_APPROVED_SCOPE_ONLY",
+  "authorized_scope": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "five_required_fields": [
+    "min_lot",
+    "lot_step",
+    "point_quote",
+    "tick_size_points",
+    "tick_value_deposit_currency"
+  ],
+  "required_count": 15,
+  "historical_scope": [
+    "USD/JPY",
+    "EUR/JPY",
+    "GBP/USD",
+    "AUD/USD"
+  ],
+  "historical_required_count": 20,
+  "historical_snapshot_ref": "specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json",
+  "g1_live_evidence_status": "UNRESOLVED",
+  "real_verified_field_count": 0,
+  "other_gates": "G2_TO_G9_UNRESOLVED",
+  "additional_attributes_remain_required": true,
+  "source_original_fx_saf_verified": false,
+  "form01_10_implementation_approved": false,
+  "live_mt4_read_approved": false,
+  "ea_or_script_execution_approved": false,
+  "order_execution_approved": false,
+  "stop_release_approved": false,
+  "production_authorized": false,
+  "independent_broker_account_verified": false,
+  "status_after_change": {
+    "phase_1": "BLOCKED",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": true,
+    "verified_values": null
+  },
+  "approval_is_not": [
+    "G1_EVIDENCE_ACCEPTANCE",
+    "MT4_OBSERVATION_OR_EXECUTION_PERMISSION",
+    "FORM_01_10_IMPLEMENTATION_APPROVAL",
+    "FX_SAF_001_015_IMPLEMENTATION_APPROVAL",
+    "MODULE_OR_PHASE_ACCEPTANCE",
+    "LIVE_TRADING_AUTHORIZATION"
+  ]
+}
