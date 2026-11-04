@@ -99,7 +99,7 @@
       "requires": [
         "P01_DOCUMENTARY_REVIEW_PACKET"
       ],
-      "status": "PENDING_ORIGINAL_SOURCE_REVIEW",
+      "status": "OWNER_APPROVED_METHOD_ONLY_ORIGINALS_NOT_REVIEWED",
       "needs_owner": true,
       "needs_real_env": false,
       "execution_permitted": false
@@ -121,7 +121,7 @@
       "requires": [
         "P01_DOCUMENTARY_REVIEW_PACKET"
       ],
-      "status": "PENDING_SEPARATE_OBSERVATION_APPROVAL",
+      "status": "OWNER_APPROVED_PROTOCOL_ONLY_P05_PRECHECK_PENDING",
       "needs_owner": true,
       "needs_real_env": false,
       "execution_permitted": false
@@ -247,5 +247,11 @@
   "runtime_go_no_go": "NO_GO",
   "safety_hold_latched": true,
   "verified_values": null,
-  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "p02_reconciliation_method_owner_approved": true,
+  "p04_readonly_protocol_method_owner_approved": true,
+  "p02_p04_owner_method_decision_ref": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "p02_actual_originals_reviewed": false,
+  "p04_real_terminal_session_authorized": false,
+  "p05_environment_safety_verified": false
 }
