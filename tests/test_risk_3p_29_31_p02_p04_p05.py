@@ -35,18 +35,78 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         self.assertEqual(mod.snapshot()["runtime_go_no_go"], "NO_GO")
 
 
+
+    def test_p05_06_creation_supersedes_previous_no_folder_observation(self):
+        p = self.docs[mod.PLAN]
+        row = p["p05_checks"][5]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_FOLDER_CREATED_SECURITY_UNVERIFIED")
+        self.assertEqual(row["owner_reported_folder_creation"],
+                         mod.P05_06_FOLDER_CREATION_OWNER_REPORT)
+        self.assertEqual(
+            row["owner_reported_private_storage"],
+            mod.P05_06_PRIVATE_STORAGE_OWNER_REPORT)
+        self.assertFalse(row["p05_accepted"])
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertIsNone(row["evidence_reference"])
+        snap = mod.snapshot()
+        self.assertTrue(snap["p05_06_prior_absence_report_retained"])
+        self.assertTrue(snap["p05_06_owner_reported_folder_created"])
+        self.assertFalse(snap["p05_06_local_storage_ready"])
+        self.assertFalse(snap["p05_06_cloud_sync_absence_verified"])
+        self.assertFalse(snap["p05_06_windows_permissions_verified"])
+        self.assertFalse(snap["p05_06_confidential_collection_authorized"])
+        self.assertEqual(snap["p05_checks_passed"], 0)
+        self.assertEqual(snap["runtime_go_no_go"], "NO_GO")
+
+    def test_p05_06_owner_created_folder_never_becomes_verified_or_access_authority(self):
+        keys = (
+            "private_absolute_path_stored_in_git",
+            "private_path_repeated_in_documentation",
+            "independently_verified_on_windows",
+            "git_exclusion_independently_verified",
+            "cloud_sync_or_backup_absence_verified",
+            "windows_acl_and_sharing_verified",
+            "encryption_and_retention_policy_verified",
+            "sensitive_material_collection_authorized",
+            "private_data_collected_or_uploaded",
+            "folder_created_or_modified_by_assistant",
+            "p05_accepted",
+        )
+        for key in keys:
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN,
+                    lambda p, k=key: p["p05_checks"][5]
+                    ["owner_reported_folder_creation"].update({k: True}),
+                    "P05_06_FOLDER_CREATED_REPORT_FALSE_SECURITY_CERTIFICATION")
+        self.refuse(
+            mod.PLAN,
+            lambda p: p["p05_checks"][5]["owner_reported_folder_creation"]
+            .update(observation="INDEPENDENTLY_VERIFIED"),
+            "P05_06_FOLDER_CREATED_REPORT_FALSE_SECURITY_CERTIFICATION")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][5]
+            ["owner_reported_folder_creation"].update(
+                private_full_path="UNSAFE_PRIVATE_PATH_IN_GIT"),
+            "P05_06_FOLDER_CREATED_REPORT_FALSE_SECURITY_CERTIFICATION")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][5].update(p05_accepted=True),
+            "P05_PREMATURE_OR_UNVERIFIED:P05-06")
+
     def test_p05_06_owner_reports_no_private_storage_folder(self):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_NO_PRIVATE_EVIDENCE_FOLDER_NOT_READY")
+                         "OWNER_REPORTED_FOLDER_CREATED_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_private_storage"],
                          mod.P05_06_PRIVATE_STORAGE_OWNER_REPORT)
         self.assertFalse(row["p05_accepted"])
         self.assertFalse(row["safe_to_proceed"])
         self.assertIsNone(row["evidence_reference"])
         snap = mod.snapshot()
-        self.assertTrue(snap["p05_06_owner_reported_folder_absent"])
+        self.assertTrue(snap["p05_06_prior_absence_report_retained"])
+        self.assertTrue(snap["p05_06_owner_reported_folder_created"])
         self.assertFalse(snap["p05_06_local_storage_ready"])
         self.assertFalse(snap["p05_06_confidential_collection_authorized"])
         self.assertEqual(snap["p05_checks_passed"], 0)
