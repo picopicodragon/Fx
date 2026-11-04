@@ -42,6 +42,18 @@ P05_03_OWNER_REPORT = {
     "current_positions_or_pending_orders_independently_verified_absent": False,
     "not_a_broker_statement": True,
 }
+P05_01_ACCOUNT_CREATION_DATE_CORRECTION = {
+    "source": "USER_CORRECTED_ACCOUNT_CREATION_DATE_IN_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "corrected_creation_date": "2026-10-26",
+    "superseded_incorrect_date": "2026-11-26",
+    "date_is_owner_report_not_broker_proof": True,
+    "account_type_confirmed": False,
+    "same_as_previously_used_demo_account_confirmed": False,
+    "account_identity_independently_verified": False,
+    "server_account_reconciled": False,
+    "not_a_broker_statement": True,
+}
 P05_01_OWNER_REPORT = {
     "source": "USER_REPORT_IN_CURRENT_CHAT",
     "reported_on_jst_date": "2026-11-04",
@@ -154,6 +166,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 0 and row.get("owner_reported_account_creation") != P05_01_ACCOUNT_CREATION_DATE_CORRECTION:
+                    errors.append("P05_01_CREATION_DATE_OR_ACCOUNT_IDENTITY_OVERCLAIMED")
+                if i != 0 and "owner_reported_account_creation" in row:
+                    errors.append("P05_UNEXPECTED_ACCOUNT_CREATION_REPORT:" + P05_IDS[i])
                 if i == 0 and row.get("owner_reported_connection_display") != P05_01_OWNER_REPORT:
                     errors.append("P05_01_CONNECTION_UI_REPORT_OVERCLAIMED")
                 if i != 0 and "owner_reported_connection_display" in row:
@@ -261,6 +277,8 @@ def snapshot(root: Path = ROOT) -> dict:
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
         "p05_01_owner_reported_communicating_display": not errors,
+        "p05_01_owner_reported_creation_date": "2026-10-26" if not errors else None,
+        "p05_01_account_same_as_prior_demo_verified": False,
         "p05_01_account_and_server_verified": False,
         "p05_03_user_reported_no_order_rows_visible": not errors,
         "p05_03_broker_orders_confirmed_absent": False,
