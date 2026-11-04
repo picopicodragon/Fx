@@ -132,7 +132,7 @@ class G1OwnerReadinessTests(unittest.TestCase):
         self.bad(mod.GATES, lambda x: x["gaps"][8].update(
             release_blocker=False), "ONE_OR_MORE_G1_G9_GATES_RELEASED")
         self.bad(mod.GATES, lambda x: x["gaps"][0].update(
-            subject="新3ペア実証済み"), "HISTORICAL_G1_GATE_PROMOTED_OR_REWRITTEN")
+            subject="新3ペア実証済み"), "FORMAL_G1_SCOPE_OR_G1_STATUS_DRIFT")
         self.bad(mod.GATES, lambda x: x.update(phase_1="ACCEPTED"),
                  "FORMAL_RELEASE_GATE_FALSELY_ADVANCED")
 
