@@ -30,7 +30,7 @@ class Form01ThreePairEvidenceDraftTests(unittest.TestCase):
         self.assertIs(self.draft["safety_hold_latched"], True)
         self.assertEqual(self.draft["runtime_go_no_go"], "NO_GO")
 
-    def test_pair_scope_and_five_field_scope_cannot_drfit(self):
+    def test_pair_scope_and_five_field_scope_cannot_drift(self):
         self.changed(lambda x: x["target_pairs"].pop(), "G1_DESIGN_SCOPE_DRIFT")
         self.changed(lambda x: x["required_g1_five_fields"].pop(),
                      "G1_DESIGN_SCOPE_DRIFT")
@@ -82,6 +82,15 @@ class Form01ThreePairEvidenceDraftTests(unittest.TestCase):
                     lambda x, k=field, v=value: x["proposed_evidence_records"][2]
                     ["required_five"][0].update({k: v}),
                     "FALSE_FIVE_FIELD_EVIDENCE:EUR/USD:min_lot")
+
+    def test_falsely_confirmed_account_symbol_or_owner_evidence_rejected(self):
+        for field in ("real_symbol_identity_confirmed",
+                      "account_identity_confirmed", "owner_verified"):
+            with self.subTest(field=field):
+                self.changed(
+                    lambda x, k=field: x["proposed_evidence_records"][2]
+                    .update({k: True}),
+                    "FALSE_REAL_EVIDENCE:EUR/USD")
 
     def test_supplemental_tick_and_contract_fields_remain_unknown(self):
         self.changed(
