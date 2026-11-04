@@ -3,6 +3,12 @@
   "description": "Q109: source/test coverage by most-specific protected prefix. active means source + registered tests exist, not a safety approval. Trading-order components remain planned.",
   "offline_synthetic_mappings": [
     {
+      "source": "scripts/review_g1_synthetic_evidence_envelope.py",
+      "spec_ids": ["Q3", "Q6", "Q7", "Q13", "Q109", "Q116", "FX-SAF-001", "FX-SAF-002"],
+      "tests": ["tests/test_risk_3p_21_g1_synthetic_evidence_envelope.py"],
+      "production_authorized": false
+    },
+    {
       "source": "scripts/phase1_form08_10_synthetic_controls.py",
       "spec_ids": ["Q9", "Q11", "Q12", "Q14", "Q80", "Q109", "Q117", "Q118", "Q119", "Q122", "Q147"],
       "tests": ["tests/test_risk_3p_13_15_synthetic_controls.py"],
