@@ -91,7 +91,7 @@
   "manual_main_merge_required": true,
   "unreviewed_auto_merge_authorized": false,
   "owner_approval_recorded": false,
-  "g1_scope_revision_approved": false,
+  "g1_scope_revision_approved": true,
   "g1_real_world_verified": false,
   "fx_saf_implementation_approved": false,
   "module_acceptance_approved": false,
@@ -114,9 +114,11 @@
   },
   "limitations": [
     "43 FORM判断は既存ドラフトにおける各1選択肢の総数であり、本人決定・サインオフではない",
-    "G1 3×5は将来の提案範囲であり現行G1旧4×5の変更承認ではない",
+    "G1対象範囲は本人が3×5に承認済みだが、新15項目はすべて未実証・未受入。旧4×5=20の歴史は別snapshotで保存",
     "新EUR/USD取引属性とブローカー口座は未確認。仮定や旧ペア資料では代替不可",
     "OFFLINE pytest/unittest/PRチェック通過は取引安全の実証を意味しない",
     "FX-SAF-001〜015原議が未検証、G1〜G9未解決、PHASE-1 BLOCKED"
-  ]
+  ],
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "legacy_g1_snapshot_ref": "specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json"
 }
