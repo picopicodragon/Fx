@@ -70,7 +70,9 @@ def render(root: Path = ROOT) -> str:
                 "",
                 f"**審査する事項：** {item['original_question']}",
                 "",
-                f"**元ドラフトの提案：** {item['source_recommendation']}",
+                ("**元ドラフトの提案：** " + item["source_recommendation"]
+                 if item["source_recommendation"] is not None
+                 else "**元ドラフトの個別提案：未設定（本人判断待ち）**"),
                 "",
                 f"**原資料：** {item['source']}",
                 "",
