@@ -67,3 +67,5 @@ FORM-01〜10の43件には、本人の設計方針の個別判断、原議照合
 従来の原議と旧4ペア記録を保存し、未証明のUSD/JPY・EUR/JPY・EUR/USD属性を勝手に記載しない。実口座・発注・Cloud/EA操作は引き続き実施しない。
 
 **不変の安全要件：** 1取引損失≤純資産0.5%、建玉＋未約定＋候補の非相殺合算≤1.0%、日次1.5%、DD4%新規停止、DD5%全決済と本人承認。G1〜G9 UNRESOLVED、FX-SAF-001〜015未承認、PHASE-1 BLOCKED、runtime NO_GO、safety_hold_latched=true、verified_values=null。
+
+> **後続の本人決定による更新（2026-11-04、RISK-3P-28）**：当初この資料で未決としたP03「G1正式審査対象」は、本人が**新3ペア×主要5属性（計15項目）への変更を承認済み**。旧4×5の未解決記録は別snapshotに保存した。G1の実属性0/15・G1〜G9 UNRESOLVED・PHASE-1 BLOCKED・runtime NO_GOは不変。P02原議照合とP04実MT4非破壊観測の安全な個別許可は依然未決。参照：[G1範囲変更](risk_3p_28_g1_owner_scope_approval_20261104.md)。
