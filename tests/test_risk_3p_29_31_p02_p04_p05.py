@@ -37,10 +37,55 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
 
 
 
+
+    def test_p05_06_not_shared_owner_report_keeps_all_gates_blocked(self):
+        row = self.docs[mod.PLAN]["p05_checks"][5]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
+        self.assertEqual(row["owner_reported_network_sharing"],
+                         mod.P05_06_NETWORK_SHARING_OWNER_REPORT)
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertFalse(row["p05_accepted"])
+        self.assertIsNone(row["evidence_reference"])
+        state = mod.snapshot()
+        self.assertTrue(state["p05_06_owner_reported_not_network_shared"])
+        self.assertFalse(state["p05_06_network_sharing_independently_verified"])
+        self.assertFalse(state["p05_06_ntfs_acl_independently_verified"])
+        self.assertFalse(state["p05_06_local_storage_ready"])
+        self.assertFalse(state["p05_06_confidential_collection_authorized"])
+        self.assertEqual(state["p05_checks_passed"], 0)
+        self.assertEqual(state["runtime_go_no_go"], "NO_GO")
+
+    def test_p05_06_not_shared_ui_cannot_certify_acl_or_authorize_mt4(self):
+        fields = (
+            "windows_share_tab_display_independently_verified",
+            "effective_ntfs_acl_and_inheritance_verified",
+            "advanced_network_share_and_admin_share_absence_verified",
+            "remote_access_or_other_app_access_absence_verified",
+            "cloud_sync_or_backup_absence_independently_verified",
+            "private_data_access_and_retention_policy_approved",
+            "folder_sharing_modified_by_assistant",
+            "sensitive_evidence_collection_authorized",
+            "any_file_or_mt4_log_collected",
+            "p05_accepted",
+        )
+        for key in fields:
+            with self.subTest(key=key):
+                self.refuse(mod.PLAN, lambda p, k=key: p["p05_checks"][5]
+                            ["owner_reported_network_sharing"].update({k: True}),
+                            "P05_06_NOT_SHARED_FALSELY_TREATED_AS_ACCESS_CONTROL_PROOF")
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][5]
+                    ["owner_reported_network_sharing"].update(reported_state="VERIFIED"),
+                    "P05_06_NOT_SHARED_FALSELY_TREATED_AS_ACCESS_CONTROL_PROOF")
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][5].update(p05_accepted=True),
+                    "P05_PREMATURE_OR_UNVERIFIED:P05-06")
+        self.refuse(mod.PLAN, lambda p: p.update(p06_observation_authorized=True),
+                    "FALSE_REAL_OPERATION_AUTHORITY:p06_observation_authorized")
+
     def test_p05_06_no_cloud_sync_is_owner_report_only(self):
         row = self.docs[mod.PLAN]["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_FOLDER_CREATED_NO_CLOUD_SYNC_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_cloud_sync"],
                          mod.P05_06_CLOUD_SYNC_OWNER_REPORT)
         self.assertEqual(row["owner_reported_cloud_sync"]["reported_state"],
@@ -81,7 +126,7 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_FOLDER_CREATED_NO_CLOUD_SYNC_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_folder_creation"],
                          mod.P05_06_FOLDER_CREATION_OWNER_REPORT)
         self.assertEqual(
@@ -139,7 +184,7 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_FOLDER_CREATED_NO_CLOUD_SYNC_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_private_storage"],
                          mod.P05_06_PRIVATE_STORAGE_OWNER_REPORT)
         self.assertFalse(row["p05_accepted"])
