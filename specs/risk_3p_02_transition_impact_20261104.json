@@ -34,6 +34,7 @@
   "safety_hold_latched": true,
   "status": "INVENTORIED_NOT_MIGRATED",
   "legacy_code_paths": [
+    "scripts/audit_mt4_readonly_source.py",
     "scripts/validate_mt4_manual_symbol_specs.py",
     "scripts/mt4_manual_symbol_v2.py",
     "scripts/p0_01_offline_five_field_mock.py",
@@ -41,6 +42,12 @@
     "mt4/read_only/P0_01_ManualSymbolSnapshot_ReadOnly.mq4"
   ],
   "inventory": [
+    {
+      "path": "scripts/audit_mt4_readonly_source.py",
+      "category": "LEGACY_4P_CODE",
+      "next_action": "VERSION_REQUIRED",
+      "finding": "既存read-only MQL4ソースの旧4シンボル検査。新3ペア版MQL4の静的拒否監査は別版で追加。"
+    },
     {
       "path": "scripts/validate_mt4_manual_symbol_specs.py",
       "category": "LEGACY_4P_CODE",
