@@ -44,6 +44,23 @@ P05_01_DEMO_TYPE_REPORT = {
     "p05_accepted": False,
     "not_a_broker_statement": True,
 }
+P05_02_FACE_ICON_OWNER_REPORT = {
+    "source": "USER_EXPLICIT_REPLY_TO_P05_02_MACD_SAMPLE_FACE_ICON_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "view": "EXISTING_MT4_CHART_MACD_SAMPLE_NEARBY",
+    "display_observation": "SAD_FACE_ICON",
+    "classification": "OWNER_REPORTED_CHART_UI_ONLY",
+    "expert_advisor_attached_independently_verified": False,
+    "ea_execution_state_independently_verified": False,
+    "autotrading_permission_for_this_ea_independently_verified": False,
+    "all_ea_scripts_inactive_verified": False,
+    "server_order_or_position_absence_verified": False,
+    "account_or_broker_sync_independently_verified": False,
+    "chart_or_terminal_modified_by_assistant": False,
+    "p05_accepted": False,
+    "not_a_broker_or_execution_proof": True
+}
+
 P05_02_AUTOTRADING_OFF_OWNER_REPORT = {
     "source": "USER_EXPLICIT_OFF_REPLY_TO_P05_AUTOTRADING_UI_QUESTION",
     "reported_on_jst_date": "2026-11-04",
@@ -206,7 +223,7 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or plan.get("p05_total_checks") != 8
                 or plan.get("p05_passed_checks") != 0):
             errors.append("P05_UNJUSTIFIED_PRECHECK_PASS")
-        if plan.get("p05_current_observation_summary") != "OWNER_DEMO_SINGLE_MT4_MACD_VISIBLE_AUTOTRADING_OFF_COMMUNICATING_TRADE_TAB_BALANCE_ONLY_ALL_UI_REPORTS_NOT_SERVER_VERIFIED":
+        if plan.get("p05_current_observation_summary") != "OWNER_DEMO_SINGLE_MT4_MACD_VISIBLE_SAD_FACE_AUTOTRADING_OFF_COMMUNICATING_TRADE_TAB_BALANCE_ONLY_ALL_UI_REPORTS_NOT_SERVER_VERIFIED":
             errors.append("P05_UI_OBSERVATION_MISTAKEN_FOR_ACCOUNT_RECONCILIATION")
         checks = plan.get("p05_checks")
         if (type(checks) is not list or len(checks) != len(P05_IDS)
@@ -225,6 +242,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                     errors.append("P05_OTHER_CHECK_FALSELY_ATTESTED_DEMO:" + P05_IDS[i])
                 if i == 1 and row.get("owner_reported_ea_visibility") != P05_02_EA_VISIBLE_REPORT:
                     errors.append("P05_02_EA_VISIBILITY_FALSELY_INTERPRETED_AS_RUNNING")
+                if i == 1 and row.get("owner_reported_chart_ea_face_icon") != P05_02_FACE_ICON_OWNER_REPORT:
+                    errors.append("P05_02_FACE_ICON_FALSELY_TREATED_AS_EA_OR_ORDER_PROOF")
+                if i != 1 and "owner_reported_chart_ea_face_icon" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_REPORTS_EA_FACE_ICON:" + P05_IDS[i])
                 if i == 1 and row.get("owner_reported_autotrading_display") != P05_02_AUTOTRADING_OFF_OWNER_REPORT:
                     errors.append("P05_02_AUTOTRADING_OFF_FALSELY_TREATED_AS_EXECUTION_PROOF")
                 if i != 1 and "owner_reported_autotrading_display" in row:
@@ -345,6 +366,7 @@ def snapshot(root: Path = ROOT) -> dict:
         "p05_04_single_session_independently_verified": False,
         "p05_01_owner_reported_demo_account": not errors,
         "p05_02_macd_sample_visible_runtime_unverified": not errors,
+        "p05_02_sad_face_icon_owner_reported_not_execution_proof": not errors,
         "p05_02_autotrading_off_owner_reported_not_broker_verified": not errors,
         "p05_02_ea_or_orders_absent_verified": False,
         "p05_01_independent_account_identity_verified": False,
