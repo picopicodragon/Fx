@@ -209,6 +209,30 @@
       "category": "CURRENT_DESIGN_INDEX",
       "next_action": "KEEP_DESIGN_ONLY",
       "finding": "歴史的Q3はそのまま。3ペアの後続指示を末尾に追記済み。"
+    },
+    {
+      "path": "specs/mt4_manual_symbol_3p_v3_template.json",
+      "category": "CURRENT_3P_OFFLINE_V3",
+      "next_action": "KEEP_OFFLINE_ONLY",
+      "finding": "新3ペア・全観測値nullの独立入力テンプレ。旧v1/v2は非破壊で保持。"
+    },
+    {
+      "path": "scripts/review_mt4_manual_symbol_3p_v3.py",
+      "category": "CURRENT_3P_OFFLINE_V3",
+      "next_action": "KEEP_OFFLINE_ONLY",
+      "finding": "新3ペア独立形式検査。実契約照合や新規注文許可なし。"
+    },
+    {
+      "path": "tests/test_risk_3p_03_symbol_v3.py",
+      "category": "CURRENT_3P_OFFLINE_V3",
+      "next_action": "KEEP_OFFLINE_ONLY",
+      "finding": "新3ペアの未知属性・不正/偽の証拠・秘匿値非表示に関するオフライン検証。"
+    },
+    {
+      "path": "docs/risk_3p_03_symbol_v3_offline_20261104.md",
+      "category": "CURRENT_3P_OFFLINE_V3",
+      "next_action": "KEEP_OFFLINE_ONLY",
+      "finding": "3ペア契約入力スキーマと非承認境界の説明。"
     }
   ],
   "stage_order": [
@@ -244,5 +268,6 @@
     "Independent broker equity and all position/pending-order reconciliation, partial fills, unknown status",
     "Per-currency concentration and stress shock thresholds, signed exposure with contract units",
     "Owner approval of versioned FX-SAF-001/002 specifications and G1 3x5 scope; current formal G1 still 4x5 BLOCKED"
-  ]
+  ],
+  "risk_3p_03_progress": "OFFLINE_TEMPLATE_AND_FORMAT_REVIEW_ONLY_UNVERIFIED"
 }
