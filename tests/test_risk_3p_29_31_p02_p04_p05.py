@@ -34,6 +34,60 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         self.assertEqual(mod.snapshot()["audit_status"], "PASS_DOCUMENT_ONLY")
         self.assertEqual(mod.snapshot()["runtime_go_no_go"], "NO_GO")
 
+
+    def test_p05_06_owner_reports_no_private_storage_folder(self):
+        p = self.docs[mod.PLAN]
+        row = p["p05_checks"][5]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_NO_PRIVATE_EVIDENCE_FOLDER_NOT_READY")
+        self.assertEqual(row["owner_reported_private_storage"],
+                         mod.P05_06_PRIVATE_STORAGE_OWNER_REPORT)
+        self.assertFalse(row["p05_accepted"])
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertIsNone(row["evidence_reference"])
+        snap = mod.snapshot()
+        self.assertTrue(snap["p05_06_owner_reported_folder_absent"])
+        self.assertFalse(snap["p05_06_local_storage_ready"])
+        self.assertFalse(snap["p05_06_confidential_collection_authorized"])
+        self.assertEqual(snap["p05_checks_passed"], 0)
+        self.assertEqual(snap["runtime_go_no_go"], "NO_GO")
+
+    def test_p05_06_no_folder_must_not_grant_storage_or_mt4_access(self):
+        fields = (
+            "folder_path_disclosed",
+            "local_folder_independently_verified",
+            "out_of_repo_private_folder_ready",
+            "confidential_evidence_collection_authorized",
+            "any_log_or_screenshot_collected",
+            "filesystem_modified_by_assistant",
+            "p05_accepted",
+        )
+        for name in fields:
+            with self.subTest(name=name):
+                self.refuse(
+                    mod.PLAN,
+                    lambda p, k=name: p["p05_checks"][5]
+                    ["owner_reported_private_storage"].update({k: True}),
+                    "P05_06_OWNER_NO_FOLDER_FALSIFIED_OR_OVERCLAIMED")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][5]
+            ["owner_reported_private_storage"].update(
+                response="FOLDER_CREATED"),
+            "P05_06_OWNER_NO_FOLDER_FALSIFIED_OR_OVERCLAIMED")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][5].update(
+                current_status="STORAGE_VERIFIED"),
+            "P05_PREMATURE_OR_UNVERIFIED:P05-06")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][5].update(p05_accepted=True),
+            "P05_PREMATURE_OR_UNVERIFIED:P05-06")
+        self.refuse(
+            mod.PLAN, lambda p: p.update(p05_passed_checks=1),
+            "P05_UNJUSTIFIED_PRECHECK_PASS")
+        self.refuse(
+            mod.PLAN, lambda p: p.update(p06_observation_authorized=True),
+            "FALSE_REAL_OPERATION_AUTHORITY:p06_observation_authorized")
+
     def test_owner_reports_this_mt4_only_without_independent_session_proof(self):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][3]
