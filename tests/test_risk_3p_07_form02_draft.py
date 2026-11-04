@@ -66,7 +66,7 @@ class Form02DraftAuditTests(unittest.TestCase):
         self.changed(lambda d: d["review_scenarios"].pop(),
                      "SCENARIO_SET_INCOMPLETE")
         self.changed(lambda d: d["review_scenarios"][0].update(
-            order_kind="MARKET"), "SCENARIO_FALSE_POSITIVE")
+            order_kind="STOP_LIMIT"), "SCENARIO_FALSE_POSITIVE")
         self.changed(lambda d: d["review_scenarios"][0].update(
             live_risk_covered=True), "SCENARIO_FALSE_POSITIVE")
 
