@@ -36,11 +36,52 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
 
 
 
+
+    def test_p05_06_no_cloud_sync_is_owner_report_only(self):
+        row = self.docs[mod.PLAN]["p05_checks"][5]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_FOLDER_CREATED_NO_CLOUD_SYNC_SECURITY_UNVERIFIED")
+        self.assertEqual(row["owner_reported_cloud_sync"],
+                         mod.P05_06_CLOUD_SYNC_OWNER_REPORT)
+        self.assertEqual(row["owner_reported_cloud_sync"]["reported_state"],
+                         "NOT_SYNCED")
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertFalse(row["p05_accepted"])
+        snap = mod.snapshot()
+        self.assertTrue(snap["p05_06_owner_reported_no_cloud_sync"])
+        self.assertFalse(snap["p05_06_cloud_sync_absence_verified"])
+        self.assertFalse(snap["p05_06_windows_permissions_verified"])
+        self.assertFalse(snap["p05_06_confidential_collection_authorized"])
+        self.assertEqual(snap["p05_checks_passed"], 0)
+        self.assertEqual(snap["runtime_go_no_go"], "NO_GO")
+
+    def test_p05_06_no_sync_report_cannot_approve_storage_or_collection(self):
+        fields = ("service_or_folder_settings_independently_inspected",
+                  "windows_cloud_sync_or_backup_absence_independently_verified",
+                  "cloud_sync_setting_changed_by_assistant",
+                  "evidence_collected_or_uploaded",
+                  "sensitive_evidence_collection_authorized",
+                  "p05_accepted")
+        for key in fields:
+            with self.subTest(key=key):
+                self.refuse(mod.PLAN, lambda p, k=key: p["p05_checks"][5]
+                            ["owner_reported_cloud_sync"].update({k: True}),
+                            "P05_06_CLOUD_SYNC_REPORT_FALSELY_VERIFIED_OR_PROMOTED")
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][5]
+                    ["owner_reported_cloud_sync"].update(
+                        reported_state="VERIFIED_DISABLED"),
+                    "P05_06_CLOUD_SYNC_REPORT_FALSELY_VERIFIED_OR_PROMOTED")
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][5].update(
+                    current_status="ACCEPTED"),
+                    "P05_PREMATURE_OR_UNVERIFIED:P05-06")
+        self.refuse(mod.PLAN, lambda p: p.update(p06_observation_authorized=True),
+                    "FALSE_REAL_OPERATION_AUTHORITY:p06_observation_authorized")
+
     def test_p05_06_creation_supersedes_previous_no_folder_observation(self):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_FOLDER_CREATED_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_FOLDER_CREATED_NO_CLOUD_SYNC_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_folder_creation"],
                          mod.P05_06_FOLDER_CREATION_OWNER_REPORT)
         self.assertEqual(
@@ -98,7 +139,7 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_FOLDER_CREATED_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_FOLDER_CREATED_NO_CLOUD_SYNC_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_private_storage"],
                          mod.P05_06_PRIVATE_STORAGE_OWNER_REPORT)
         self.assertFalse(row["p05_accepted"])
