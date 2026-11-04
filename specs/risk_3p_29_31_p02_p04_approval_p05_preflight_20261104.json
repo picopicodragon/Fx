@@ -111,6 +111,19 @@
         "ea_changed_or_stopped": false,
         "order_risk_absence_verified": false,
         "not_a_runtime_execution_proof": true
+      },
+      "owner_reported_autotrading_display": {
+        "source": "USER_EXPLICIT_OFF_REPLY_TO_P05_AUTOTRADING_UI_QUESTION",
+        "reported_on_jst_date": "2026-11-04",
+        "display_observation": "AUTOTRADING_BUTTON_OFF",
+        "classification": "OWNER_REPORTED_UI_INDICATOR_ONLY",
+        "broker_execution_state_independently_verified": false,
+        "ea_or_script_activity_absent_verified": false,
+        "server_positions_or_pending_orders_absent_verified": false,
+        "button_or_ea_changed_by_assistant": false,
+        "account_identity_verified_by_report": false,
+        "p05_accepted": false,
+        "not_an_execution_or_broker_proof": true
       }
     },
     {
@@ -236,5 +249,5 @@
     "Whether positions or pending orders still exist in the demo environment; CURRENT UNKNOWN",
     "Whether an observation can be made without creating a second session or modifying any running EA/order; CURRENT UNKNOWN"
   ],
-  "p05_current_observation_summary": "OWNER_DEMO_TYPE_AND_SINGLE_MT4_ONLY_REPORTED_MACD_SAMPLE_VISIBLE_COMMUNICATING_UI_NO_TRADE_ROWS_NOT_SERVER_VERIFIED"
+  "p05_current_observation_summary": "OWNER_DEMO_SINGLE_MT4_MACD_VISIBLE_AUTOTRADING_OFF_COMMUNICATING_TRADE_TAB_BALANCE_ONLY_ALL_UI_REPORTS_NOT_SERVER_VERIFIED"
 }
