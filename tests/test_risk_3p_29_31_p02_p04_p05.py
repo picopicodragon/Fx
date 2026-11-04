@@ -122,6 +122,56 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
                     "P05_02_EA_VISIBILITY_FALSELY_INTERPRETED_AS_RUNNING")
 
 
+
+    def test_sad_face_icon_is_only_owner_ui_report(self):
+        p = self.docs[mod.PLAN]
+        row = p["p05_checks"][1]
+        self.assertEqual(row["owner_reported_chart_ea_face_icon"],
+                         mod.P05_02_FACE_ICON_OWNER_REPORT)
+        self.assertEqual(
+            row["owner_reported_chart_ea_face_icon"]["display_observation"],
+            "SAD_FACE_ICON")
+        self.assertEqual(row["owner_reported_autotrading_display"]
+                         ["display_observation"], "AUTOTRADING_BUTTON_OFF")
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertFalse(row["p05_accepted"])
+        snap = mod.snapshot()
+        self.assertTrue(snap["p05_02_sad_face_icon_owner_reported_not_execution_proof"])
+        self.assertFalse(snap["p05_02_ea_or_orders_absent_verified"])
+        self.assertEqual(snap["p05_checks_passed"], 0)
+        self.assertEqual(snap["runtime_go_no_go"], "NO_GO")
+
+    def test_sad_face_icon_cannot_be_ea_stop_broker_or_order_proof(self):
+        keys = (
+            "expert_advisor_attached_independently_verified",
+            "ea_execution_state_independently_verified",
+            "autotrading_permission_for_this_ea_independently_verified",
+            "all_ea_scripts_inactive_verified",
+            "server_order_or_position_absence_verified",
+            "account_or_broker_sync_independently_verified",
+            "chart_or_terminal_modified_by_assistant",
+            "p05_accepted",
+        )
+        for key in keys:
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN,
+                    lambda p, k=key: p["p05_checks"][1]
+                    ["owner_reported_chart_ea_face_icon"].update({k: True}),
+                    "P05_02_FACE_ICON_FALSELY_TREATED_AS_EA_OR_ORDER_PROOF")
+        self.refuse(mod.PLAN,
+                    lambda p: p["p05_checks"][1]
+                    ["owner_reported_chart_ea_face_icon"].update(
+                        display_observation="SMILING_FACE_ICON"),
+                    "P05_02_FACE_ICON_FALSELY_TREATED_AS_EA_OR_ORDER_PROOF")
+        self.refuse(mod.PLAN,
+                    lambda p: p["p05_checks"][1].update(
+                        current_status="EA_DISABLED_VERIFIED"),
+                    "P05_PREMATURE_OR_UNVERIFIED:P05-02")
+        self.refuse(mod.PLAN,
+                    lambda p: p.update(p05_passed_checks=1),
+                    "P05_UNJUSTIFIED_PRECHECK_PASS")
+
     def test_autotrading_off_ui_report_does_not_verify_ea_or_order_state(self):
         row = self.docs[mod.PLAN]["p05_checks"][1]
         self.assertEqual(row["owner_reported_autotrading_display"],
