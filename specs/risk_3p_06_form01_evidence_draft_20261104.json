@@ -1,0 +1,513 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-06-FORM01-CONTRACT-EVIDENCE-DRAFT",
+  "date": "2026-11-04",
+  "source_main_sha": "3e07f84554496265152762fd9e6e93550fecb402",
+  "scope": "OFFLINE_OWNER_REVIEW_AND_EVIDENCE_PLAN_ONLY",
+  "source_form_id": "FORM-01",
+  "related_spec_ids": [
+    "Q3",
+    "Q6",
+    "Q7",
+    "Q13",
+    "Q109",
+    "Q116",
+    "FX-SAF-001",
+    "FX-SAF-002",
+    "G1"
+  ],
+  "proposed_only": true,
+  "historical_g1_attribute_count": 20,
+  "target_g1_attribute_count": 15,
+  "legacy_g1_gate_scope_unchanged": true,
+  "g1_scope_revision_approved": false,
+  "form01_owner_decision": "NOT_RECORDED",
+  "form01_implementation_approved": false,
+  "fx_saf_implementation_approved": false,
+  "real_world_verified": false,
+  "production_authorized": false,
+  "broker_connection_authorized": false,
+  "terminal_execution_approved": false,
+  "stop_release_authorized": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "risk_caps_unmodified": {
+    "single_trade_fraction": "0.005",
+    "combined_fraction": "0.010",
+    "daily_fraction": "0.015",
+    "max_drawdown_fraction": "0.05"
+  },
+  "target_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "required_g1_five_fields": [
+    "min_lot",
+    "lot_step",
+    "point_quote",
+    "tick_size_points",
+    "tick_value_deposit_currency"
+  ],
+  "mandatory_reject_conditions": [
+    "UNKNOWN_CONTRACT_FIELD",
+    "MISSING_SYMBOL_IDENTITY",
+    "MISSING_ACCOUNT_ENVIRONMENT_IDENTITY",
+    "UNVERIFIABLE_DEPOSIT_CURRENCY_OR_TICK_UNIT",
+    "STALE_OR_MIXED_PROVENANCE",
+    "INCONSISTENT_LOT_GRID",
+    "UNKNOWN_STOP_OR_TRADE_MODE",
+    "CONTRACT_VALUE_CHANGED_WITHOUT_RECHECK",
+    "UNRECONCILED_ACCOUNT_OR_PENDING_ORDERS",
+    "OWNER_APPROVAL_NOT_RECORDED",
+    "G1_GATES_UNRESOLVED"
+  ],
+  "proposed_evidence_records": [
+    {
+      "pair": "USD/JPY",
+      "required_five": [
+        {
+          "field": "min_lot",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "lot_step",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "point_quote",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "tick_size_points",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "tick_value_deposit_currency",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        }
+      ],
+      "supplementary_checks": [
+        {
+          "field": "terminal_symbol",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "account_environment_identity",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "account_deposit_currency",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "base_units_per_lot",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "max_lot",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "digits",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "stop_level_points",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "freeze_level_points",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "trade_mode",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "execution_mode",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "server_stop_visibility",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "evidence_timestamp_utc",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "specification_source",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "contract_change_recheck",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        }
+      ],
+      "real_symbol_identity_confirmed": false,
+      "account_identity_confirmed": false,
+      "owner_verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "required_five": [
+        {
+          "field": "min_lot",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "lot_step",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "point_quote",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "tick_size_points",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "tick_value_deposit_currency",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        }
+      ],
+      "supplementary_checks": [
+        {
+          "field": "terminal_symbol",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "account_environment_identity",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "account_deposit_currency",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "base_units_per_lot",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "max_lot",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "digits",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "stop_level_points",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "freeze_level_points",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "trade_mode",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "execution_mode",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "server_stop_visibility",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "evidence_timestamp_utc",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "specification_source",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "contract_change_recheck",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        }
+      ],
+      "real_symbol_identity_confirmed": false,
+      "account_identity_confirmed": false,
+      "owner_verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "required_five": [
+        {
+          "field": "min_lot",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "lot_step",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "point_quote",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "tick_size_points",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        },
+        {
+          "field": "tick_value_deposit_currency",
+          "status": "PENDING_REAL_WORLD_EVIDENCE",
+          "verified_value": null,
+          "provenance_reference": null,
+          "observed_at_utc": null,
+          "independent_crosscheck": "NOT_PERFORMED"
+        }
+      ],
+      "supplementary_checks": [
+        {
+          "field": "terminal_symbol",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "account_environment_identity",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "account_deposit_currency",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "base_units_per_lot",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "max_lot",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "digits",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "stop_level_points",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "freeze_level_points",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "trade_mode",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "execution_mode",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "server_stop_visibility",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "evidence_timestamp_utc",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "specification_source",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        },
+        {
+          "field": "contract_change_recheck",
+          "status": "PENDING_REVIEW",
+          "verified_value": null,
+          "provenance_reference": null
+        }
+      ],
+      "real_symbol_identity_confirmed": false,
+      "account_identity_confirmed": false,
+      "owner_verified": false
+    }
+  ],
+  "owner_decisions_to_resolve": [
+    {
+      "id": "F01-1",
+      "question": "3ペアに対しどの環境のMT4属性を安全に観測するか。既存デモ口座はEA/建玉があり無断使用不可。",
+      "proposal": "口座同一性と単一セッションを示す事前確認・権限を分離してから別途本人が閲覧方式を承認。",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F01-2",
+      "question": "実MT4でEUR/USDのシンボル/契約サイズ/lot/point/tick・tick-valueの単位を何で確証するか。",
+      "proposal": "3ペア各5主要属性の時刻・情報源・別経路照合を要求し、数値未確認時は拒否。",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F01-3",
+      "question": "口座通貨とquote通貨、USD/JPY換算の整合をどの独立証拠で確認するか。",
+      "proposal": "EUR/USDのUSD建てquote損益とJPY入金通貨の換算経路を別のFORM-03で審査。",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F01-4",
+      "question": "契約属性の変更をどう検出し、いつ再検証するか。",
+      "proposal": "契約値/出典/バージョンが不明または変化したら保守的に新規拒否、再検証/本人承認待ち。",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F01-5",
+      "question": "0.01lot相当等の最小取引数量で10万円の0.5%を守れるか。",
+      "proposal": "ブローカー契約証拠とFORM-02/03/04/07の未承認計算結果が揃うまで評価不可。",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    }
+  ],
+  "known_legacy_limitations": [
+    "過去の4ペアの実口座目視報告は3ペアG1の契約確認を証明しない",
+    "RISK-3P-03のV3テンプレートは数値null、RISK-3P-04の損失計算は合成値のみ",
+    "PRマージとCI PASSはFORM-01、G1、FX-SAFの実装承認ではない"
+  ]
+}
