@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-16-17-OWNER-G1-READINESS-PREFLIGHT-20261104",
+  "recorded_at": "2026-11-04",
+  "scope": "OFFLINE_DOCUMENTARY_PRECHECK_ONLY",
+  "baseline_main_sha": "8ac478698d5f96bc05256cf6e13ac4eb110316ec",
+  "target_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "historic_g1_attributes": 20,
+  "proposed_g1_attributes": 15,
+  "g1_fields": [
+    "min_lot",
+    "lot_step",
+    "point_quote",
+    "tick_size_points",
+    "tick_value_deposit_currency"
+  ],
+  "form_ids": [
+    "FORM-01",
+    "FORM-02",
+    "FORM-03",
+    "FORM-04",
+    "FORM-05",
+    "FORM-06",
+    "FORM-07",
+    "FORM-08",
+    "FORM-09",
+    "FORM-10"
+  ],
+  "pending_owner_decisions_by_source": {
+    "specs/risk_3p_06_form01_evidence_draft_20261104.json": 5,
+    "specs/risk_3p_07_form02_stop_review_draft_20261104.json": 6,
+    "specs/risk_3p_08_12_form03_07_batch_review_20261104.json": 20,
+    "specs/risk_3p_13_15_form08_10_owner_review_20261104.json": 12
+  },
+  "source_review_priorities": "specs/source_review_priority.json",
+  "formal_g1_gate": "specs/p0_01_d5_25_gap_verification_matrix.json",
+  "expected_form_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+  "expected_fx_saf_original": "PENDING_ORIGINAL",
+  "expected_acceptance": "BLOCKED",
+  "evidence_lifecycle": [
+    {
+      "stage": "1-FORM-REVIEW",
+      "requirement": "10 FORM仕様の本人判断・原議照合・版管理",
+      "status": "PENDING_OWNER_DECISIONS",
+      "authorized": false
+    },
+    {
+      "stage": "2-G1-SCOPE",
+      "requirement": "歴史的4×5=20を保存したまま新3×5=15のG1正式範囲を別途本人承認",
+      "status": "PENDING_SCOPE_APPROVAL",
+      "authorized": false
+    },
+    {
+      "stage": "3-OBSERVATION",
+      "requirement": "MT4から許可された一意口座/シンボル/日時/単位/出典を取得する方式を安全審査",
+      "status": "PENDING_SEPARATE_REAL_ENVIRONMENT_AUTHORIZATION",
+      "authorized": false
+    },
+    {
+      "stage": "4-INDEPENDENT-CHECK",
+      "requirement": "EUR/USDを含む15項目の原証拠・時刻・契約変更・独立照合を本人確認",
+      "status": "PENDING_REAL_WORLD_EVIDENCE",
+      "authorized": false
+    },
+    {
+      "stage": "5-RISK-MODEL",
+      "requirement": "円換算・SL・費用・予約・net/gross・日次DD・鮮度の仕様をFX-SAFと照合・失敗系試験",
+      "status": "PENDING_IMPL_SPEC_APPROVAL",
+      "authorized": false
+    },
+    {
+      "stage": "6-ACCEPTANCE",
+      "requirement": "TASK/MODULE/PHASEを独立受入、全G1〜G9・FX-SAF後に別途稼働可否判断",
+      "status": "PENDING_INDEPENDENT_ACCEPTANCE",
+      "authorized": false
+    }
+  ],
+  "privacy_and_operation": {
+    "secrets_or_account_ids_to_github": false,
+    "private_mt4_snapshot_to_github": false,
+    "owner_approved_single_session": false,
+    "mt4_real_read_authorized": false,
+    "broker_trading_authorized": false,
+    "start_ea_authorized": false,
+    "open_additional_demo_account_authorized": false
+  },
+  "manual_main_merge_required": true,
+  "unreviewed_auto_merge_authorized": false,
+  "owner_approval_recorded": false,
+  "g1_scope_revision_approved": false,
+  "g1_real_world_verified": false,
+  "fx_saf_implementation_approved": false,
+  "module_acceptance_approved": false,
+  "phase_acceptance_approved": false,
+  "production_authorized": false,
+  "real_market_data_verified": false,
+  "order_allowed": false,
+  "stop_release_allowed": false,
+  "current_readiness": "BLOCKED_MISSING_ORIGINALS_AND_REAL_EVIDENCE",
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "unchanged_limits": {
+    "individual_fraction": "0.005",
+    "aggregate_fraction": "0.010",
+    "daily_fraction": "0.015",
+    "dd4_new_entry_stop": true,
+    "dd5_all_close_and_human_approval": true
+  },
+  "limitations": [
+    "43 FORM判断は既存ドラフトにおける各1選択肢の総数であり、本人決定・サインオフではない",
+    "G1 3×5は将来の提案範囲であり現行G1旧4×5の変更承認ではない",
+    "新EUR/USD取引属性とブローカー口座は未確認。仮定や旧ペア資料では代替不可",
+    "OFFLINE pytest/unittest/PRチェック通過は取引安全の実証を意味しない",
+    "FX-SAF-001〜015原議が未検証、G1〜G9未解決、PHASE-1 BLOCKED"
+  ]
+}
