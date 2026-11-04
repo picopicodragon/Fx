@@ -204,7 +204,7 @@
     {
       "check_id": "P05-06",
       "title": "Private evidence storage and minimization",
-      "current_status": "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED",
+      "current_status": "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED",
       "known_historical_condition": "NO_ACCOUNT_IDENTIFIERS_NO_PRIVATE_LOGS_IN_GITHUB",
       "required_for_future": "pre-identify safe local out-of-repo private storage and redaction",
       "evidence_reference": null,
@@ -269,6 +269,23 @@
         "folder_sharing_modified_by_assistant": false,
         "sensitive_evidence_collection_authorized": false,
         "any_file_or_mt4_log_collected": false,
+        "p05_accepted": false
+      },
+      "owner_reported_ntfs_everyone_visibility": {
+        "source": "USER_EXPLICIT_EVERYONE_NOT_VISIBLE_REPLY_TO_P05_06_SECURITY_TAB_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "display_observation": "EVERYONE_NOT_LISTED",
+        "classification": "OWNER_REPORTED_WINDOWS_SECURITY_TAB_UI_ONLY",
+        "unfamiliar_principals_present": "UNKNOWN_NOT_ANSWERED",
+        "individual_or_group_names_collected": false,
+        "windows_security_tab_independently_inspected": false,
+        "effective_acl_or_inherited_permissions_verified": false,
+        "other_builtin_group_or_unknown_account_absence_verified": false,
+        "principal_access_and_write_permissions_verified": false,
+        "network_or_remote_access_absence_verified": false,
+        "evidence_storage_security_approved": false,
+        "acl_or_folder_modified_by_assistant": false,
+        "confidential_data_collection_authorized": false,
         "p05_accepted": false
       }
     },
