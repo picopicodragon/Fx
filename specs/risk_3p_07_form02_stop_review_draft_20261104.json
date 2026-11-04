@@ -1,0 +1,325 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-07-FORM02-STOP-REVIEW-DRAFT-20261104",
+  "as_of": "2026-11-04",
+  "baseline_main_sha": "51a9b2ee6d500f0002065886a925345442ac6f66",
+  "scope": "SYNTHETIC_SHAPE_AND_OWNER_REVIEW_ONLY",
+  "source_form": "specs/p0_01_risk_formula_open_decisions.json",
+  "historical_form02_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+  "target_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "order_kinds": [
+    "MARKET",
+    "LIMIT",
+    "STOP"
+  ],
+  "stages": [
+    "CANDIDATE",
+    "PENDING",
+    "POSITION"
+  ],
+  "risk_limits_unchanged": {
+    "individual": "0.005",
+    "aggregate": "0.010",
+    "daily": "0.015",
+    "max_dd": "0.05"
+  },
+  "related_unresolved": [
+    "FORM-01",
+    "FORM-03",
+    "FORM-04",
+    "FORM-05",
+    "FORM-06",
+    "FORM-07",
+    "FORM-08",
+    "FORM-09",
+    "FORM-10",
+    "G1",
+    "FX-SAF-001",
+    "FX-SAF-002"
+  ],
+  "source_truth": "SYNTHETIC_INPUT_ONLY",
+  "owner_approval_recorded": false,
+  "form02_implementation_approved": false,
+  "broker_stop_verified": false,
+  "real_loss_bound_verified": false,
+  "real_world_evidence_verified": false,
+  "production_authorized": false,
+  "mt4_execution_authorized": false,
+  "order_allowed": false,
+  "stop_release_allowed": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "review_scenarios": [
+    {
+      "id": "SYNTHETIC_CANDIDATE_BUY_MARKET",
+      "stage": "CANDIDATE",
+      "side": "BUY",
+      "order_kind": "MARKET",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_CANDIDATE_BUY_LIMIT",
+      "stage": "CANDIDATE",
+      "side": "BUY",
+      "order_kind": "LIMIT",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_CANDIDATE_BUY_STOP",
+      "stage": "CANDIDATE",
+      "side": "BUY",
+      "order_kind": "STOP",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_CANDIDATE_SELL_MARKET",
+      "stage": "CANDIDATE",
+      "side": "SELL",
+      "order_kind": "MARKET",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_CANDIDATE_SELL_LIMIT",
+      "stage": "CANDIDATE",
+      "side": "SELL",
+      "order_kind": "LIMIT",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_CANDIDATE_SELL_STOP",
+      "stage": "CANDIDATE",
+      "side": "SELL",
+      "order_kind": "STOP",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_PENDING_BUY_LIMIT",
+      "stage": "PENDING",
+      "side": "BUY",
+      "order_kind": "LIMIT",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_PENDING_BUY_STOP",
+      "stage": "PENDING",
+      "side": "BUY",
+      "order_kind": "STOP",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_PENDING_SELL_LIMIT",
+      "stage": "PENDING",
+      "side": "SELL",
+      "order_kind": "LIMIT",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_PENDING_SELL_STOP",
+      "stage": "PENDING",
+      "side": "SELL",
+      "order_kind": "STOP",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_POSITION_BUY_MARKET",
+      "stage": "POSITION",
+      "side": "BUY",
+      "order_kind": "MARKET",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_POSITION_BUY_LIMIT",
+      "stage": "POSITION",
+      "side": "BUY",
+      "order_kind": "LIMIT",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_POSITION_BUY_STOP",
+      "stage": "POSITION",
+      "side": "BUY",
+      "order_kind": "STOP",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_POSITION_SELL_MARKET",
+      "stage": "POSITION",
+      "side": "SELL",
+      "order_kind": "MARKET",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_POSITION_SELL_LIMIT",
+      "stage": "POSITION",
+      "side": "SELL",
+      "order_kind": "LIMIT",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    },
+    {
+      "id": "SYNTHETIC_POSITION_SELL_STOP",
+      "stage": "POSITION",
+      "side": "SELL",
+      "order_kind": "STOP",
+      "expected_claim": "SHAPE_ONLY_NEVER_ORDER_ALLOWED",
+      "live_risk_covered": false
+    }
+  ],
+  "negative_scenarios": [
+    {
+      "id": "SL_MISSING",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "SL_WRONG_SIDE",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "ZERO_STOP_DISTANCE",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "MARKET_PLAN_NOT_GUARANTEED_FILL",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "PENDING_TRIGGER_MISSING",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "LIMIT_TRIGGER_WRONG_SIDE",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "STOP_TRIGGER_WRONG_SIDE",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "SERVER_STOP_NOT_CONFIRMED",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "STOP_REPLACE_UNACKNOWLEDGED",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "STOP_REMOVAL_UNCONFIRMED",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "PARTIAL_FILL_UNRECONCILED",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "CANCEL_REQUEST_PENDING",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "ORDER_OUTCOME_UNKNOWN",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "ADVERSE_GAP_OR_SLIPPAGE_UNKNOWN",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "QUOTE_EPOCH_MISMATCH",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "CROSSED_QUOTE",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    },
+    {
+      "id": "ACCOUNT_OR_INFLIGHT_STATE_UNKNOWN",
+      "expected": "DENY_NEW_ENTRY_NO_GO",
+      "real_world_verified": false
+    }
+  ],
+  "owner_decisions": [
+    {
+      "id": "F02-1",
+      "question": "成行・指値・逆指値の予定entry/triggerと実約定値を区別する基準は何か",
+      "recommendation": "成行/未約定では予定価格を保証約定値と扱わず、保有確認後は実約定価格に基づき再評価。注文種別とBUY/SELLを全件区別する",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F02-2",
+      "question": "server-side SLの有無・確認時刻・変更の受領を何で証明するか",
+      "recommendation": "SL不在/未確認/変更保留/サーバー状態不明では新規許可しない。保有済みポジションの保護・復旧は別安全仕様で判断",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F02-3",
+      "question": "pending trigger（BUY LIMIT/STOP、SELL LIMIT/STOP）の現在価格に対する相対関係と最小stop距離をどう確認するか",
+      "recommendation": "対象ブローカーのストップレベルとbid/askの実規則をG1/FORM-01の証拠で検証し、条件が不明なら新規拒否する",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F02-4",
+      "question": "部分約定・取消保留・未知の発注結果・SL変更中のリスク枠をどう扱うか",
+      "recommendation": "FORM-05/06の同一世代スナップショットと残余発注・建玉の独立照合ができないなら新規停止し、盲目的再送しない",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F02-5",
+      "question": "スリッページ・ギャップの有限な想定損失をどのように扱うか",
+      "recommendation": "SL価格を最大実現損失の保証とみなさず、有限保守見積りが正当化できなければリスク計算不能として新規拒否する。費用・JPY換算はFORM-03/04で別審査",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    },
+    {
+      "id": "F02-6",
+      "question": "保有建玉のSL変更、分割約定、再起動後の保護状態をどの優先順位で検証するか",
+      "recommendation": "本人承認済みの緊急保護・停止仕様を別途必要とし、オフライン形状PASSから実環境保護操作を自動実行しない",
+      "owner_status": "UNDECIDED",
+      "approval_reference": null
+    }
+  ],
+  "notes": [
+    "形状審査はSL損失額/実約定/JPY換算/ギャップを保証しない",
+    "3ペア新設計と歴史的4ペアQ3を混同しない",
+    "既存建玉に対する保護の緊急操作は今回の設計・コードで実行しない",
+    "全CI PASSも本人承認やG1〜G9解除を意味しない"
+  ]
+}
