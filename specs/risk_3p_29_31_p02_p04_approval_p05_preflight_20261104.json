@@ -45,7 +45,7 @@
     {
       "check_id": "P05-01",
       "title": "Existing demo account and environment identity",
-      "current_status": "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ACCOUNT_UNVERIFIED",
+      "current_status": "OWNER_REPORTED_DEMO_ACCOUNT_COMMUNICATING_IDENTITY_UNVERIFIED",
       "known_historical_condition": "DEMO_ACCOUNT_REPORTED_NO_CURRENT_ATTESTATION",
       "required_for_future": "human-confirmed account scope without identifiers; no new connection implied",
       "evidence_reference": null,
@@ -76,19 +76,42 @@
         "account_identity_independently_verified": false,
         "server_account_reconciled": false,
         "not_a_broker_statement": true
+      },
+      "owner_reported_account_type": {
+        "source": "USER_EXPLICIT_DEMO_ACCOUNT_REPLY_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "classification": "OWNER_ATTESTED_DEMO_ACCOUNT_TYPE_ONLY",
+        "account_type_owner_reported": "DEMO",
+        "creation_date_owner_reported": "2026-10-26",
+        "independent_broker_account_type_verified": false,
+        "same_as_historically_known_demo_login_verified": false,
+        "server_account_or_session_independently_verified": false,
+        "account_identifiers_disclosed": false,
+        "p05_accepted": false,
+        "not_a_broker_statement": true
       }
     },
     {
       "check_id": "P05-02",
       "title": "MACD Sample and other EA state",
-      "current_status": "CURRENT_STATE_UNKNOWN_PRIOR_MACD_SAMPLE_ATTACHED",
+      "current_status": "OWNER_REPORTED_MACD_SAMPLE_VISIBLE_RUNTIME_UNVERIFIED",
       "known_historical_condition": "PRIOR_EA_EXISTS_MACD_SAMPLE",
       "required_for_future": "prove planned observation cannot interfere with EA, without toggling it",
       "evidence_reference": null,
       "observation_at_utc": null,
       "reviewer_reference": null,
       "safe_to_proceed": false,
-      "p05_accepted": false
+      "p05_accepted": false,
+      "owner_reported_ea_visibility": {
+        "source": "USER_REPORTED_MACD_SAMPLE_VISIBLE_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "display_observation": "MACD_SAMPLE_VISIBLE",
+        "attachment_location_currently_verified": false,
+        "active_or_trading_verified": false,
+        "ea_changed_or_stopped": false,
+        "order_risk_absence_verified": false,
+        "not_a_runtime_execution_proof": true
+      }
     },
     {
       "check_id": "P05-03",
@@ -201,5 +224,5 @@
     "Whether positions or pending orders still exist in the demo environment; CURRENT UNKNOWN",
     "Whether an observation can be made without creating a second session or modifying any running EA/order; CURRENT UNKNOWN"
   ],
-  "p05_current_observation_summary": "P05_01_COMMUNICATION_UI_REPORTED_AND_P05_03_NO_ORDER_ROWS_VISIBLE_NOT_SERVER_VERIFIED"
+  "p05_current_observation_summary": "OWNER_DEMO_TYPE_REPORTED_MACD_SAMPLE_VISIBLE_COMMUNICATING_UI_NO_TRADE_ROWS_NOT_SERVER_VERIFIED"
 }
