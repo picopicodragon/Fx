@@ -25,7 +25,7 @@ P05_STATES = (
     "OWNER_REPORTED_DEMO_ACCOUNT_COMMUNICATING_IDENTITY_UNVERIFIED",
     "OWNER_REPORTED_MACD_SAMPLE_VISIBLE_RUNTIME_UNVERIFIED",
     "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
-    "CURRENT_SESSION_UNVERIFIED",
+    "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED",
     "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
     "LOCAL_GIT_EXTERNAL_STORAGE_NOT_CONFIRMED",
     "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
@@ -53,6 +53,18 @@ P05_02_EA_VISIBLE_REPORT = {
     "ea_changed_or_stopped": False,
     "order_risk_absence_verified": False,
     "not_a_runtime_execution_proof": True,
+}
+P05_04_SINGLE_SESSION_OWNER_REPORT = {
+    "source": "USER_EXPLICIT_CURRENT_MT4_ONLY_REPLY_IN_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "reported_usage": "CURRENT_MT4_ONLY",
+    "other_pc_or_mt4_same_demo_login_owner_reported": False,
+    "other_pc_or_mt4_same_demo_login_independently_verified_absent": False,
+    "login_session_count_broker_verified": False,
+    "different_demo_account_absence_independently_verified": False,
+    "demo_contract_compliance_independently_verified": False,
+    "additional_login_or_account_created_by_assistant": False,
+    "not_a_broker_statement": True,
 }
 P05_03_OWNER_REPORT = {
     "source": "USER_REPORT_IN_CURRENT_CHAT",
@@ -180,7 +192,7 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or plan.get("p05_total_checks") != 8
                 or plan.get("p05_passed_checks") != 0):
             errors.append("P05_UNJUSTIFIED_PRECHECK_PASS")
-        if plan.get("p05_current_observation_summary") != "OWNER_DEMO_TYPE_REPORTED_MACD_SAMPLE_VISIBLE_COMMUNICATING_UI_NO_TRADE_ROWS_NOT_SERVER_VERIFIED":
+        if plan.get("p05_current_observation_summary") != "OWNER_DEMO_TYPE_AND_SINGLE_MT4_ONLY_REPORTED_MACD_SAMPLE_VISIBLE_COMMUNICATING_UI_NO_TRADE_ROWS_NOT_SERVER_VERIFIED":
             errors.append("P05_UI_OBSERVATION_MISTAKEN_FOR_ACCOUNT_RECONCILIATION")
         checks = plan.get("p05_checks")
         if (type(checks) is not list or len(checks) != len(P05_IDS)
@@ -189,6 +201,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 3 and row.get("owner_reported_session_observation") != P05_04_SINGLE_SESSION_OWNER_REPORT:
+                    errors.append("P05_04_OWNER_SINGLE_SESSION_REPORT_OVERCLAIMED")
+                if i != 3 and "owner_reported_session_observation" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_SINGLE_SESSION_REPORTED:" + P05_IDS[i])
                 if i == 0 and row.get("owner_reported_account_type") != P05_01_DEMO_TYPE_REPORT:
                     errors.append("P05_01_DEMO_OWNER_ATTESTATION_OVERCLAIMED")
                 if i != 0 and "owner_reported_account_type" in row:
@@ -307,6 +323,8 @@ def snapshot(root: Path = ROOT) -> dict:
         "p04_real_mt4_session_allowed": False,
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
+        "p05_04_owner_reported_single_mt4_only": not errors,
+        "p05_04_single_session_independently_verified": False,
         "p05_01_owner_reported_demo_account": not errors,
         "p05_02_macd_sample_visible_runtime_unverified": not errors,
         "p05_01_independent_account_identity_verified": False,
