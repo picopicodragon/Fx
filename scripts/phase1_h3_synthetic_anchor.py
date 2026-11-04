@@ -64,7 +64,7 @@ def _valid(value: object) -> bool:
     s = value
     if not all(_snapshot_ok(x) for x in (s.local, s.witness, s.audit)):
         return False
-    if (s.phase not in _PHASES
+    if (type(s.phase) is not str or s.phase not in _PHASES
             or type(s.issuer_generation) is not int
             or s.issuer_generation < 1
             or type(s.revoked_generations) is not frozenset
@@ -159,6 +159,8 @@ def audit_result(state: object, outcome: object, request_id: object) -> Review:
         return _deny(None, "INVALID_STATE")
     if state.phase != "WITNESS_COMMITTED":
         return _deny(state, "WITNESS_COMMIT_NOT_CONFIRMED")
+    if state.issuer_generation in state.revoked_generations:
+        return _quarantine(state, "ISSUER_REVOKED")
     if request_id != state.request_id or type(request_id) is not str:
         return _quarantine(state, "AUDIT_REQUEST_MISMATCH")
     if outcome == "APPENDED":
@@ -185,6 +187,8 @@ def reconcile(state: object, journal: object, witness: object, audit: object,
         return _deny(None, "INVALID_STATE")
     if state.phase != "AUDIT_COMMITTED":
         return _deny(state, "RECONCILIATION_NOT_READY")
+    if state.issuer_generation in state.revoked_generations:
+        return _quarantine(state, "ISSUER_REVOKED")
     if (witness_available is not True or audit_available is not True
             or stop_tombstone_present is not True):
         return _quarantine(state, "EVIDENCE_OR_TOMBSTONE_MISSING")
