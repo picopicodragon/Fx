@@ -204,7 +204,7 @@
     {
       "check_id": "P05-06",
       "title": "Private evidence storage and minimization",
-      "current_status": "OWNER_REPORTED_NO_PRIVATE_EVIDENCE_FOLDER_NOT_READY",
+      "current_status": "OWNER_REPORTED_FOLDER_CREATED_SECURITY_UNVERIFIED",
       "known_historical_condition": "NO_ACCOUNT_IDENTIFIERS_NO_PRIVATE_LOGS_IN_GITHUB",
       "required_for_future": "pre-identify safe local out-of-repo private storage and redaction",
       "evidence_reference": null,
@@ -223,6 +223,24 @@
         "confidential_evidence_collection_authorized": false,
         "any_log_or_screenshot_collected": false,
         "filesystem_modified_by_assistant": false,
+        "p05_accepted": false
+      },
+      "owner_reported_folder_creation": {
+        "source": "USER_EXPLICIT_FOLDER_CREATED_REPLY_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "observation": "PRIVATE_EVIDENCE_FOLDER_CREATED_BY_OWNER",
+        "classification": "OWNER_ATTESTED_CREATION_NO_LOCAL_VERIFICATION",
+        "location_relation_from_owner_path": "SIBLING_OF_FX_REPOSITORY_BY_REPORTED_PATH_ONLY",
+        "private_absolute_path_stored_in_git": false,
+        "private_path_repeated_in_documentation": false,
+        "independently_verified_on_windows": false,
+        "git_exclusion_independently_verified": false,
+        "cloud_sync_or_backup_absence_verified": false,
+        "windows_acl_and_sharing_verified": false,
+        "encryption_and_retention_policy_verified": false,
+        "sensitive_material_collection_authorized": false,
+        "private_data_collected_or_uploaded": false,
+        "folder_created_or_modified_by_assistant": false,
         "p05_accepted": false
       }
     },
