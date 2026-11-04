@@ -69,14 +69,25 @@
     {
       "check_id": "P05-03",
       "title": "Open positions and pending orders",
-      "current_status": "CURRENT_STATE_UNKNOWN_PRIOR_POSITIONS_OR_ORDERS_YES",
+      "current_status": "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
       "known_historical_condition": "PRIOR_POSITIONS_OR_PENDING_ORDERS_YES",
       "required_for_future": "reconcile any existing orders before observing, no changes/close/cancel assumed",
       "evidence_reference": null,
       "observation_at_utc": null,
       "reviewer_reference": null,
       "safe_to_proceed": false,
-      "p05_accepted": false
+      "p05_accepted": false,
+      "owner_reported_ui_observation": {
+        "source": "USER_REPORT_IN_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "view": "MT4_TERMINAL_TRADE_TAB",
+        "observation": "BALANCE_ONLY_NO_POSITION_OR_PENDING_ORDER_ROWS_VISIBLE",
+        "account_identity_confirmed": false,
+        "server_order_state_reconciled": false,
+        "connection_status": "NOT_CONFIRMED",
+        "current_positions_or_pending_orders_independently_verified_absent": false,
+        "not_a_broker_statement": true
+      }
     },
     {
       "check_id": "P05-04",
@@ -165,5 +176,6 @@
     "Whether the previously reported MACD Sample is still attached or active; CURRENT UNKNOWN",
     "Whether positions or pending orders still exist in the demo environment; CURRENT UNKNOWN",
     "Whether an observation can be made without creating a second session or modifying any running EA/order; CURRENT UNKNOWN"
-  ]
+  ],
+  "p05_current_observation_summary": "P05-03_UI_ROWS_NOT_VISIBLE_ONLY_NOT_SERVER_ACCOUNT_RECONCILIATION"
 }
