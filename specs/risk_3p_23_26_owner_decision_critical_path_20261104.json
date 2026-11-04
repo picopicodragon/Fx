@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-23-26-OWNER-DECISION-CRITICAL-PATH-20261104",
+  "as_of": "2026-11-04",
+  "scope": "PROPOSED_PLANNING_DEPENDENCIES_NOT_APPROVED_EXECUTION_SEQUENCE",
+  "source_docket": "specs/risk_3p_22_form43_owner_review_docket_20261104.json",
+  "source_g1_rubric": "specs/risk_3p_20_g1_acceptance_rubric_20261104.json",
+  "source_g1_protocol": "specs/risk_3p_18_19_g1_readonly_provenance_protocol_20261104.json",
+  "source_acceptance_registry": "specs/acceptance_registry.json",
+  "form_ids": [
+    "FORM-01",
+    "FORM-02",
+    "FORM-03",
+    "FORM-04",
+    "FORM-05",
+    "FORM-06",
+    "FORM-07",
+    "FORM-08",
+    "FORM-09",
+    "FORM-10"
+  ],
+  "cohorts": [
+    {
+      "cohort_id": "D1_CONTRACT_SCOPE_AND_EVIDENCE",
+      "sequence": 1,
+      "forms": [
+        "FORM-01"
+      ],
+      "topic": "3ペアG1対象・実契約の証拠方針",
+      "decision_type": "OWNER_DESIGN_AND_SEPARATE_REAL_ENV_AUTH",
+      "proposal": "歴史的旧4×5 G1を残し、3×5の新G1案の改版・読取許可・独立証拠・単一セッションをそれぞれ別記録とする。未確認なら新規拒否。",
+      "evidence_gap": "G1新15属性の原値、出典、lot/point/tickの単位、EURUSD損益通貨と換算、正式口座同一性",
+      "may_prepare_offline": true,
+      "requires_human_spec_decision": true,
+      "requires_real_broker_evidence_for_final_acceptance": true
+    },
+    {
+      "cohort_id": "D2_PROTECTION_RECONCILIATION_AND_GROSS",
+      "sequence": 2,
+      "forms": [
+        "FORM-02",
+        "FORM-05",
+        "FORM-06"
+      ],
+      "topic": "SL・約定・建玉/未約定・予約の保護と非相殺リスク",
+      "decision_type": "OWNER_IMPL_POLICY_AND_REAL_ORDER_BEHAVIOR_EVIDENCE",
+      "proposal": "不明なサーバーSL/約定結果/送信中状態では新規拒否。部分約定、OCO、逆方向建玉も損失額を安易に相殺しない。既存建玉の保護は別仕様。",
+      "evidence_gap": "既存EA/注文の現況、server SL確認・失効やcancelの証拠、独立CAS/予約同期とギャップの扱い",
+      "may_prepare_offline": true,
+      "requires_human_spec_decision": true,
+      "requires_real_broker_evidence_for_final_acceptance": true
+    },
+    {
+      "cohort_id": "D3_CONVERSION_COST_AND_LOT_PRECISION",
+      "sequence": 3,
+      "forms": [
+        "FORM-03",
+        "FORM-04",
+        "FORM-07"
+      ],
+      "topic": "EUR/USD円換算、費用・lot grid・Decimal境界",
+      "decision_type": "OWNER_FORMULA_POLICY_AND_CONTRACT_PROVENANCE",
+      "proposal": "JPY換算bid/askは売買方向・正負・quote/口座通貨で別審査。費用二重計上/過小評価・数量切上げを拒否し、500/1000円の厳密比較を維持。",
+      "evidence_gap": "楽天MT4の契約/数量刻み・換算通貨、損益符号別レート、実スプレッド/コミッション/スワップ/SLギャップ",
+      "may_prepare_offline": true,
+      "requires_human_spec_decision": true,
+      "requires_real_broker_evidence_for_final_acceptance": true
+    },
+    {
+      "cohort_id": "D4_NY17_DD_TIME_LEDGER",
+      "sequence": 4,
+      "forms": [
+        "FORM-08",
+        "FORM-09",
+        "FORM-10"
+      ],
+      "topic": "日次1.5%、DD高水位、入出金調整、各入力の鮮度",
+      "decision_type": "OWNER_ACCOUNTING_CLOCK_AND_LATCH_POLICY",
+      "proposal": "NY17の凍結分母、DD4/5%停止、原本とHWM、再起動後停止ラッチを保持。どの価格・注文源にも共通TTLを推測しない。",
+      "evidence_gap": "取引カレンダー、口座損益/入出金の原帳簿、単位化の実記録、時計の障害・再起動試験と鮮度根拠",
+      "may_prepare_offline": true,
+      "requires_human_spec_decision": true,
+      "requires_real_broker_evidence_for_final_acceptance": true
+    }
+  ],
+  "proposed_dependency_nodes": [
+    {
+      "id": "P01_DOCUMENTARY_REVIEW_PACKET",
+      "name": "本PRの文書/CI/出典関係の整理",
+      "requires": [],
+      "status": "DOCUMENTATION_COMPLETE_NOT_APPROVAL",
+      "needs_owner": false,
+      "needs_real_env": false,
+      "execution_permitted": false
+    },
+    {
+      "id": "P02_OWNER_VERIFY_SOURCE_ORIGINALS",
+      "name": "FX-SAF-001〜015の原議と未決FORM原文の本人照合",
+      "requires": [
+        "P01_DOCUMENTARY_REVIEW_PACKET"
+      ],
+      "status": "PENDING_ORIGINAL_SOURCE_REVIEW",
+      "needs_owner": true,
+      "needs_real_env": false,
+      "execution_permitted": false
+    },
+    {
+      "id": "P03_OWNER_G1_SCOPE_DECISION",
+      "name": "旧4×5を保全した新3×5 G1正式対象の本人判断",
+      "requires": [
+        "P01_DOCUMENTARY_REVIEW_PACKET"
+      ],
+      "status": "PENDING_EXPLICIT_SCOPE_DECISION",
+      "needs_owner": true,
+      "needs_real_env": false,
+      "execution_permitted": false
+    },
+    {
+      "id": "P04_OWNER_READONLY_PROTOCOL_DECISION",
+      "name": "既存EA/建玉への干渉回避と単一セッションを含む実MT4閲覧方法の本人判断",
+      "requires": [
+        "P01_DOCUMENTARY_REVIEW_PACKET"
+      ],
+      "status": "PENDING_SEPARATE_OBSERVATION_APPROVAL",
+      "needs_owner": true,
+      "needs_real_env": false,
+      "execution_permitted": false
+    },
+    {
+      "id": "P05_SAFE_ENVIRONMENT_PRECHECK",
+      "name": "事前の現況照合・口座同一性・規約と保管方針の安全審査",
+      "requires": [
+        "P03_OWNER_G1_SCOPE_DECISION",
+        "P04_OWNER_READONLY_PROTOCOL_DECISION"
+      ],
+      "status": "PENDING_ENVIRONMENT_PRECHECK",
+      "needs_owner": true,
+      "needs_real_env": true,
+      "execution_permitted": false
+    },
+    {
+      "id": "P06_G1_PRIMARY_OBSERVATION",
+      "name": "承認された非破壊閲覧条件でのみ3ペア15項目の証拠を採取する将来工程",
+      "requires": [
+        "P05_SAFE_ENVIRONMENT_PRECHECK"
+      ],
+      "status": "PENDING_REAL_MT4_EVIDENCE",
+      "needs_owner": true,
+      "needs_real_env": true,
+      "execution_permitted": false
+    },
+    {
+      "id": "P07_G1_INDEPENDENT_VERIFICATION",
+      "name": "口座・銘柄・unit・UTC・発行者・契約変更の別経路照合",
+      "requires": [
+        "P06_G1_PRIMARY_OBSERVATION"
+      ],
+      "status": "PENDING_15_FIELD_INDEPENDENT_CHECK",
+      "needs_owner": true,
+      "needs_real_env": true,
+      "execution_permitted": false
+    },
+    {
+      "id": "P08_OWNER_FORM_POLICY_DECISIONS",
+      "name": "FORM-01〜10の43個の実装詳細と反証・失敗条件を本人が文書で決める",
+      "requires": [
+        "P02_OWNER_VERIFY_SOURCE_ORIGINALS"
+      ],
+      "status": "PENDING_43_OWNER_DECISIONS",
+      "needs_owner": true,
+      "needs_real_env": false,
+      "execution_permitted": false
+    },
+    {
+      "id": "P09_FORM_EVIDENCE_RECONCILIATION",
+      "name": "個別決定・G1証拠・SL/JPY換算/合算の実証を本人が照合",
+      "requires": [
+        "P07_G1_INDEPENDENT_VERIFICATION",
+        "P08_OWNER_FORM_POLICY_DECISIONS"
+      ],
+      "status": "PENDING_FORM_EVIDENCE_REVIEW",
+      "needs_owner": true,
+      "needs_real_env": true,
+      "execution_permitted": false
+    },
+    {
+      "id": "P10_SAFETY_IMPLEMENTATION_SIGNOFF",
+      "name": "安全重要実装・FX-SAFの原議一致と失敗試験について別途本人承認",
+      "requires": [
+        "P09_FORM_EVIDENCE_RECONCILIATION"
+      ],
+      "status": "PENDING_FX_SAF_IMPLEMENTATION_APPROVAL",
+      "needs_owner": true,
+      "needs_real_env": true,
+      "execution_permitted": false
+    },
+    {
+      "id": "P11_G2_G9_INDEPENDENT_GATE_REVIEWS",
+      "name": "G2〜G9の個別受入。G1とQ110の階層型検査を分離",
+      "requires": [
+        "P10_SAFETY_IMPLEMENTATION_SIGNOFF"
+      ],
+      "status": "PENDING_FORMAL_G2_G9_GATE_EVIDENCE",
+      "needs_owner": true,
+      "needs_real_env": true,
+      "execution_permitted": false
+    },
+    {
+      "id": "P12_MODULE_PHASE_ACCEPTANCE",
+      "name": "TASK/MODULE/PHASEを個別に確認し、停止解除は別の明示判断",
+      "requires": [
+        "P11_G2_G9_INDEPENDENT_GATE_REVIEWS"
+      ],
+      "status": "PENDING_Q110_INDEPENDENT_OWNER_ACCEPTANCE",
+      "needs_owner": true,
+      "needs_real_env": true,
+      "execution_permitted": false
+    }
+  ],
+  "owner_review_status": "NO_SPECIFICATION_DECISIONS_RECORDED",
+  "topological_plan_is_only_proposal": true,
+  "independent_human_go_decision_required": true,
+  "proposed_topological_stage_count": 12,
+  "total_owner_choices": 43,
+  "source_original_safety_requirements": 15,
+  "g1_target_field_count": 15,
+  "g1_fields_proved": 0,
+  "existing_g1_scope_status": "LEGACY_4x5_UNRESOLVED",
+  "proposed_g1_scope_status": "3x5_NOT_APPROVED",
+  "pr_merge_is_not_form_approval": true,
+  "potential_subsequent_branch_release_prohibited": true,
+  "real_mt4_observation_authorized": false,
+  "customer_account_data_ingested": false,
+  "automated_owner_approval_authorized": false,
+  "production_authorized": false,
+  "orders_authorized": false,
+  "stop_release_authorized": false,
+  "safety_gate_overrides_authorized": false,
+  "safety_caps": {
+    "individual_risk": "0.005",
+    "combined_risk": "0.010",
+    "daily_loss": "0.015",
+    "dd_level3_new_entries_halt": "0.04",
+    "max_dd": "0.05"
+  },
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null
+}
