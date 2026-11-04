@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-05-OWNER-REVIEW-20261104",
+  "as_of": "2026-11-04",
+  "baseline_main_sha": "4565d38fbc5dec625cb9d706d0f4ba23eacef969",
+  "scope": "OWNER_DECISION_PREPARATION_ONLY",
+  "source_register": "specs/p0_01_risk_formula_open_decisions.json",
+  "historic_pair_scope": [
+    "USD/JPY",
+    "EUR/JPY",
+    "GBP/USD",
+    "AUD/USD"
+  ],
+  "future_design_pair_scope": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "old_g1_attributes": 20,
+  "proposed_g1_attributes": 15,
+  "g1_scope_change_approved": false,
+  "g1_real_world_verified": false,
+  "owner_approval_recorded": false,
+  "fx_saf_implementation_approved": false,
+  "production_authorized": false,
+  "real_broker_or_cloud_actions_authorized": false,
+  "stop_release_authorized": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "hard_limits_unchanged": {
+    "trade": "0.005",
+    "aggregate": "0.010",
+    "daily": "0.015",
+    "drawdown": "0.05",
+    "dd4_new_entries_stopped": true
+  },
+  "previous_offline_test_scope": [
+    "RISK-3P-01",
+    "RISK-3P-02",
+    "RISK-3P-03",
+    "RISK-3P-04"
+  ],
+  "open_reviews": [
+    {
+      "id": "FORM-01",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Position size and symbol contract metadata",
+      "three_pair_impact": "DIRECT_CHANGE_REVIEW_REQUIRED",
+      "scope": "CONTRACT_AND_VOLUME",
+      "recommendation": "3ペアそれぞれについて口座同一性・実MT4シンボル名・1lot契約単位・min/max/step・point/tick価値・取引可否・証拠の出典時刻を揃える。未確認なら注文拒否。旧4ペアの値は新EUR/USDへ流用しない。",
+      "required_evidence": [
+        "3ペアの各5主要属性と実口座同一性の独立検証",
+        "新EUR/USD実シンボル・口座通貨・tick価値の出典と時刻",
+        "契約条件変更時の再審査・差異記録"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-02",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Stop-based expected risk formula by direction and order kind",
+      "three_pair_impact": "DIRECT_CHANGE_REVIEW_REQUIRED",
+      "scope": "STOP_DIRECTION",
+      "recommendation": "BUY/SELL、成行/指値/逆指値、既存建玉のstop位置・約定価格・pending発動価格を区別し、サーバー確認不能やSL不在の場合は注文拒否。想定SLでの約定を保証とみなさない。",
+      "required_evidence": [
+        "注文種別×方向×発動とSL位置の拒否試験",
+        "SL移動・削除・ギャップ・部分約定時の拒否仕様",
+        "ブローカー実環境での挙動証拠（別承認）"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-03",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Cross-currency conversion to JPY at one coherent risk epoch",
+      "three_pair_impact": "DIRECT_CHANGE_REVIEW_REQUIRED",
+      "scope": "JPY_CONVERSION",
+      "recommendation": "EUR/USDのUSD建て正の損失のJPY換算経路を含め、side別bid/ask、同じ意思決定世代、クロス価格の鮮度・取得元を仕様化。USD/JPY askの合成例は承認済み換算則ではない。",
+      "required_evidence": [
+        "USD建て損失→JPY側価格・符号・換算実装案の独立検算",
+        "実口座通貨とMT4 tick値の単位の検証",
+        "失効・欠損・交差価格・非同期quoteの拒否テスト"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-04",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Fees, spread, swap and stop slippage in planned-risk estimate",
+      "three_pair_impact": "DIRECT_CHANGE_REVIEW_REQUIRED",
+      "scope": "LOSSES_FEES_GAPS",
+      "recommendation": "スプレッド、手数料、スワップ、スリッページ/ギャップの別建てと二重計上を避ける設計を審査。上限を保守的に見積れない場合は新規拒否し、SL損失を保証最大損失とは呼ばない。",
+      "required_evidence": [
+        "費用項目の通貨・符号・計上タイミングの対応表",
+        "急変/ギャップの誤った有限保証を拒否する試験",
+        "入力欠損時のfail closed試験"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-05",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Single risk decision snapshot and concurrent new order reservations",
+      "three_pair_impact": "DIRECT_CHANGE_REVIEW_REQUIRED",
+      "scope": "SNAPSHOT_AND_RESERVATIONS",
+      "recommendation": "純資産・建玉・未約定・送信中・換算価格の同一世代を必要条件とし、発注競合で1%枠が二重消費されないことを証明する。再起動・結果不明時は自動再送禁止。",
+      "required_evidence": [
+        "注文ID/世代・保留/送信中・照合証跡",
+        "同時発注・取消と約定の競合/再起動試験",
+        "独立参照での口座状態の整合性証拠"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-06",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Aggregation with partial fills, opposite positions and pending-order contingencies",
+      "three_pair_impact": "DIRECT_CHANGE_REVIEW_REQUIRED",
+      "scope": "GROSS_NET_AND_CONTINGENCIES",
+      "recommendation": "新3ペアのUSD/EUR/JPYネット/グロスを併記し、円建て非相殺SLリスクは建玉＋未約定＋新規候補を合算。OCO/片側約定/取消未確認を理由に計上を減らさない。通貨集中上限・ストレス条件はまだ決定しない。",
+      "required_evidence": [
+        "三角関係/netゼロでもgross損失を残す試験",
+        "部分約定・両建て・cancel不確定・同時発動のシナリオ試験",
+        "集中閾値とストレス集合の本人による個別承認記録"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-07",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Precision, risk boundary, lot rounding and invalid quantities",
+      "three_pair_impact": "DIRECT_CHANGE_REVIEW_REQUIRED",
+      "scope": "DECIMAL_AND_LOT_GRID",
+      "recommendation": "契約ロットstep/min/maxに応じた数量境界を決め、投資リスクを減らす名目の未承認切り下げ/切り上げを行わない。Decimal比較で500.01円や1000.01円の超過を見落とさない。",
+      "required_evidence": [
+        "各銘柄のlot・契約単位とJPYの小数扱い",
+        "上限境界の単位試験および値の過小評価を拒否する試験",
+        "不正値・丸め・型変換と多重注文の拒否試験"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-08",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Daily net equity change, loss offset and independent PnL reconciliation",
+      "three_pair_impact": "RETAIN_EXISTING_GATE",
+      "scope": "DAILY_LOSS",
+      "recommendation": "従来のNY17日次始値・1.5%上限を維持。日次元本の入出金調整と損益照合の実装詳細を後続承認に留保。",
+      "required_evidence": [
+        "NY17/DST区切りと日次損益の外部照合",
+        "入出金による日次許容額の不正増加を防ぐテスト"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-09",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Unitized DD issuance/redemption, high-water and restart recovery",
+      "three_pair_impact": "RETAIN_EXISTING_GATE",
+      "scope": "DRAWDOWN",
+      "recommendation": "DD警戒2/3/4%、5%全決済停止、本人解除要件と高水位/外部入出金調整を維持。実装詳細は未決。",
+      "required_evidence": [
+        "高水位単位化・外部フローの照合",
+        "再起動後に停止ラッチが解除されない試験"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    },
+    {
+      "id": "FORM-10",
+      "original_owner_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "original_blocking": true,
+      "topic": "Per-data freshness and timebase / NY17 calendar",
+      "three_pair_impact": "RETAIN_EXISTING_GATE",
+      "scope": "FRESHNESS_AND_TIME",
+      "recommendation": "価格/契約/口座/注文の出典と時刻・世代を区別し、入力種別ごとの鮮度制限は別途承認。単一TTLを勝手に適用しない。",
+      "required_evidence": [
+        "価格とbroker口座データの独立時刻根拠",
+        "NY17/DSTと停止中の時刻・再評価条件の確認"
+      ],
+      "proposed_only": true,
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false,
+      "implementation_approved": false
+    }
+  ],
+  "decision_sequence": [
+    "A: confirm only the scope and owner-review wording, no safety approval",
+    "B: evidence-based FORM-01 to FORM-07 owner signoff by ID/version, keeping no order permission",
+    "C: separately verify 3x5 G1 contract evidence and reconcile old 4x5 scope with owner approval",
+    "D: validate FX-SAF-001/002 and other safety conditions with source and independent tests",
+    "E: separately authorize future read-only MT4 review and later operational gating"
+  ]
+}
