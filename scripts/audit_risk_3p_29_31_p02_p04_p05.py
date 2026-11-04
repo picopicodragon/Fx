@@ -22,8 +22,8 @@ SAFETY = "specs/source_review_priority.json"
 DOCKET = "specs/risk_3p_22_form43_owner_review_docket_20261104.json"
 P05_IDS = tuple(f"P05-{i:02d}" for i in range(1, 9))
 P05_STATES = (
-    "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ACCOUNT_UNVERIFIED",
-    "CURRENT_STATE_UNKNOWN_PRIOR_MACD_SAMPLE_ATTACHED",
+    "OWNER_REPORTED_DEMO_ACCOUNT_COMMUNICATING_IDENTITY_UNVERIFIED",
+    "OWNER_REPORTED_MACD_SAMPLE_VISIBLE_RUNTIME_UNVERIFIED",
     "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
     "CURRENT_SESSION_UNVERIFIED",
     "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
@@ -31,6 +31,29 @@ P05_STATES = (
     "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
     "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
 )
+P05_01_DEMO_TYPE_REPORT = {
+    "source": "USER_EXPLICIT_DEMO_ACCOUNT_REPLY_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "classification": "OWNER_ATTESTED_DEMO_ACCOUNT_TYPE_ONLY",
+    "account_type_owner_reported": "DEMO",
+    "creation_date_owner_reported": "2026-10-26",
+    "independent_broker_account_type_verified": False,
+    "same_as_historically_known_demo_login_verified": False,
+    "server_account_or_session_independently_verified": False,
+    "account_identifiers_disclosed": False,
+    "p05_accepted": False,
+    "not_a_broker_statement": True,
+}
+P05_02_EA_VISIBLE_REPORT = {
+    "source": "USER_REPORTED_MACD_SAMPLE_VISIBLE_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "display_observation": "MACD_SAMPLE_VISIBLE",
+    "attachment_location_currently_verified": False,
+    "active_or_trading_verified": False,
+    "ea_changed_or_stopped": False,
+    "order_risk_absence_verified": False,
+    "not_a_runtime_execution_proof": True,
+}
 P05_03_OWNER_REPORT = {
     "source": "USER_REPORT_IN_CURRENT_CHAT",
     "reported_on_jst_date": "2026-11-04",
@@ -157,7 +180,7 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or plan.get("p05_total_checks") != 8
                 or plan.get("p05_passed_checks") != 0):
             errors.append("P05_UNJUSTIFIED_PRECHECK_PASS")
-        if plan.get("p05_current_observation_summary") != "P05_01_COMMUNICATION_UI_REPORTED_AND_P05_03_NO_ORDER_ROWS_VISIBLE_NOT_SERVER_VERIFIED":
+        if plan.get("p05_current_observation_summary") != "OWNER_DEMO_TYPE_REPORTED_MACD_SAMPLE_VISIBLE_COMMUNICATING_UI_NO_TRADE_ROWS_NOT_SERVER_VERIFIED":
             errors.append("P05_UI_OBSERVATION_MISTAKEN_FOR_ACCOUNT_RECONCILIATION")
         checks = plan.get("p05_checks")
         if (type(checks) is not list or len(checks) != len(P05_IDS)
@@ -166,6 +189,14 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 0 and row.get("owner_reported_account_type") != P05_01_DEMO_TYPE_REPORT:
+                    errors.append("P05_01_DEMO_OWNER_ATTESTATION_OVERCLAIMED")
+                if i != 0 and "owner_reported_account_type" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_ATTESTED_DEMO:" + P05_IDS[i])
+                if i == 1 and row.get("owner_reported_ea_visibility") != P05_02_EA_VISIBLE_REPORT:
+                    errors.append("P05_02_EA_VISIBILITY_FALSELY_INTERPRETED_AS_RUNNING")
+                if i != 1 and "owner_reported_ea_visibility" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_REPORTS_EA:" + P05_IDS[i])
                 if i == 0 and row.get("owner_reported_account_creation") != P05_01_ACCOUNT_CREATION_DATE_CORRECTION:
                     errors.append("P05_01_CREATION_DATE_OR_ACCOUNT_IDENTITY_OVERCLAIMED")
                 if i != 0 and "owner_reported_account_creation" in row:
@@ -276,6 +307,9 @@ def snapshot(root: Path = ROOT) -> dict:
         "p04_real_mt4_session_allowed": False,
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
+        "p05_01_owner_reported_demo_account": not errors,
+        "p05_02_macd_sample_visible_runtime_unverified": not errors,
+        "p05_01_independent_account_identity_verified": False,
         "p05_01_owner_reported_communicating_display": not errors,
         "p05_01_owner_reported_creation_date": "2026-10-26" if not errors else None,
         "p05_01_account_same_as_prior_demo_verified": False,
