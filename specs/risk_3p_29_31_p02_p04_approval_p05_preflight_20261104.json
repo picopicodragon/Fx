@@ -64,6 +64,18 @@
         "order_state_synchronized_with_server_verified": false,
         "terminal_session_authorized_by_report": false,
         "not_a_broker_statement": true
+      },
+      "owner_reported_account_creation": {
+        "source": "USER_CORRECTED_ACCOUNT_CREATION_DATE_IN_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "corrected_creation_date": "2026-10-26",
+        "superseded_incorrect_date": "2026-11-26",
+        "date_is_owner_report_not_broker_proof": true,
+        "account_type_confirmed": false,
+        "same_as_previously_used_demo_account_confirmed": false,
+        "account_identity_independently_verified": false,
+        "server_account_reconciled": false,
+        "not_a_broker_statement": true
       }
     },
     {
