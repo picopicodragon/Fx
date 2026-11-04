@@ -139,14 +139,26 @@
     {
       "check_id": "P05-04",
       "title": "Single session and no second demo account",
-      "current_status": "CURRENT_SESSION_UNVERIFIED",
+      "current_status": "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED",
       "known_historical_condition": "SINGLE_SESSION_POLICY_NO_NEW_ACCOUNT",
       "required_for_future": "verify no parallel terminal/login, no new account, no conflict with demo terms",
       "evidence_reference": null,
       "observation_at_utc": null,
       "reviewer_reference": null,
       "safe_to_proceed": false,
-      "p05_accepted": false
+      "p05_accepted": false,
+      "owner_reported_session_observation": {
+        "source": "USER_EXPLICIT_CURRENT_MT4_ONLY_REPLY_IN_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "reported_usage": "CURRENT_MT4_ONLY",
+        "other_pc_or_mt4_same_demo_login_owner_reported": false,
+        "other_pc_or_mt4_same_demo_login_independently_verified_absent": false,
+        "login_session_count_broker_verified": false,
+        "different_demo_account_absence_independently_verified": false,
+        "demo_contract_compliance_independently_verified": false,
+        "additional_login_or_account_created_by_assistant": false,
+        "not_a_broker_statement": true
+      }
     },
     {
       "check_id": "P05-05",
@@ -224,5 +236,5 @@
     "Whether positions or pending orders still exist in the demo environment; CURRENT UNKNOWN",
     "Whether an observation can be made without creating a second session or modifying any running EA/order; CURRENT UNKNOWN"
   ],
-  "p05_current_observation_summary": "OWNER_DEMO_TYPE_REPORTED_MACD_SAMPLE_VISIBLE_COMMUNICATING_UI_NO_TRADE_ROWS_NOT_SERVER_VERIFIED"
+  "p05_current_observation_summary": "OWNER_DEMO_TYPE_AND_SINGLE_MT4_ONLY_REPORTED_MACD_SAMPLE_VISIBLE_COMMUNICATING_UI_NO_TRADE_ROWS_NOT_SERVER_VERIFIED"
 }
