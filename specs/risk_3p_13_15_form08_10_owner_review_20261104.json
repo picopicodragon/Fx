@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-13-15-FORM08-10-BATCH-OWNER-REVIEW-20261104",
+  "recorded_date": "2026-11-04",
+  "baseline_main_sha": "8ac478698d5f96bc05256cf6e13ac4eb110316ec",
+  "scope": "SYNTHETIC_DAY_DD_TIME_AND_OWNER_REVIEW_ONLY",
+  "forms": [
+    {
+      "risk_id": "RISK-3P-13",
+      "form_id": "FORM-08",
+      "title": "NY17 opening-equity based daily loss",
+      "recommendation": "NY17で凍結した期首純資産を説明用分母とし、合成入出金を調整した日次損失を厳密比較する。利益相殺・費用事後計上や補正の実運用方針は未決。",
+      "unresolved": [
+        "利益相殺をどこまで認めるか/損失計上と費用の有効時刻",
+        "入出金と各サーバー口座情報の有効時刻・翌日境界",
+        "独立ledger/口座照合と遅延補正・手動調整の許容と拒否閾値",
+        "NY17のDST週末/休日境界と凍結分母を本人承認する条件"
+      ],
+      "original_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "real_world_verified": false,
+      "implementation_approved": false,
+      "owner_approval_recorded": false
+    },
+    {
+      "risk_id": "RISK-3P-14",
+      "form_id": "FORM-09",
+      "title": "DD unitization high water and stop persistence",
+      "recommendation": "合成のunit価額と過去高水位からDD4%/5%を算術比較。外部キャッシュフロー後の口数計算やHWM永続化の実証は行わず、再起動後の停止状態も仮定を誤認しない。",
+      "unresolved": [
+        "初期単位価格・口数の発行償還と入出金/価額更新の順序",
+        "再起動/書込み不明時のHWM復旧、監査証拠と取引停止保持",
+        "ゼロ/負のequityおよび未確定価額の取扱いと人間承認要件",
+        "DD4/5%の一時回復でラッチ自動解除されないことを実環境で独立実証"
+      ],
+      "original_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "real_world_verified": false,
+      "implementation_approved": false,
+      "owner_approval_recorded": false
+    },
+    {
+      "risk_id": "RISK-3P-15",
+      "form_id": "FORM-10",
+      "title": "Per-source freshness and NY17 clock",
+      "recommendation": "口座・建玉・未約定・FX気配・換算・ledgerそれぞれのUTC証拠時刻/同一決定世代を要求する設計草案。全データに共通TTLを勝手に適用せず、実際の鮮度審査は未実装。",
+      "unresolved": [
+        "口座/pos/pending/quote/conversion/ledgerごとの鮮度上限の証拠・承認",
+        "NY17のDST・週末/休場・日付境界の正規化と誤時計対策",
+        "時計不連続やPC sleep/wake後のmonotonic/UTCと復帰拒否",
+        "DD2/3監視向けQ128の15秒条件を他の全項目へ流用しないルール"
+      ],
+      "original_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "real_world_verified": false,
+      "implementation_approved": false,
+      "owner_approval_recorded": false
+    }
+  ],
+  "owner_decisions": [
+    {
+      "id": "FORM08-1",
+      "question": "利益相殺をどこまで認めるか/損失計上と費用の有効時刻",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM08-2",
+      "question": "入出金と各サーバー口座情報の有効時刻・翌日境界",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM08-3",
+      "question": "独立ledger/口座照合と遅延補正・手動調整の許容と拒否閾値",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM08-4",
+      "question": "NY17のDST週末/休日境界と凍結分母を本人承認する条件",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM09-1",
+      "question": "初期単位価格・口数の発行償還と入出金/価額更新の順序",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM09-2",
+      "question": "再起動/書込み不明時のHWM復旧、監査証拠と取引停止保持",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM09-3",
+      "question": "ゼロ/負のequityおよび未確定価額の取扱いと人間承認要件",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM09-4",
+      "question": "DD4/5%の一時回復でラッチ自動解除されないことを実環境で独立実証",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM10-1",
+      "question": "口座/pos/pending/quote/conversion/ledgerごとの鮮度上限の証拠・承認",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM10-2",
+      "question": "NY17のDST・週末/休場・日付境界の正規化と誤時計対策",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM10-3",
+      "question": "時計不連続やPC sleep/wake後のmonotonic/UTCと復帰拒否",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    },
+    {
+      "id": "FORM10-4",
+      "question": "DD2/3監視向けQ128の15秒条件を他の全項目へ流用しないルール",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_verified": false
+    }
+  ],
+  "source_register": "specs/p0_01_risk_formula_open_decisions.json",
+  "only_examples": [
+    "NY17_DAY_ANCHOR_USING_SUPPLIED_UTC_AND_IANA_TZ",
+    "SYNTHETIC_CASHFLOW_ADJUSTMENT_NOT_APPROVED",
+    "SYNTHETIC_UNIT_VALUE_NOT_HWM_PROVENANCE",
+    "ALL_SOURCES_CAUSAL_SHAPE_NO_APPROVED_TTL"
+  ],
+  "existing_caps": {
+    "individual": "0.005",
+    "aggregate": "0.010",
+    "daily": "0.015",
+    "max_drawdown": "0.05",
+    "dd4_no_new_orders": true
+  },
+  "fx_saf_implementation_approved": false,
+  "g1_to_g9_real_world_verified": false,
+  "owner_approval_recorded": false,
+  "production_authorized": false,
+  "broker_connection_authorized": false,
+  "mt4_execution_authorized": false,
+  "order_allowed": false,
+  "stop_release_allowed": false,
+  "auto_resume_authorized": false,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "unresolved_dependencies": [
+    "FORM-01",
+    "FORM-02",
+    "FORM-03",
+    "FORM-04",
+    "FORM-05",
+    "FORM-06",
+    "FORM-07",
+    "G1",
+    "G6",
+    "FX-SAF-001",
+    "FX-SAF-002"
+  ],
+  "notes": [
+    "全データは合成値。口座通貨/現金フロー/価額単位/休場日と外部出典の検証なし",
+    "NY17夏冬時刻は合成UTCとAmerica/New_York zoneinfoの形式算術だけ",
+    "旧Q128 <=15秒はDD2/3監視解除専用であり注文・レート・ledgerの共通鮮度上限ではない",
+    "書込み成功・人間承認・実取引開始の許可はしない",
+    "まとめた開発PRのマージでも安全重要仕様は承認されない"
+  ]
+}
