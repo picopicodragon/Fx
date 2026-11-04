@@ -1,0 +1,133 @@
+{
+  "schema_version": 3,
+  "kind": "MT4_MANUAL_SYMBOL_PROPERTIES_3P_V3",
+  "scope": "OFFLINE_3P_DESIGN_INPUT_ONLY",
+  "source_type": "MT4_MARKET_WATCH_SPECIFICATION_MANUAL_ONLY",
+  "data_state": "UNVERIFIED_LOCAL_VALUES",
+  "instructions": "Offline design template. All numbers, exact terminal names, evidence time and source identity are UNKNOWN (null), never guessed or backfilled from historical four-pair samples. Copy completed private observations outside Git. No broker credentials, account identifiers, orders, personal information or screenshots. Structural validation never certifies broker data, risk limits or trading permission.",
+  "symbols": [
+    {
+      "symbol": "USD/JPY",
+      "observation": {
+        "terminal_symbol": null,
+        "observed_at_utc": null,
+        "source_kind": null
+      },
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      },
+      "display_properties": {
+        "spread_mode": null,
+        "margin_currency": null,
+        "profit_calculation_mode": null,
+        "margin_calculation_mode": null,
+        "hedged_margin_display": null,
+        "margin_rate_display": null,
+        "trade_mode_display": null,
+        "execution_mode_display": null,
+        "gtc_mode_display": null,
+        "trading_hours_display": {
+          "sunday": null,
+          "monday": null,
+          "tuesday": null,
+          "wednesday": null,
+          "thursday": null,
+          "friday": null,
+          "saturday": null
+        }
+      }
+    },
+    {
+      "symbol": "EUR/JPY",
+      "observation": {
+        "terminal_symbol": null,
+        "observed_at_utc": null,
+        "source_kind": null
+      },
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      },
+      "display_properties": {
+        "spread_mode": null,
+        "margin_currency": null,
+        "profit_calculation_mode": null,
+        "margin_calculation_mode": null,
+        "hedged_margin_display": null,
+        "margin_rate_display": null,
+        "trade_mode_display": null,
+        "execution_mode_display": null,
+        "gtc_mode_display": null,
+        "trading_hours_display": {
+          "sunday": null,
+          "monday": null,
+          "tuesday": null,
+          "wednesday": null,
+          "thursday": null,
+          "friday": null,
+          "saturday": null
+        }
+      }
+    },
+    {
+      "symbol": "EUR/USD",
+      "observation": {
+        "terminal_symbol": null,
+        "observed_at_utc": null,
+        "source_kind": null
+      },
+      "properties": {
+        "lot_size_base_units": null,
+        "min_lot": null,
+        "lot_step": null,
+        "max_lot": null,
+        "point_quote": null,
+        "digits": null,
+        "tick_size_points": null,
+        "tick_value_deposit_currency": null,
+        "stop_level_points": null,
+        "freeze_level_points": null,
+        "spread_points": null
+      },
+      "display_properties": {
+        "spread_mode": null,
+        "margin_currency": null,
+        "profit_calculation_mode": null,
+        "margin_calculation_mode": null,
+        "hedged_margin_display": null,
+        "margin_rate_display": null,
+        "trade_mode_display": null,
+        "execution_mode_display": null,
+        "gtc_mode_display": null,
+        "trading_hours_display": {
+          "sunday": null,
+          "monday": null,
+          "tuesday": null,
+          "wednesday": null,
+          "thursday": null,
+          "friday": null,
+          "saturday": null
+        }
+      }
+    }
+  ]
+}
