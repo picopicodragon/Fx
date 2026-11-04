@@ -121,6 +121,52 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
                     ["owner_reported_ea_visibility"].update({k: True}),
                     "P05_02_EA_VISIBILITY_FALSELY_INTERPRETED_AS_RUNNING")
 
+
+    def test_autotrading_off_ui_report_does_not_verify_ea_or_order_state(self):
+        row = self.docs[mod.PLAN]["p05_checks"][1]
+        self.assertEqual(row["owner_reported_autotrading_display"],
+                         mod.P05_02_AUTOTRADING_OFF_OWNER_REPORT)
+        self.assertEqual(
+            row["owner_reported_autotrading_display"]["display_observation"],
+            "AUTOTRADING_BUTTON_OFF")
+        self.assertFalse(row["p05_accepted"])
+        self.assertFalse(row["safe_to_proceed"])
+        snap = mod.snapshot()
+        self.assertTrue(snap["p05_02_autotrading_off_owner_reported_not_broker_verified"])
+        self.assertFalse(snap["p05_02_ea_or_orders_absent_verified"])
+        self.assertEqual(snap["p05_checks_passed"], 0)
+        self.assertEqual(snap["runtime_go_no_go"], "NO_GO")
+
+    def test_autotrading_off_report_cannot_promote_broker_proof_or_approval(self):
+        keys = (
+            "broker_execution_state_independently_verified",
+            "ea_or_script_activity_absent_verified",
+            "server_positions_or_pending_orders_absent_verified",
+            "button_or_ea_changed_by_assistant",
+            "account_identity_verified_by_report",
+            "p05_accepted",
+        )
+        for key in keys:
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN,
+                    lambda p, k=key: p["p05_checks"][1]
+                    ["owner_reported_autotrading_display"].update({k: True}),
+                    "P05_02_AUTOTRADING_OFF_FALSELY_TREATED_AS_EXECUTION_PROOF")
+        self.refuse(
+            mod.PLAN,
+            lambda p: p["p05_checks"][1]
+            ["owner_reported_autotrading_display"].update(
+                display_observation="AUTOTRADING_BUTTON_ON"),
+            "P05_02_AUTOTRADING_OFF_FALSELY_TREATED_AS_EXECUTION_PROOF")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][1].update(p05_accepted=True),
+            "P05_PREMATURE_OR_UNVERIFIED:P05-02")
+        self.refuse(
+            mod.PLAN, lambda p: p.update(
+                p05_current_observation_summary="BROKER_VERIFIED_SAFE"),
+            "P05_UI_OBSERVATION_MISTAKEN_FOR_ACCOUNT_RECONCILIATION")
+
     def test_corrected_account_creation_date_is_user_report_not_identity_evidence(self):
         check = self.docs[mod.PLAN]["p05_checks"][0]
         self.assertEqual(check["owner_reported_account_creation"],
