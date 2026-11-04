@@ -204,14 +204,27 @@
     {
       "check_id": "P05-06",
       "title": "Private evidence storage and minimization",
-      "current_status": "LOCAL_GIT_EXTERNAL_STORAGE_NOT_CONFIRMED",
+      "current_status": "OWNER_REPORTED_NO_PRIVATE_EVIDENCE_FOLDER_NOT_READY",
       "known_historical_condition": "NO_ACCOUNT_IDENTIFIERS_NO_PRIVATE_LOGS_IN_GITHUB",
       "required_for_future": "pre-identify safe local out-of-repo private storage and redaction",
       "evidence_reference": null,
       "observation_at_utc": null,
       "reviewer_reference": null,
       "safe_to_proceed": false,
-      "p05_accepted": false
+      "p05_accepted": false,
+      "owner_reported_private_storage": {
+        "source": "USER_EXPLICIT_NO_REPLY_TO_P05_06_PRIVATE_FOLDER_QUESTION",
+        "reported_on_jst_date": "2026-11-04",
+        "response": "NO_PRIVATE_EVIDENCE_FOLDER_PREPARED",
+        "classification": "OWNER_REPORT_ONLY_NO_FILESYSTEM_INSPECTION",
+        "folder_path_disclosed": false,
+        "local_folder_independently_verified": false,
+        "out_of_repo_private_folder_ready": false,
+        "confidential_evidence_collection_authorized": false,
+        "any_log_or_screenshot_collected": false,
+        "filesystem_modified_by_assistant": false,
+        "p05_accepted": false
+      }
     },
     {
       "check_id": "P05-07",
