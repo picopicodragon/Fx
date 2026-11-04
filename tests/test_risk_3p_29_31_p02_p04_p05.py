@@ -116,7 +116,7 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][0]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ACCOUNT_UNVERIFIED")
+                         "OWNER_REPORTED_DEMO_ACCOUNT_COMMUNICATING_IDENTITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_connection_display"],
                          mod.P05_01_OWNER_REPORT)
         self.assertFalse(row["safe_to_proceed"])
