@@ -149,7 +149,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or type(rubric.get("verified_count")) is not int
                 or rubric["verified_count"] != 0
                 or rubric.get("historical_g1") != "4_PAIRS_X_5_FIELDS_UNRESOLVED_PRESERVED"
-                or rubric.get("proposed_g1") != "3_PAIRS_X_5_FIELDS_NOT_APPROVED"):
+                or rubric.get("proposed_g1") != "3_PAIRS_X_5_FIELDS_OWNER_SCOPE_APPROVED_UNVERIFIED"
+                or rubric.get("g1_formal_scope_approved") is not True
+                or rubric.get("scope_decision_ref") !=
+                "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
             errors.append("G1_FIFTEEN_ITEM_SCOPE_DRIFT")
         if rubric.get("common_required_checks") != list(COMMON_CHECKS):
             errors.append("COMMON_EVIDENCE_CHECKS_DROPPED")
@@ -185,7 +188,7 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 "QUOTED_TICK_VALUE_IS_NOT_PROOF_OF_JPY_RISK"]):
             errors.append("DEPENDENT_GATES_DROPPED")
         expected_approvals = {
-            "human_review_signoff": False, "g1_formal_scope_approved": False,
+            "human_review_signoff": False,
             "market_watch_access_approved": False,
             "real_account_verification": False,
             "broker_contract_verified": False,
