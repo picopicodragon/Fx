@@ -34,6 +34,39 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         self.assertEqual(mod.snapshot()["audit_status"], "PASS_DOCUMENT_ONLY")
         self.assertEqual(mod.snapshot()["runtime_go_no_go"], "NO_GO")
 
+    def test_corrected_account_creation_date_is_user_report_not_identity_evidence(self):
+        check = self.docs[mod.PLAN]["p05_checks"][0]
+        self.assertEqual(check["owner_reported_account_creation"],
+                         mod.P05_01_ACCOUNT_CREATION_DATE_CORRECTION)
+        self.assertEqual(check["owner_reported_account_creation"]
+                         ["corrected_creation_date"], "2026-10-26")
+        self.assertEqual(check["owner_reported_account_creation"]
+                         ["superseded_incorrect_date"], "2026-11-26")
+        self.assertFalse(check["safe_to_proceed"])
+        self.assertFalse(check["p05_accepted"])
+        self.assertEqual(mod.snapshot()["p05_01_owner_reported_creation_date"],
+                         "2026-10-26")
+        self.assertFalse(mod.snapshot()["p05_01_account_same_as_prior_demo_verified"])
+        self.assertEqual(mod.snapshot()["p05_checks_passed"], 0)
+
+    def test_date_correction_cannot_falsely_verify_account_or_demo_identity(self):
+        for name in (
+            "account_type_confirmed",
+            "same_as_previously_used_demo_account_confirmed",
+            "account_identity_independently_verified",
+            "server_account_reconciled",
+        ):
+            with self.subTest(field=name):
+                self.refuse(
+                    mod.PLAN, lambda p, k=name: p["p05_checks"][0]
+                    ["owner_reported_account_creation"].update({k: True}),
+                    "P05_01_CREATION_DATE_OR_ACCOUNT_IDENTITY_OVERCLAIMED")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][0]
+            ["owner_reported_account_creation"].update(
+                corrected_creation_date="2026-11-26"),
+            "P05_01_CREATION_DATE_OR_ACCOUNT_IDENTITY_OVERCLAIMED")
+
     def test_connection_display_is_user_report_not_server_or_account_verification(self):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][0]
