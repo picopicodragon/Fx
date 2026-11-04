@@ -252,6 +252,30 @@ class H3SyntheticAnchorTests(unittest.TestCase):
                 self.assertEqual(r.reason, "INVALID_STATE")
                 self.held(r)
 
+
+    def test_revoked_issuer_after_commit_cannot_write_audit(self):
+        tampered = replace(committed(), revoked_generations=frozenset({1}))
+        r = audit_result(tampered, "APPENDED", "request-1")
+        self.assertEqual(r.reason, "ISSUER_REVOKED")
+        self.assertEqual(r.state.phase, "QUARANTINED")
+        self.held(r)
+
+    def test_revoked_issuer_after_audit_cannot_reconcile(self):
+        tampered = replace(audited(), revoked_generations=frozenset({1}))
+        r = reconcile(tampered, tampered.witness, tampered.witness,
+                      tampered.audit, witness_available=True,
+                      audit_available=True, stop_tombstone_present=True)
+        self.assertEqual(r.reason, "ISSUER_REVOKED")
+        self.assertEqual(r.state.phase, "QUARANTINED")
+        self.held(r)
+
+    def test_unhashable_phase_is_invalid_and_does_not_raise(self):
+        tampered = replace(SyntheticAnchor(), phase=["PREPARED"])
+        r = prepare(tampered, "r", "new", 1)
+        self.assertFalse(r.advanced)
+        self.assertEqual(r.reason, "INVALID_STATE")
+        self.held(r)
+
     def test_outcome_injection_does_not_count_as_success(self):
         s = prepared()
         for outcome in (None, 1, True, "REPLAY", "ACK", "COMMIT"):
