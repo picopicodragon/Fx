@@ -253,6 +253,9 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
         if (module.get("status") != "BLOCKED" or module.get("approval") is not None
                 or phase.get("status") != "BLOCKED" or phase.get("approval") is not None):
             errors.append("Q110_MODULE_OR_PHASE_FALSELY_ACCEPTED")
+        if (plan.get("g1_scope_decision_ref") !=
+                "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
+            errors.append("G1_APPROVED_SCOPE_REFERENCE_MISSING")
         if injected is None and prior_audit(root):
             errors.append("PRIOR_FORM_AND_G1_AUDIT_FAILED")
     except (OSError, KeyError, ValueError, TypeError,
@@ -279,7 +282,10 @@ def snapshot(root: Path = ROOT) -> dict:
         "documentary_preparation_complete": ["P01_DOCUMENTARY_REVIEW_PACKET"],
         "proposed_next_human_review_entries": list(HUMAN_FIRST),
         "remaining_unapproved": [row["id"]
-                                 for row in plan["proposed_dependency_nodes"][1:]],
+                                 for row in plan["proposed_dependency_nodes"][1:]
+                                 if row["id"] != "P03_OWNER_G1_SCOPE_DECISION"],
+        "g1_review_scope_owner_approved": True,
+        "g1_real_world_evidence_verified": False,
         "owner_decisions_pending": 43,
         "g1_real_fields_verified": 0,
         "fx_saf_originals_reviewed": 0,
