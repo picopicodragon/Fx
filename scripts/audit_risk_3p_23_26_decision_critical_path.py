@@ -32,11 +32,11 @@ COHORTS = (
 NODES = (
     ("P01_DOCUMENTARY_REVIEW_PACKET", (), "DOCUMENTATION_COMPLETE_NOT_APPROVAL"),
     ("P02_OWNER_VERIFY_SOURCE_ORIGINALS",
-     ("P01_DOCUMENTARY_REVIEW_PACKET",), "PENDING_ORIGINAL_SOURCE_REVIEW"),
+     ("P01_DOCUMENTARY_REVIEW_PACKET",), "OWNER_APPROVED_METHOD_ONLY_ORIGINALS_NOT_REVIEWED"),
     ("P03_OWNER_G1_SCOPE_DECISION",
      ("P01_DOCUMENTARY_REVIEW_PACKET",), "OWNER_APPROVED_SCOPE_ONLY_NO_EVIDENCE"),
     ("P04_OWNER_READONLY_PROTOCOL_DECISION",
-     ("P01_DOCUMENTARY_REVIEW_PACKET",), "PENDING_SEPARATE_OBSERVATION_APPROVAL"),
+     ("P01_DOCUMENTARY_REVIEW_PACKET",), "OWNER_APPROVED_PROTOCOL_ONLY_P05_PRECHECK_PENDING"),
     ("P05_SAFE_ENVIRONMENT_PRECHECK",
      ("P03_OWNER_G1_SCOPE_DECISION",
       "P04_OWNER_READONLY_PROTOCOL_DECISION"), "PENDING_ENVIRONMENT_PRECHECK"),
@@ -66,7 +66,7 @@ CAPS = {"individual_risk": "0.005",
         "max_dd": "0.05"}
 HUMAN_FIRST = (
     "P02_OWNER_VERIFY_SOURCE_ORIGINALS",
-    "P04_OWNER_READONLY_PROTOCOL_DECISION",
+    "P05_SAFE_ENVIRONMENT_PRECHECK",
 )
 
 
@@ -253,6 +253,14 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
         if (module.get("status") != "BLOCKED" or module.get("approval") is not None
                 or phase.get("status") != "BLOCKED" or phase.get("approval") is not None):
             errors.append("Q110_MODULE_OR_PHASE_FALSELY_ACCEPTED")
+        if (plan.get("p02_reconciliation_method_owner_approved") is not True
+                or plan.get("p04_readonly_protocol_method_owner_approved") is not True
+                or plan.get("p02_p04_owner_method_decision_ref") !=
+                "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json"
+                or plan.get("p02_actual_originals_reviewed") is not False
+                or plan.get("p04_real_terminal_session_authorized") is not False
+                or plan.get("p05_environment_safety_verified") is not False):
+            errors.append("P02_P04_METHOD_APPROVAL_SCOPE_MISSING")
         if (plan.get("g1_scope_decision_ref") !=
                 "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
             errors.append("G1_APPROVED_SCOPE_REFERENCE_MISSING")
@@ -285,6 +293,10 @@ def snapshot(root: Path = ROOT) -> dict:
                                  for row in plan["proposed_dependency_nodes"][1:]
                                  if row["id"] != "P03_OWNER_G1_SCOPE_DECISION"],
         "g1_review_scope_owner_approved": True,
+        "p02_original_reconciliation_method_owner_approved": True,
+        "p02_real_originals_verified": 0,
+        "p04_readonly_method_owner_approved": True,
+        "p05_environment_precheck_passed": False,
         "g1_real_world_evidence_verified": False,
         "owner_decisions_pending": 43,
         "g1_real_fields_verified": 0,
