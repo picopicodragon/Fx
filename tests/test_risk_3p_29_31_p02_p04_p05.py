@@ -34,6 +34,42 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         self.assertEqual(mod.snapshot()["audit_status"], "PASS_DOCUMENT_ONLY")
         self.assertEqual(mod.snapshot()["runtime_go_no_go"], "NO_GO")
 
+    def test_balance_only_trade_tab_report_does_not_verify_server_orders(self):
+        p = self.docs[mod.PLAN]
+        row = p["p05_checks"][2]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE")
+        self.assertEqual(row["owner_reported_ui_observation"],
+                         mod.P05_03_OWNER_REPORT)
+        self.assertFalse(row["p05_accepted"])
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertIsNone(row["observation_at_utc"])
+        self.assertEqual(p["p05_passed_checks"], 0)
+        state = mod.snapshot()
+        self.assertTrue(state["p05_03_user_reported_no_order_rows_visible"])
+        self.assertFalse(state["p05_03_broker_orders_confirmed_absent"])
+        self.assertFalse(state["p04_real_mt4_session_allowed"])
+
+    def test_trade_tab_row_report_cannot_be_treated_as_broker_reconciliation(self):
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][2]
+                    ["owner_reported_ui_observation"].update(
+                        server_order_state_reconciled=True),
+                    "P05_03_UI_REPORT_FALSIFIED_OR_OVERCLAIMED")
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][2]
+                    ["owner_reported_ui_observation"].update(
+                        account_identity_confirmed=True),
+                    "P05_03_UI_REPORT_FALSIFIED_OR_OVERCLAIMED")
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][2]
+                    ["owner_reported_ui_observation"].update(
+                        connection_status="CONNECTED"),
+                    "P05_03_UI_REPORT_FALSIFIED_OR_OVERCLAIMED")
+        self.refuse(mod.PLAN, lambda p: p.update(
+                        p05_current_observation_summary="SERVER_ORDERS_ZERO"),
+                    "P05_UI_OBSERVATION_MISTAKEN_FOR_ACCOUNT_RECONCILIATION")
+        self.refuse(mod.PLAN, lambda p: p["p05_checks"][2].update(
+                        p05_accepted=True),
+                    "P05_PREMATURE_OR_UNVERIFIED:P05-03")
+
     def test_owner_provenance_must_be_current_explicit_turn(self):
         self.refuse(mod.PLAN, lambda p: p.update(
             source="AI_INFERRED_COMPLIANCE"),
