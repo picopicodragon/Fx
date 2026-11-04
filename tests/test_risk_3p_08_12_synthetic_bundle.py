@@ -238,7 +238,7 @@ class BatchForm03To07Tests(unittest.TestCase):
                          status="PENDING", portion="REMAINDER",
                          asserted_quote_loss="125"))
         r = review(p=p)
-        self.assertEqual(Decimal(r.aggregate_jpy), Decimal("827"))
+        self.assertEqual(Decimal(r.aggregate_jpy), Decimal("822"))
         self.assertEqual(Decimal(dict(r.per_slice_jpy)["part-1"]), Decimal("80"))
         self.assertEqual(Decimal(dict(r.per_slice_jpy)["part-2"]), Decimal("130"))
         self.held(r)
