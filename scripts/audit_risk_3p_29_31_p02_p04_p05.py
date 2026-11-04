@@ -22,7 +22,7 @@ SAFETY = "specs/source_review_priority.json"
 DOCKET = "specs/risk_3p_22_form43_owner_review_docket_20261104.json"
 P05_IDS = tuple(f"P05-{i:02d}" for i in range(1, 9))
 P05_STATES = (
-    "CURRENT_STATE_UNKNOWN_PRIOR_DEMO_EVIDENCE_ONLY",
+    "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ACCOUNT_UNVERIFIED",
     "CURRENT_STATE_UNKNOWN_PRIOR_MACD_SAMPLE_ATTACHED",
     "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
     "CURRENT_SESSION_UNVERIFIED",
@@ -38,8 +38,20 @@ P05_03_OWNER_REPORT = {
     "observation": "BALANCE_ONLY_NO_POSITION_OR_PENDING_ORDER_ROWS_VISIBLE",
     "account_identity_confirmed": False,
     "server_order_state_reconciled": False,
-    "connection_status": "NOT_CONFIRMED",
+    "connection_status": "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ONLY",
     "current_positions_or_pending_orders_independently_verified_absent": False,
+    "not_a_broker_statement": True,
+}
+P05_01_OWNER_REPORT = {
+    "source": "USER_REPORT_IN_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "display_report": "MT4_COMMUNICATING",
+    "classification": "UI_REPORTED_COMMUNICATION_ONLY",
+    "account_type_confirmed": False,
+    "account_identity_confirmed": False,
+    "server_connection_independently_verified": False,
+    "order_state_synchronized_with_server_verified": False,
+    "terminal_session_authorized_by_report": False,
     "not_a_broker_statement": True,
 }
 EXPECTED_METHODS = (
@@ -133,7 +145,7 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or plan.get("p05_total_checks") != 8
                 or plan.get("p05_passed_checks") != 0):
             errors.append("P05_UNJUSTIFIED_PRECHECK_PASS")
-        if plan.get("p05_current_observation_summary") != "P05-03_UI_ROWS_NOT_VISIBLE_ONLY_NOT_SERVER_ACCOUNT_RECONCILIATION":
+        if plan.get("p05_current_observation_summary") != "P05_01_COMMUNICATION_UI_REPORTED_AND_P05_03_NO_ORDER_ROWS_VISIBLE_NOT_SERVER_VERIFIED":
             errors.append("P05_UI_OBSERVATION_MISTAKEN_FOR_ACCOUNT_RECONCILIATION")
         checks = plan.get("p05_checks")
         if (type(checks) is not list or len(checks) != len(P05_IDS)
@@ -142,6 +154,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 0 and row.get("owner_reported_connection_display") != P05_01_OWNER_REPORT:
+                    errors.append("P05_01_CONNECTION_UI_REPORT_OVERCLAIMED")
+                if i != 0 and "owner_reported_connection_display" in row:
+                    errors.append("P05_OTHER_CHECK_FALSLY_CONNECTION_REPORTED:" + P05_IDS[i])
                 if i == 2 and row.get("owner_reported_ui_observation") != P05_03_OWNER_REPORT:
                     errors.append("P05_03_UI_REPORT_FALSIFIED_OR_OVERCLAIMED")
                 if i != 2 and "owner_reported_ui_observation" in row:
@@ -244,6 +260,8 @@ def snapshot(root: Path = ROOT) -> dict:
         "p04_real_mt4_session_allowed": False,
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
+        "p05_01_owner_reported_communicating_display": not errors,
+        "p05_01_account_and_server_verified": False,
         "p05_03_user_reported_no_order_rows_visible": not errors,
         "p05_03_broker_orders_confirmed_absent": False,
         "p05_readiness": "BLOCKED",
