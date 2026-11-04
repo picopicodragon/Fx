@@ -27,10 +27,27 @@ P05_STATES = (
     "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
     "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED",
     "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
-    "OWNER_REPORTED_FOLDER_CREATED_NO_CLOUD_SYNC_SECURITY_UNVERIFIED",
+    "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED",
     "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
     "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
 )
+P05_06_NETWORK_SHARING_OWNER_REPORT = {
+    "source": "USER_EXPLICIT_NOT_SHARED_REPLY_TO_P05_06_WINDOWS_SHARE_TAB_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "reported_state": "NOT_SHARED",
+    "classification": "OWNER_REPORTED_WINDOWS_NETWORK_SHARING_STATUS_ONLY",
+    "windows_share_tab_display_independently_verified": False,
+    "effective_ntfs_acl_and_inheritance_verified": False,
+    "advanced_network_share_and_admin_share_absence_verified": False,
+    "remote_access_or_other_app_access_absence_verified": False,
+    "cloud_sync_or_backup_absence_independently_verified": False,
+    "private_data_access_and_retention_policy_approved": False,
+    "folder_sharing_modified_by_assistant": False,
+    "sensitive_evidence_collection_authorized": False,
+    "any_file_or_mt4_log_collected": False,
+    "p05_accepted": False
+}
+
 P05_06_CLOUD_SYNC_OWNER_REPORT = {
     "source": "USER_EXPLICIT_CLOUD_SYNC_OFF_REPLY_TO_P05_06_CURRENT_CHAT",
     "reported_on_jst_date": "2026-11-04",
@@ -278,6 +295,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 5 and row.get("owner_reported_network_sharing") != P05_06_NETWORK_SHARING_OWNER_REPORT:
+                    errors.append("P05_06_NOT_SHARED_FALSELY_TREATED_AS_ACCESS_CONTROL_PROOF")
+                if i != 5 and "owner_reported_network_sharing" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_REPORTS_NETWORK_SHARING:" + P05_IDS[i])
                 if i == 5 and row.get("owner_reported_cloud_sync") != P05_06_CLOUD_SYNC_OWNER_REPORT:
                     errors.append("P05_06_CLOUD_SYNC_REPORT_FALSELY_VERIFIED_OR_PROMOTED")
                 if i != 5 and "owner_reported_cloud_sync" in row:
@@ -421,6 +442,9 @@ def snapshot(root: Path = ROOT) -> dict:
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
         "p05_06_prior_absence_report_retained": not errors,
+        "p05_06_owner_reported_not_network_shared": not errors,
+        "p05_06_network_sharing_independently_verified": False,
+        "p05_06_ntfs_acl_independently_verified": False,
         "p05_06_owner_reported_no_cloud_sync": not errors,
         "p05_06_owner_reported_folder_created": not errors,
         "p05_06_path_is_outside_repo_per_owner_report_only": not errors,
