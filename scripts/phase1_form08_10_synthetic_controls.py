@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone, time
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, localcontext
 import re
 from zoneinfo import ZoneInfo
 
@@ -186,7 +186,7 @@ def review_dd(dd: object) -> Review:
         return _deny("DD_HWM_OR_STOP_PERSISTENCE_UNKNOWN")
     if dd.hwm_source != "SYNTHETIC_PRIOR_PEAK_ONLY":
         return _deny("DD_HWM_SOURCE_UNVERIFIED")
-    with __import__("decimal").localcontext() as context:
+    with localcontext() as context:
         context.prec = 48
         drawdown = (peak - current) / peak
     return Review(
