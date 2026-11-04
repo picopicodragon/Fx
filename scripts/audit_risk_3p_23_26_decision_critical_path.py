@@ -34,7 +34,7 @@ NODES = (
     ("P02_OWNER_VERIFY_SOURCE_ORIGINALS",
      ("P01_DOCUMENTARY_REVIEW_PACKET",), "PENDING_ORIGINAL_SOURCE_REVIEW"),
     ("P03_OWNER_G1_SCOPE_DECISION",
-     ("P01_DOCUMENTARY_REVIEW_PACKET",), "PENDING_EXPLICIT_SCOPE_DECISION"),
+     ("P01_DOCUMENTARY_REVIEW_PACKET",), "OWNER_APPROVED_SCOPE_ONLY_NO_EVIDENCE"),
     ("P04_OWNER_READONLY_PROTOCOL_DECISION",
      ("P01_DOCUMENTARY_REVIEW_PACKET",), "PENDING_SEPARATE_OBSERVATION_APPROVAL"),
     ("P05_SAFE_ENVIRONMENT_PRECHECK",
@@ -66,7 +66,6 @@ CAPS = {"individual_risk": "0.005",
         "max_dd": "0.05"}
 HUMAN_FIRST = (
     "P02_OWNER_VERIFY_SOURCE_ORIGINALS",
-    "P03_OWNER_G1_SCOPE_DECISION",
     "P04_OWNER_READONLY_PROTOCOL_DECISION",
 )
 
@@ -145,9 +144,9 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or plan.get("g1_target_field_count") != 15
                 or plan.get("g1_fields_proved") != 0
                 or plan.get("existing_g1_scope_status") !=
-                "LEGACY_4x5_UNRESOLVED"
+                "LEGACY_4x5_ARCHIVED_UNRESOLVED"
                 or plan.get("proposed_g1_scope_status") !=
-                "3x5_NOT_APPROVED"):
+                "FORMAL_OWNER_APPROVED_3x5_UNVERIFIED"):
             errors.append("FORM_OR_G1_COUNTS_PROMOTED")
         if plan.get("safety_caps") != CAPS:
             errors.append("HARD_CAPS_DRIFT")
