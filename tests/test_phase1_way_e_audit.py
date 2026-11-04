@@ -98,6 +98,7 @@ class WayEGateAuditTests(unittest.TestCase):
             "scripts/phase1_h3_synthetic_anchor.py",
             "scripts/phase1_three_pair_synthetic_risk.py",
             "scripts/phase1_three_pair_synthetic_stop_conversion.py",
+            "scripts/phase1_form02_synthetic_stop_scenarios.py",
             "scripts/review_mt4_manual_symbol_3p_v3.py",
         })
         for source, row in mapping.items():
