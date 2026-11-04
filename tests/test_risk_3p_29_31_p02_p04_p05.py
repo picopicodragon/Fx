@@ -34,6 +34,51 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         self.assertEqual(mod.snapshot()["audit_status"], "PASS_DOCUMENT_ONLY")
         self.assertEqual(mod.snapshot()["runtime_go_no_go"], "NO_GO")
 
+    def test_user_reported_demo_account_is_not_independent_account_identity_proof(self):
+        row = self.docs[mod.PLAN]["p05_checks"][0]
+        self.assertEqual(row["owner_reported_account_type"], mod.P05_01_DEMO_TYPE_REPORT)
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_DEMO_ACCOUNT_COMMUNICATING_IDENTITY_UNVERIFIED")
+        self.assertFalse(row["p05_accepted"])
+        self.assertFalse(row["safe_to_proceed"])
+        snap = mod.snapshot()
+        self.assertTrue(snap["p05_01_owner_reported_demo_account"])
+        self.assertFalse(snap["p05_01_independent_account_identity_verified"])
+        self.assertEqual(snap["p05_checks_passed"], 0)
+
+    def test_demo_report_cannot_prove_login_or_server_consistency(self):
+        for key in (
+            "independent_broker_account_type_verified",
+            "same_as_historically_known_demo_login_verified",
+            "server_account_or_session_independently_verified",
+            "account_identifiers_disclosed",
+            "p05_accepted",
+        ):
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN,
+                    lambda p, k=key: p["p05_checks"][0]
+                    ["owner_reported_account_type"].update({k: True}),
+                    "P05_01_DEMO_OWNER_ATTESTATION_OVERCLAIMED")
+
+    def test_macd_sample_visible_does_not_prove_ea_execution_or_safety(self):
+        row = self.docs[mod.PLAN]["p05_checks"][1]
+        self.assertEqual(row["owner_reported_ea_visibility"],
+                         mod.P05_02_EA_VISIBLE_REPORT)
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_MACD_SAMPLE_VISIBLE_RUNTIME_UNVERIFIED")
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertFalse(row["p05_accepted"])
+        self.assertTrue(mod.snapshot()["p05_02_macd_sample_visible_runtime_unverified"])
+        for key in ("attachment_location_currently_verified",
+                    "active_or_trading_verified", "ea_changed_or_stopped",
+                    "order_risk_absence_verified"):
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN, lambda p, k=key: p["p05_checks"][1]
+                    ["owner_reported_ea_visibility"].update({k: True}),
+                    "P05_02_EA_VISIBILITY_FALSELY_INTERPRETED_AS_RUNNING")
+
     def test_corrected_account_creation_date_is_user_report_not_identity_evidence(self):
         check = self.docs[mod.PLAN]["p05_checks"][0]
         self.assertEqual(check["owner_reported_account_creation"],
