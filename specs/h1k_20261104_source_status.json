@@ -1,0 +1,489 @@
+{
+  "schema_version": 1,
+  "record_type": "H1K_SCOPED_LOCAL_SOURCE_AUDIT",
+  "review_date": "2026-11-04",
+  "source_format": "VALID_JSON",
+  "fx_design_conversation_found": true,
+  "fx_design_mapping_equal_to_2026_10_23": true,
+  "explicit_q_candidates_total": 126,
+  "unmatched_user_messages_total": 41,
+  "post147_explicit_candidates": 0,
+  "post147_context_hints": 0,
+  "post147_missing_count": 52,
+  "notes": [
+    "Only the authorized FX design conversation was extracted; other conversations in the archive were not used as FX decision evidence.",
+    "The complete archive file differs, but its FX design conversation is unchanged from the October 23 snapshot.",
+    "Repository DIRECT_CHAT excerpts are distinct from verification against this local archive.",
+    "No owner reconciliation, safety implementation approval, runtime permission, or stop release follows from this audit."
+  ],
+  "question_statuses": [
+    {
+      "question_id": "Q148",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q149",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q150",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q151",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q152",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q153",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q154",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q155",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q156",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q157",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q158",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q159",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q160",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q161",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q162",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q163",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q164",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q165",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q166",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q167",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q168",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q169",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q170",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q171",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q172",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q173",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q174",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q175",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q176",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q177",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q178",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q179",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q180",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q181",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q182",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q183",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q184",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q185",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q186",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q187",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q188",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q189",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q190",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q191",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q192",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q193",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q194",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q195",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q196",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q197",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q198",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "DIRECT_CHAT_PENDING_LOCAL_ARCHIVE",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    },
+    {
+      "question_id": "Q199",
+      "explicit_user_candidate_count": 0,
+      "unmatched_context_hint_count": 0,
+      "scoped_local_status": "SOURCE_UNAVAILABLE",
+      "repository_evidence": "SUMMARY_ONLY_PENDING",
+      "owner_original_review": "PENDING",
+      "safety_approval": false
+    }
+  ]
+}
