@@ -1,5 +1,6 @@
 """RISK-3P-01: no broker, network, filesystem, or live-risk approval."""
 from dataclasses import replace
+from decimal import Decimal
 import unittest
 
 from scripts.phase1_three_pair_synthetic_risk import (
@@ -69,7 +70,8 @@ class ThreePairOfflineRiskTests(unittest.TestCase):
         ]
         a = review(trades=synthetic_eurusd_usdjpy)
         b = review(trades=single_eurjpy)
-        self.assertEqual(a.net_native, b.net_native)
+        self.assertEqual({currency: Decimal(value) for currency, value in a.net_native},
+                         {currency: Decimal(value) for currency, value in b.net_native})
         self.assertNotEqual(a.gross_native, b.gross_native)
         self.assertNotEqual(a.total_max_loss_jpy, b.total_max_loss_jpy)
         self.held(a)
