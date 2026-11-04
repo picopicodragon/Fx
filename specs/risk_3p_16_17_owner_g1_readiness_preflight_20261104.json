@@ -120,5 +120,9 @@
     "FX-SAF-001〜015原議が未検証、G1〜G9未解決、PHASE-1 BLOCKED"
   ],
   "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
-  "legacy_g1_snapshot_ref": "specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json"
+  "legacy_g1_snapshot_ref": "specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json",
+  "p02_reconciliation_method_owner_approved": true,
+  "p04_readonly_protocol_method_owner_approved": true,
+  "p02_p04_method_decision_ref": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "p05_environment_precheck_status": "BLOCKED_NOT_PERFORMED"
 }
