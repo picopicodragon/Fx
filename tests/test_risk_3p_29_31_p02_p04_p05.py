@@ -38,10 +38,63 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
 
 
 
+
+    def test_p05_06_everyone_not_visible_but_other_principals_unknown(self):
+        row = self.docs[mod.PLAN]["p05_checks"][5]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED")
+        self.assertEqual(row["owner_reported_ntfs_everyone_visibility"],
+                         mod.P05_06_EVERYONE_VISIBILITY_OWNER_REPORT)
+        self.assertEqual(row["owner_reported_ntfs_everyone_visibility"]
+                         ["display_observation"], "EVERYONE_NOT_LISTED")
+        self.assertEqual(row["owner_reported_ntfs_everyone_visibility"]
+                         ["unfamiliar_principals_present"], "UNKNOWN_NOT_ANSWERED")
+        self.assertFalse(row["p05_accepted"])
+        self.assertFalse(row["safe_to_proceed"])
+        state = mod.snapshot()
+        self.assertTrue(state["p05_06_owner_reported_everyone_not_visible"])
+        self.assertEqual(state["p05_06_unfamiliar_principals_state"], "UNVERIFIED")
+        self.assertFalse(state["p05_06_effective_ntfs_permissions_verified"])
+        self.assertFalse(state["p05_06_local_storage_ready"])
+        self.assertFalse(state["p05_06_confidential_collection_authorized"])
+        self.assertEqual(state["p05_checks_passed"], 0)
+        self.assertEqual(state["runtime_go_no_go"], "NO_GO")
+
+    def test_p05_06_everyone_absence_cannot_certify_acl_or_execution(self):
+        keys = (
+            "individual_or_group_names_collected",
+            "windows_security_tab_independently_inspected",
+            "effective_acl_or_inherited_permissions_verified",
+            "other_builtin_group_or_unknown_account_absence_verified",
+            "principal_access_and_write_permissions_verified",
+            "network_or_remote_access_absence_verified",
+            "evidence_storage_security_approved",
+            "acl_or_folder_modified_by_assistant",
+            "confidential_data_collection_authorized",
+            "p05_accepted",
+        )
+        for key in keys:
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN, lambda p, k=key: p["p05_checks"][5]
+                    ["owner_reported_ntfs_everyone_visibility"].update({k: True}),
+                    "P05_06_EVERYONE_ABSENT_FALSELY_TREATED_AS_FULL_ACL_PROOF")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][5]
+            ["owner_reported_ntfs_everyone_visibility"].update(
+                unfamiliar_principals_present="NONE_VERIFIED"),
+            "P05_06_EVERYONE_ABSENT_FALSELY_TREATED_AS_FULL_ACL_PROOF")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][5].update(p05_accepted=True),
+            "P05_PREMATURE_OR_UNVERIFIED:P05-06")
+        self.refuse(
+            mod.PLAN, lambda p: p.update(p06_observation_authorized=True),
+            "FALSE_REAL_OPERATION_AUTHORITY:p06_observation_authorized")
+
     def test_p05_06_not_shared_owner_report_keeps_all_gates_blocked(self):
         row = self.docs[mod.PLAN]["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_network_sharing"],
                          mod.P05_06_NETWORK_SHARING_OWNER_REPORT)
         self.assertFalse(row["safe_to_proceed"])
@@ -85,7 +138,7 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
     def test_p05_06_no_cloud_sync_is_owner_report_only(self):
         row = self.docs[mod.PLAN]["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_cloud_sync"],
                          mod.P05_06_CLOUD_SYNC_OWNER_REPORT)
         self.assertEqual(row["owner_reported_cloud_sync"]["reported_state"],
@@ -126,7 +179,7 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_folder_creation"],
                          mod.P05_06_FOLDER_CREATION_OWNER_REPORT)
         self.assertEqual(
@@ -184,7 +237,7 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][5]
         self.assertEqual(row["current_status"],
-                         "OWNER_REPORTED_NO_CLOUD_SYNC_AND_NOT_SHARED_SECURITY_UNVERIFIED")
+                         "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED")
         self.assertEqual(row["owner_reported_private_storage"],
                          mod.P05_06_PRIVATE_STORAGE_OWNER_REPORT)
         self.assertFalse(row["p05_accepted"])
