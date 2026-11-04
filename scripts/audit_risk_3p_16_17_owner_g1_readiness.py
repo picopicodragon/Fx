@@ -65,6 +65,12 @@ def audit(root: Path = ROOT, documents: dict | None = None) -> list[str]:
                 or d.get("id") != "RISK-3P-16-17-OWNER-G1-READINESS-PREFLIGHT-20261104"
                 or d.get("scope") != "OFFLINE_DOCUMENTARY_PRECHECK_ONLY"):
             failures.append("PREFLIGHT_ID_OR_SCOPE")
+        if (d.get("p02_reconciliation_method_owner_approved") is not True
+                or d.get("p04_readonly_protocol_method_owner_approved") is not True
+                or d.get("p02_p04_method_decision_ref") !=
+                "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json"
+                or d.get("p05_environment_precheck_status") != "BLOCKED_NOT_PERFORMED"):
+            failures.append("P02_P04_PROCEDURAL_APPROVAL_NOT_P05_EXECUTION")
         if (d.get("g1_scope_revision_approved") is not True
                 or d.get("g1_scope_decision_ref") !=
                 "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
