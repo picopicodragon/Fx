@@ -62,6 +62,12 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or doc.get("id") != "RISK-3P-18-19-G1-READONLY-PROVENANCE-PROTOCOL-20261104"
                 or doc.get("scope") != "DOCUMENT_ONLY_NO_MT4_ACCESS_OR_EVIDENCE_COLLECTION"):
             failures.append("DOCUMENT_IDENTITY_OR_SCOPE_CHANGED")
+        if (doc.get("p04_readonly_protocol_method_owner_approved") is not True
+                or doc.get("p02_p04_owner_method_decision_ref") !=
+                "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json"
+                or doc.get("p05_environment_precheck_status") !=
+                "BLOCKED_SAFETY_CONDITIONS_UNKNOWN"):
+            failures.append("P04_METHOD_APPROVAL_OR_P05_SAFETY_HOLD_CHANGED")
         if (doc.get("g1_3x5_scope_approved") is not True
                 or doc.get("g1_scope_decision_ref") !=
                 "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
