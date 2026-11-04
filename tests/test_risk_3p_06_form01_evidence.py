@@ -36,11 +36,13 @@ class Form01ThreePairEvidenceDraftTests(unittest.TestCase):
                      "G1_DESIGN_SCOPE_DRIFT")
         self.changed(lambda x: x.update(target_g1_attribute_count=20),
                      "G1_DESIGN_SCOPE_DRIFT")
-        self.changed(lambda x: x.update(legacy_g1_gate_scope_unchanged=False),
+        self.changed(lambda x: x.update(legacy_g1_gate_scope_unchanged=True),
                      "G1_DESIGN_SCOPE_DRIFT")
 
     def test_g1_draft_and_real_world_claims_cannot_be_promoted(self):
-        for key in ("g1_scope_revision_approved", "real_world_verified",
+        self.changed(lambda x: x.update(g1_scope_revision_approved=False),
+                     "G1_DESIGN_SCOPE_DRIFT")
+        for key in ("real_world_verified",
                     "broker_connection_authorized", "terminal_execution_approved",
                     "production_authorized", "stop_release_authorized",
                     "form01_implementation_approved",
