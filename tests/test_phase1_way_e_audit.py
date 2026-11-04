@@ -95,6 +95,7 @@ class WayEGateAuditTests(unittest.TestCase):
             "scripts/phase1_synthetic_persistence.py",
             "scripts/check_phase1_way_e.py",
             "scripts/phase1_way_e_synthetic_review.py",
+            "scripts/phase1_h3_synthetic_anchor.py",
         })
         for source, row in mapping.items():
             with self.subTest(source=source):
