@@ -34,6 +34,49 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         self.assertEqual(mod.snapshot()["audit_status"], "PASS_DOCUMENT_ONLY")
         self.assertEqual(mod.snapshot()["runtime_go_no_go"], "NO_GO")
 
+    def test_connection_display_is_user_report_not_server_or_account_verification(self):
+        p = self.docs[mod.PLAN]
+        row = p["p05_checks"][0]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ACCOUNT_UNVERIFIED")
+        self.assertEqual(row["owner_reported_connection_display"],
+                         mod.P05_01_OWNER_REPORT)
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertFalse(row["p05_accepted"])
+        self.assertIsNone(row["observation_at_utc"])
+        summary = mod.snapshot()
+        self.assertTrue(summary["p05_01_owner_reported_communicating_display"])
+        self.assertFalse(summary["p05_01_account_and_server_verified"])
+        self.assertFalse(summary["p05_03_broker_orders_confirmed_absent"])
+        self.assertEqual(summary["p05_checks_passed"], 0)
+        self.assertEqual(summary["runtime_go_no_go"], "NO_GO")
+
+    def test_communication_indicator_cannot_fabricate_server_sync_or_session_permission(self):
+        for key in ("account_type_confirmed", "account_identity_confirmed",
+                    "server_connection_independently_verified",
+                    "order_state_synchronized_with_server_verified",
+                    "terminal_session_authorized_by_report"):
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN,
+                    lambda p, k=key: p["p05_checks"][0]["owner_reported_connection_display"]
+                    .update({k: True}),
+                    "P05_01_CONNECTION_UI_REPORT_OVERCLAIMED")
+        self.refuse(
+            mod.PLAN,
+            lambda p: p["p05_checks"][0]["owner_reported_connection_display"]
+            .update(display_report="BROKER_VERIFIED_ZERO_ORDERS"),
+            "P05_01_CONNECTION_UI_REPORT_OVERCLAIMED")
+        self.refuse(
+            mod.PLAN,
+            lambda p: p["p05_checks"][0].update(p05_accepted=True),
+            "P05_PREMATURE_OR_UNVERIFIED:P05-01")
+        self.refuse(
+            mod.PLAN,
+            lambda p: p["p05_checks"][2]["owner_reported_ui_observation"]
+            .update(connection_status="BROKER_VERIFIED_SYNCHRONIZED"),
+            "P05_03_UI_REPORT_FALSIFIED_OR_OVERCLAIMED")
+
     def test_balance_only_trade_tab_report_does_not_verify_server_orders(self):
         p = self.docs[mod.PLAN]
         row = p["p05_checks"][2]
