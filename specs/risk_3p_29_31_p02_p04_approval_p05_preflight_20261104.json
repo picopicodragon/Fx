@@ -124,6 +124,22 @@
         "account_identity_verified_by_report": false,
         "p05_accepted": false,
         "not_an_execution_or_broker_proof": true
+      },
+      "owner_reported_chart_ea_face_icon": {
+        "source": "USER_EXPLICIT_REPLY_TO_P05_02_MACD_SAMPLE_FACE_ICON_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "view": "EXISTING_MT4_CHART_MACD_SAMPLE_NEARBY",
+        "display_observation": "SAD_FACE_ICON",
+        "classification": "OWNER_REPORTED_CHART_UI_ONLY",
+        "expert_advisor_attached_independently_verified": false,
+        "ea_execution_state_independently_verified": false,
+        "autotrading_permission_for_this_ea_independently_verified": false,
+        "all_ea_scripts_inactive_verified": false,
+        "server_order_or_position_absence_verified": false,
+        "account_or_broker_sync_independently_verified": false,
+        "chart_or_terminal_modified_by_assistant": false,
+        "p05_accepted": false,
+        "not_a_broker_or_execution_proof": true
       }
     },
     {
@@ -249,5 +265,5 @@
     "Whether positions or pending orders still exist in the demo environment; CURRENT UNKNOWN",
     "Whether an observation can be made without creating a second session or modifying any running EA/order; CURRENT UNKNOWN"
   ],
-  "p05_current_observation_summary": "OWNER_DEMO_SINGLE_MT4_MACD_VISIBLE_AUTOTRADING_OFF_COMMUNICATING_TRADE_TAB_BALANCE_ONLY_ALL_UI_REPORTS_NOT_SERVER_VERIFIED"
+  "p05_current_observation_summary": "OWNER_DEMO_SINGLE_MT4_MACD_VISIBLE_SAD_FACE_AUTOTRADING_OFF_COMMUNICATING_TRADE_TAB_BALANCE_ONLY_ALL_UI_REPORTS_NOT_SERVER_VERIFIED"
 }
