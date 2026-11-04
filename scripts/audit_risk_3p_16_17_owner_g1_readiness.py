@@ -65,6 +65,10 @@ def audit(root: Path = ROOT, documents: dict | None = None) -> list[str]:
                 or d.get("id") != "RISK-3P-16-17-OWNER-G1-READINESS-PREFLIGHT-20261104"
                 or d.get("scope") != "OFFLINE_DOCUMENTARY_PRECHECK_ONLY"):
             failures.append("PREFLIGHT_ID_OR_SCOPE")
+        if (d.get("g1_scope_revision_approved") is not True
+                or d.get("g1_scope_decision_ref") !=
+                "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
+            failures.append("SCOPE_APPROVAL_RECORD_MISSING")
         if (d.get("target_pairs") != list(PAIRS)
                 or d.get("g1_fields") != list(FIVE)
                 or d.get("historic_g1_attributes") != 20
@@ -79,7 +83,7 @@ def audit(root: Path = ROOT, documents: dict | None = None) -> list[str]:
                 or d.get("current_readiness") != KNOWN_BLOCKERS[0]):
             failures.append("FALSE_READINESS_DECLARATION")
         for key in ("unreviewed_auto_merge_authorized", "owner_approval_recorded",
-                    "g1_scope_revision_approved", "g1_real_world_verified",
+                    "g1_real_world_verified",
                     "fx_saf_implementation_approved", "module_acceptance_approved",
                     "phase_acceptance_approved", "production_authorized",
                     "real_market_data_verified", "order_allowed",
@@ -201,8 +205,8 @@ def audit(root: Path = ROOT, documents: dict | None = None) -> list[str]:
         if (g1.get("implementation_status") != "UNRESOLVED"
                 or g1.get("real_world_verified") is not False
                 or g1.get("release_blocker") is not True
-                or "4通貨ペア" not in g1.get("subject", "")):
-            failures.append("HISTORICAL_G1_GATE_PROMOTED_OR_REWRITTEN")
+                or "3通貨ペア×5主要契約属性" not in g1.get("subject", "")):
+            failures.append("FORMAL_G1_SCOPE_OR_G1_STATUS_DRIFT")
         if (len(gates["gaps"]) != 9
                 or set(g["id"] for g in gates["gaps"])
                 != {f"G{i}" for i in range(1, 10)}
@@ -255,7 +259,7 @@ def main() -> None:
                          + "\n".join("- " + x for x in issues))
     print("RISK-3P-16/17: DOCUMENTARY CONSISTENCY PASS")
     print("READINESS: BLOCKED | FORM-01..10 UNDECIDED | 43 owner choices NOT APPROVED")
-    print("G1 future 3x5: 15/15 evidence PENDING | historic G1 4x5 UNRESOLVED")
+    print("G1 owner-approved 3x5: 15/15 evidence PENDING | historical 4x5 ARCHIVED")
     print("FX-SAF-001..015 PENDING_ORIGINAL | G1..G9 UNRESOLVED")
     print("PHASE-1 BLOCKED | runtime NO_GO | safety_hold_latched=true")
     print("This program never grants a broker probe, trade, merge or stop release.")
