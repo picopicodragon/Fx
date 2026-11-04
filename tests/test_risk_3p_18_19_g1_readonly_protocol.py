@@ -35,8 +35,11 @@ class ReadonlyG1ProtocolTests(unittest.TestCase):
         self.assertIs(plan["safety_hold_latched"], True)
 
     def test_false_owner_live_or_g1_authorizations_are_rejected(self):
+        self.assert_refused(
+            audit.PLAN, lambda d: d.update(g1_3x5_scope_approved=False),
+            "G1_OWNER_APPROVED_SCOPE_REFERENCE_MISSING")
         for k in ("evidence_collected", "owner_approved_real_read",
-                  "g1_3x5_scope_approved", "g1_real_world_verified",
+                  "g1_real_world_verified",
                   "fx_saf_implementation_approved", "production_authorized",
                   "order_allowed", "stop_release_allowed", "auto_merge_authorized"):
             with self.subTest(flag=k):
@@ -142,7 +145,7 @@ class ReadonlyG1ProtocolTests(unittest.TestCase):
             audit.V3, lambda d: d["symbols"][2]["properties"].update(
                 min_lot="0.01"), "V3_CONTRACT_TEMPLATE_PREMATURELY_FILLED")
         self.assert_refused(
-            audit.PREVIOUS, lambda d: d.update(g1_scope_revision_approved=True),
+            audit.PREVIOUS, lambda d: d.update(g1_scope_revision_approved=False),
             "UPSTREAM_G1_PREFLIGHT_PROMOTED")
 
     def test_stop_gate_never_go_after_pass_or_bad_mutation(self):
