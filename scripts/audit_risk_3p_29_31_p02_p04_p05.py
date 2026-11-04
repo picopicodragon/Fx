@@ -27,10 +27,29 @@ P05_STATES = (
     "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
     "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED",
     "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
-    "OWNER_REPORTED_NO_PRIVATE_EVIDENCE_FOLDER_NOT_READY",
+    "OWNER_REPORTED_FOLDER_CREATED_SECURITY_UNVERIFIED",
     "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
     "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
 )
+P05_06_FOLDER_CREATION_OWNER_REPORT = {
+    "source": "USER_EXPLICIT_FOLDER_CREATED_REPLY_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "observation": "PRIVATE_EVIDENCE_FOLDER_CREATED_BY_OWNER",
+    "classification": "OWNER_ATTESTED_CREATION_NO_LOCAL_VERIFICATION",
+    "location_relation_from_owner_path": "SIBLING_OF_FX_REPOSITORY_BY_REPORTED_PATH_ONLY",
+    "private_absolute_path_stored_in_git": False,
+    "private_path_repeated_in_documentation": False,
+    "independently_verified_on_windows": False,
+    "git_exclusion_independently_verified": False,
+    "cloud_sync_or_backup_absence_verified": False,
+    "windows_acl_and_sharing_verified": False,
+    "encryption_and_retention_policy_verified": False,
+    "sensitive_material_collection_authorized": False,
+    "private_data_collected_or_uploaded": False,
+    "folder_created_or_modified_by_assistant": False,
+    "p05_accepted": False
+}
+
 P05_06_PRIVATE_STORAGE_OWNER_REPORT = {
     "source": "USER_EXPLICIT_NO_REPLY_TO_P05_06_PRIVATE_FOLDER_QUESTION",
     "reported_on_jst_date": "2026-11-04",
@@ -246,6 +265,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 5 and row.get("owner_reported_folder_creation") != P05_06_FOLDER_CREATION_OWNER_REPORT:
+                    errors.append("P05_06_FOLDER_CREATED_REPORT_FALSE_SECURITY_CERTIFICATION")
+                if i != 5 and "owner_reported_folder_creation" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_REPORTS_FOLDER_CREATION:" + P05_IDS[i])
                 if i == 5 and row.get("owner_reported_private_storage") != P05_06_PRIVATE_STORAGE_OWNER_REPORT:
                     errors.append("P05_06_OWNER_NO_FOLDER_FALSIFIED_OR_OVERCLAIMED")
                 if i != 5 and "owner_reported_private_storage" in row:
@@ -380,7 +403,11 @@ def snapshot(root: Path = ROOT) -> dict:
         "p04_real_mt4_session_allowed": False,
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
-        "p05_06_owner_reported_folder_absent": not errors,
+        "p05_06_prior_absence_report_retained": not errors,
+        "p05_06_owner_reported_folder_created": not errors,
+        "p05_06_path_is_outside_repo_per_owner_report_only": not errors,
+        "p05_06_windows_permissions_verified": False,
+        "p05_06_cloud_sync_absence_verified": False,
         "p05_06_local_storage_ready": False,
         "p05_06_confidential_collection_authorized": False,
         "p05_04_owner_reported_single_mt4_only": not errors,
