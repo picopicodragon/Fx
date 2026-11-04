@@ -12,7 +12,7 @@
     "EUR/USD"
   ],
   "historical_scope_retained": "LEGACY_4X5_UNRESOLVED",
-  "proposed_scope": "FUTURE_3X5_NOT_APPROVED",
+  "proposed_scope": "FORMAL_OWNER_APPROVED_3X5_UNVERIFIED",
   "expected_g1_items": 15,
   "field_methodology": [
     {
@@ -387,7 +387,7 @@
   ],
   "evidence_collected": false,
   "owner_approved_real_read": false,
-  "g1_3x5_scope_approved": false,
+  "g1_3x5_scope_approved": true,
   "g1_real_world_verified": false,
   "fx_saf_implementation_approved": false,
   "production_authorized": false,
@@ -398,5 +398,6 @@
   "phase_1": "BLOCKED",
   "runtime_go_no_go": "NO_GO",
   "safety_hold_latched": true,
-  "verified_values": null
+  "verified_values": null,
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"
 }
