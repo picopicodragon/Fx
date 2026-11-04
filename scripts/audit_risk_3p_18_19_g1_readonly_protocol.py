@@ -62,14 +62,18 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or doc.get("id") != "RISK-3P-18-19-G1-READONLY-PROVENANCE-PROTOCOL-20261104"
                 or doc.get("scope") != "DOCUMENT_ONLY_NO_MT4_ACCESS_OR_EVIDENCE_COLLECTION"):
             failures.append("DOCUMENT_IDENTITY_OR_SCOPE_CHANGED")
+        if (doc.get("g1_3x5_scope_approved") is not True
+                or doc.get("g1_scope_decision_ref") !=
+                "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
+            failures.append("G1_OWNER_APPROVED_SCOPE_REFERENCE_MISSING")
         if (doc.get("target_pairs") != list(PAIRS)
                 or doc.get("expected_g1_items") != 15
                 or doc.get("historical_scope_retained") != "LEGACY_4X5_UNRESOLVED"
-                or doc.get("proposed_scope") != "FUTURE_3X5_NOT_APPROVED"):
+                or doc.get("proposed_scope") != "FORMAL_OWNER_APPROVED_3X5_UNVERIFIED"):
             failures.append("PAIR_SCOPE_OR_G1_HISTORY_DRIFT")
         for key in (
             "evidence_collected", "owner_approved_real_read",
-            "g1_3x5_scope_approved", "g1_real_world_verified",
+            "g1_real_world_verified",
             "fx_saf_implementation_approved", "production_authorized",
             "order_allowed", "stop_release_allowed", "auto_merge_authorized",
         ):
@@ -143,7 +147,7 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             failures.append("EVIDENCE_PROVENANCE_REQUIREMENTS_DROPPED")
         previous = docs[PREVIOUS]
         if (previous.get("g1_real_world_verified") is not False
-                or previous.get("g1_scope_revision_approved") is not False
+                or previous.get("g1_scope_revision_approved") is not True
                 or previous.get("phase_1") != "BLOCKED"
                 or previous.get("runtime_go_no_go") != "NO_GO"
                 or previous.get("current_readiness")
@@ -154,7 +158,7 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
         if (g1.get("implementation_status") != "UNRESOLVED"
                 or g1.get("real_world_verified") is not False
                 or g1.get("release_blocker") is not True
-                or "4通貨ペア" not in g1.get("subject", "")
+                or "3通貨ペア×5主要契約属性" not in g1.get("subject", "")
                 or g.get("real_mt4_access_approved") is not False
                 or g.get("phase_1") != "BLOCKED"
                 or g.get("runtime_go_no_go") != "NO_GO"):
