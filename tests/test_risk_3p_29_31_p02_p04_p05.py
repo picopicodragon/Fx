@@ -34,6 +34,48 @@ class OwnerProcedureAndP05Tests(unittest.TestCase):
         self.assertEqual(mod.snapshot()["audit_status"], "PASS_DOCUMENT_ONLY")
         self.assertEqual(mod.snapshot()["runtime_go_no_go"], "NO_GO")
 
+    def test_owner_reports_this_mt4_only_without_independent_session_proof(self):
+        p = self.docs[mod.PLAN]
+        row = p["p05_checks"][3]
+        self.assertEqual(row["current_status"],
+                         "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED")
+        self.assertEqual(row["owner_reported_session_observation"],
+                         mod.P05_04_SINGLE_SESSION_OWNER_REPORT)
+        self.assertIsNone(row["observation_at_utc"])
+        self.assertFalse(row["p05_accepted"])
+        self.assertFalse(row["safe_to_proceed"])
+        self.assertEqual(p["p05_passed_checks"], 0)
+        snap = mod.snapshot()
+        self.assertTrue(snap["p05_04_owner_reported_single_mt4_only"])
+        self.assertFalse(snap["p05_04_single_session_independently_verified"])
+        self.assertEqual(snap["runtime_go_no_go"], "NO_GO")
+
+    def test_solo_mt4_report_must_not_auto_verify_demo_terms_or_release_gate(self):
+        for key in (
+            "other_pc_or_mt4_same_demo_login_independently_verified_absent",
+            "login_session_count_broker_verified",
+            "different_demo_account_absence_independently_verified",
+            "demo_contract_compliance_independently_verified",
+            "additional_login_or_account_created_by_assistant",
+        ):
+            with self.subTest(key=key):
+                self.refuse(
+                    mod.PLAN,
+                    lambda p, k=key: p["p05_checks"][3]
+                    ["owner_reported_session_observation"].update({k: True}),
+                    "P05_04_OWNER_SINGLE_SESSION_REPORT_OVERCLAIMED")
+        self.refuse(
+            mod.PLAN,
+            lambda p: p["p05_checks"][3]["owner_reported_session_observation"]
+            .update(reported_usage="TWO_MT4_LOGINS"),
+            "P05_04_OWNER_SINGLE_SESSION_REPORT_OVERCLAIMED")
+        self.refuse(
+            mod.PLAN, lambda p: p["p05_checks"][3].update(p05_accepted=True),
+            "P05_PREMATURE_OR_UNVERIFIED:P05-04")
+        self.refuse(
+            mod.PLAN, lambda p: p.update(p05_passed_checks=1),
+            "P05_UNJUSTIFIED_PRECHECK_PASS")
+
     def test_user_reported_demo_account_is_not_independent_account_identity_proof(self):
         row = self.docs[mod.PLAN]["p05_checks"][0]
         self.assertEqual(row["owner_reported_account_type"], mod.P05_01_DEMO_TYPE_REPORT)
