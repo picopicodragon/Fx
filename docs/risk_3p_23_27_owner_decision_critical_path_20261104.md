@@ -71,3 +71,6 @@ G1の実際の契約属性は**0/15**。FX-SAF-001〜015の原議照合は**0/15
 既存のリスク上限：単一0.5%、同時合計1%、日次1.5%、DD4%新規停止、DD5%全決済＋本人承認。G1〜G9 UNRESOLVED、FX-SAF-001〜015未承認、PHASE-1 BLOCKED、runtime NO_GO、safety_hold_latched=true、verified_values=nullを維持する。
 
 > **後続の本人決定による更新（2026-11-04、RISK-3P-28）**：当初この資料で未決としたP03「G1正式審査対象」は、本人が**新3ペア×主要5属性（計15項目）への変更を承認済み**。旧4×5の未解決記録は別snapshotに保存した。G1の実属性0/15・G1〜G9 UNRESOLVED・PHASE-1 BLOCKED・runtime NO_GOは不変。P02原議照合とP04実MT4非破壊観測の安全な個別許可は依然未決。参照：[G1範囲変更](risk_3p_28_g1_owner_scope_approval_20261104.md)。
+
+
+> **後続承認：RISK-3P-29〜31（2026-11-04）**。本人がP02原議照合**方法**、P04安全な非破壊MT4観測**方法**の方針を承認。原本照合を終えたという意味ではない。既存デモMT4/EA/建玉の現況に関するP05の8確認条件は**0/8、BLOCKED**であり、実MT4のログイン/観測・EA/SL/注文変更は未許可。P06〜P12は未実施、PHASE-1 BLOCKED、NO_GOを維持する。 [詳細](risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md)。
