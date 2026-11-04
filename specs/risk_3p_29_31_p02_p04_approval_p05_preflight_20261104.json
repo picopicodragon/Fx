@@ -45,14 +45,26 @@
     {
       "check_id": "P05-01",
       "title": "Existing demo account and environment identity",
-      "current_status": "CURRENT_STATE_UNKNOWN_PRIOR_DEMO_EVIDENCE_ONLY",
+      "current_status": "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ACCOUNT_UNVERIFIED",
       "known_historical_condition": "DEMO_ACCOUNT_REPORTED_NO_CURRENT_ATTESTATION",
       "required_for_future": "human-confirmed account scope without identifiers; no new connection implied",
       "evidence_reference": null,
       "observation_at_utc": null,
       "reviewer_reference": null,
       "safe_to_proceed": false,
-      "p05_accepted": false
+      "p05_accepted": false,
+      "owner_reported_connection_display": {
+        "source": "USER_REPORT_IN_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-04",
+        "display_report": "MT4_COMMUNICATING",
+        "classification": "UI_REPORTED_COMMUNICATION_ONLY",
+        "account_type_confirmed": false,
+        "account_identity_confirmed": false,
+        "server_connection_independently_verified": false,
+        "order_state_synchronized_with_server_verified": false,
+        "terminal_session_authorized_by_report": false,
+        "not_a_broker_statement": true
+      }
     },
     {
       "check_id": "P05-02",
@@ -84,7 +96,7 @@
         "observation": "BALANCE_ONLY_NO_POSITION_OR_PENDING_ORDER_ROWS_VISIBLE",
         "account_identity_confirmed": false,
         "server_order_state_reconciled": false,
-        "connection_status": "NOT_CONFIRMED",
+        "connection_status": "OWNER_REPORTED_MT4_COMMUNICATING_DISPLAY_ONLY",
         "current_positions_or_pending_orders_independently_verified_absent": false,
         "not_a_broker_statement": true
       }
@@ -177,5 +189,5 @@
     "Whether positions or pending orders still exist in the demo environment; CURRENT UNKNOWN",
     "Whether an observation can be made without creating a second session or modifying any running EA/order; CURRENT UNKNOWN"
   ],
-  "p05_current_observation_summary": "P05-03_UI_ROWS_NOT_VISIBLE_ONLY_NOT_SERVER_ACCOUNT_RECONCILIATION"
+  "p05_current_observation_summary": "P05_01_COMMUNICATION_UI_REPORTED_AND_P05_03_NO_ORDER_ROWS_VISIBLE_NOT_SERVER_VERIFIED"
 }
