@@ -12,8 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DRAFT = "specs/risk_3p_05_owner_review_draft_20261104.json"
 SOURCE = "specs/p0_01_risk_formula_open_decisions.json"
-PAIRS = ("USD/JPY", "EUR/JPY", "EUR/USD")
-HISTORIC = ("USD/JPY", "EUR/JPY", "GBP/USD", "AUD/USD")
+from scripts.audit_risk_3p_02_migration import TARGET as PAIRS, HISTORY as HISTORIC
 HARD_LIMITS = {"trade": "0.005", "aggregate": "0.010",
                "daily": "0.015", "drawdown": "0.05",
                "dd4_new_entries_stopped": True}
