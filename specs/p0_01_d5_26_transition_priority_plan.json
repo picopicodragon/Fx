@@ -112,13 +112,12 @@
         "3通貨ペア×5主要属性の正式承認済み対象について、出典・UTC観測時刻・実銘柄/口座同一性と未確認時NO_GOの設計"
       ],
       "external_evidence_required": [
-        "USD/JPY、EUR/JPY、EUR/USD各5属性（計15項目）と契約サイズ・入金通貨・tick換算等の補助属性の実口座原証拠を、将来別途許可された手順で確認"
+        "USD/JPY、EUR/JPY、EUR/USDの各5主要契約属性（計15項目）について、別途承認された非破壊手順で、実端末シンボル・対象口座・数値単位・出典・UTC観測時刻・独立照合を確認する。現在は全件未取得。",
+        "1lot契約数量、口座入金通貨、最大lot、digits、stop/freeze level、約定/取引制約、損益通貨とJPY換算等の追加検証を維持。5属性のみで最大損失額の実証としない。"
       ],
       "readiness": "UNRESOLVED",
       "release_blocker": true,
-      "real_world_verified": false,
-      "scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
-      "scope_approved": true
+      "real_world_verified": false
     },
     {
       "id": "G5",
