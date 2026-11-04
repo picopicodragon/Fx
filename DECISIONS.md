@@ -347,3 +347,10 @@ SQLiteのWAL・チェックポイント観測値とPythonアプリ側の書き�
 ## 2026-11-04 後続指示：3通貨ペア＋通貨別合算リスク管理（設計方針）
 
 本人指示により、**今後の設計対象**をUSD/JPY・EUR/JPY・EUR/USDの3ペアとする。旧Q3の4ペアは当時の決定として残し、新方針と混同しない。通貨別ネット/グロス・三角関係の重複リスク評価を導入する方向。数値的な通貨集中上限、具体的な計算式、EUR/USD実契約値・検証結果、安全重要コードの実装承認は**未確定**。従来の0.5%/1.0%/日次1.5%/DD5%を緩和しない。原議欠落は未照合、FX-SAF-001〜015未承認、G1〜G9/PHASE-1 BLOCKED、runtime NO_GOを維持。詳細は `docs/three_pair_aggregate_currency_risk_design_20261104.md`。
+
+
+## 2026-11-04 RISK-3P-28：G1正式審査対象の範囲変更を本人承認
+
+本人が**G1正式審査対象をUSD/JPY・EUR/JPY・EUR/USDの3通貨ペア×主要5契約属性＝15項目にする方針**を明示承認。これは単なる将来案ではなく、**審査対象範囲のみの承認済み決定**として記録した。旧G1 4ペア×5属性＝20項目の未解決履歴は[`legacy scope snapshot`](specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json)に非破壊保存。現行G1台帳の対象を更新したが、契約属性の実証は**0/15**、G1自体はUNRESOLVEDのまま。補助属性（1lot契約数量、口座通貨、stop/freeze等）を省略しない。
+
+決定記録：[`specs/risk_3p_28_g1_scope_owner_decision_20261104.json`](specs/risk_3p_28_g1_scope_owner_decision_20261104.json)、[範囲変更と安全境界の説明](docs/risk_3p_28_g1_owner_scope_approval_20261104.md)。本決定ではFX-SAF原議・FORMの実装詳細・実MT4閲覧/EA/注文/停止解除は承認されていない。**G1〜G9 UNRESOLVED、PHASE-1 BLOCKED、runtime NO_GO**を維持。
