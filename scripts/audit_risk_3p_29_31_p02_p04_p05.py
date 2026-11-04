@@ -27,10 +27,24 @@ P05_STATES = (
     "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
     "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED",
     "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
-    "LOCAL_GIT_EXTERNAL_STORAGE_NOT_CONFIRMED",
+    "OWNER_REPORTED_NO_PRIVATE_EVIDENCE_FOLDER_NOT_READY",
     "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
     "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
 )
+P05_06_PRIVATE_STORAGE_OWNER_REPORT = {
+    "source": "USER_EXPLICIT_NO_REPLY_TO_P05_06_PRIVATE_FOLDER_QUESTION",
+    "reported_on_jst_date": "2026-11-04",
+    "response": "NO_PRIVATE_EVIDENCE_FOLDER_PREPARED",
+    "classification": "OWNER_REPORT_ONLY_NO_FILESYSTEM_INSPECTION",
+    "folder_path_disclosed": False,
+    "local_folder_independently_verified": False,
+    "out_of_repo_private_folder_ready": False,
+    "confidential_evidence_collection_authorized": False,
+    "any_log_or_screenshot_collected": False,
+    "filesystem_modified_by_assistant": False,
+    "p05_accepted": False
+}
+
 P05_01_DEMO_TYPE_REPORT = {
     "source": "USER_EXPLICIT_DEMO_ACCOUNT_REPLY_CURRENT_CHAT",
     "reported_on_jst_date": "2026-11-04",
@@ -232,6 +246,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 5 and row.get("owner_reported_private_storage") != P05_06_PRIVATE_STORAGE_OWNER_REPORT:
+                    errors.append("P05_06_OWNER_NO_FOLDER_FALSIFIED_OR_OVERCLAIMED")
+                if i != 5 and "owner_reported_private_storage" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_REPORTS_PRIVATE_STORAGE:" + P05_IDS[i])
                 if i == 3 and row.get("owner_reported_session_observation") != P05_04_SINGLE_SESSION_OWNER_REPORT:
                     errors.append("P05_04_OWNER_SINGLE_SESSION_REPORT_OVERCLAIMED")
                 if i != 3 and "owner_reported_session_observation" in row:
@@ -362,6 +380,9 @@ def snapshot(root: Path = ROOT) -> dict:
         "p04_real_mt4_session_allowed": False,
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
+        "p05_06_owner_reported_folder_absent": not errors,
+        "p05_06_local_storage_ready": False,
+        "p05_06_confidential_collection_authorized": False,
         "p05_04_owner_reported_single_mt4_only": not errors,
         "p05_04_single_session_independently_verified": False,
         "p05_01_owner_reported_demo_account": not errors,
