@@ -249,8 +249,8 @@ def review_synthetic_bundle(quotes: object, slices: object, state: object, *,
             elif (len(related) != 2
                   or {x.portion for x in related} != {"FILLED", "REMAINDER"}
                   or {x.status for x in related} != {"POSITION", "PENDING"}
-                  or {x.pair for x in related}.__len__() != 1
-                  or {x.side for x in related}.__len__() != 1):
+                  or len({x.pair for x in related}) != 1
+                  or len({x.side for x in related}) != 1):
                 return _deny("PARTIAL_FILL_NOT_RECONCILED")
         if aggregate_jpy > Decimal("1e22"):
             return _deny("SYNTHETIC_RESULT_OUT_OF_RANGE")
