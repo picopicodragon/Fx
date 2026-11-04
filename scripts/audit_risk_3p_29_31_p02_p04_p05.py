@@ -24,13 +24,24 @@ P05_IDS = tuple(f"P05-{i:02d}" for i in range(1, 9))
 P05_STATES = (
     "CURRENT_STATE_UNKNOWN_PRIOR_DEMO_EVIDENCE_ONLY",
     "CURRENT_STATE_UNKNOWN_PRIOR_MACD_SAMPLE_ATTACHED",
-    "CURRENT_STATE_UNKNOWN_PRIOR_POSITIONS_OR_ORDERS_YES",
+    "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
     "CURRENT_SESSION_UNVERIFIED",
     "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
     "LOCAL_GIT_EXTERNAL_STORAGE_NOT_CONFIRMED",
     "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
     "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
 )
+P05_03_OWNER_REPORT = {
+    "source": "USER_REPORT_IN_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-04",
+    "view": "MT4_TERMINAL_TRADE_TAB",
+    "observation": "BALANCE_ONLY_NO_POSITION_OR_PENDING_ORDER_ROWS_VISIBLE",
+    "account_identity_confirmed": False,
+    "server_order_state_reconciled": False,
+    "connection_status": "NOT_CONFIRMED",
+    "current_positions_or_pending_orders_independently_verified_absent": False,
+    "not_a_broker_statement": True,
+}
 EXPECTED_METHODS = (
     ("P02", "ORIGINAL_SOURCE_RECONCILIATION_METHOD_ONLY",
      "APPROVED_NOT_EXECUTED"),
@@ -122,6 +133,8 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
                 or plan.get("p05_total_checks") != 8
                 or plan.get("p05_passed_checks") != 0):
             errors.append("P05_UNJUSTIFIED_PRECHECK_PASS")
+        if plan.get("p05_current_observation_summary") != "P05-03_UI_ROWS_NOT_VISIBLE_ONLY_NOT_SERVER_ACCOUNT_RECONCILIATION":
+            errors.append("P05_UI_OBSERVATION_MISTAKEN_FOR_ACCOUNT_RECONCILIATION")
         checks = plan.get("p05_checks")
         if (type(checks) is not list or len(checks) != len(P05_IDS)
                 or [x.get("check_id") for x in checks if type(x) is dict]
@@ -129,6 +142,10 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 2 and row.get("owner_reported_ui_observation") != P05_03_OWNER_REPORT:
+                    errors.append("P05_03_UI_REPORT_FALSIFIED_OR_OVERCLAIMED")
+                if i != 2 and "owner_reported_ui_observation" in row:
+                    errors.append("P05_OTHER_CHECK_FALSLY_REPORTED:" + P05_IDS[i])
                 if (row.get("current_status") != P05_STATES[i]
                         or type(row.get("title")) is not str or not row["title"]
                         or type(row.get("known_historical_condition")) is not str
@@ -227,6 +244,8 @@ def snapshot(root: Path = ROOT) -> dict:
         "p04_real_mt4_session_allowed": False,
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
+        "p05_03_user_reported_no_order_rows_visible": not errors,
+        "p05_03_broker_orders_confirmed_absent": False,
         "p05_readiness": "BLOCKED",
         "g1_verified": "0/15",
         "form_decisions_approved": "0/43",
