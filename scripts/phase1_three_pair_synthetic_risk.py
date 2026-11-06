@@ -8,11 +8,17 @@ risk estimate. No network, host, MT4, credentials, disk, or clock I/O.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal
+from decimal import Decimal, localcontext
 import re
 
 
 PAIRS = ("USD/JPY", "EUR/JPY", "EUR/USD")
+# Defensive ceilings apply only to this fictional arithmetic fixture,
+# not to real account settings, broker lot limits or authorization.
+MAX_SYNTHETIC_TRADES = 128
+MAX_SIMULATED_ID_CHARS = 128
+MAX_SYNTHETIC_ASOF = (1 << 63) - 1
+DECIMAL_WORK_PRECISION = 96
 CURRENCIES = ("USD", "EUR", "JPY")
 _STATUSES = frozenset({"POSITION", "PENDING", "CANDIDATE"})
 _NUMBER = re.compile(r"(?:0|[1-9][0-9]*)(?:\.[0-9]+)?\Z", re.ASCII)
@@ -85,8 +91,9 @@ def review_synthetic_portfolio(
     """
     if positions_reconciled is not True or pending_orders_reconciled is not True:
         return _reject("ACCOUNT_OR_PENDING_STATE_UNKNOWN")
-    if (type(asof) is not int or asof < 0
-            or type(snapshot_id) is not str or not snapshot_id):
+    if (type(asof) is not int or not 0 <= asof <= MAX_SYNTHETIC_ASOF
+            or type(snapshot_id) is not str or not snapshot_id
+            or len(snapshot_id) > MAX_SIMULATED_ID_CHARS):
         return _reject("INVALID_SYNTHETIC_SNAPSHOT_IDENTITY")
     equity = _decimal(equity_jpy)
     if equity is None or equity <= 0:
@@ -108,62 +115,70 @@ def review_synthetic_portfolio(
         validated[pair] = (bid, ask)
     if type(trades) not in (tuple, list) or not trades:
         return _reject("MISSING_CANDIDATE_OR_TRADES")
+    if len(trades) > MAX_SYNTHETIC_TRADES:
+        return _reject("SYNTHETIC_WORKLOAD_BOUND_EXCEEDED")
 
-    net = {currency: Decimal(0) for currency in CURRENCIES}
-    gross = {currency: Decimal(0) for currency in CURRENCIES}
-    seen: set[str] = set()
-    candidate_count = 0
-    candidate_loss = Decimal(0)
-    total_loss = Decimal(0)
-    for trade in trades:
-        if type(trade) is not Trade:
-            return _reject("INVALID_TRADE")
-        if (type(trade.trade_id) is not str or not trade.trade_id
-                or trade.trade_id in seen):
-            return _reject("DUPLICATE_OR_INVALID_TRADE_ID")
-        seen.add(trade.trade_id)
-        if (type(trade.pair) is not str or trade.pair not in PAIRS
-                or type(trade.side) is not str
-                or trade.side not in ("BUY", "SELL")
-                or type(trade.status) is not str
-                or trade.status not in _STATUSES):
-            return _reject("UNSUPPORTED_PAIR_SIDE_OR_STATUS")
-        units, asserted_loss = _decimal(trade.base_units), _decimal(trade.max_loss_jpy)
-        if units is None or units <= 0 or asserted_loss is None:
-            return _reject("UNVERIFIABLE_SYNTHETIC_QUANTITY_OR_LOSS")
-        if trade.status == "CANDIDATE":
-            candidate_count += 1
-            candidate_loss += asserted_loss
-        total_loss += asserted_loss
-        base, quote_ccy = trade.pair.split("/")
-        bid, ask = validated[trade.pair]
-        sign = Decimal(1) if trade.side == "BUY" else Decimal(-1)
-        effective_price = ask if sign > 0 else bid
-        legs = ((base, sign * units),
-                (quote_ccy, -sign * units * effective_price))
-        for currency, amount in legs:
-            net[currency] += amount
-            gross[currency] += abs(amount)
-    if candidate_count != 1:
-        return _reject("EXACTLY_ONE_NEW_CANDIDATE_REQUIRED")
+    # Preserve sub-yen boundary exceedances in synthetic high-scale amounts.
+    # With <=40 decimal digits per operand and <=128 tickets, 96 digits
+    # accommodate product, aggregation, and both hard-limit comparisons.
+    with localcontext() as ctx:
+        ctx.prec = DECIMAL_WORK_PRECISION
+        net = {currency: Decimal(0) for currency in CURRENCIES}
+        gross = {currency: Decimal(0) for currency in CURRENCIES}
+        seen: set[str] = set()
+        candidate_count = 0
+        candidate_loss = Decimal(0)
+        total_loss = Decimal(0)
+        for trade in trades:
+            if type(trade) is not Trade:
+                return _reject("INVALID_TRADE")
+            if (type(trade.trade_id) is not str or not trade.trade_id
+                    or len(trade.trade_id) > MAX_SIMULATED_ID_CHARS
+                    or trade.trade_id in seen):
+                return _reject("DUPLICATE_OR_INVALID_TRADE_ID")
+            seen.add(trade.trade_id)
+            if (type(trade.pair) is not str or trade.pair not in PAIRS
+                    or type(trade.side) is not str
+                    or trade.side not in ("BUY", "SELL")
+                    or type(trade.status) is not str
+                    or trade.status not in _STATUSES):
+                return _reject("UNSUPPORTED_PAIR_SIDE_OR_STATUS")
+            units, asserted_loss = _decimal(trade.base_units), _decimal(trade.max_loss_jpy)
+            if units is None or units <= 0 or asserted_loss is None or asserted_loss <= 0:
+                return _reject("UNVERIFIABLE_SYNTHETIC_QUANTITY_OR_LOSS")
+            if trade.status == "CANDIDATE":
+                candidate_count += 1
+                candidate_loss += asserted_loss
+            total_loss += asserted_loss
+            base, quote_ccy = trade.pair.split("/")
+            bid, ask = validated[trade.pair]
+            sign = Decimal(1) if trade.side == "BUY" else Decimal(-1)
+            effective_price = ask if sign > 0 else bid
+            legs = ((base, sign * units),
+                    (quote_ccy, -sign * units * effective_price))
+            for currency, amount in legs:
+                net[currency] += amount
+                gross[currency] += abs(amount)
+        if candidate_count != 1:
+            return _reject("EXACTLY_ONE_NEW_CANDIDATE_REQUIRED")
 
-    # Illustrative positive gross-equivalent only. The ask-side upper bound
-    # for *gross* is not a certified value for risk, settlement, or liquidation.
-    gross_jpy = (gross["JPY"]
-                 + gross["USD"] * validated["USD/JPY"][1]
-                 + gross["EUR"] * validated["EUR/JPY"][1])
-    candidate_over = candidate_loss > equity * Decimal("0.005")
-    total_over = total_loss > equity * Decimal("0.01")
-    return Review(
-        reason=("EXISTING_HARD_LIMIT_OVER_IN_SYNTHETIC_INPUT"
-                if candidate_over or total_over
-                else "SYNTHETIC_ARITHMETIC_ONLY_NOT_AUTHORIZED"),
-        arithmetic_complete=True,
-        net_native=tuple((c, str(net[c])) for c in CURRENCIES),
-        gross_native=tuple((c, str(gross[c])) for c in CURRENCIES),
-        gross_currency_legs_jpy=str(gross_jpy),
-        total_max_loss_jpy=str(total_loss),
-        candidate_max_loss_jpy=str(candidate_loss),
-        candidate_exceeds_existing_limit=candidate_over,
-        total_exceeds_existing_limit=total_over,
-    )
+        # Illustrative positive gross-equivalent only. The ask-side upper bound
+        # for *gross* is not a certified value for risk, settlement, or liquidation.
+        gross_jpy = (gross["JPY"]
+                     + gross["USD"] * validated["USD/JPY"][1]
+                     + gross["EUR"] * validated["EUR/JPY"][1])
+        candidate_over = candidate_loss > equity * Decimal("0.005")
+        total_over = total_loss > equity * Decimal("0.01")
+        return Review(
+            reason=("EXISTING_HARD_LIMIT_OVER_IN_SYNTHETIC_INPUT"
+                    if candidate_over or total_over
+                    else "SYNTHETIC_ARITHMETIC_ONLY_NOT_AUTHORIZED"),
+            arithmetic_complete=True,
+            net_native=tuple((c, str(net[c])) for c in CURRENCIES),
+            gross_native=tuple((c, str(gross[c])) for c in CURRENCIES),
+            gross_currency_legs_jpy=str(gross_jpy),
+            total_max_loss_jpy=str(total_loss),
+            candidate_max_loss_jpy=str(candidate_loss),
+            candidate_exceeds_existing_limit=candidate_over,
+            total_exceeds_existing_limit=total_over,
+        )
