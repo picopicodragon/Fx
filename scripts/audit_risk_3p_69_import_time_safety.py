@@ -13,6 +13,7 @@ from pathlib import Path
 from scripts import audit_risk_3p_56_static_offline_boundary as prior
 
 ROOT = Path(__file__).resolve().parents[1]
+MAX_STATIC_SOURCE_CHARS = 65536
 TARGETS = prior.TARGETS
 
 
@@ -33,13 +34,25 @@ def _literal_only(node: object) -> bool:
 
 
 def inspect_source(source: object) -> list[str]:
-    if type(source) is not str or not source.strip():
+    if type(source) is not str or not source:
+        return ["P69_EMPTY_OR_INVALID_SOURCE"]
+    if len(source) > MAX_STATIC_SOURCE_CHARS:
+        return ["P69_SOURCE_TOO_LARGE"]
+    if not source.strip():
         return ["P69_EMPTY_OR_INVALID_SOURCE"]
     try:
         tree = ast.parse(source)
     except (SyntaxError, TypeError, ValueError, RecursionError):
         return ["P69_BAD_PYTHON_SYNTAX"]
     errors: list[str] = []
+    # Without postponed annotations an Attribute/Subscript annotation may
+    # execute at function definition time even without any ast.Call node.
+    # These six fixed mock modules already use future annotations.
+    postponed_annotations = any(
+        isinstance(stmt, ast.ImportFrom)
+        and stmt.level == 0 and stmt.module == "__future__"
+        and any(alias.name == "annotations" for alias in stmt.names)
+        for stmt in tree.body)
     for stmt in tree.body:
         if isinstance(stmt, (ast.Import, ast.ImportFrom, ast.Pass)):
             continue
@@ -54,6 +67,8 @@ def inspect_source(source: object) -> list[str]:
                 if arg.annotation is not None]
             if stmt.returns is not None:
                 annotations.append(stmt.returns)
+            if annotations and not postponed_annotations:
+                errors.append("P69_UNPOSTPONED_ANNOTATION_EVALUATION")
             if (stmt.decorator_list
                     or any(not _literal_only(x) for x in defaults)
                     or any(isinstance(n, (ast.Call, ast.Await, ast.Yield,
@@ -62,6 +77,9 @@ def inspect_source(source: object) -> list[str]:
                 errors.append("P69_IMPORT_TIME_DECORATOR_OR_DEFAULT_CALL")
             continue
         if isinstance(stmt, (ast.Assign, ast.AnnAssign)):
+            if (isinstance(stmt, ast.AnnAssign)
+                    and not postponed_annotations):
+                errors.append("P69_UNPOSTPONED_ANNOTATION_EVALUATION")
             if isinstance(stmt, ast.AnnAssign) and any(
                     isinstance(n, (ast.Call, ast.Await, ast.Yield,
                                    ast.NamedExpr))
@@ -108,11 +126,17 @@ def inspect_source(source: object) -> list[str]:
 
 def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
     errors = []
-    if overrides is not None and (
-            type(overrides) is not dict
-            or set(overrides) - set(TARGETS)
-            or any(type(v) is not str for v in overrides.values())):
-        errors.append("P69_UNSAFE_OR_UNKNOWN_OVERRIDE")
+    # Do not construct set(overrides) or inspect any unknown key before
+    # confirming exact built-in string types. Reject the entire override
+    # immediately, before reading public repository files.
+    if overrides is not None:
+        if (type(overrides) is not dict
+                or len(overrides) > len(TARGETS)
+                or any(type(k) is not str or type(v) is not str
+                       or k not in TARGETS
+                       or len(v) > MAX_STATIC_SOURCE_CHARS
+                       for k, v in overrides.items())):
+            return ["P69_UNSAFE_OR_UNKNOWN_OVERRIDE"]
     for i, path in enumerate(TARGETS, 1):
         try:
             source = (overrides[path] if type(overrides) is dict
