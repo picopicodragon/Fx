@@ -184,7 +184,7 @@ class ExactIntegerOracleTests(unittest.TestCase):
             with self.subTest(raw=raw):
                 self.assertEqual(rat(exact_decimal(rat(raw))), rat(raw))
 
-    def test_72_pair_side_volume_cost_cases_match_independent_fraction(self):
+    def test_48_pair_side_volume_cost_cases_match_independent_fraction(self):
         scenarios = 0
         for pair, side, vol, buffer, cost in product(
                 PAIRS, ("BUY", "SELL"), ("0.01", "0.03"),
