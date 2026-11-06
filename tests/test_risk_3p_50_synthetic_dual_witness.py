@@ -11,7 +11,7 @@ class FictionalDualWitnessTests(unittest.TestCase):
     def setUp(self):
         self.data = mod.fixture()
 
-    def fail(self, mutate, code):
+    def reject(self, mutate, code):
         x = copy.deepcopy(self.data)
         mutate(x)
         result = mod.evaluate(x)
@@ -32,45 +32,45 @@ class FictionalDualWitnessTests(unittest.TestCase):
         self.assertEqual(state["p05_passed"], 0)
 
     def test_independent_origin_claim_or_account_scope_refused(self):
-        self.fail(lambda x: x["second_witness"].update(
+        self.reject(lambda x: x["second_witness"].update(
             source_kind="REAL_BROKER_SERVER"), "P50_WITNESS_SCOPE_OR_FAKE_TIMESTAMP_INVALID")
-        self.fail(lambda x: x["second_witness"].update(
+        self.reject(lambda x: x["second_witness"].update(
             account_alias="SIM_SECOND_ACCOUNT"), "P50_WITNESS_SCOPE_OR_FAKE_TIMESTAMP_INVALID")
-        self.fail(lambda x: x["second_witness"].update(
+        self.reject(lambda x: x["second_witness"].update(
             fake_utc="2026-11-06T00:00:00Z"), "P50_WITNESS_SCOPE_OR_FAKE_TIMESTAMP_INVALID")
 
     def test_every_field_conflict_refused_even_if_primary_is_well_formed(self):
         for i in range(15):
             with self.subTest(index=i):
-                self.fail(lambda x, n=i: x["second_witness"]["rows"][n].update(
+                self.reject(lambda x, n=i: x["second_witness"]["rows"][n].update(
                     synthetic_decimal="99.99"),
                     "P50_SOURCE_VALUE_OR_UNIT_CONFLICT:" + str(i + 1))
 
     def test_unit_and_pair_substitution_refused(self):
-        self.fail(lambda x: x["second_witness"]["rows"][4].update(
+        self.reject(lambda x: x["second_witness"]["rows"][4].update(
             unit="POINTS_PER_TICK"), "P50_SOURCE_VALUE_OR_UNIT_CONFLICT:5")
-        self.fail(lambda x: x["second_witness"]["rows"][9].update(
+        self.reject(lambda x: x["second_witness"]["rows"][9].update(
             pair="GBP/USD"), "P50_SOURCE_VALUE_OR_UNIT_CONFLICT:10")
 
     def test_reused_or_cross_field_source_tokens_refused(self):
-        self.fail(lambda x: x["second_witness"]["rows"][1].update(
+        self.reject(lambda x: x["second_witness"]["rows"][1].update(
             source_token="SIM_WITNESS_01"),
             "P50_SOURCE_VALUE_OR_UNIT_CONFLICT:2")
-        self.fail(lambda x: x["second_witness"]["rows"][11].update(
-            field="lot_step"), "P50_SOURCE_VALUE_OR_UNIT_CONFLICT:12")
+        self.reject(lambda x: x["second_witness"]["rows"][11].update(
+            field="point_quote"), "P50_SOURCE_VALUE_OR_UNIT_CONFLICT:12")
 
     def test_missing_rows_and_private_data_columns_refused(self):
-        self.fail(lambda x: x["second_witness"]["rows"].pop(),
+        self.reject(lambda x: x["second_witness"]["rows"].pop(),
                   "P50_FIFTEEN_WITNESS_ROWS_REQUIRED")
-        self.fail(lambda x: x["second_witness"]["rows"][0].update(
+        self.reject(lambda x: x["second_witness"]["rows"][0].update(
             account_password="CANARY_50"),
             "P50_WITNESS_ROW_SECRET_OR_MISSING:1")
 
     def test_primary_baseline_must_be_validated_separately(self):
-        self.fail(lambda x: x["primary"]["rows"][0].update(
+        self.reject(lambda x: x["primary"]["rows"][0].update(
             synthetic_value_decimal="0"),
             "P50_PRIMARY_SYNTHETIC_PROVENANCE_INVALID")
-        self.fail(lambda x: x["primary"].update(
+        self.reject(lambda x: x["primary"].update(
             order_authorized=True),
             "P50_PRIMARY_SYNTHETIC_PROVENANCE_INVALID")
 
@@ -79,14 +79,14 @@ class FictionalDualWitnessTests(unittest.TestCase):
             with self.subTest(key=key):
                 new = (not original if type(original) is bool
                        else (1 if type(original) is int else "GO"))
-                self.fail(lambda x, k=key, v=new:
+                self.reject(lambda x, k=key, v=new:
                           x["safety"].update({k: v}),
                           "P50_FORGED_REAL_EVIDENCE_OR_PERMISSION")
 
     def test_unknown_or_sensitive_envelope_fields_refused(self):
-        self.fail(lambda x: x.update(account_id="CANARY_50"),
+        self.reject(lambda x: x.update(account_id="CANARY_50"),
                   "P50_INVALID_OR_EXTRA_PACKAGE_FIELDS")
-        self.fail(lambda x: x["second_witness"].update(
+        self.reject(lambda x: x["second_witness"].update(
             actual_broker_log="CANARY_50"),
             "P50_SECOND_WITNESS_STRUCTURE_INVALID")
 
