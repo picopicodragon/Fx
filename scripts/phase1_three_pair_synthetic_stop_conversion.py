@@ -90,10 +90,18 @@ def _parse(value: object, *, zero: bool = False) -> Decimal | None:
         return None
     try:
         number = Decimal(value)
+        # normalize() rounds at the caller's ambient Decimal precision.
+        # Count the exact input coefficient instead, ignoring trailing zeros,
+        # so low-precision caller settings cannot launder 19+ significant
+        # digits into the allowed 18-digit fictional contract.
+        digits = number.as_tuple().digits
+        significant = len(digits)
+        while significant > 1 and digits[significant - 1] == 0:
+            significant -= 1
         if (not number.is_finite() or number > Decimal("1e12")
                 or (number < 0 if zero else number <= 0)
                 or (number != 0 and number < Decimal("1e-12"))
-                or len(number.normalize().as_tuple().digits) > 18):
+                or significant > 18):
             return None
         return number
     except (InvalidOperation, ArithmeticError, ValueError):
