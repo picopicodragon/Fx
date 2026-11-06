@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-53-54-FUTURE-EVIDENCE-HANDOFF-20261106",
+  "created_on_jst_date": "2026-11-06",
+  "classification": "UNSIGNED_FUTURE_HANDOFF_DESIGN_ONLY",
+  "references": {
+    "p05": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+    "g1": "specs/risk_3p_33_p05_07_offline_provenance_readiness_20261106.json",
+    "p05_debt": "specs/risk_3p_46_48_offline_acceptance_debt_20261106.json",
+    "order_protocol": "specs/risk_3p_36_37_order_reconciliation_offline_contract_20261106.json"
+  },
+  "required_before_real_observation": [
+    "INDEPENDENT_ACCOUNT_DEMO_IDENTITY_CHECK",
+    "EXISTING_EA_STATE_AND_NON_INTERFERENCE",
+    "FULL_ACCOUNT_POSITIONS_PENDING_ORDERS_RECONCILIATION",
+    "SINGLE_TERMINAL_SESSION_NO_PARALLEL_LOGIN",
+    "READ_ONLY_PLAN_SAFETY_AND_NO_CODE_EXECUTION",
+    "PRIVATE_STORAGE_OWNER_ACCEPTED_OFFLINE_ONLY",
+    "G1_THREE_PAIRS_FIFTEEN_FIELDS_PRIMARY_AND_INDEPENDENT_REAL_PROOF",
+    "SEPARATE_EXPLICIT_HUMAN_P05_SIGNOFF"
+  ],
+  "owner_storage_decision": "ACCEPTED_FOR_OFFLINE_ONLY_NO_REAL_BROKER_COLLECTION",
+  "g1_rows": [
+    {
+      "pair": "USD/JPY",
+      "field": "min_lot",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "lot_step",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "point_quote",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "tick_size_points",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "tick_value_deposit_currency",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "min_lot",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "lot_step",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "point_quote",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "tick_size_points",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "tick_value_deposit_currency",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "min_lot",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "lot_step",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "point_quote",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "tick_size_points",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "tick_value_deposit_currency",
+      "real_broker_value": null,
+      "real_observation_utc": null,
+      "real_primary_source_ref": null,
+      "real_independent_source_ref": null,
+      "unit": null,
+      "verified": false
+    }
+  ],
+  "permission": {
+    "real_mt4_session_read_authorized": false,
+    "real_broker_login_authorized": false,
+    "order_or_ea_action_authorized": false,
+    "private_log_upload_authorized": false,
+    "p05_human_signoff": false,
+    "phase1_human_signoff": false,
+    "g1_fifteen_fields_verified": 0,
+    "p05_passed_checks": 0,
+    "fx_saf_originals_verified": 0,
+    "form_implementation_approvals": 0,
+    "verified_values": null,
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": true
+  },
+  "next_step": "REVIEW_FUTURE_REAL_REQUIREMENTS_WITHOUT_AUTOMATIC_ACTIVATION"
+}
