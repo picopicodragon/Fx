@@ -706,7 +706,8 @@
         "Q109"
       ],
       "tests": [
-        "tests/test_risk_3p_04_synthetic_stop_conversion.py"
+        "tests/test_risk_3p_04_synthetic_stop_conversion.py",
+        "tests/test_risk_3p_85_90_stop_conversion_precision.py"
       ],
       "production_authorized": false
     },
