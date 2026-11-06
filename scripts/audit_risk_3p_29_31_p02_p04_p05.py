@@ -27,10 +27,38 @@ P05_STATES = (
     "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
     "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED",
     "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
-    "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED",
+    "OWNER_ACCEPTED_LOCAL_FOLDER_AND_PARENTS_FOR_OFFLINE_PLANNING_ONLY",
     "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
     "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
 )
+P05_06_UNFAMILIAR_PRINCIPALS_OWNER_REPORT = {
+    "source": "USER_EXPLICIT_NO_UNFAMILIAR_GROUPS_OR_ACCOUNTS_CURRENT_CHAT",
+    "reported_on_jst_date": "2026-11-06",
+    "observation": "NO_UNFAMILIAR_ACCOUNTS_OR_GROUPS_DISPLAYED",
+    "classification": "OWNER_REPORTED_UI_OBSERVATION_ONLY",
+    "all_effective_ntfs_acl_principals_independently_verified": False,
+    "inheritance_or_nested_group_memberships_independently_verified": False,
+    "raw_account_names_or_windows_path_collected": False,
+    "share_or_acl_setting_modified": False,
+    "p05_accepted": False
+}
+
+P05_06_OWNER_STORAGE_SECURITY_ACCEPTANCE = {
+    "source": "USER_EXPLICIT_ACCEPT_FOLDER_AND_PARENT_SECURITY_AS_SATISFACTORY_CURRENT_CHAT",
+    "decision_on_jst_date": "2026-11-06",
+    "decision": "OWNER_ACCEPTS_FOLDER_AND_PARENT_SECURITY_FOR_CONTINUED_OFFLINE_WORK",
+    "accepted_for": "OFFLINE_DESIGN_AND_SYNTHETIC_TEST_PLANNING_ONLY",
+    "applies_to_reported_private_folder_and_ancestors": True,
+    "not_an_independent_windows_security_audit": True,
+    "effective_ntfs_acl_independently_verified": False,
+    "cloud_backup_absence_independently_verified": False,
+    "real_mt4_session_or_data_collection_authorized": False,
+    "p05_independent_preflight_accepted": False,
+    "private_broker_data_upload_authorized": False,
+    "trade_or_order_execution_authorized": False,
+    "safety_hold_release_authorized": False
+}
+
 P05_06_EVERYONE_VISIBILITY_OWNER_REPORT = {
     "source": "USER_EXPLICIT_EVERYONE_NOT_VISIBLE_REPLY_TO_P05_06_SECURITY_TAB_CURRENT_CHAT",
     "reported_on_jst_date": "2026-11-04",
@@ -313,6 +341,14 @@ def audit(root: Path = ROOT, *, injected: dict | None = None) -> list[str]:
             errors.append("P05_MANDATORY_CHECK_SET_CHANGED")
         else:
             for i, row in enumerate(checks):
+                if i == 5 and row.get("owner_reported_unfamiliar_principals") != P05_06_UNFAMILIAR_PRINCIPALS_OWNER_REPORT:
+                    errors.append("P05_06_NO_UNKNOWN_PRINCIPALS_FALSELY_CERTIFIED")
+                if i != 5 and "owner_reported_unfamiliar_principals" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_REPORTS_PRINCIPALS:" + P05_IDS[i])
+                if i == 5 and row.get("owner_accepted_storage_security_scope") != P05_06_OWNER_STORAGE_SECURITY_ACCEPTANCE:
+                    errors.append("P05_06_OWNER_ACCEPTANCE_WRONGLY_EXTENDED_TO_MT4_OR_ACL_PROOF")
+                if i != 5 and "owner_accepted_storage_security_scope" in row:
+                    errors.append("P05_OTHER_CHECK_FALSELY_OWNER_APPROVES_STORAGE:" + P05_IDS[i])
                 if i == 5 and row.get("owner_reported_ntfs_everyone_visibility") != P05_06_EVERYONE_VISIBILITY_OWNER_REPORT:
                     errors.append("P05_06_EVERYONE_ABSENT_FALSELY_TREATED_AS_FULL_ACL_PROOF")
                 if i != 5 and "owner_reported_ntfs_everyone_visibility" in row:
@@ -464,6 +500,9 @@ def snapshot(root: Path = ROOT) -> dict:
         "p05_checks_passed": 0,
         "p05_total_checks": 8,
         "p05_06_prior_absence_report_retained": not errors,
+        "p05_06_owner_reported_no_unfamiliar_principals": not errors,
+        "p05_06_owner_accepts_folder_and_parents_for_offline_work": not errors,
+        "p05_06_storage_permission_is_not_broker_permission": True,
         "p05_06_owner_reported_everyone_not_visible": not errors,
         "p05_06_unfamiliar_principals_state": "UNVERIFIED",
         "p05_06_effective_ntfs_permissions_verified": False,
