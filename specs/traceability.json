@@ -3,6 +3,138 @@
   "description": "Q109: source/test coverage by most-specific protected prefix. active means source + registered tests exist, not a safety approval. Trading-order components remain planned.",
   "offline_synthetic_mappings": [
     {
+      "source": "scripts/risk_3p_60_offline_ingress_quality_gate.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q44",
+        "Q80",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_60_offline_ingress_quality_gate.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/audit_risk_3p_59_p05_dependency_dag.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q44",
+        "Q80",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_59_p05_dependency_dag.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/risk_3p_58_safe_diagnostic_projection.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q44",
+        "Q80",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_58_safe_diagnostic_projection.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/risk_3p_57_synthetic_temporal_coherence.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q44",
+        "Q80",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_57_synthetic_temporal_coherence.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/audit_risk_3p_56_static_offline_boundary.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q44",
+        "Q80",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_56_static_offline_boundary.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/risk_3p_55_synthetic_ingress_contract.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q44",
+        "Q80",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_55_synthetic_ingress_contract.py"
+      ],
+      "production_authorized": false
+    },
+    {
       "source": "scripts/audit_risk_3p_53_54_future_handoff.py",
       "spec_ids": [
         "Q3",
