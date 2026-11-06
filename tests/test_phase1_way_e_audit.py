@@ -128,6 +128,11 @@ class WayEGateAuditTests(unittest.TestCase):
             "scripts/risk_3p_58_safe_diagnostic_projection.py",
             "scripts/audit_risk_3p_59_p05_dependency_dag.py",
             "scripts/risk_3p_60_offline_ingress_quality_gate.py",
+            "scripts/risk_3p_61_strict_offline_result_contract.py",
+            "scripts/audit_risk_3p_62_offline_traceability_graph.py",
+            "scripts/audit_risk_3p_63_g1_ledger_alignment.py",
+            "scripts/risk_3p_64_adversarial_consistency_campaign.py",
+            "scripts/risk_3p_65_integrated_offline_audit.py",
         })
         for source, row in mapping.items():
             with self.subTest(source=source):
