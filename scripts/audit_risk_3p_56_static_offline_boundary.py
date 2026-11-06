@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+MAX_STATIC_SOURCE_CHARS = 65536  # synthetic AST resource bound, not a sandbox
 TARGETS = (
     "scripts/risk_3p_49_synthetic_evidence_chain.py",
     "scripts/risk_3p_50_synthetic_dual_witness.py",
@@ -60,7 +61,11 @@ ALLOWED_SCRIPT_MODULES = frozenset((
 
 def _inspect_source(source: object) -> list[str]:
     """Fixed error codes only; never echo or run untrusted source."""
-    if type(source) is not str or not source.strip():
+    if type(source) is not str or not source:
+        return ["P56_INVALID_SOURCE"]
+    if len(source) > MAX_STATIC_SOURCE_CHARS:
+        return ["P56_SOURCE_TOO_LARGE"]
+    if not source.strip():
         return ["P56_INVALID_SOURCE"]
     try:
         tree = ast.parse(source)
@@ -105,11 +110,17 @@ def _inspect_source(source: object) -> list[str]:
 
 def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
     errors = []
-    if overrides is not None and (
-            type(overrides) is not dict
-            or any(key not in TARGETS or type(value) is not str
-                   for key, value in overrides.items())):
-        errors.append("P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE")
+    # Inspect the actual built-in dict key/value types before any membership
+    # test or dict lookup. A poisoned object key may execute custom __eq__
+    # if compared to an expected filename, even after construction.
+    if overrides is not None:
+        if (type(overrides) is not dict
+                or len(overrides) > len(TARGETS)
+                or any(type(k) is not str or type(v) is not str
+                       or k not in TARGETS
+                       or len(v) > MAX_STATIC_SOURCE_CHARS
+                       for k, v in overrides.items())):
+            return ["P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE"]
     for position, path in enumerate(TARGETS, 1):
         try:
             source = (
