@@ -54,7 +54,8 @@ EXPECTED_FIELDS = (
      "real_order_or_ea_action_authorized", "runtime_go_no_go",
      "safety_hold_latched", "errors"),
     ("status", "offline_baseline_classes", "synthetic_mutation_types",
-     "synthetic_corruptions_checked", "p05_passed", "g1_real_verified",
+     "synthetic_corruptions_checked", "composite_integration_cases_checked",
+     "p05_passed", "g1_real_verified",
      "actual_broker_evidence_received", "human_signoff_verified",
      "real_mt4_access_authorized", "order_execution_authorized",
      "runtime_go_no_go", "safety_hold_latched", "errors"),
@@ -83,7 +84,8 @@ COUNTS = (
     ("offline_subchecks", 7), ("offline_report_contracts", 7),
     ("minimum_tracked_synthetic_sources", 41), ("required_real_g1_rows", 15),
     ("offline_baseline_classes", 7), ("synthetic_mutation_types", 10),
-    ("synthetic_corruptions_checked", 70), ("p05_prerequisites", 8),
+    ("synthetic_corruptions_checked", 70),
+    ("composite_integration_cases_checked", 7), ("p05_prerequisites", 8),
 )
 
 
