@@ -7,7 +7,7 @@ risk estimate. No network, host, MT4, credentials, disk, or clock I/O.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from decimal import Context, Decimal, localcontext
 from fractions import Fraction
 
@@ -212,6 +212,47 @@ def _handoff_reject(code: str) -> SyntheticHandoffReview:
     return SyntheticHandoffReview(code)
 
 
+
+def _exact_mock_structure(observed: object, expected: object) -> bool:
+    """Check all declared fields, nested values and exact built-in types.
+
+    Dataclass equality alone is unsafe for a claim of strict consistency:
+    False == 0, True == 1, or equal-valued tuple subclasses can hide a type
+    change. Frozen dataclasses can also have unknown instance attributes added
+    with object.__setattr__, which normal dataclass equality ignores.
+    """
+    if type(observed) is not type(expected):
+        return False
+    if type(observed) in (stop_conversion.Review, Review):
+        try:
+            names = {field.name for field in fields(type(expected))}
+            if (set(vars(observed)) != names
+                    or set(vars(expected)) != names):
+                return False
+            return all(_exact_mock_structure(getattr(observed, name),
+                                             getattr(expected, name))
+                       for name in names)
+        except (TypeError, AttributeError):
+            return False
+    if type(observed) is tuple:
+        return (len(observed) == len(expected)
+                and all(_exact_mock_structure(x, y)
+                        for x, y in zip(observed, expected)))
+    if type(observed) is list:
+        return (len(observed) == len(expected)
+                and all(_exact_mock_structure(x, y)
+                        for x, y in zip(observed, expected)))
+    if type(observed) is dict:
+        return (observed.keys() == expected.keys()
+                and all(_exact_mock_structure(observed[k], expected[k])
+                        for k in expected))
+    if type(observed) in (str, int, bool, type(None)):
+        return observed == expected
+    # This guard is intentionally scoped to the synthetic report values.
+    # Any unfamiliar object is refused instead of executing its __eq__ hook.
+    return False
+
+
 def _mock_stop_protected(report: stop_conversion.Review) -> bool:
     return (
         type(report) is stop_conversion.Review
@@ -352,6 +393,13 @@ def review_synthetic_loss_handoff(
             or stop_result != recomputed_stop
             or portfolio_result != recomputed_portfolio):
         return _handoff_reject("P103_MOCK_RECOMPUTATION_MISMATCH")
+    # Equality above retains previous error codes for actual value drift.
+    # Strict type/field matching separately denies bool/int coercion,
+    # tuple subclasses and extra attributes invisible to dataclass __eq__.
+    if (not _exact_mock_structure(stop_result, recomputed_stop)
+            or not _exact_mock_structure(portfolio_result,
+                                         recomputed_portfolio)):
+        return _handoff_reject("P109_MOCK_TYPED_REPORT_DRIFT")
 
     return SyntheticHandoffReview(
         "PASS_OFFLINE_MOCK_BINDING_ONLY",
