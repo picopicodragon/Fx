@@ -11,7 +11,7 @@ P05とG1の**証拠未取得・人間承認未実施の状態を維持**した�
 | RISK-3P-61 | `scripts/risk_3p_61_strict_offline_result_contract.py`＋既存`risk_3p_60_offline_ingress_quality_gate.py`の検査強化 | 7つの合成品質結果の許可キー・値・型を固定。従来の検査が見逃し得た**未知の許可フラグ・改変された検査件数・boolとintの混同**をFAIL_CLOSEDにする |
 | RISK-3P-62 | `scripts/audit_risk_3p_62_offline_traceability_graph.py` | Q109のオフラインソースとテストの対応を監査。重複ソース・欠落・未登録・危険なパス・production_authorized=trueを拒否 |
 | RISK-3P-63 | `scripts/audit_risk_3p_63_g1_ledger_alignment.py` | 既存G1台帳と将来の引継ぎ台帳について、USD/JPY・EUR/JPY・EUR/USD×5属性の**15件すべての順序・ペア・属性名・null状態**を照合。G1実証値の偽挿入を拒否 |
-| RISK-3P-64 | `scripts/risk_3p_64_adversarial_consistency_campaign.py` | 合成7モジュール×10種類＝70通りの改ざん・偽許可・件数改変・秘匿値・型違いを一括注入 |
+| RISK-3P-64 | `scripts/risk_3p_64_adversarial_consistency_campaign.py` | 合成7モジュール×10種類＝70通りの改ざん・偽許可・件数改変・秘匿値・型違いを厳密スキーマで全件検査し、7モジュールそれぞれについて総合ゲートへの連動検査も実施 |
 | RISK-3P-65 | `scripts/risk_3p_65_integrated_offline_audit.py` | 既存総合品質、厳密結果スキーマ、Q109対応、G1台帳、70件の改ざん試験、P05依存DAGの6系統を統合 |
 | RISK-3P-66 | 対応自動テスト、Q109、設計資料、PR/CI | 仕様ID・テスト対応を登録し、すべて`production_authorized=false`、mainへはマージしない |
 
