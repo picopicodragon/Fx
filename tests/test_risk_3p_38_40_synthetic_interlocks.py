@@ -223,9 +223,9 @@ class CompositeInterlocksTests(unittest.TestCase):
 
     def test_malformed_composite_fails_closed(self):
         for bad in (None, [], {}, "", 10, True,
-                    {"raw_secret": "SECRET"}):
+                    {"raw_secret": "PRIVATE_VALUE_CANARY_42"}):
             result = matrix.evaluate(bad)
             self.assertEqual(result["status"], "FAIL_CLOSED")
             self.assertFalse(result["real_mt4_read_authorized"])
             self.assertEqual(result["runtime_go_no_go"], "NO_GO")
-            self.assertNotIn("SECRET", str(result))
+            self.assertNotIn("PRIVATE_VALUE_CANARY_42", str(result))
