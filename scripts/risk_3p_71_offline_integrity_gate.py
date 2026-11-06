@@ -14,6 +14,7 @@ from scripts import audit_risk_3p_67_source_index as index
 from scripts import audit_risk_3p_56_static_offline_boundary as syntax
 from scripts import audit_risk_3p_69_import_time_safety as import_time
 from scripts import risk_3p_70_fail_closed_campaign as adversarial
+from scripts import risk_3p_61_strict_offline_result_contract as exact
 
 ROOT = Path(__file__).resolve().parents[1]
 NAMES = (
@@ -60,6 +61,65 @@ COUNT_FIELDS = (
 )
 
 
+def _expected(status: str, **facts) -> dict:
+    """Explicitly reviewed P71 child output. Not a runtime authority token."""
+    return {"status": status, **facts, "runtime_go_no_go": "NO_GO",
+            "safety_hold_latched": True, "errors": []}
+
+
+# Unlike a list of known danger flags, these complete records also block
+# newly inserted fields and altered benign-looking numeric or Boolean claims.
+EXPECTED_CHILD_REPORTS = (
+    _expected(
+        "PASS_GOVERNANCE_DESIGN_ONLY",
+        offline_governance_subchecks=6, synthetic_corruption_cases_included=70,
+        actual_broker_evidence_verified=False, p05_passed=0,
+        g1_real_verified=0, real_mt4_observation_authorized=False,
+        ea_or_order_execution_authorized=False,
+        automatic_main_merge_authorized=False),
+    _expected(
+        "PASS_OFFLINE_Q109_LINKS_ONLY",
+        minimum_tracked_synthetic_sources=41,
+        all_sources_production_authorized=False,
+        runtime_dependency_closure_verified=False,
+        real_evidence_or_signoff_verified=False,
+        p05_passed=0, g1_real_verified=0,
+        real_mt4_read_authorized=False, order_execution_authorized=False,
+        main_auto_merge_authorized=False),
+    _expected(
+        "PASS_BLANK_G1_LEDGER_ALIGNMENT_ONLY",
+        required_real_g1_rows=15, real_g1_verified=0, p05_real_accepted=0,
+        real_broker_sources_confirmed=False, human_p05_signoff=False,
+        real_mt4_access_authorized=False,
+        real_order_or_ea_action_authorized=False),
+    _expected(
+        "PASS_PINNED_OFFLINE_INVENTORY_ONLY",
+        expected_offline_sources=45, real_source_authenticity_verified=False,
+        production_approval_recorded=False, p05_passed=0,
+        g1_real_verified=0, real_mt4_access_authorized=False,
+        main_auto_merge_authorized=False),
+    _expected(
+        "PASS_NARROW_STATIC_REVIEW_ONLY",
+        pure_synthetic_modules_scanned=6, full_runtime_isolation_proven=False,
+        transitive_imports_or_reflection_proven_safe=False,
+        p05_passed=0, g1_real_verified=0,
+        real_mt4_access_authorized=False, order_execution_authorized=False),
+    _expected(
+        "PASS_NARROW_IMPORT_TIME_AST_ONLY",
+        mock_source_modules_reviewed=6, runtime_side_effect_freedom_proven=False,
+        transitive_dependencies_verified=False, actual_mt4_access_performed=False,
+        p05_passed=0, g1_real_verified=0,
+        real_mt4_read_authorized=False, order_execution_authorized=False),
+    _expected(
+        "PASS_TWENTY_NINE_OFFLINE_ATTACKS_ONLY",
+        mock_failures_exercised=29, pure_modules_reviewed=6,
+        real_source_security_proven=False, real_broker_evidence_verified=False,
+        p05_passed=0, g1_real_verified=0,
+        real_mt4_access_authorized=False, order_execution_authorized=False,
+        main_auto_merge_authorized=False),
+)
+
+
 def _outputs(root: Path = ROOT) -> tuple[dict, ...]:
     return (
         old.evaluate(root),
@@ -91,6 +151,8 @@ def evaluate(root: Path = ROOT, injected: dict | None = None) -> dict:
                     or row.get("safety_hold_latched") is not True):
                 errors.append("P71_CHILD_REPORT_MISSING_OR_INVALID:" + code)
                 continue
+            if not exact._strict_same(row, EXPECTED_CHILD_REPORTS[n - 1]):
+                errors.append("P71_UNREVIEWED_CHILD_FIELD_OR_TYPE:" + code)
             if any(k in row and row[k] is not False for k in FALSE_FLAGS):
                 errors.append("P71_REAL_PERMISSION_OR_FALSE_PROOF:" + code)
             if any(k in row and

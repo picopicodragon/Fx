@@ -46,7 +46,7 @@ class ImportTimeSourceTests(unittest.TestCase):
 
     def test_existing_fixed_hash_regex_is_explicit_exception(self):
         self.assertEqual(mod.inspect_source(
-            'import re\nHEX64 = re.compile("[0-9a-f]{64}")'), [])
+            'import re\nHEX64 = re.compile(r"[0-9a-f]{64}\\Z")'), [])
         self.assertIn("P69_IMPORT_TIME_INITIALIZER_EXECUTION",
                       mod.inspect_source(
                           'HEX64 = re.compile(untrusted_expression())'))

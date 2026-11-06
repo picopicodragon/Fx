@@ -43,6 +43,12 @@ DISALLOWED_IDENTIFIERS = frozenset((
 # Explicitly pin the only mock-only dependencies permitted in the six
 # selected pure validators. This is a narrow syntactic allowlist, not a
 # guarantee that module imports are side-effect free.
+REFLECTION_ESCAPE_ATTRIBUTES = frozenset((
+    "__globals__", "__builtins__", "__dict__", "__getattribute__",
+    "__subclasses__", "__mro__", "__bases__", "__class__",
+    "__code__", "__closure__", "__loader__", "__spec__",
+))
+
 ALLOWED_SCRIPT_MODULES = frozenset((
     "validate_risk_3p_34_synthetic_provenance",
     "risk_3p_49_synthetic_evidence_chain",
@@ -88,6 +94,9 @@ def _inspect_source(source: object) -> list[str]:
                 errors.append("P56_UNSAFE_DIRECT_CALL")
             if isinstance(fn, ast.Attribute) and fn.attr in DISALLOWED_ATTR_CALLS:
                 errors.append("P56_UNSAFE_ATTRIBUTE_CALL")
+        elif isinstance(node, ast.Attribute):
+            if node.attr in REFLECTION_ESCAPE_ATTRIBUTES:
+                errors.append("P56_REFLECTION_ESCAPE_ATTRIBUTE")
         elif isinstance(node, ast.Name):
             if node.id in DISALLOWED_IDENTIFIERS:
                 errors.append("P56_PRIVILEGED_SYMBOL_REFERENCE")

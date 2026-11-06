@@ -16,6 +16,22 @@ ROOT = Path(__file__).resolve().parents[1]
 TARGETS = prior.TARGETS
 
 
+def _literal_only(node: object) -> bool:
+    """Only immutable literal structures; no names, subscripts, operators or calls."""
+    if isinstance(node, ast.Constant):
+        return type(node.value) in (str, bytes, int, float, bool, type(None))
+    if isinstance(node, (ast.Tuple, ast.List, ast.Set)):
+        return all(_literal_only(item) for item in node.elts)
+    if isinstance(node, ast.Dict):
+        return all(k is not None and _literal_only(k) and _literal_only(v)
+                   for k, v in zip(node.keys, node.values))
+    if isinstance(node, ast.UnaryOp) and isinstance(
+            node.op, (ast.USub, ast.UAdd)):
+        return isinstance(node.operand, ast.Constant) and type(
+            node.operand.value) in (int, float)
+    return False
+
+
 def inspect_source(source: object) -> list[str]:
     if type(source) is not str or not source.strip():
         return ["P69_EMPTY_OR_INVALID_SOURCE"]
@@ -28,19 +44,38 @@ def inspect_source(source: object) -> list[str]:
         if isinstance(stmt, (ast.Import, ast.ImportFrom, ast.Pass)):
             continue
         if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if (stmt.decorator_list or
-                    any(isinstance(n, ast.Call)
-                        for arg in list(stmt.args.defaults) + [
-                            x for x in stmt.args.kw_defaults if x is not None]
-                        for n in ast.walk(arg))):
+            defaults = list(stmt.args.defaults) + [
+                x for x in stmt.args.kw_defaults if x is not None]
+            annotations = [arg.annotation for arg in (
+                list(stmt.args.posonlyargs) + list(stmt.args.args)
+                + list(stmt.args.kwonlyargs)
+                + ([stmt.args.vararg] if stmt.args.vararg else [])
+                + ([stmt.args.kwarg] if stmt.args.kwarg else []))
+                if arg.annotation is not None]
+            if stmt.returns is not None:
+                annotations.append(stmt.returns)
+            if (stmt.decorator_list
+                    or any(not _literal_only(x) for x in defaults)
+                    or any(isinstance(n, (ast.Call, ast.Await, ast.Yield,
+                                         ast.NamedExpr))
+                           for a in annotations for n in ast.walk(a))):
                 errors.append("P69_IMPORT_TIME_DECORATOR_OR_DEFAULT_CALL")
             continue
-        if isinstance(stmt, ast.Assign):
-            # One retained static regular-expression compilation used by
-            # the synthetic hash validator. No general call is permitted.
+        if isinstance(stmt, (ast.Assign, ast.AnnAssign)):
+            if isinstance(stmt, ast.AnnAssign) and any(
+                    isinstance(n, (ast.Call, ast.Await, ast.Yield,
+                                   ast.NamedExpr))
+                    for n in ast.walk(stmt.annotation)):
+                errors.append("P69_IMPORT_TIME_INITIALIZER_EXECUTION")
             value = stmt.value
+            if value is None:
+                continue
+            # Narrow existing exception for a constant regular expression
+            # assigned to the mock chain's HEX64. Other calls and expressions
+            # are not permitted as module-level values.
             allow_regex = (
-                isinstance(value, ast.Call)
+                isinstance(stmt, ast.Assign)
+                and isinstance(value, ast.Call)
                 and isinstance(value.func, ast.Attribute)
                 and isinstance(value.func.value, ast.Name)
                 and value.func.value.id == "re"
@@ -48,20 +83,20 @@ def inspect_source(source: object) -> list[str]:
                 and len(value.args) == 1
                 and isinstance(value.args[0], ast.Constant)
                 and type(value.args[0].value) is str
+                and value.args[0].value == r"[0-9a-f]{64}\Z"
                 and not value.keywords
                 and len(stmt.targets) == 1
                 and isinstance(stmt.targets[0], ast.Name)
                 and stmt.targets[0].id == "HEX64"
             )
-            if any(isinstance(n, ast.Call) for n in ast.walk(value)) and not (
-                    allow_regex and sum(isinstance(n, ast.Call)
-                                        for n in ast.walk(value)) == 1):
+            if not (_literal_only(value) or allow_regex):
                 errors.append("P69_IMPORT_TIME_INITIALIZER_EXECUTION")
-            continue
-        if isinstance(stmt, ast.AnnAssign):
-            if stmt.value is not None and any(
-                    isinstance(n, ast.Call) for n in ast.walk(stmt.value)):
-                errors.append("P69_IMPORT_TIME_INITIALIZER_EXECUTION")
+            if isinstance(stmt, ast.Assign) and any(
+                    not isinstance(t, ast.Name) for t in stmt.targets):
+                errors.append("P69_IMPORT_TIME_ASSIGNMENT_TARGET")
+            elif isinstance(stmt, ast.AnnAssign) and not isinstance(
+                    stmt.target, ast.Name):
+                errors.append("P69_IMPORT_TIME_ASSIGNMENT_TARGET")
             continue
         if isinstance(stmt, ast.Expr):
             if not (isinstance(stmt.value, ast.Constant)
@@ -70,7 +105,6 @@ def inspect_source(source: object) -> list[str]:
             continue
         errors.append("P69_UNREVIEWED_IMPORT_TIME_STATEMENT")
     return list(dict.fromkeys(errors))
-
 
 def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
     errors = []
@@ -85,7 +119,7 @@ def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
                       and path in overrides else
                       (root / path).read_text(encoding="utf-8"))
             findings = inspect_source(source)
-        except (OSError, UnicodeError, ValueError):
+        except (OSError, UnicodeError, ValueError, RecursionError):
             findings = ["P69_SOURCE_UNAVAILABLE"]
         errors.extend("P69_SOURCE_" + str(i) + ":" + f for f in findings)
     return errors
