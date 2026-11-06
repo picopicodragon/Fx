@@ -213,6 +213,28 @@ def _handoff_reject(code: str) -> SyntheticHandoffReview:
 
 
 
+
+def _mock_report_type_shape(observed: object, expected: object) -> bool:
+    """Preflight structure/types without calling any untrusted __eq__ methods."""
+    if type(observed) is not type(expected):
+        return False
+    if type(observed) in (stop_conversion.Review, Review):
+        names = {field.name for field in fields(type(expected))}
+        return (set(vars(observed)) == names
+                and set(vars(expected)) == names
+                and all(_mock_report_type_shape(getattr(observed, name),
+                                                getattr(expected, name))
+                        for name in names))
+    if type(observed) is tuple:
+        return (len(observed) == len(expected)
+                and all(_mock_report_type_shape(a, b)
+                        for a, b in zip(observed, expected)))
+    if type(observed) in (str, int, bool, type(None)):
+        return True
+    # No arbitrary class objects or custom equality hooks are trusted.
+    return False
+
+
 def _exact_mock_structure(observed: object, expected: object) -> bool:
     """Check all declared fields, nested values and exact built-in types.
 
@@ -389,17 +411,19 @@ def review_synthetic_loss_handoff(
         positions_reconciled=positions_reconciled,
         pending_orders_reconciled=pending_reconciled)
     if (not _mock_stop_protected(recomputed_stop)
-            or not _mock_portfolio_protected(recomputed_portfolio)
-            or stop_result != recomputed_stop
-            or portfolio_result != recomputed_portfolio):
+            or not _mock_portfolio_protected(recomputed_portfolio)):
         return _handoff_reject("P103_MOCK_RECOMPUTATION_MISMATCH")
-    # Equality above retains previous error codes for actual value drift.
-    # Strict type/field matching separately denies bool/int coercion,
-    # tuple subclasses and extra attributes invisible to dataclass __eq__.
+    # Check types, nested tuple shapes and unknown fields before comparing
+    # values. Otherwise an injected object can run custom __eq__ or exploit
+    # False == 0 and frozen dataclasses ignoring unknown instance attributes.
+    if (not _mock_report_type_shape(stop_result, recomputed_stop)
+            or not _mock_report_type_shape(portfolio_result,
+                                           recomputed_portfolio)):
+        return _handoff_reject("P109_MOCK_TYPED_REPORT_DRIFT")
     if (not _exact_mock_structure(stop_result, recomputed_stop)
             or not _exact_mock_structure(portfolio_result,
                                          recomputed_portfolio)):
-        return _handoff_reject("P109_MOCK_TYPED_REPORT_DRIFT")
+        return _handoff_reject("P103_MOCK_RECOMPUTATION_MISMATCH")
 
     return SyntheticHandoffReview(
         "PASS_OFFLINE_MOCK_BINDING_ONLY",
