@@ -96,17 +96,21 @@ def tickets():
                         "SIM-127")]
 
 
-def run_portfolio(q=None):
+# Explicit None is a malformed argument to exercise, NOT an omitted fixture.
+_OMITTED = object()
+
+
+def run_portfolio(q=_OMITTED):
     return portfolio.review_synthetic_portfolio(
-        quotes() if q is None else q, trades(), equity_jpy="100000",
+        quotes() if q is _OMITTED else q, trades(), equity_jpy="100000",
         asof=127, snapshot_id="SIM-127",
         positions_reconciled=True, pending_orders_reconciled=True)
 
 
-def run_stop(c=None, q=None):
+def run_stop(c=_OMITTED, q=_OMITTED):
     return stop.review_synthetic_stop_risk(
-        contracts() if c is None else c,
-        stop_quotes() if q is None else q,
+        contracts() if c is _OMITTED else c,
+        stop_quotes() if q is _OMITTED else q,
         tickets(), equity_jpy="100000", asof=127, snapshot_id="SIM-127",
         positions_reconciled=True, pending_reconciled=True,
         inflight_reservations_reconciled=True)
