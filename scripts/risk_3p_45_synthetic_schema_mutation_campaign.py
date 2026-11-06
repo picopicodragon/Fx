@@ -42,9 +42,13 @@ def _mutation(doc: dict, fault: str) -> object:
     elif fault == "REAL_SCOPE_SPOOF":
         result["classification"] = "REAL_BROKER_CONFIRMED"
     elif fault == "FORGED_RUNTIME_GO":
-        result["safety"]["runtime_go_no_go"] = "GO"
+        # P34 stores safety flags at the root. Other offline contracts
+        # keep them in a nested safety object; both must fail closed.
+        target = result["safety"] if "safety" in result else result
+        target["runtime_go_no_go"] = "GO"
     elif fault == "SAFETY_KEY_INJECTION":
-        result["safety"]["broker_secret"] = CANARY
+        target = result["safety"] if "safety" in result else result
+        target["broker_secret"] = CANARY
     else:
         raise ValueError("unknown synthetic fault")
     return result
