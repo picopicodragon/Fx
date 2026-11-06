@@ -201,7 +201,8 @@ class DecimalRoundingFailClosedTests(unittest.TestCase):
         with patch.object(stop, "Context", side_effect=weak_context(8)):
             r = review_stop(tickets=[row])
         self.held_stop(r, True)
-        self.assertEqual(r.candidate_illustrative_loss_jpy, "500")
+        self.assertEqual(Decimal(r.candidate_illustrative_loss_jpy),
+                         Decimal("500"))
 
     def test_rounded_failure_exposes_no_partial_portfolio_legs(self):
         with patch.object(portfolio, "Context", side_effect=weak_context(8)):
