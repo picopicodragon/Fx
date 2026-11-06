@@ -156,6 +156,16 @@ class SyntheticReconciliationTests(unittest.TestCase):
         self.assertEqual(result["status"], "FAIL_CLOSED")
         self.assertNotIn("SHOULD_NOT_RETURN_IN_ERRORS", str(result))
 
+    def test_broker_other_symbol_exposure_cannot_be_inferred_from_empty_ui(self):
+        # The owner's trade tab only showed balance; even a fictional
+        # server-only position on an unselected pair must block zero claims.
+        self.reject(lambda p: p["server"]["rows"][3].update(
+            open_positions=1, pending_orders=2),
+            "P36_POSITION_OR_PENDING_MISMATCH:4")
+        self.reject(lambda p: p["terminal"].update(
+            coverage="SIM_BALANCE_ONLY_NO_POSITION_ROWS"),
+            "P36_SOURCE_UNVERIFIED_OR_PARTIAL")
+
     def test_malformed_data_fails_closed_without_network_or_mt4(self):
         for item in (None, [], "", 1, True, {}, {"terminal": {}}):
             with self.subTest(item=type(item).__name__):
