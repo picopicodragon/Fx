@@ -7,7 +7,7 @@ risk estimate. No network, host, MT4, credentials, disk, or clock I/O.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from decimal import Context, Decimal, localcontext
 from fractions import Fraction
 
@@ -218,9 +218,55 @@ def _handoff_reject(code: str) -> SyntheticHandoffReview:
     return SyntheticHandoffReview(code)
 
 
+def _mock_plain_report(report: object, expected: type) -> bool:
+    """Require inert primitive child report fields before any comparisons.
+
+    A frozen dataclass alone is not a schema: callers can still construct it
+    with arbitrary Python objects that execute code through __eq__. This
+    narrow offline review compares only plain text, bools, None, and rows.
+    """
+    if type(report) is not expected:
+        return False
+    for field in fields(expected):
+        value = getattr(report, field.name)
+        if type(value) is str:
+            if len(value) > 512:
+                return False
+        elif type(value) in (bool, type(None)):
+            continue
+        elif type(value) is tuple:
+            if len(value) > MAX_SYNTHETIC_TRADES:
+                return False
+            for item in value:
+                if (type(item) is not tuple or len(item) != 2
+                        or type(item[0]) is not str
+                        or type(item[1]) is not str
+                        or len(item[0]) > MAX_SIMULATED_ID_CHARS
+                        or len(item[1]) > 512):
+                    return False
+        else:
+            return False
+    return True
+
+
+def _mock_plain_dataclass(record: object, expected: type) -> bool:
+    """Reject unexpected objects before tuple equality or recomputation."""
+    if type(record) is not expected:
+        return False
+    for field in fields(expected):
+        value = getattr(record, field.name)
+        if field.name == "observed_at":
+            if (type(value) is not int
+                    or not 0 <= value <= MAX_SYNTHETIC_ASOF):
+                return False
+        elif type(value) is not str or len(value) > MAX_SIMULATED_ID_CHARS:
+            return False
+    return True
+
+
 def _mock_stop_protected(report: stop_conversion.Review) -> bool:
     return (
-        type(report) is stop_conversion.Review
+        _mock_plain_report(report, stop_conversion.Review)
         and report.illustrative_complete is True
         and report.reason in (
             "SYNTHETIC_HARD_LIMIT_EXCEEDED_NEVER_AUTHORIZED",
@@ -242,7 +288,7 @@ def _mock_stop_protected(report: stop_conversion.Review) -> bool:
 
 def _mock_portfolio_protected(report: Review) -> bool:
     return (
-        type(report) is Review
+        _mock_plain_report(report, Review)
         and report.arithmetic_complete is True
         and report.reason in (
             "EXISTING_HARD_LIMIT_OVER_IN_SYNTHETIC_INPUT",
@@ -272,6 +318,11 @@ def review_synthetic_loss_handoff(
     ID, pair, side, status, exact rational units and asserted loss. Does not
     authenticate source facts, validate real SL fills, or permit an order.
     """
+    if (type(asof) is not int or not 0 <= asof <= MAX_SYNTHETIC_ASOF
+            or type(snapshot_id) is not str or not snapshot_id
+            or len(snapshot_id) > MAX_SIMULATED_ID_CHARS
+            or not snapshot_id.isprintable() or _decimal(equity_jpy) is None):
+        return _handoff_reject("P103_MOCK_SNAPSHOT_OR_EQUITY_INVALID")
     if (positions_reconciled is not True or pending_reconciled is not True
             or inflight_reconciled is not True):
         return _handoff_reject("P103_UNKNOWN_MOCK_RECONCILIATION")
@@ -290,9 +341,12 @@ def review_synthetic_loss_handoff(
             and _mock_portfolio_protected(portfolio_result)):
         return _handoff_reject("P103_UNVERIFIED_OR_PRIVILEGED_MOCK_OUTPUT")
     for pair in PAIRS:
+        contract = contracts[pair]
+        if not _mock_plain_dataclass(contract, stop_conversion.Contract):
+            return _handoff_reject("P103_MOCK_CONTRACT_FIELD_INVALID")
         s, p = stop_quotes[pair], portfolio_quotes[pair]
-        if (type(s) is not stop_conversion.Quote
-                or type(p) is not Quote
+        if (not _mock_plain_dataclass(s, stop_conversion.Quote)
+                or not _mock_plain_dataclass(p, Quote)
                 or (s.pair, s.bid, s.ask, s.observed_at, s.snapshot_id)
                 != (p.pair, p.bid, p.ask, p.observed_at, p.snapshot_id)):
             return _handoff_reject("P103_MOCK_SNAPSHOT_QUOTE_MISMATCH")
@@ -309,8 +363,20 @@ def review_synthetic_loss_handoff(
                     or type(trade) is not Trade
                     or type(item) is not tuple or len(item) != 2
                     or type(item[0]) is not str
-                    or type(item[1]) is not str
-                    or (ticket.ticket_id, ticket.pair, ticket.side, ticket.status)
+                    or type(item[1]) is not str):
+                return _handoff_reject("P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
+            if (not _mock_plain_dataclass(ticket, stop_conversion.Ticket)
+                    or not _mock_plain_dataclass(trade, Trade)):
+                if (any(type(getattr(ticket, name)) is not str
+                        for name in (
+                            "volume_lots", "planned_entry", "stop_price",
+                            "adverse_buffer_quote_per_base",
+                            "additional_cost_jpy"))
+                        or type(trade.base_units) is not str
+                        or type(trade.max_loss_jpy) is not str):
+                    return _handoff_reject("P103_MOCK_UNPARSABLE_AMOUNT")
+                return _handoff_reject("P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
+            if ((ticket.ticket_id, ticket.pair, ticket.side, ticket.status)
                     != (trade.trade_id, trade.pair, trade.side, trade.status)
                     or item[0] != ticket.ticket_id):
                 return _handoff_reject("P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
@@ -342,17 +408,22 @@ def review_synthetic_loss_handoff(
     except (KeyError, ValueError, TypeError, ArithmeticError, OverflowError):
         return _handoff_reject("P103_MOCK_HANDOFF_FORMAT_INVALID")
 
-    recomputed_stop = stop_conversion.review_synthetic_stop_risk(
-        contracts, stop_quotes, tickets, equity_jpy=equity_jpy,
-        asof=asof, snapshot_id=snapshot_id,
-        positions_reconciled=positions_reconciled,
-        pending_reconciled=pending_reconciled,
-        inflight_reservations_reconciled=inflight_reconciled)
-    recomputed_portfolio = review_synthetic_portfolio(
-        portfolio_quotes, trades, equity_jpy=equity_jpy,
-        asof=asof, snapshot_id=snapshot_id,
-        positions_reconciled=positions_reconciled,
-        pending_orders_reconciled=pending_reconciled)
+    try:
+        recomputed_stop = stop_conversion.review_synthetic_stop_risk(
+            contracts, stop_quotes, tickets, equity_jpy=equity_jpy,
+            asof=asof, snapshot_id=snapshot_id,
+            positions_reconciled=positions_reconciled,
+            pending_reconciled=pending_reconciled,
+            inflight_reservations_reconciled=inflight_reconciled)
+        recomputed_portfolio = review_synthetic_portfolio(
+            portfolio_quotes, trades, equity_jpy=equity_jpy,
+            asof=asof, snapshot_id=snapshot_id,
+            positions_reconciled=positions_reconciled,
+            pending_orders_reconciled=pending_reconciled)
+    except Exception:
+        # Only a fixed public code is emitted. Never reproduce input objects,
+        # exception text, personal data or a privileged/positive result.
+        return _handoff_reject("P103_MOCK_RECOMPUTATION_EXCEPTION")
     if (not _mock_stop_protected(recomputed_stop)
             or not _mock_portfolio_protected(recomputed_portfolio)
             or stop_result != recomputed_stop
