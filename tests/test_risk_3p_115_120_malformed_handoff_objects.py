@@ -220,7 +220,7 @@ class PureMockTypeGuardTests(unittest.TestCase):
             ts = list(d["tickets"])
             ts[0] = replace(ts[0], volume_lots=DangerousComparison())
             d["tickets"] = ts
-        self.reject(change, "P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
+        self.reject(change, "P103_MOCK_UNPARSABLE_AMOUNT")
 
     def test_trade_id_object_is_rejected_before_equal_comparison(self):
         def change(d):
@@ -234,7 +234,7 @@ class PureMockTypeGuardTests(unittest.TestCase):
             ts = list(d["trades"])
             ts[0] = replace(ts[0], max_loss_jpy=DangerousComparison())
             d["trades"] = ts
-        self.reject(change, "P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
+        self.reject(change, "P103_MOCK_UNPARSABLE_AMOUNT")
 
     def test_snapshot_object_is_rejected_before_recompute(self):
         self.reject(lambda d: d.update(snapshot_id=DangerousComparison()),
