@@ -8,7 +8,7 @@ No filesystem, clock, network, account, MT4, or live-trading operations.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation, localcontext
+from decimal import Context, Decimal, InvalidOperation, localcontext
 import re
 
 
@@ -180,8 +180,9 @@ def review_synthetic_stop_risk(
     # Up to 18 significant decimal digits per validated input; products of
     # stop distance, units, volume and conversion plus 128 sums can exceed
     # the 48-digit context. 96 digits preserve those synthetic fractions.
-    with localcontext() as context:
-        context.prec = DECIMAL_WORK_PRECISION
+    # Fresh Decimal context prevents inherited Emax/Emin, rounding modes and
+    # traps from altering illustrative stop-loss arithmetic.
+    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)):
         for ticket in tickets:
             if type(ticket) is not Ticket:
                 return _reject("INVALID_TICKET")
