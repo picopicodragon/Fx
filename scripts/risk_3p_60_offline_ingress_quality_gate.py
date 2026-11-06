@@ -15,6 +15,7 @@ from scripts import risk_3p_58_safe_diagnostic_projection as diag
 from scripts import audit_risk_3p_59_p05_dependency_dag as deps
 from scripts import risk_3p_52_offline_provenance_gate as prior
 from scripts import audit_risk_3p_53_54_future_handoff as handoff
+from scripts import risk_3p_61_strict_offline_result_contract as strict
 
 ROOT = Path(__file__).resolve().parents[1]
 NAMES = ("fictional_ingress", "static_boundary", "fake_clocks",
@@ -83,6 +84,10 @@ def evaluate(root: Path = ROOT, injected: dict | None = None) -> dict:
                    (type(result[key]) is not int or result[key] != 0)
                    for key in ZERO_COUNTERS):
                 errors.append("P60_UNVERIFIED_COUNT_PROMOTED:" + str(i))
+        selected = {name: injected.get(name, actual)
+                    if type(injected) is dict else actual
+                    for name, actual in zip(NAMES, outputs)}
+        errors.extend(strict.snapshot(selected)["errors"])
         if injected is not None and (type(injected) is not dict
                                      or set(injected) - set(NAMES)):
             errors.append("P60_UNAUTHORIZED_OR_PRIVATE_CASE_INSERTION")
