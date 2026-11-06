@@ -8,7 +8,7 @@ No filesystem, clock, network, account, MT4, or live-trading operations.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation, localcontext
+from decimal import Context, Decimal, InvalidOperation, localcontext
 import re
 
 
@@ -132,7 +132,8 @@ def review_synthetic_stop_risk(
         return _reject("BROKER_OR_INFLIGHT_STATE_UNKNOWN")
     if (type(asof) is not int or not 0 <= asof <= MAX_SYNTHETIC_ASOF
             or type(snapshot_id) is not str or not snapshot_id
-            or len(snapshot_id) > MAX_SYNTHETIC_ID_CHARS):
+            or len(snapshot_id) > MAX_SYNTHETIC_ID_CHARS
+            or not snapshot_id.isprintable()):
         return _reject("MISSING_OR_INVALID_SNAPSHOT_IDENTITY")
     equity = _parse(equity_jpy)
     if equity is None:
@@ -180,13 +181,15 @@ def review_synthetic_stop_risk(
     # Up to 18 significant decimal digits per validated input; products of
     # stop distance, units, volume and conversion plus 128 sums can exceed
     # the 48-digit context. 96 digits preserve those synthetic fractions.
-    with localcontext() as context:
-        context.prec = DECIMAL_WORK_PRECISION
+    # Fresh Decimal context prevents inherited Emax/Emin, rounding modes and
+    # traps from altering illustrative stop-loss arithmetic.
+    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)):
         for ticket in tickets:
             if type(ticket) is not Ticket:
                 return _reject("INVALID_TICKET")
             if (type(ticket.ticket_id) is not str or not ticket.ticket_id
                     or len(ticket.ticket_id) > MAX_SYNTHETIC_ID_CHARS
+                    or not ticket.ticket_id.isprintable()
                     or ticket.ticket_id in seen):
                 return _reject("DUPLICATE_OR_MISSING_TICKET_ID")
             seen.add(ticket.ticket_id)

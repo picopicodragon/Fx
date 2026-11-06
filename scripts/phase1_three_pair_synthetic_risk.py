@@ -8,7 +8,7 @@ risk estimate. No network, host, MT4, credentials, disk, or clock I/O.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, localcontext
+from decimal import Context, Decimal, localcontext
 import re
 
 
@@ -93,7 +93,8 @@ def review_synthetic_portfolio(
         return _reject("ACCOUNT_OR_PENDING_STATE_UNKNOWN")
     if (type(asof) is not int or not 0 <= asof <= MAX_SYNTHETIC_ASOF
             or type(snapshot_id) is not str or not snapshot_id
-            or len(snapshot_id) > MAX_SIMULATED_ID_CHARS):
+            or len(snapshot_id) > MAX_SIMULATED_ID_CHARS
+            or not snapshot_id.isprintable()):
         return _reject("INVALID_SYNTHETIC_SNAPSHOT_IDENTITY")
     equity = _decimal(equity_jpy)
     if equity is None or equity <= 0:
@@ -121,8 +122,9 @@ def review_synthetic_portfolio(
     # Preserve sub-yen boundary exceedances in synthetic high-scale amounts.
     # With <=40 decimal digits per operand and <=128 tickets, 96 digits
     # accommodate product, aggregation, and both hard-limit comparisons.
-    with localcontext() as ctx:
-        ctx.prec = DECIMAL_WORK_PRECISION
+    # Use an independent Decimal context. Caller rounding mode, exponent
+    # bounds and Inexact/Rounded traps must not change mock risk decisions.
+    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)):
         net = {currency: Decimal(0) for currency in CURRENCIES}
         gross = {currency: Decimal(0) for currency in CURRENCIES}
         seen: set[str] = set()
@@ -134,6 +136,7 @@ def review_synthetic_portfolio(
                 return _reject("INVALID_TRADE")
             if (type(trade.trade_id) is not str or not trade.trade_id
                     or len(trade.trade_id) > MAX_SIMULATED_ID_CHARS
+                    or not trade.trade_id.isprintable()
                     or trade.trade_id in seen):
                 return _reject("DUPLICATE_OR_INVALID_TRADE_ID")
             seen.add(trade.trade_id)
