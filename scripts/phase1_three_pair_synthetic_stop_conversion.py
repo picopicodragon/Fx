@@ -17,6 +17,11 @@ STATUSES = frozenset(("POSITION", "PENDING", "CANDIDATE"))
 _TOKEN = re.compile(r"(?:0|[1-9][0-9]*)(?:\.[0-9]+)?\Z", re.ASCII)
 SYNTHETIC_TRADE_LIMIT = Decimal("0.005")
 SYNTHETIC_AGGREGATE_LIMIT = Decimal("0.01")
+# These are defensive simulation limits, not approved broker specifications.
+MAX_SYNTHETIC_TICKETS = 128
+MAX_SYNTHETIC_ID_CHARS = 128
+MAX_SYNTHETIC_ASOF = (1 << 63) - 1
+DECIMAL_WORK_PRECISION = 96
 
 
 @dataclass(frozen=True)
@@ -85,10 +90,18 @@ def _parse(value: object, *, zero: bool = False) -> Decimal | None:
         return None
     try:
         number = Decimal(value)
+        # normalize() rounds at the caller's ambient Decimal precision.
+        # Count the exact input coefficient instead, ignoring trailing zeros,
+        # so low-precision caller settings cannot launder 19+ significant
+        # digits into the allowed 18-digit fictional contract.
+        digits = number.as_tuple().digits
+        significant = len(digits)
+        while significant > 1 and digits[significant - 1] == 0:
+            significant -= 1
         if (not number.is_finite() or number > Decimal("1e12")
                 or (number < 0 if zero else number <= 0)
                 or (number != 0 and number < Decimal("1e-12"))
-                or len(number.normalize().as_tuple().digits) > 18):
+                or significant > 18):
             return None
         return number
     except (InvalidOperation, ArithmeticError, ValueError):
@@ -117,8 +130,9 @@ def review_synthetic_stop_risk(
     if (positions_reconciled is not True or pending_reconciled is not True
             or inflight_reservations_reconciled is not True):
         return _reject("BROKER_OR_INFLIGHT_STATE_UNKNOWN")
-    if (type(asof) is not int or asof < 0
-            or type(snapshot_id) is not str or not snapshot_id):
+    if (type(asof) is not int or not 0 <= asof <= MAX_SYNTHETIC_ASOF
+            or type(snapshot_id) is not str or not snapshot_id
+            or len(snapshot_id) > MAX_SYNTHETIC_ID_CHARS):
         return _reject("MISSING_OR_INVALID_SNAPSHOT_IDENTITY")
     equity = _parse(equity_jpy)
     if equity is None:
@@ -156,17 +170,23 @@ def review_synthetic_stop_risk(
 
     if type(tickets) not in (tuple, list) or not tickets:
         return _reject("MISSING_TICKETS")
+    if len(tickets) > MAX_SYNTHETIC_TICKETS:
+        return _reject("SYNTHETIC_WORKLOAD_BOUND_EXCEEDED")
     seen: set[str] = set()
     candidate_count = 0
     candidate_loss = Decimal(0)
     total_loss = Decimal(0)
     rows: list[tuple[str, str]] = []
+    # Up to 18 significant decimal digits per validated input; products of
+    # stop distance, units, volume and conversion plus 128 sums can exceed
+    # the 48-digit context. 96 digits preserve those synthetic fractions.
     with localcontext() as context:
-        context.prec = 48
+        context.prec = DECIMAL_WORK_PRECISION
         for ticket in tickets:
             if type(ticket) is not Ticket:
                 return _reject("INVALID_TICKET")
             if (type(ticket.ticket_id) is not str or not ticket.ticket_id
+                    or len(ticket.ticket_id) > MAX_SYNTHETIC_ID_CHARS
                     or ticket.ticket_id in seen):
                 return _reject("DUPLICATE_OR_MISSING_TICKET_ID")
             seen.add(ticket.ticket_id)
