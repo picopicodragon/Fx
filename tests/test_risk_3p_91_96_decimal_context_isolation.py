@@ -358,8 +358,8 @@ class DecimalContextIsolationTests(unittest.TestCase):
 
 
     def test_stop_mock_ticket_ids_with_newlines_or_controls_are_rejected(self):
-        for value in ("ID\\nPRIVATE", "ID\\rPRIVATE", "ID\\tPRIVATE",
-                      "ID\\x00PRIVATE", "ID\\x1bPRIVATE"):
+        for value in tuple("ID" + chr(n) + "PRIVATE"
+                           for n in (10, 13, 9, 0, 27)):
             with self.subTest(value=repr(value)):
                 tickets = stop_tickets()
                 tickets[0] = replace(tickets[0], ticket_id=value)
@@ -370,8 +370,8 @@ class DecimalContextIsolationTests(unittest.TestCase):
                 self.held_stop(r)
 
     def test_portfolio_mock_trade_ids_with_newlines_or_controls_rejected(self):
-        for value in ("ID\\nPRIVATE", "ID\\rPRIVATE", "ID\\tPRIVATE",
-                      "ID\\x00PRIVATE", "ID\\x1bPRIVATE"):
+        for value in tuple("ID" + chr(n) + "PRIVATE"
+                           for n in (10, 13, 9, 0, 27)):
             with self.subTest(value=repr(value)):
                 trades = portfolio_trades_from_stops()
                 trades[0] = replace(trades[0], trade_id=value)
@@ -382,7 +382,8 @@ class DecimalContextIsolationTests(unittest.TestCase):
                 self.held_portfolio(r)
 
     def test_unprintable_snapshot_identifiers_rejected_before_quote_data(self):
-        for value in ("SIM\\nPRIVATE", "SIM\\rPRIVATE", "SIM\\x00PRIVATE"):
+        for value in tuple("SIM" + chr(n) + "PRIVATE"
+                           for n in (10, 13, 0)):
             with self.subTest(value=repr(value)):
                 rs = stop.review_synthetic_stop_risk(
                     stop_contracts(), stop_quotes(), stop_tickets(),
