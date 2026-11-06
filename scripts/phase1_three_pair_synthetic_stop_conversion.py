@@ -8,7 +8,7 @@ No filesystem, clock, network, account, MT4, or live-trading operations.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Context, Decimal, InvalidOperation, localcontext
+from decimal import Context, Decimal, Inexact, InvalidOperation, Rounded, localcontext
 import re
 
 
@@ -199,7 +199,7 @@ def review_synthetic_stop_risk(
     # the 48-digit context. 96 digits preserve those synthetic fractions.
     # Fresh Decimal context prevents inherited Emax/Emin, rounding modes and
     # traps from altering illustrative stop-loss arithmetic.
-    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)):
+    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)) as ctx:
         for ticket in tickets:
             if type(ticket) is not Ticket:
                 return _reject("INVALID_TICKET")
@@ -251,6 +251,11 @@ def review_synthetic_stop_risk(
             return _reject("EXACTLY_ONE_CANDIDATE_REQUIRED")
         candidate_over = candidate_loss > equity * SYNTHETIC_TRADE_LIMIT
         aggregate_over = total_loss > equity * SYNTHETIC_AGGREGATE_LIMIT
+        # Even with independent 96-digit context, never silently accept
+        # a rounded stop-distance, conversion or fee calculation. Input
+        # expansion must be reviewed rather than hiding fractional risk.
+        if ctx.flags[Inexact] or ctx.flags[Rounded]:
+            return _reject("SYNTHETIC_ARITHMETIC_ROUNDED_FAIL_CLOSED")
     return Review(
         reason=("SYNTHETIC_HARD_LIMIT_EXCEEDED_NEVER_AUTHORIZED"
                 if candidate_over or aggregate_over
