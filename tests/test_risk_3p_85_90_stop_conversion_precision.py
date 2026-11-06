@@ -10,9 +10,28 @@ from decimal import Decimal, getcontext, localcontext
 import unittest
 
 from scripts import phase1_three_pair_synthetic_stop_conversion as mod
-from tests.test_risk_3p_04_synthetic_stop_conversion import (
-    contracts, quotes, tickets,
-)
+def contracts():
+    return {pair: mod.Contract(pair, "100000", "0.01", "0.01", "1")
+            for pair in mod.PAIRS}
+
+
+def quotes():
+    return {
+        "USD/JPY": mod.Quote("USD/JPY", "150", "151", 42, "fixture-1"),
+        "EUR/JPY": mod.Quote("EUR/JPY", "181", "182", 42, "fixture-1"),
+        "EUR/USD": mod.Quote("EUR/USD", "1.20", "1.21", 42, "fixture-1"),
+    }
+
+
+def tickets():
+    return [
+        mod.Ticket("candidate", "EUR/USD", "BUY", "CANDIDATE",
+                   "0.01", "1.2000", "1.1990", "0.0001", "5", "fixture-1"),
+        mod.Ticket("position", "USD/JPY", "SELL", "POSITION",
+                   "0.01", "150", "150.05", "0.01", "0", "fixture-1"),
+        mod.Ticket("pending", "EUR/JPY", "BUY", "PENDING",
+                   "0.01", "181", "180.9", "0.01", "0", "fixture-1"),
+    ]
 
 
 def review(*, cs=None, qs=None, ts=None, equity="100000", asof=42,
