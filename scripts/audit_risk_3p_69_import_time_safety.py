@@ -83,7 +83,7 @@ def inspect_source(source: object) -> list[str]:
                 and len(value.args) == 1
                 and isinstance(value.args[0], ast.Constant)
                 and type(value.args[0].value) is str
-                and value.args[0].value == r"[0-9a-f]{64}\\Z"
+                and value.args[0].value == r"[0-9a-f]{64}\Z"
                 and not value.keywords
                 and len(stmt.targets) == 1
                 and isinstance(stmt.targets[0], ast.Name)
