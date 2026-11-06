@@ -739,7 +739,8 @@
         "FX-SAF-002"
       ],
       "tests": [
-        "tests/test_phase1_three_pair_synthetic_risk.py"
+        "tests/test_phase1_three_pair_synthetic_risk.py",
+        "tests/test_risk_3p_79_84_numeric_boundaries.py"
       ],
       "production_authorized": false
     },
