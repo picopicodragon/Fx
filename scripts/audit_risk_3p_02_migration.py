@@ -133,6 +133,7 @@ def audit(root: Path, document: object = None) -> list[str]:
                     "tests/test_risk_3p_79_84_numeric_boundaries.py",
                     "tests/test_risk_3p_91_96_decimal_context_isolation.py",
                     "tests/test_risk_3p_97_102_fraction_oracle.py",
+                    "tests/test_risk_3p_103_108_loss_handoff_binding.py",
                 ]):
             errors.append("THREE_PAIR_SYNTHETIC_PRODUCTION_PROMOTED")
     except (OSError, ValueError, KeyError, TypeError, SyntaxError,
