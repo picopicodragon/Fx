@@ -23,6 +23,12 @@ FALSE_FLAGS = (
     "real_trading_authorized", "order_authorized",
     "broker_order_or_ea_action_authorized", "real_broker_order_state_reconciled",
     "real_broker_safety_verified", "human_approval_recorded",
+    "real_close_event_verified", "real_order_absence_verified",
+    "real_positions_or_orders_absent_verified",
+    "real_broker_state_reconciled", "real_account_identity_verified",
+    "real_single_session_verified", "real_trading_authorized",
+    "human_p05_signoff", "human_p05_08_signoff",
+    "p05_03_accepted", "order_or_ea_action_authorized",
 )
 ZERO_FLAGS = ("p05_passed", "real_p05_passed", "actual_p05_items_passed",
               "real_p05_checks_passed", "real_g1_fields_verified",
