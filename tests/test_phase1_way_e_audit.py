@@ -107,6 +107,11 @@ class WayEGateAuditTests(unittest.TestCase):
             "scripts/review_mt4_manual_symbol_3p_v3.py",
             "scripts/risk_3p_36_synthetic_order_reconciliation.py",
             "scripts/audit_risk_3p_37_p05_03_reconciliation_readiness.py",
+            "scripts/risk_3p_38_synthetic_session_identity.py",
+            "scripts/risk_3p_39_synthetic_ea_no_interference.py",
+            "scripts/risk_3p_40_synthetic_p05_interlock_matrix.py",
+            "scripts/audit_risk_3p_41_p05_offline_gate_matrix.py",
+            "scripts/risk_3p_42_synthetic_fault_campaign.py",
         })
         for source, row in mapping.items():
             with self.subTest(source=source):
