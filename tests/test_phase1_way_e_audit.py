@@ -122,6 +122,12 @@ class WayEGateAuditTests(unittest.TestCase):
             "scripts/risk_3p_51_mock_approval_separation.py",
             "scripts/risk_3p_52_offline_provenance_gate.py",
             "scripts/audit_risk_3p_53_54_future_handoff.py",
+            "scripts/risk_3p_55_synthetic_ingress_contract.py",
+            "scripts/audit_risk_3p_56_static_offline_boundary.py",
+            "scripts/risk_3p_57_synthetic_temporal_coherence.py",
+            "scripts/risk_3p_58_safe_diagnostic_projection.py",
+            "scripts/audit_risk_3p_59_p05_dependency_dag.py",
+            "scripts/risk_3p_60_offline_ingress_quality_gate.py",
         })
         for source, row in mapping.items():
             with self.subTest(source=source):
