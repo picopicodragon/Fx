@@ -250,6 +250,33 @@ class StopConversionPrecisionTests(unittest.TestCase):
         self.assertEqual(mod.SYNTHETIC_TRADE_LIMIT, Decimal("0.005"))
         self.assertEqual(mod.SYNTHETIC_AGGREGATE_LIMIT, Decimal("0.01"))
 
+    def test_precision_digit_check_is_independent_of_low_caller_context(self):
+        nineteen = "0.1234567890123456789"
+        eighteen = "0.123456789012345678"
+        with localcontext() as ctx:
+            ctx.prec = 3
+            self.assertIsNone(mod._parse(nineteen))
+            self.assertEqual(mod._parse(eighteen), Decimal(eighteen))
+            wrong = review(ts=[jpy_ticket(cost=nineteen)])
+            self.assertEqual(wrong.reason, "STOP_VOLUME_OR_COST_UNCOMPUTABLE")
+            self.assertFalse(wrong.illustrative_complete)
+            self.held(wrong)
+
+    def test_noncanonical_leading_or_scientific_numbers_still_rejected(self):
+        for bad in ("01", "1e5", "+1", "1_000", " 1", "NaN", "-0"):
+            with self.subTest(bad=bad):
+                r = review(ts=[jpy_ticket(cost=bad)])
+                self.assertEqual(r.reason, "STOP_VOLUME_OR_COST_UNCOMPUTABLE")
+                self.held(r)
+
+    def test_trailing_zeroes_do_not_create_fake_significant_digits(self):
+        value = "1.00000000000000000000000000000000000000"
+        self.assertLessEqual(len(value), 40)
+        with localcontext() as ctx:
+            ctx.prec = 3
+            self.assertEqual(mod._parse(value), Decimal("1"))
+            self.assertEqual(getcontext().prec, 3)
+
     def test_all_synthetic_successes_are_never_order_permission(self):
         self.assertEqual(mod.DECIMAL_WORK_PRECISION, 96)
         r = review()
