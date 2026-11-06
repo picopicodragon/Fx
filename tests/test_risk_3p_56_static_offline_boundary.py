@@ -109,5 +109,88 @@ class StaticOfflineGuardTests(unittest.TestCase):
             "# Open(...) is a comment, not a call\nx = 1"), [])
 
 
+    def test_poison_override_key_is_not_compared_or_rehashed(self):
+        class PoisonKey:
+            invoked = 0
+            def __hash__(self):
+                type(self).invoked += 1
+                return hash(mod.TARGETS[0])
+            def __eq__(self, other):
+                type(self).invoked += 1
+                raise RuntimeError("PRIVATE_CANARY_145")
+        source = {PoisonKey(): "PRIVATE_CANARY_145"}
+        PoisonKey.invoked = 0
+        out = mod.snapshot(overrides=source)
+        self.assertEqual(out["status"], "FAIL_CLOSED")
+        self.assertEqual(out["errors"],
+                         ["P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE"])
+        self.assertEqual(PoisonKey.invoked, 0)
+        self.assertNotIn("PRIVATE_CANARY_145", str(out))
+
+    def test_str_subclass_override_key_is_rejected_without_comparison(self):
+        class PoisonStr(str):
+            count = 0
+            def __hash__(self):
+                type(self).count += 1
+                return hash(str(self))
+            def __eq__(self, other):
+                type(self).count += 1
+                raise RuntimeError("PRIVATE_CANARY_145")
+        source = {PoisonStr(mod.TARGETS[0]): "x = 1"}
+        PoisonStr.count = 0
+        self.assertEqual(mod.audit(overrides=source),
+                         ["P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE"])
+        self.assertEqual(PoisonStr.count, 0)
+
+    def test_dict_subclass_override_rejected_without_iteration(self):
+        class BadDict(dict):
+            count = 0
+            def items(self):
+                type(self).count += 1
+                raise RuntimeError("PRIVATE_CANARY_145")
+        source = BadDict({mod.TARGETS[0]: "x = 1"})
+        self.assertEqual(mod.audit(overrides=source),
+                         ["P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE"])
+        self.assertEqual(BadDict.count, 0)
+
+    def test_bad_override_value_rejected_before_audit(self):
+        class BadValue:
+            def __str__(self):
+                raise RuntimeError("PRIVATE_CANARY_145")
+        self.assertEqual(mod.audit(overrides={mod.TARGETS[0]: BadValue()}),
+                         ["P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE"])
+
+    def test_oversize_source_is_refused_before_ast_parsing(self):
+        src = "x = 1\n" + "#" * mod.MAX_STATIC_SOURCE_CHARS
+        self.assertIn("P56_SOURCE_TOO_LARGE", mod._inspect_source(src))
+        self.assertEqual(mod.snapshot(overrides={mod.TARGETS[0]: src})
+                         ["errors"], ["P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE"])
+
+    def test_boundary_sized_pure_source_is_allowed(self):
+        prefix = "x = 1\n"
+        src = prefix + "#" * (mod.MAX_STATIC_SOURCE_CHARS - len(prefix))
+        self.assertEqual(len(src), mod.MAX_STATIC_SOURCE_CHARS)
+        self.assertEqual(mod._inspect_source(src), [])
+
+    def test_empty_and_untrusted_unknown_override_still_fails_closed(self):
+        for bad in ({"/private/mt4.cfg": "PRIVATE_CANARY_145"},
+                    {mod.TARGETS[0]: b"unsafe"},
+                    {"../private": "PRIVATE_CANARY_145"}):
+            with self.subTest(bad=list(bad)):
+                result = mod.snapshot(overrides=bad)
+                self.assertEqual(result["status"], "FAIL_CLOSED")
+                self.assertEqual(result["errors"],
+                                 ["P56_UNKNOWN_OR_PRIVATE_PATH_OVERRIDE"])
+                self.assertNotIn("PRIVATE_CANARY_145", str(result))
+
+    def test_current_narrow_review_still_does_not_grant_real_authority(self):
+        result = mod.snapshot()
+        self.assertEqual(result["status"], "PASS_NARROW_STATIC_REVIEW_ONLY")
+        self.assertFalse(result["full_runtime_isolation_proven"])
+        self.assertFalse(result["order_execution_authorized"])
+        self.assertEqual(result["runtime_go_no_go"], "NO_GO")
+        self.assertTrue(result["safety_hold_latched"])
+
+
 if __name__ == "__main__":
     unittest.main()
