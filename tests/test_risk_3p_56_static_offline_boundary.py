@@ -29,6 +29,27 @@ class StaticOfflineGuardTests(unittest.TestCase):
                             else "P56_DISALLOWED_IMPORT_FROM")
                 self.assertIn(expected, codes)
 
+    def test_unapproved_repository_module_import_is_rejected(self):
+        for source in (
+            "from scripts import broker_adapter",
+            "from scripts import risk_3p_49_synthetic_evidence_chain, broker_api",
+            "import scripts.broker_adapter",
+            "import scripts",
+            "import scripts.risk_3p_49_synthetic_evidence_chain.extra",
+            "from scripts.broker_adapter import connect",
+        ):
+            with self.subTest(source=source):
+                self.assertIn("P56_UNAPPROVED_LOCAL_MODULE_IMPORT",
+                              mod._inspect_source(source))
+
+    def test_explicit_mock_imports_remain_allowed(self):
+        for module in mod.ALLOWED_SCRIPT_MODULES:
+            with self.subTest(module=module):
+                self.assertEqual(mod._inspect_source(
+                    "from scripts import " + module), [])
+                self.assertEqual(mod._inspect_source(
+                    "import scripts." + module), [])
+
     def test_disallowed_import_from_and_star_refused(self):
         for source in ("from subprocess import run",
                        "from socket import socket",
