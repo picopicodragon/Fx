@@ -97,5 +97,103 @@ class FictionalDualWitnessTests(unittest.TestCase):
             self.assertNotIn("CANARY_50", str(result))
 
 
+    def test_fake_safety_false_to_zero_is_not_equivalent(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is bool and not value:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k:0}),
+                                "P50_FORGED_REAL_EVIDENCE_OR_PERMISSION")
+
+    def test_fake_safety_int_zero_to_false_is_not_equivalent(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is int and value == 0:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k:False}),
+                                "P50_FORGED_REAL_EVIDENCE_OR_PERMISSION")
+
+    def test_root_poison_key_never_computed_after_dict_creation(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("classification")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.data)
+        d.pop("classification")
+        d[Key()] = "SIM_TWO_WITNESSES_NOT_REAL_EVIDENCE"
+        Key.calls = 0
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P50_INVALID_OR_EXTRA_PACKAGE_FIELDS", state["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_second_witness_poison_key_never_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("fake_utc")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.data)
+        witness = d["second_witness"]
+        val = witness.pop("fake_utc")
+        witness[Key()] = val
+        Key.calls = 0
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P50_SECOND_WITNESS_STRUCTURE_INVALID", state["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_primary_evaluator_exception_fails_closed_without_canary(self):
+        from unittest.mock import patch
+        with patch.object(mod.base, "check_synthetic_package",
+                          side_effect=RuntimeError("PRIVATE_CANARY_157")):
+            state = mod.evaluate(copy.deepcopy(self.data))
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P50_PRIMARY_SYNTHETIC_PROVENANCE_INVALID", state["errors"])
+        self.assertNotIn("PRIVATE_CANARY_157", str(state))
+
+    def test_primary_evaluator_non_dict_result_is_rejected(self):
+        from unittest.mock import patch
+        with patch.object(mod.base, "check_synthetic_package",
+                          return_value=["PASS_SYNTHETIC_CONTRACT_ONLY"]):
+            state = mod.evaluate(copy.deepcopy(self.data))
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P50_PRIMARY_SYNTHETIC_PROVENANCE_INVALID", state["errors"])
+
+    def test_witness_field_poison_comparator_not_called(self):
+        class Value:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.data)
+        d["second_witness"]["rows"][0]["pair"] = Value()
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P50_SOURCE_VALUE_OR_UNIT_CONFLICT:1", state["errors"])
+        self.assertEqual(Value.calls, 0)
+
+    def test_second_witness_scope_object_is_not_compared(self):
+        class Value:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.data)
+        d["second_witness"]["account_alias"] = Value()
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P50_WITNESS_SCOPE_OR_FAKE_TIMESTAMP_INVALID", state["errors"])
+        self.assertEqual(Value.calls, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
