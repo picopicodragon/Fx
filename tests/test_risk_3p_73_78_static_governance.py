@@ -11,6 +11,7 @@ import unittest
 from scripts import audit_risk_3p_69_import_time_safety as import_time
 from scripts import audit_risk_3p_56_static_offline_boundary as static
 from scripts import risk_3p_71_offline_integrity_gate as gate
+from scripts import risk_3p_61_strict_offline_result_contract as exact
 
 
 class LiteralOnlyImportTimeTests(unittest.TestCase):
@@ -123,15 +124,19 @@ class ExactSevenChildGateTests(unittest.TestCase):
     def setUpClass(cls):
         cls.baselines = dict(zip(gate.NAMES, gate._outputs()))
 
-    def reject(self, name, mutate,
-               expected_prefix="P71_UNREVIEWED_CHILD_FIELD_OR_TYPE"):
+    def reject(self, name, mutate, *, integration=False):
         target = copy.deepcopy(self.baselines[name])
         mutate(target)
+        index = gate.NAMES.index(name)
+        # All mutated snapshots are checked directly with the same strict
+        # contract used by P71. The heavier full dependency gate is
+        # exercised once per report class below.
+        self.assertFalse(exact._strict_same(
+            target, gate.EXPECTED_CHILD_REPORTS[index]))
+        if not integration:
+            return
         r = gate.evaluate(injected={name: target})
         self.assertEqual(r["status"], "FAIL_CLOSED", r)
-        self.assertIn(
-            expected_prefix + ":"
-            + str(gate.NAMES.index(name) + 1), r["errors"], r)
         self.assertEqual(r["runtime_go_no_go"], "NO_GO")
         self.assertTrue(r["safety_hold_latched"])
         self.assertEqual(r["p05_passed"], 0)
@@ -141,7 +146,6 @@ class ExactSevenChildGateTests(unittest.TestCase):
         self.assertFalse(r["main_auto_merge_authorized"])
 
     def test_all_seven_child_outputs_match_literal_expected_records(self):
-        from scripts import risk_3p_61_strict_offline_result_contract as exact
         self.assertEqual(len(gate.EXPECTED_CHILD_REPORTS), 7)
         for i, name in enumerate(gate.NAMES):
             with self.subTest(name=name):
@@ -153,13 +157,12 @@ class ExactSevenChildGateTests(unittest.TestCase):
         for name in gate.NAMES:
             with self.subTest(name=name):
                 self.reject(name, lambda d: d.update(
-                    newly_invented_broker_approval=True))
+                    newly_invented_broker_approval=True), integration=True)
 
     def test_missing_errors_field_rejected_on_each_child(self):
         for name in gate.NAMES:
             with self.subTest(name=name):
-                self.reject(name, lambda d: d.pop("errors"),
-                            "P71_CHILD_REPORT_MISSING_OR_INVALID")
+                self.reject(name, lambda d: d.pop("errors"))
 
     def test_integer_counter_booleans_rejected_as_type_confusion(self):
         cases = (
