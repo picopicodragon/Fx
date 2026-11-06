@@ -131,6 +131,7 @@ def audit(root: Path, document: object = None) -> list[str]:
                 or m[0]["tests"] != [
                     "tests/test_phase1_three_pair_synthetic_risk.py",
                     "tests/test_risk_3p_79_84_numeric_boundaries.py",
+                    "tests/test_risk_3p_91_96_decimal_context_isolation.py",
                 ]):
             errors.append("THREE_PAIR_SYNTHETIC_PRODUCTION_PROMOTED")
     except (OSError, ValueError, KeyError, TypeError, SyntaxError,
