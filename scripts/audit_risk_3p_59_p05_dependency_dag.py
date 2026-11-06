@@ -63,7 +63,8 @@ def check_acyclic(items: object) -> list[str]:
             errors.append("P59_ROW_SCHEMA:" + str(i + 1))
             continue
         name, depends = row.get("check_id"), row.get("depends_on")
-        if (name not in known or type(depends) is not list
+        if (type(name) is not str or name not in known
+                or type(depends) is not list
                 or any(type(d) is not str or d not in known for d in depends)
                 or len(depends) != len(set(depends))):
             errors.append("P59_UNKNOWN_OR_DUPLICATE_DEPENDENCY:"
