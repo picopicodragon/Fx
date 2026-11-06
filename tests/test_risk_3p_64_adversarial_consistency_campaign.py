@@ -20,6 +20,7 @@ class SyntheticCorruptionCampaignTests(unittest.TestCase):
         self.assertEqual(result["status"],
                          "PASS_SEVENTY_MOCK_CORRUPTIONS_ONLY", result)
         self.assertEqual(result["synthetic_corruptions_checked"], 70)
+        self.assertEqual(result["composite_integration_cases_checked"], 7)
         self.assertEqual(result["errors"], [])
         self.assertFalse(result["actual_broker_evidence_received"])
         self.assertFalse(result["real_mt4_access_authorized"])
