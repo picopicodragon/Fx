@@ -112,6 +112,11 @@ class WayEGateAuditTests(unittest.TestCase):
             "scripts/risk_3p_40_synthetic_p05_interlock_matrix.py",
             "scripts/audit_risk_3p_41_p05_offline_gate_matrix.py",
             "scripts/risk_3p_42_synthetic_fault_campaign.py",
+            "scripts/risk_3p_43_synthetic_state_transition.py",
+            "scripts/risk_3p_44_synthetic_safety_latch.py",
+            "scripts/risk_3p_45_synthetic_schema_mutation_campaign.py",
+            "scripts/audit_risk_3p_46_offline_acceptance_debt.py",
+            "scripts/risk_3p_47_48_offline_quality_gate.py",
         })
         for source, row in mapping.items():
             with self.subTest(source=source):

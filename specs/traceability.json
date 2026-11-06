@@ -3,6 +3,92 @@
   "description": "Q109: source/test coverage by most-specific protected prefix. active means source + registered tests exist, not a safety approval. Trading-order components remain planned.",
   "offline_synthetic_mappings": [
     {
+      "source": "scripts/risk_3p_47_48_offline_quality_gate.py",
+      "spec_ids": [
+        "Q3",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_47_48_offline_quality_gate.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/audit_risk_3p_46_offline_acceptance_debt.py",
+      "spec_ids": [
+        "Q3",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_46_offline_acceptance_debt.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/risk_3p_45_synthetic_schema_mutation_campaign.py",
+      "spec_ids": [
+        "Q3",
+        "Q109",
+        "Q110",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_45_synthetic_schema_mutation_campaign.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/risk_3p_44_synthetic_safety_latch.py",
+      "spec_ids": [
+        "Q9",
+        "Q10",
+        "Q11",
+        "Q12",
+        "Q14",
+        "Q44",
+        "Q45",
+        "Q46",
+        "Q47",
+        "Q80",
+        "Q109",
+        "Q147",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_44_synthetic_safety_latch.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/risk_3p_43_synthetic_state_transition.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q110",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_43_synthetic_state_transition.py"
+      ],
+      "production_authorized": false
+    },
+    {
       "source": "scripts/risk_3p_42_synthetic_fault_campaign.py",
       "spec_ids": [
         "Q3",
