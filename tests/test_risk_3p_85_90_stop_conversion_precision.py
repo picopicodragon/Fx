@@ -245,8 +245,8 @@ class StopConversionPrecisionTests(unittest.TestCase):
                          portfolio.MAX_SYNTHETIC_TRADES)
         self.assertEqual(mod.MAX_SYNTHETIC_ID_CHARS,
                          portfolio.MAX_SIMULATED_ID_CHARS)
-        self.assertEqual(mod.DECIMAL_WORK_PRECISION,
-                         portfolio.DECIMAL_WORK_PRECISION)
+        self.assertEqual(mod.DECIMAL_WORK_PRECISION, 96)
+        self.assertEqual(portfolio.DECIMAL_WORK_PRECISION, 256)
         self.assertEqual(mod.SYNTHETIC_TRADE_LIMIT, Decimal("0.005"))
         self.assertEqual(mod.SYNTHETIC_AGGREGATE_LIMIT, Decimal("0.01"))
 
