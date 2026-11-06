@@ -3,6 +3,78 @@
   "description": "Q109: source/test coverage by most-specific protected prefix. active means source + registered tests exist, not a safety approval. Trading-order components remain planned.",
   "offline_synthetic_mappings": [
     {
+      "source": "scripts/risk_3p_71_offline_integrity_gate.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_71_offline_integrity_gate.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/risk_3p_70_fail_closed_campaign.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_70_fail_closed_campaign.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/audit_risk_3p_69_import_time_safety.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_69_import_time_safety.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/audit_risk_3p_67_source_index.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_67_source_index.py"
+      ],
+      "production_authorized": false
+    },
+    {
       "source": "scripts/risk_3p_65_integrated_offline_audit.py",
       "spec_ids": [
         "Q3",
