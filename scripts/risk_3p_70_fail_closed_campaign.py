@@ -42,7 +42,7 @@ def campaign() -> dict:
             ("PRODUCTION", lambda d: d[index.TRACE][
                 "offline_synthetic_mappings"][0].update(
                     production_authorized=True)),
-            ("REPLACE", lambda d: d[index.PINNED]["sources"][0:1].__setitem__(
+            ("REPLACE", lambda d: d[index.PINNED]["sources"].__setitem__(
                 0, "scripts/unreviewed_secret_70.py")),
         ):
             clone = copy.deepcopy(docs)
