@@ -105,6 +105,8 @@ class WayEGateAuditTests(unittest.TestCase):
             "scripts/audit_risk_3p_28_owner_g1_scope.py",
             "scripts/audit_risk_3p_29_31_p02_p04_p05.py",
             "scripts/review_mt4_manual_symbol_3p_v3.py",
+            "scripts/risk_3p_36_synthetic_order_reconciliation.py",
+            "scripts/audit_risk_3p_37_p05_03_reconciliation_readiness.py",
         })
         for source, row in mapping.items():
             with self.subTest(source=source):
