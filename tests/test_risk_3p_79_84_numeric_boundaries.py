@@ -7,7 +7,7 @@ positive loss just above the 0.5% or 1.0% ceilings.
 from __future__ import annotations
 
 from dataclasses import replace
-from decimal import Decimal
+from decimal import Decimal, localcontext
 import unittest
 
 from scripts import phase1_three_pair_synthetic_risk as mod
@@ -75,7 +75,7 @@ class NumericFailClosedTests(unittest.TestCase):
         self.assertFalse(r.candidate_exceeds_existing_limit)
         self.assertTrue(r.total_exceeds_existing_limit)
         self.assertEqual(Decimal(r.total_max_loss_jpy),
-                         Decimal("1000") + Decimal("0.00000000000000000000000000000000001"))
+                         Decimal("1000.00000000000000000000000000000000001"))
         self.held(r)
 
     def test_exact_half_percent_and_one_percent_are_not_falsely_exceeded(self):
@@ -198,8 +198,10 @@ class NumericFailClosedTests(unittest.TestCase):
                       "CANDIDATE", max40, "1")],
             equity=max40)
         self.assertTrue(r.arithmetic_complete)
-        self.assertEqual(Decimal(dict(r.gross_native)["JPY"]),
-                         Decimal(max40) * Decimal(max40))
+        with localcontext() as ctx:
+            ctx.prec = mod.DECIMAL_WORK_PRECISION
+            self.assertEqual(Decimal(dict(r.gross_native)["JPY"]),
+                             Decimal(max40) * Decimal(max40))
         self.held(r)
 
     def test_current_three_pairs_remain_only_scope(self):
