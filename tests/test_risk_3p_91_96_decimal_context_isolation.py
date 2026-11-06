@@ -357,5 +357,56 @@ class DecimalContextIsolationTests(unittest.TestCase):
         self.held_portfolio(result)
 
 
+    def test_stop_mock_ticket_ids_with_newlines_or_controls_are_rejected(self):
+        for value in ("ID\\nPRIVATE", "ID\\rPRIVATE", "ID\\tPRIVATE",
+                      "ID\\x00PRIVATE", "ID\\x1bPRIVATE"):
+            with self.subTest(value=repr(value)):
+                tickets = stop_tickets()
+                tickets[0] = replace(tickets[0], ticket_id=value)
+                r = stops(ts=tickets)
+                self.assertFalse(r.illustrative_complete)
+                self.assertEqual(r.reason, "DUPLICATE_OR_MISSING_TICKET_ID")
+                self.assertNotIn("PRIVATE", str(r))
+                self.held_stop(r)
+
+    def test_portfolio_mock_trade_ids_with_newlines_or_controls_rejected(self):
+        for value in ("ID\\nPRIVATE", "ID\\rPRIVATE", "ID\\tPRIVATE",
+                      "ID\\x00PRIVATE", "ID\\x1bPRIVATE"):
+            with self.subTest(value=repr(value)):
+                trades = portfolio_trades_from_stops()
+                trades[0] = replace(trades[0], trade_id=value)
+                r = portfolio_review(ts=trades)
+                self.assertFalse(r.arithmetic_complete)
+                self.assertEqual(r.reason, "DUPLICATE_OR_INVALID_TRADE_ID")
+                self.assertNotIn("PRIVATE", str(r))
+                self.held_portfolio(r)
+
+    def test_unprintable_snapshot_identifiers_rejected_before_quote_data(self):
+        for value in ("SIM\\nPRIVATE", "SIM\\rPRIVATE", "SIM\\x00PRIVATE"):
+            with self.subTest(value=repr(value)):
+                rs = stop.review_synthetic_stop_risk(
+                    stop_contracts(), stop_quotes(), stop_tickets(),
+                    equity_jpy="100000", asof=42, snapshot_id=value,
+                    positions_reconciled=True, pending_reconciled=True,
+                    inflight_reservations_reconciled=True)
+                rp = portfolio.review_synthetic_portfolio(
+                    portfolio_quotes(), portfolio_trades_from_stops(),
+                    asof=42, snapshot_id=value, equity_jpy="100000",
+                    positions_reconciled=True, pending_orders_reconciled=True)
+                self.assertEqual(rs.reason, "MISSING_OR_INVALID_SNAPSHOT_IDENTITY")
+                self.assertEqual(rp.reason, "INVALID_SYNTHETIC_SNAPSHOT_IDENTITY")
+                self.held_stop(rs)
+                self.held_portfolio(rp)
+
+    def test_normal_mock_identifiers_remain_accepted(self):
+        result = stops()
+        self.assertTrue(result.illustrative_complete)
+        trade = portfolio_trades_from_stops(stop_result=result)
+        rp = portfolio_review(ts=trade)
+        self.assertTrue(rp.arithmetic_complete)
+        self.held_stop(result)
+        self.held_portfolio(rp)
+
+
 if __name__ == "__main__":
     unittest.main()
