@@ -8,7 +8,7 @@ risk estimate. No network, host, MT4, credentials, disk, or clock I/O.
 from __future__ import annotations
 
 from dataclasses import dataclass, fields
-from decimal import Context, Decimal, localcontext
+from decimal import Context, Decimal, Inexact, Rounded, localcontext
 from fractions import Fraction
 
 from scripts import phase1_three_pair_synthetic_stop_conversion as stop_conversion
@@ -134,7 +134,7 @@ def review_synthetic_portfolio(
     # fractional legs in the presence of very large synthetic positions.
     # Use an independent Decimal context. Caller rounding mode, exponent
     # bounds and Inexact/Rounded traps must not change mock risk decisions.
-    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)):
+    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)) as ctx:
         net = {currency: Decimal(0) for currency in CURRENCIES}
         gross = {currency: Decimal(0) for currency in CURRENCIES}
         seen: set[str] = set()
@@ -182,6 +182,12 @@ def review_synthetic_portfolio(
                      + gross["EUR"] * validated["EUR/JPY"][1])
         candidate_over = candidate_loss > equity * Decimal("0.005")
         total_over = total_loss > equity * Decimal("0.01")
+        # Precision is an implementation detail, not permission to discard
+        # tiny FX exposure. This independent context records any operation
+        # that rounded coefficients (even an exactly discarded zero tail).
+        # A rounded mock result must never be reported as complete.
+        if ctx.flags[Inexact] or ctx.flags[Rounded]:
+            return _reject("SYNTHETIC_ARITHMETIC_ROUNDED_FAIL_CLOSED")
         return Review(
             reason=("EXISTING_HARD_LIMIT_OVER_IN_SYNTHETIC_INPUT"
                     if candidate_over or total_over
