@@ -712,7 +712,8 @@
         "tests/test_risk_3p_97_102_fraction_oracle.py",
         "tests/test_risk_3p_103_108_loss_handoff_binding.py",
         "tests/test_risk_3p_127_132_upstream_key_guards.py",
-        "tests/test_risk_3p_133_138_decimal_rounding_failclosed.py"
+        "tests/test_risk_3p_133_138_decimal_rounding_failclosed.py",
+        "tests/test_risk_3p_139_144_exception_failclosed.py"
       ],
       "production_authorized": false
     },
@@ -754,7 +755,8 @@
         "tests/test_risk_3p_115_120_malformed_handoff_objects.py",
         "tests/test_risk_3p_121_126_mock_map_key_guard.py",
         "tests/test_risk_3p_127_132_upstream_key_guards.py",
-        "tests/test_risk_3p_133_138_decimal_rounding_failclosed.py"
+        "tests/test_risk_3p_133_138_decimal_rounding_failclosed.py",
+        "tests/test_risk_3p_139_144_exception_failclosed.py"
       ],
       "production_authorized": false
     },
