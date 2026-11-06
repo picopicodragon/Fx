@@ -8,6 +8,8 @@ from __future__ import annotations
 import json
 from pathlib import Path, PurePosixPath
 
+from scripts import audit_risk_3p_67_source_index as pinned
+
 ROOT = Path(__file__).resolve().parents[1]
 TRACE = "specs/traceability.json"
 FIELDS = ("source", "spec_ids", "tests", "production_authorized")
@@ -17,6 +19,10 @@ REQUIRED_NEW = frozenset((
     "scripts/audit_risk_3p_63_g1_ledger_alignment.py",
     "scripts/risk_3p_64_adversarial_consistency_campaign.py",
     "scripts/risk_3p_65_integrated_offline_audit.py",
+    "scripts/audit_risk_3p_67_source_index.py",
+    "scripts/audit_risk_3p_69_import_time_safety.py",
+    "scripts/risk_3p_70_fail_closed_campaign.py",
+    "scripts/risk_3p_71_offline_integrity_gate.py",
 ))
 
 
@@ -79,8 +85,14 @@ def audit(root: Path = ROOT, data: object = None) -> list[str]:
             errors.append("P62_NEW_SAFETY_SOURCES_UNTRACKED")
         if len(rows) != len(seen):
             errors.append("P62_INCOMPLETE_OR_DUPLICATE_MAPPING")
-        if len(rows) < 41:
+        if len(rows) < 45:
             errors.append("P62_EXPECTED_PRIOR_MAPPINGS_MISSING")
+        # The original minimum-count test could pass after an old mapping
+        # disappeared. Cross-check the exact pinned source inventory instead.
+        pinned_doc = pinned._read(root, pinned.PINNED)
+        if pinned.audit(injected={pinned.TRACE: record,
+                                 pinned.PINNED: pinned_doc}):
+            errors.append("P62_PINNED_SOURCE_INVENTORY_DRIFT")
     except (OSError, ValueError, TypeError, KeyError, AttributeError):
         errors.append("P62_CANNOT_READ_PUBLIC_TRACEABILITY")
     return errors
