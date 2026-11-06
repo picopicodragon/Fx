@@ -21,7 +21,12 @@ PAIRS = ("USD/JPY", "EUR/JPY", "EUR/USD")
 MAX_SYNTHETIC_TRADES = 128
 MAX_SIMULATED_ID_CHARS = 128
 MAX_SYNTHETIC_ASOF = (1 << 63) - 1
-DECIMAL_WORK_PRECISION = 96
+# Native legs multiply up to two 40-character coefficients, then the gross
+# JPY conversion multiplies a third. Across 128 records, retaining both
+# ~120-digit large terms and 10^-114 fractional tails requires more than
+# 96 significant digits. 256 prevents silently understated mock exposure.
+# These are illustrative figures only and never enable orders.
+DECIMAL_WORK_PRECISION = 256
 CURRENCIES = ("USD", "EUR", "JPY")
 _STATUSES = frozenset({"POSITION", "PENDING", "CANDIDATE"})
 _NUMBER = re.compile(r"(?:0|[1-9][0-9]*)(?:\.[0-9]+)?\Z", re.ASCII)
@@ -122,9 +127,10 @@ def review_synthetic_portfolio(
     if len(trades) > MAX_SYNTHETIC_TRADES:
         return _reject("SYNTHETIC_WORKLOAD_BOUND_EXCEEDED")
 
-    # Preserve sub-yen boundary exceedances in synthetic high-scale amounts.
-    # With <=40 decimal digits per operand and <=128 tickets, 96 digits
-    # accommodate product, aggregation, and both hard-limit comparisons.
+    # The old 96-digit context preserved risk limits but could round the
+    # three-factor JPY gross exposure (EUR/USD quantity * EUR/USD ASK *
+    # USD/JPY ASK). A 256-digit independent context also retains micro
+    # fractional legs in the presence of very large synthetic positions.
     # Use an independent Decimal context. Caller rounding mode, exponent
     # bounds and Inexact/Rounded traps must not change mock risk decisions.
     with localcontext(Context(prec=DECIMAL_WORK_PRECISION)):

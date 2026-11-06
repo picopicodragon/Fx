@@ -44,7 +44,7 @@ def evaluate(c, q, ts, *, equity="100000", asof=42, sid="SIM-HANDOFF",
     pq = {p: pf.Quote(q0.pair, q0.bid, q0.ask, q0.observed_at,
                       q0.snapshot_id) for p, q0 in q.items()}
     amounts = dict(stops.per_ticket_illustrative_loss_jpy or ())
-    with localcontext(Context(prec=96)):
+    with localcontext(Context(prec=pf.DECIMAL_WORK_PRECISION)):
         trades = [
             pf.Trade(t.ticket_id, t.pair, t.side, t.status,
                      str(Decimal(t.volume_lots)

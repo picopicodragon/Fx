@@ -188,7 +188,7 @@ class NumericFailClosedTests(unittest.TestCase):
         self.held(r)
 
     def test_large_decimal_multiplication_retains_native_gross(self):
-        # At most 40 input digits each; 96-digit internal context leaves
+        # 256-digit context also preserves three-factor gross JPY exposures.
         # ample room for an 80-digit product and 128-entry accumulation.
         max40 = "9" * 40
         q = quotes()
@@ -214,7 +214,7 @@ class NumericFailClosedTests(unittest.TestCase):
             self.held(r)
 
     def test_no_real_trading_permission_from_boundary_success(self):
-        self.assertEqual(mod.DECIMAL_WORK_PRECISION, 96)
+        self.assertEqual(mod.DECIMAL_WORK_PRECISION, 256)
         self.assertEqual(mod.MAX_SYNTHETIC_TRADES, 128)
         r = evaluate()
         self.assertTrue(r.arithmetic_complete)
