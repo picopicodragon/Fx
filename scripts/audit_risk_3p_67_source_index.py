@@ -30,8 +30,8 @@ def audit(root: Path = ROOT, injected: dict | None = None) -> list[str]:
     errors = []
     try:
         docs = injected if injected is not None else {
-            p: _read(root, p) for p in (TRACE, PINN)}
-        trace, index = docs[TRACE], docs[PINN]
+            p: _read(root, p) for p in (TRACE, PINNED)}
+        trace, index = docs[TRACE], docs[PINNED]
         if type(trace) is not dict or type(index) is not dict:
             return ["P67_SOURCE_INDEX_OR_TRACE_INVALID"]
         if (set(index) != set(PIN_FIELDS)
