@@ -62,6 +62,11 @@ def inspect_source(source: object) -> list[str]:
                 errors.append("P69_IMPORT_TIME_DECORATOR_OR_DEFAULT_CALL")
             continue
         if isinstance(stmt, (ast.Assign, ast.AnnAssign)):
+            if isinstance(stmt, ast.AnnAssign) and any(
+                    isinstance(n, (ast.Call, ast.Await, ast.Yield,
+                                   ast.NamedExpr))
+                    for n in ast.walk(stmt.annotation)):
+                errors.append("P69_IMPORT_TIME_INITIALIZER_EXECUTION")
             value = stmt.value
             if value is None:
                 continue
@@ -78,6 +83,7 @@ def inspect_source(source: object) -> list[str]:
                 and len(value.args) == 1
                 and isinstance(value.args[0], ast.Constant)
                 and type(value.args[0].value) is str
+                and value.args[0].value == r"[0-9a-f]{64}\\Z"
                 and not value.keywords
                 and len(stmt.targets) == 1
                 and isinstance(stmt.targets[0], ast.Name)
@@ -113,7 +119,7 @@ def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
                       and path in overrides else
                       (root / path).read_text(encoding="utf-8"))
             findings = inspect_source(source)
-        except (OSError, UnicodeError, ValueError):
+        except (OSError, UnicodeError, ValueError, RecursionError):
             findings = ["P69_SOURCE_UNAVAILABLE"]
         errors.extend("P69_SOURCE_" + str(i) + ":" + f for f in findings)
     return errors
