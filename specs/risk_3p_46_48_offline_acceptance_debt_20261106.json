@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-46-48-P05-UNRESOLVED-ACCEPTANCE-DEBT-20261106",
+  "date_jst": "2026-11-06",
+  "scope": "OFFLINE_UNRESOLVED_SAFETY_REGISTER_ONLY",
+  "sources": {
+    "p05": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+    "unsigned_review": "specs/risk_3p_35_p05_08_human_review_packet_20261106.json",
+    "p05_matrix": "specs/risk_3p_41_p05_offline_gate_matrix_20261106.json",
+    "g1": "specs/risk_3p_33_p05_07_offline_provenance_readiness_20261106.json"
+  },
+  "p05_items": [
+    {
+      "check_id": "P05-01",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_01_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-02",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_02_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-03",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_03_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-04",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_04_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-05",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_05_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-06",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_06_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-07",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_07_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-08",
+      "independent_evidence_verified": false,
+      "human_acceptance_reference": null,
+      "passed": false,
+      "reason_code": "P05_08_NOT_INDEPENDENTLY_VERIFIED"
+    }
+  ],
+  "safety": {
+    "p05_required": 8,
+    "p05_passed": 0,
+    "g1_required": 15,
+    "g1_real_verified": 0,
+    "fx_saf_originals_verified": 0,
+    "form_decisions_approved": 0,
+    "real_mt4_broker_evidence_collected": false,
+    "real_account_session_verified": false,
+    "real_ea_runtime_verified": false,
+    "real_server_orders_verified": false,
+    "real_broker_symbols_verified": false,
+    "independent_acl_certified": false,
+    "owner_local_storage_accepted_for_offline_planning_only": true,
+    "p05_human_signoff": false,
+    "phase1_human_signoff": false,
+    "real_terminal_observation_authorized": false,
+    "order_or_ea_actions_authorized": false,
+    "auto_merge_authorized": false,
+    "phase_1": "BLOCKED",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": true,
+    "verified_values": null
+  },
+  "report_classification": "SOURCE_STATE_CROSS_CHECK_NOT_REAL_SAFETY_ACCEPTANCE",
+  "next_step": "CONTINUE_OFFLINE_SAFETY_TESTS_NO_EXTRA_OWNER_QUESTIONS_OR_AUTO_MERGE"
+}
