@@ -40,6 +40,17 @@ DISALLOWED_IDENTIFIERS = frozenset((
     "AutoTrading", "ShellExecute", "WinDLL",
 ))
 
+# Explicitly pin the only mock-only dependencies permitted in the six
+# selected pure validators. This is a narrow syntactic allowlist, not a
+# guarantee that module imports are side-effect free.
+ALLOWED_SCRIPT_MODULES = frozenset((
+    "validate_risk_3p_34_synthetic_provenance",
+    "risk_3p_49_synthetic_evidence_chain",
+    "risk_3p_50_synthetic_dual_witness",
+    "risk_3p_51_mock_approval_separation",
+    "risk_3p_55_synthetic_ingress_contract",
+))
+
 
 def _inspect_source(source: object) -> list[str]:
     """Fixed error codes only; never echo or run untrusted source."""
@@ -55,11 +66,22 @@ def _inspect_source(source: object) -> list[str]:
             for alias in node.names:
                 if alias.name.split(".")[0] not in ALLOWED_IMPORT_ROOTS:
                     errors.append("P56_DISALLOWED_IMPORT")
+                elif alias.name == "scripts" or (
+                        alias.name.startswith("scripts.") and
+                        alias.name.removeprefix("scripts.")
+                        not in ALLOWED_SCRIPT_MODULES):
+                    errors.append("P56_UNAPPROVED_LOCAL_MODULE_IMPORT")
         elif isinstance(node, ast.ImportFrom):
             if (node.level != 0 or node.module is None
                     or node.module.split(".")[0] not in ALLOWED_IMPORT_ROOTS
                     or any(alias.name == "*" for alias in node.names)):
                 errors.append("P56_DISALLOWED_IMPORT_FROM")
+            elif node.module == "scripts":
+                if any(alias.name not in ALLOWED_SCRIPT_MODULES
+                       for alias in node.names):
+                    errors.append("P56_UNAPPROVED_LOCAL_MODULE_IMPORT")
+            elif node.module.startswith("scripts."):
+                errors.append("P56_UNAPPROVED_LOCAL_MODULE_IMPORT")
         elif isinstance(node, ast.Call):
             fn = node.func
             if isinstance(fn, ast.Name) and fn.id in DISALLOWED_CALLS:
