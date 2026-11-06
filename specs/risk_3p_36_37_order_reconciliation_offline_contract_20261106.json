@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-36-37-P05-03-OFFLINE-RECONCILIATION-20261106",
+  "created_on_jst_date": "2026-11-06",
+  "scope": "OFFLINE_SYNTHETIC_CONTRACT_ONLY_NO_MT4_ACCESS",
+  "source_p05": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "source_unsigned_p05_review": "specs/risk_3p_35_p05_08_human_review_packet_20261106.json",
+  "source_g1": "specs/risk_3p_33_p05_07_offline_provenance_readiness_20261106.json",
+  "observed_owner_ui": "BALANCE_ONLY_NO_POSITION_OR_PENDING_ORDER_ROWS_VISIBLE",
+  "known_history": "PRIOR_POSITIONS_OR_PENDING_ORDERS_YES",
+  "observed_zero_is_not_verified_zero": true,
+  "categories": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD",
+    "OTHER_SYMBOLS"
+  ],
+  "totals_required": [
+    "open_positions",
+    "pending_orders"
+  ],
+  "unknown_counts_must_not_be_normalized_to_zero": true,
+  "broker_side_must_be_independent_and_account_wide": true,
+  "source_utc_format": "SYNTHETIC_UTC_ONLY_NO_REAL_WALL_CLOCK_PROOF",
+  "max_simulated_time_skew_seconds": 30,
+  "no_live_session_or_order_manipulation": true,
+  "acceptance_paths": {
+    "synthetic_zero_match": "SIMULATED_ZERO_MATCH_ONLY_NOT_REAL_PROOF",
+    "synthetic_nonzero_match": "SIMULATED_EXPOSURE_PRESENT_ONLY_NOT_REAL_PROOF",
+    "mismatch": "FAIL_CLOSED",
+    "incomplete_or_unreliable": "FAIL_CLOSED"
+  },
+  "future_real_evidence_requirements": [
+    "EXPLICIT_HUMAN_P05_SAFETY_APPROVAL_BEFORE_ANY_TERMINAL_OBSERVATION",
+    "SAME_BROKER_ACCOUNT_SCOPE_WITHOUT_EXPOSING_ACCOUNT_ID",
+    "TERMINAL_AND_BROKER_INDEPENDENTLY_CONFIRMED_SOURCE_AUTHENTICITY",
+    "ACCOUNT_WIDE_COVERAGE_INCLUDING_NON_TARGET_SYMBOLS",
+    "EXPLICIT_POSITION_AND_PENDING_ORDER_COUNTS_NOT_BALANCE_ONLY",
+    "UTC_TIME_AND_STALENESS_BOTH_SOURCES_VERIFIED",
+    "SERVER_STATUS_AND_CONNECTION_STATE_RECONCILED",
+    "EXISTING_EA_PRESERVED_AND_NO_ORDER_CHANGES",
+    "SOURCE_CONFLICTS_AND_UNKNOWN_VALUES_FORCE_STOP"
+  ],
+  "environment": {
+    "real_mt4_data_collected": false,
+    "real_order_positions_verified": false,
+    "p05_03_accepted": false,
+    "p05_checks_passed": 0,
+    "p05_human_signoff": false,
+    "p06_observation_authorized": false,
+    "real_mt4_access_authorized": false,
+    "order_execution_authorized": false,
+    "auto_trading_change_authorized": false,
+    "parallel_mt4_session_authorized": false,
+    "uploaded_private_broker_log": false,
+    "fx_saf_originals_verified": 0,
+    "form_implementation_approvals": 0,
+    "g1_independently_verified_fields": 0,
+    "phase_1": "BLOCKED",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": true,
+    "verified_values": null
+  }
+}
