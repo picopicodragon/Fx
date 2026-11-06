@@ -275,9 +275,21 @@ def _exact_mock_structure(observed: object, expected: object) -> bool:
     return False
 
 
+
+def _declared_mock_fields_present(report: object, expected: type) -> bool:
+    """Reject missing attributes before reading untrusted dataclass fields."""
+    return (type(report) is expected
+            and {field.name for field in fields(expected)}
+            <= set(vars(report)))
+
+
 def _mock_stop_protected(report: stop_conversion.Review) -> bool:
     return (
-        type(report) is stop_conversion.Review
+        _declared_mock_fields_present(report, stop_conversion.Review)
+        and type(report.reason) is str
+        and type(report.runtime_go_no_go) is str
+        and type(report.phase_1) is str
+        and type(report.quote_conversion_method) is str
         and report.illustrative_complete is True
         and report.reason in (
             "SYNTHETIC_HARD_LIMIT_EXCEEDED_NEVER_AUTHORIZED",
@@ -299,7 +311,10 @@ def _mock_stop_protected(report: stop_conversion.Review) -> bool:
 
 def _mock_portfolio_protected(report: Review) -> bool:
     return (
-        type(report) is Review
+        _declared_mock_fields_present(report, Review)
+        and type(report.reason) is str
+        and type(report.runtime_go_no_go) is str
+        and type(report.phase_1) is str
         and report.arithmetic_complete is True
         and report.reason in (
             "EXISTING_HARD_LIMIT_OVER_IN_SYNTHETIC_INPUT",
