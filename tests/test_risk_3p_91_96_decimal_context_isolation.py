@@ -60,7 +60,7 @@ def portfolio_trades_from_stops(tickets=None, contracts=None, stop_result=None):
     cs = stop_contracts() if contracts is None else contracts
     result = stops(cs=cs, ts=ts) if stop_result is None else stop_result
     amounts = dict(result.per_ticket_illustrative_loss_jpy)
-    with localcontext(Context(prec=96)):
+    with localcontext(Context(prec=portfolio.DECIMAL_WORK_PRECISION)):
         return [
             portfolio.Trade(t.ticket_id, t.pair, t.side, t.status,
                             str(Decimal(t.volume_lots) *
@@ -319,9 +319,9 @@ class DecimalContextIsolationTests(unittest.TestCase):
                     self.held_stop(a)
                     self.held_portfolio(b)
 
-    def test_explicit_context_precision_is_96_for_both(self):
+    def test_explicit_context_precisions_are_scoped_per_calculator(self):
         self.assertEqual(stop.DECIMAL_WORK_PRECISION, 96)
-        self.assertEqual(portfolio.DECIMAL_WORK_PRECISION, 96)
+        self.assertEqual(portfolio.DECIMAL_WORK_PRECISION, 256)
         with localcontext() as ctx:
             hostile_decimal_context()
             a, b = stops(), portfolio_review()
