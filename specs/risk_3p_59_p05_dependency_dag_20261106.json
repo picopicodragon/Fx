@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-59-P05-SAFE-DEPENDENCY-DAG-20261106",
+  "created_jst": "2026-11-06",
+  "scope": "OFFLINE_PREREQUISITES_ONLY_NOT_REAL_BROKER_ACCEPTANCE",
+  "source_p05": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "checks": [
+    {
+      "check_id": "P05-01",
+      "criterion": "DEMO_ACCOUNT_IDENTITY_REAL_INDEPENDENT_CONFIRMATION",
+      "depends_on": [],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-02",
+      "criterion": "MACD_EA_RUNTIME_STATE_REAL_NONINTERFERING_CONFIRMATION",
+      "depends_on": [
+        "P05-01"
+      ],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-03",
+      "criterion": "ACCOUNT_WIDE_BROKER_POSITIONS_AND_PENDING_ORDERS_RECONCILIATION",
+      "depends_on": [
+        "P05-01",
+        "P05-04"
+      ],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-04",
+      "criterion": "SINGLE_MT4_SESSION_REAL_STATE_CONFIRMATION",
+      "depends_on": [
+        "P05-01"
+      ],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-05",
+      "criterion": "READ_ONLY_NO_INTERFERENCE_REAL_PLAN",
+      "depends_on": [
+        "P05-02",
+        "P05-03",
+        "P05-04"
+      ],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-06",
+      "criterion": "OWNER_ACCEPTED_FOLDER_OFFLINE_ONLY_NO_REAL_DATA_COLLECTION",
+      "depends_on": [],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-07",
+      "criterion": "G1_REAL_3X5_BROKER_PROPERTIES_AND_INDEPENDENT_PROVENANCE",
+      "depends_on": [
+        "P05-01",
+        "P05-03",
+        "P05-04",
+        "P05-05",
+        "P05-06"
+      ],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    },
+    {
+      "check_id": "P05-08",
+      "criterion": "EXPLICIT_OWNER_P05_SIGNOFF_AFTER_ALL_PREVIOUS_GATES",
+      "depends_on": [
+        "P05-01",
+        "P05-02",
+        "P05-03",
+        "P05-04",
+        "P05-05",
+        "P05-06",
+        "P05-07"
+      ],
+      "independent_evidence_verified": false,
+      "owner_signed": false,
+      "status": "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"
+    }
+  ],
+  "state": {
+    "owner_offline_folder_accepted": true,
+    "real_acl_verified": false,
+    "p05_passed": 0,
+    "g1_real_verified": 0,
+    "real_mt4_observation_authorized": false,
+    "real_order_or_ea_action_authorized": false,
+    "owner_p05_signoff": false,
+    "phase_1": "BLOCKED",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": true,
+    "main_auto_merge_authorized": false
+  },
+  "next_step": "NO_AUTO_TRANSITION_REQUIRE_INDEPENDENT_PROOF_AND_SEPARATE_HUMAN_ACCEPTANCE"
+}
