@@ -7,7 +7,7 @@ risk estimate. No network, host, MT4, credentials, disk, or clock I/O.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from decimal import Context, Decimal, localcontext
 from fractions import Fraction
 
@@ -218,9 +218,84 @@ def _handoff_reject(code: str) -> SyntheticHandoffReview:
     return SyntheticHandoffReview(code)
 
 
+
+
+def _mock_report_type_shape(observed: object, expected: object) -> bool:
+    """Preflight structure/types without calling any untrusted __eq__ methods."""
+    if type(observed) is not type(expected):
+        return False
+    if type(observed) in (stop_conversion.Review, Review):
+        names = {field.name for field in fields(type(expected))}
+        return (set(vars(observed)) == names
+                and set(vars(expected)) == names
+                and all(_mock_report_type_shape(getattr(observed, name),
+                                                getattr(expected, name))
+                        for name in names))
+    if type(observed) is tuple:
+        return (len(observed) == len(expected)
+                and all(_mock_report_type_shape(a, b)
+                        for a, b in zip(observed, expected)))
+    if type(observed) in (str, int, bool, type(None)):
+        return True
+    # No arbitrary class objects or custom equality hooks are trusted.
+    return False
+
+
+def _exact_mock_structure(observed: object, expected: object) -> bool:
+    """Check all declared fields, nested values and exact built-in types.
+
+    Dataclass equality alone is unsafe for a claim of strict consistency:
+    False == 0, True == 1, or equal-valued tuple subclasses can hide a type
+    change. Frozen dataclasses can also have unknown instance attributes added
+    with object.__setattr__, which normal dataclass equality ignores.
+    """
+    if type(observed) is not type(expected):
+        return False
+    if type(observed) in (stop_conversion.Review, Review):
+        try:
+            names = {field.name for field in fields(type(expected))}
+            if (set(vars(observed)) != names
+                    or set(vars(expected)) != names):
+                return False
+            return all(_exact_mock_structure(getattr(observed, name),
+                                             getattr(expected, name))
+                       for name in names)
+        except (TypeError, AttributeError):
+            return False
+    if type(observed) is tuple:
+        return (len(observed) == len(expected)
+                and all(_exact_mock_structure(x, y)
+                        for x, y in zip(observed, expected)))
+    if type(observed) is list:
+        return (len(observed) == len(expected)
+                and all(_exact_mock_structure(x, y)
+                        for x, y in zip(observed, expected)))
+    if type(observed) is dict:
+        return (observed.keys() == expected.keys()
+                and all(_exact_mock_structure(observed[k], expected[k])
+                        for k in expected))
+    if type(observed) in (str, int, bool, type(None)):
+        return observed == expected
+    # This guard is intentionally scoped to the synthetic report values.
+    # Any unfamiliar object is refused instead of executing its __eq__ hook.
+    return False
+
+
+
+def _declared_mock_fields_present(report: object, expected: type) -> bool:
+    """Reject missing attributes before reading untrusted dataclass fields."""
+    return (type(report) is expected
+            and {field.name for field in fields(expected)}
+            <= set(vars(report)))
+
+
 def _mock_stop_protected(report: stop_conversion.Review) -> bool:
     return (
-        type(report) is stop_conversion.Review
+        _declared_mock_fields_present(report, stop_conversion.Review)
+        and type(report.reason) is str
+        and type(report.runtime_go_no_go) is str
+        and type(report.phase_1) is str
+        and type(report.quote_conversion_method) is str
         and report.illustrative_complete is True
         and report.reason in (
             "SYNTHETIC_HARD_LIMIT_EXCEEDED_NEVER_AUTHORIZED",
@@ -242,7 +317,10 @@ def _mock_stop_protected(report: stop_conversion.Review) -> bool:
 
 def _mock_portfolio_protected(report: Review) -> bool:
     return (
-        type(report) is Review
+        _declared_mock_fields_present(report, Review)
+        and type(report.reason) is str
+        and type(report.runtime_go_no_go) is str
+        and type(report.phase_1) is str
         and report.arithmetic_complete is True
         and report.reason in (
             "EXISTING_HARD_LIMIT_OVER_IN_SYNTHETIC_INPUT",
@@ -354,9 +432,18 @@ def review_synthetic_loss_handoff(
         positions_reconciled=positions_reconciled,
         pending_orders_reconciled=pending_reconciled)
     if (not _mock_stop_protected(recomputed_stop)
-            or not _mock_portfolio_protected(recomputed_portfolio)
-            or stop_result != recomputed_stop
-            or portfolio_result != recomputed_portfolio):
+            or not _mock_portfolio_protected(recomputed_portfolio)):
+        return _handoff_reject("P103_MOCK_RECOMPUTATION_MISMATCH")
+    # Check types, nested tuple shapes and unknown fields before comparing
+    # values. Otherwise an injected object can run custom __eq__ or exploit
+    # False == 0 and frozen dataclasses ignoring unknown instance attributes.
+    if (not _mock_report_type_shape(stop_result, recomputed_stop)
+            or not _mock_report_type_shape(portfolio_result,
+                                           recomputed_portfolio)):
+        return _handoff_reject("P115_MOCK_TYPED_REPORT_DRIFT")
+    if (not _exact_mock_structure(stop_result, recomputed_stop)
+            or not _exact_mock_structure(portfolio_result,
+                                         recomputed_portfolio)):
         return _handoff_reject("P103_MOCK_RECOMPUTATION_MISMATCH")
 
     return SyntheticHandoffReview(
