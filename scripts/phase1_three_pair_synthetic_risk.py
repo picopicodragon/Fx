@@ -9,6 +9,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Context, Decimal, localcontext
+from fractions import Fraction
+
+from scripts import phase1_three_pair_synthetic_stop_conversion as stop_conversion
 import re
 
 
@@ -185,3 +188,173 @@ def review_synthetic_portfolio(
             candidate_exceeds_existing_limit=candidate_over,
             total_exceeds_existing_limit=total_over,
         )
+
+
+@dataclass(frozen=True)
+class SyntheticHandoffReview:
+    """Only asserts in-memory mock consistency; never validates broker facts."""
+
+    reason: str
+    mock_binding_consistent: bool = False
+    mock_records_bound: int = 0
+    independent_broker_origin_verified: bool = False
+    human_p05_signoff: bool = False
+    runtime_go_no_go: str = "NO_GO"
+    phase_1: str = "BLOCKED"
+    safety_hold_latched: bool = True
+    order_allowed: bool = False
+    automatic_retry_allowed: bool = False
+    stop_release_allowed: bool = False
+    verified_values: None = None
+
+
+def _handoff_reject(code: str) -> SyntheticHandoffReview:
+    return SyntheticHandoffReview(code)
+
+
+def _mock_stop_protected(report: stop_conversion.Review) -> bool:
+    return (
+        type(report) is stop_conversion.Review
+        and report.illustrative_complete is True
+        and report.reason in (
+            "SYNTHETIC_HARD_LIMIT_EXCEEDED_NEVER_AUTHORIZED",
+            "SYNTHETIC_ARITHMETIC_ONLY_NEVER_AUTHORIZED")
+        and report.runtime_go_no_go == "NO_GO"
+        and report.phase_1 == "BLOCKED"
+        and report.safety_hold_latched is True
+        and report.order_allowed is False
+        and report.automatic_retry_allowed is False
+        and report.stop_release_allowed is False
+        and report.result_authorizes_trade is False
+        and report.broker_contract_verified is False
+        and report.costs_verified is False
+        and report.stop_execution_guaranteed is False
+        and report.verified_values is None
+        and report.quote_conversion_method == "UNAPPROVED_SYNTHETIC_ONLY"
+    )
+
+
+def _mock_portfolio_protected(report: Review) -> bool:
+    return (
+        type(report) is Review
+        and report.arithmetic_complete is True
+        and report.reason in (
+            "EXISTING_HARD_LIMIT_OVER_IN_SYNTHETIC_INPUT",
+            "SYNTHETIC_ARITHMETIC_ONLY_NOT_AUTHORIZED")
+        and report.runtime_go_no_go == "NO_GO"
+        and report.phase_1 == "BLOCKED"
+        and report.safety_hold_latched is True
+        and report.order_allowed is False
+        and report.automatic_retry_allowed is False
+        and report.stop_release_allowed is False
+        and report.verified_values is None
+    )
+
+
+def review_synthetic_loss_handoff(
+    contracts: object, stop_quotes: object, tickets: object,
+    stop_result: object, portfolio_quotes: object, trades: object,
+    portfolio_result: object, *,
+    asof: object, snapshot_id: object, equity_jpy: object,
+    positions_reconciled: object, pending_reconciled: object,
+    inflight_reconciled: object,
+) -> SyntheticHandoffReview:
+    """Bind two *fictional* computations to a one-to-one input ledger.
+
+    Recomputes both hypothetical outputs from the supplied *same* snapshot,
+    requiring exact report identity. Matches each ticket and trade by order,
+    ID, pair, side, status, exact rational units and asserted loss. Does not
+    authenticate source facts, validate real SL fills, or permit an order.
+    """
+    if (positions_reconciled is not True or pending_reconciled is not True
+            or inflight_reconciled is not True):
+        return _handoff_reject("P103_UNKNOWN_MOCK_RECONCILIATION")
+    if (type(tickets) not in (list, tuple)
+            or type(trades) not in (list, tuple)
+            or not tickets or len(tickets) != len(trades)
+            or len(tickets) > MAX_SYNTHETIC_TRADES):
+        return _handoff_reject("P103_MISSING_OR_MISMATCHED_MOCK_ROWS")
+    if (type(contracts) is not dict or set(contracts) != set(PAIRS)
+            or type(stop_quotes) is not dict
+            or set(stop_quotes) != set(PAIRS)
+            or type(portfolio_quotes) is not dict
+            or set(portfolio_quotes) != set(PAIRS)):
+        return _handoff_reject("P103_MOCK_THREE_PAIR_SCOPE_MISMATCH")
+    if not (_mock_stop_protected(stop_result)
+            and _mock_portfolio_protected(portfolio_result)):
+        return _handoff_reject("P103_UNVERIFIED_OR_PRIVILEGED_MOCK_OUTPUT")
+    for pair in PAIRS:
+        s, p = stop_quotes[pair], portfolio_quotes[pair]
+        if (type(s) is not stop_conversion.Quote
+                or type(p) is not Quote
+                or (s.pair, s.bid, s.ask, s.observed_at, s.snapshot_id)
+                != (p.pair, p.bid, p.ask, p.observed_at, p.snapshot_id)):
+            return _handoff_reject("P103_MOCK_SNAPSHOT_QUOTE_MISMATCH")
+    report_rows = stop_result.per_ticket_illustrative_loss_jpy
+    if (type(report_rows) is not tuple or len(report_rows) != len(tickets)
+            or type(stop_result.candidate_illustrative_loss_jpy) is not str
+            or type(stop_result.total_illustrative_loss_jpy) is not str
+            or type(portfolio_result.candidate_max_loss_jpy) is not str
+            or type(portfolio_result.total_max_loss_jpy) is not str):
+        return _handoff_reject("P103_MOCK_STOP_REPORT_ROW_MISMATCH")
+    try:
+        for ticket, trade, item in zip(tickets, trades, report_rows):
+            if (type(ticket) is not stop_conversion.Ticket
+                    or type(trade) is not Trade
+                    or type(item) is not tuple or len(item) != 2
+                    or type(item[0]) is not str
+                    or type(item[1]) is not str
+                    or (ticket.ticket_id, ticket.pair, ticket.side, ticket.status)
+                    != (trade.trade_id, trade.pair, trade.side, trade.status)
+                    or item[0] != ticket.ticket_id):
+                return _handoff_reject("P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
+            contract = contracts[ticket.pair]
+            if (type(contract) is not stop_conversion.Contract
+                    or _decimal(trade.base_units) is None
+                    or _decimal(trade.max_loss_jpy) is None
+                    or stop_conversion._parse(ticket.volume_lots) is None
+                    or stop_conversion._parse(contract.base_units_per_lot)
+                    is None
+                    or _decimal(item[1]) is None):
+                return _handoff_reject("P103_MOCK_UNPARSABLE_AMOUNT")
+            if (Fraction(Decimal(trade.base_units))
+                    != Fraction(Decimal(ticket.volume_lots))
+                    * Fraction(Decimal(contract.base_units_per_lot))
+                    or Fraction(Decimal(trade.max_loss_jpy))
+                    != Fraction(Decimal(item[1]))):
+                return _handoff_reject("P103_MOCK_UNIT_OR_LOSS_ASSERTION_DRIFT")
+
+        if (Fraction(Decimal(stop_result.candidate_illustrative_loss_jpy))
+                != Fraction(Decimal(portfolio_result.candidate_max_loss_jpy))
+                or Fraction(Decimal(stop_result.total_illustrative_loss_jpy))
+                != Fraction(Decimal(portfolio_result.total_max_loss_jpy))
+                or stop_result.candidate_exceeds_existing_fraction
+                is not portfolio_result.candidate_exceeds_existing_limit
+                or stop_result.aggregate_exceeds_existing_fraction
+                is not portfolio_result.total_exceeds_existing_limit):
+            return _handoff_reject("P103_MOCK_TOTAL_OR_LIMIT_DRIFT")
+    except (KeyError, ValueError, TypeError, ArithmeticError, OverflowError):
+        return _handoff_reject("P103_MOCK_HANDOFF_FORMAT_INVALID")
+
+    recomputed_stop = stop_conversion.review_synthetic_stop_risk(
+        contracts, stop_quotes, tickets, equity_jpy=equity_jpy,
+        asof=asof, snapshot_id=snapshot_id,
+        positions_reconciled=positions_reconciled,
+        pending_reconciled=pending_reconciled,
+        inflight_reservations_reconciled=inflight_reconciled)
+    recomputed_portfolio = review_synthetic_portfolio(
+        portfolio_quotes, trades, equity_jpy=equity_jpy,
+        asof=asof, snapshot_id=snapshot_id,
+        positions_reconciled=positions_reconciled,
+        pending_orders_reconciled=pending_reconciled)
+    if (not _mock_stop_protected(recomputed_stop)
+            or not _mock_portfolio_protected(recomputed_portfolio)
+            or stop_result != recomputed_stop
+            or portfolio_result != recomputed_portfolio):
+        return _handoff_reject("P103_MOCK_RECOMPUTATION_MISMATCH")
+
+    return SyntheticHandoffReview(
+        "PASS_OFFLINE_MOCK_BINDING_ONLY",
+        mock_binding_consistent=True,
+        mock_records_bound=len(tickets),
+    )
