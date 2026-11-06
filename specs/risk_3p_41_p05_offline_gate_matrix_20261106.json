@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-41-P05-OFFLINE-GATE-MATRIX-20261106",
+  "created_on_jst_date": "2026-11-06",
+  "scope": "OFFLINE_GATE_ALIGNMENT_AND_SYNTHETIC_TEST_ONLY",
+  "source_p05": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "source_unsigned_review": "specs/risk_3p_35_p05_08_human_review_packet_20261106.json",
+  "source_g1": "specs/risk_3p_33_p05_07_offline_provenance_readiness_20261106.json",
+  "checks": [
+    {
+      "check_id": "P05-01",
+      "reported_state_expected": "OWNER_REPORTED_DEMO_ACCOUNT_COMMUNICATING_IDENTITY_UNVERIFIED",
+      "blocker_code": "OWNER_UI_DEMO_DOES_NOT_PROVE_ACCOUNT_IDENTITY",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    },
+    {
+      "check_id": "P05-02",
+      "reported_state_expected": "OWNER_REPORTED_MACD_SAMPLE_VISIBLE_RUNTIME_UNVERIFIED",
+      "blocker_code": "MACD_SAD_FACE_AND_AUTOTRADING_OFF_NOT_EA_RUNTIME_PROOF",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    },
+    {
+      "check_id": "P05-03",
+      "reported_state_expected": "OWNER_REPORTED_TRADE_TAB_BALANCE_ONLY_NO_ORDER_ROWS_VISIBLE",
+      "blocker_code": "BALANCE_ONLY_DOES_NOT_PROVE_SERVER_ORDERS_ZERO",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    },
+    {
+      "check_id": "P05-04",
+      "reported_state_expected": "OWNER_REPORTS_THIS_MT4_ONLY_NO_PARALLEL_LOGIN_INDEPENDENTLY_UNVERIFIED",
+      "blocker_code": "OWNER_ONE_TERMINAL_REPORT_NOT_ACCOUNT_SESSION_AUDIT",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    },
+    {
+      "check_id": "P05-05",
+      "reported_state_expected": "NOT_DEMONSTRATED_ON_CURRENT_ENVIRONMENT",
+      "blocker_code": "NO_REAL_TERMINAL_NONINTERFERENCE_TEST",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    },
+    {
+      "check_id": "P05-06",
+      "reported_state_expected": "OWNER_ACCEPTED_LOCAL_FOLDER_AND_PARENTS_FOR_OFFLINE_PLANNING_ONLY",
+      "blocker_code": "OWNER_STORAGE_ACCEPTANCE_ONLY_NO_REAL_BROKER_EVIDENCE_UPLOAD",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    },
+    {
+      "check_id": "P05-07",
+      "reported_state_expected": "ACTUAL_MT4_SYMBOL_AND_TIME_NOT_OBSERVED",
+      "blocker_code": "G1_3X5_REAL_BROKER_FIELDS_ZERO_VERIFIED",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    },
+    {
+      "check_id": "P05-08",
+      "reported_state_expected": "NO_SEPARATE_P05_PASS_OR_OPERATOR_ATTESTATION",
+      "blocker_code": "HUMAN_P05_SIGNOFF_NOT_GRANTED",
+      "real_evidence_verified": false,
+      "owner_p05_item_approved": false,
+      "simulator_pass_means_real_clearance": false
+    }
+  ],
+  "controls": {
+    "required_p05_items": 8,
+    "passed_p05_items": 0,
+    "g1_broker_values_verified": 0,
+    "fx_saf_originals_verified": 0,
+    "form_implementation_approvals": 0,
+    "real_account_identity_verified": false,
+    "real_mt4_terminal_session_verified": false,
+    "real_macd_ea_runtime_verified": false,
+    "real_order_state_reconciled": false,
+    "real_readonly_noninterference_verified": false,
+    "real_g1_symbol_provenance_verified": false,
+    "owner_storage_acceptance_offline_only": true,
+    "human_p05_signoff": false,
+    "real_mt4_access_authorized": false,
+    "ea_or_order_action_authorized": false,
+    "parallel_mt4_login_authorized": false,
+    "main_auto_merge_authorized": false,
+    "phase_1": "BLOCKED",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": true,
+    "verified_values": null
+  },
+  "next_step": "OFFLINE_CONTINUE_ONLY_P05_INDEPENDENT_EVIDENCE_AND_HUMAN_SIGNOFF_REQUIRED"
+}
