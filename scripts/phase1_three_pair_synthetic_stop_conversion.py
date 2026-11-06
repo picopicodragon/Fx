@@ -82,6 +82,20 @@ class Review:
 def _reject(reason: str) -> Review:
     return Review(reason)
 
+def _plain_three_pair_map(value: object) -> bool:
+    """Only inspect built-in string keys before hashing or equality checks.
+
+    Python dicts may contain user-defined keys with hostile __hash__ /
+    __eq__ methods. Never pass them to set() before exact-type validation.
+    This protects only an already-created, in-memory mock dictionary.
+    """
+    if type(value) is not dict or len(value) != len(PAIRS):
+        return False
+    keys = tuple(value)
+    return (all(type(key) is str for key in keys)
+            and set(keys) == set(PAIRS))
+
+
 
 def _parse(value: object, *, zero: bool = False) -> Decimal | None:
     """Strict bounded decimal strings. No float or bool coercion."""
@@ -138,12 +152,13 @@ def review_synthetic_stop_risk(
     equity = _parse(equity_jpy)
     if equity is None:
         return _reject("MISSING_OR_INVALID_EQUITY")
-    if (type(contracts) is not dict or set(contracts) != set(PAIRS)):
+    if not _plain_three_pair_map(contracts):
         return _reject("CONTRACT_SET_INCOMPLETE")
     checked_contracts: dict[str, tuple[Decimal, ...]] = {}
     for pair in PAIRS:
         row = contracts[pair]
-        if type(row) is not Contract or row.pair != pair:
+        if (type(row) is not Contract or type(row.pair) is not str
+                or row.pair != pair):
             return _reject("INVALID_SYNTHETIC_CONTRACT")
         values = tuple(_parse(getattr(row, field)) for field in (
             "base_units_per_lot", "min_lot", "lot_step", "max_lot"))
@@ -153,12 +168,13 @@ def review_synthetic_stop_risk(
         if minimum > maximum or step > minimum:
             return _reject("INCOHERENT_SYNTHETIC_LOT_CONTRACT")
         checked_contracts[pair] = values
-    if type(quotes) is not dict or set(quotes) != set(PAIRS):
+    if not _plain_three_pair_map(quotes):
         return _reject("QUOTE_SET_INCOMPLETE")
     checked_quotes: dict[str, tuple[Decimal, Decimal]] = {}
     for pair in PAIRS:
         q = quotes[pair]
-        if type(q) is not Quote or q.pair != pair:
+        if (type(q) is not Quote or type(q.pair) is not str
+                or q.pair != pair):
             return _reject("INVALID_QUOTE")
         if (type(q.observed_at) is not int or q.observed_at != asof
                 or type(q.snapshot_id) is not str

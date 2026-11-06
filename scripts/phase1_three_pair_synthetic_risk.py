@@ -107,12 +107,13 @@ def review_synthetic_portfolio(
     equity = _decimal(equity_jpy)
     if equity is None or equity <= 0:
         return _reject("INVALID_SYNTHETIC_EQUITY")
-    if type(quotes) is not dict or set(quotes) != set(PAIRS):
+    if not _mock_plain_three_pair_map(quotes):
         return _reject("QUOTE_SET_INCOMPLETE_OR_EXTRA")
     validated: dict[str, tuple[Decimal, Decimal]] = {}
     for pair in PAIRS:
         quote = quotes[pair]
-        if type(quote) is not Quote or quote.pair != pair:
+        if (type(quote) is not Quote or type(quote.pair) is not str
+                or quote.pair != pair):
             return _reject("INVALID_QUOTE")
         if (type(quote.observed_at) is not int or quote.observed_at != asof
                 or type(quote.snapshot_id) is not str
