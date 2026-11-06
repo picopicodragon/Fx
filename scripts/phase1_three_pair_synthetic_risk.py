@@ -8,7 +8,7 @@ risk estimate. No network, host, MT4, credentials, disk, or clock I/O.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, localcontext
+from decimal import Context, Decimal, localcontext
 import re
 
 
@@ -121,8 +121,9 @@ def review_synthetic_portfolio(
     # Preserve sub-yen boundary exceedances in synthetic high-scale amounts.
     # With <=40 decimal digits per operand and <=128 tickets, 96 digits
     # accommodate product, aggregation, and both hard-limit comparisons.
-    with localcontext() as ctx:
-        ctx.prec = DECIMAL_WORK_PRECISION
+    # Use an independent Decimal context. Caller rounding mode, exponent
+    # bounds and Inexact/Rounded traps must not change mock risk decisions.
+    with localcontext(Context(prec=DECIMAL_WORK_PRECISION)):
         net = {currency: Decimal(0) for currency in CURRENCIES}
         gross = {currency: Decimal(0) for currency in CURRENCIES}
         seen: set[str] = set()
