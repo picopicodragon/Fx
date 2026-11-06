@@ -128,7 +128,10 @@ def audit(root: Path, document: object = None) -> list[str]:
         m = [x for x in trace["offline_synthetic_mappings"]
              if x["source"] == "scripts/phase1_three_pair_synthetic_risk.py"]
         if (len(m) != 1 or m[0]["production_authorized"] is not False
-                or m[0]["tests"] != ["tests/test_phase1_three_pair_synthetic_risk.py"]):
+                or m[0]["tests"] != [
+                    "tests/test_phase1_three_pair_synthetic_risk.py",
+                    "tests/test_risk_3p_79_84_numeric_boundaries.py",
+                ]):
             errors.append("THREE_PAIR_SYNTHETIC_PRODUCTION_PROMOTED")
     except (OSError, ValueError, KeyError, TypeError, SyntaxError,
             StopIteration, AttributeError) as exc:
