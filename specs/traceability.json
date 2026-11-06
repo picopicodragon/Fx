@@ -708,7 +708,8 @@
       "tests": [
         "tests/test_risk_3p_04_synthetic_stop_conversion.py",
         "tests/test_risk_3p_85_90_stop_conversion_precision.py",
-        "tests/test_risk_3p_91_96_decimal_context_isolation.py"
+        "tests/test_risk_3p_91_96_decimal_context_isolation.py",
+        "tests/test_risk_3p_97_102_fraction_oracle.py"
       ],
       "production_authorized": false
     },
@@ -743,7 +744,8 @@
       "tests": [
         "tests/test_phase1_three_pair_synthetic_risk.py",
         "tests/test_risk_3p_79_84_numeric_boundaries.py",
-        "tests/test_risk_3p_91_96_decimal_context_isolation.py"
+        "tests/test_risk_3p_91_96_decimal_context_isolation.py",
+        "tests/test_risk_3p_97_102_fraction_oracle.py"
       ],
       "production_authorized": false
     },
