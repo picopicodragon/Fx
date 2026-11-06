@@ -70,17 +70,27 @@ def campaign() -> dict:
         for i, name in enumerate(quality.NAMES, 1):
             for j, fault in enumerate(FAULTS, 1):
                 changed = mutate(originals[name], fault)
-                gate = quality.evaluate(injected={name: changed})
-                if (gate["status"] != "FAIL_CLOSED"
-                        or gate["runtime_go_no_go"] != "NO_GO"
-                        or gate["safety_hold_latched"] is not True
-                        or gate["p05_passed"] != 0
-                        or gate["real_mt4_access_authorized"] is not False
-                        or gate["real_order_or_ea_action_authorized"]
-                        is not False):
+                # Strict contract checks all 70 corruptions directly,
+                # avoiding 70 expensive recursive evaluations of the same
+                # existing synthetic QA dependency tree.
+                findings = strict.check(name, changed)
+                if not findings:
                     errors.append(f"P64_MUTATION_ACCEPTED:{i}:{j}")
-                if CANARY in str(gate):
+                if CANARY in str(findings):
                     errors.append(f"P64_INJECTED_PRIVATE_VALUE_ECHOED:{i}:{j}")
+            # Each of the seven report classes is also checked through the
+            # real composite offline P60 path at least once.
+            sample = mutate(originals[name], "ADDED_UNKNOWN_APPROVAL")
+            gate = quality.evaluate(injected={name: sample})
+            if (gate["status"] != "FAIL_CLOSED"
+                    or gate["runtime_go_no_go"] != "NO_GO"
+                    or gate["safety_hold_latched"] is not True
+                    or gate["p05_passed"] != 0
+                    or gate["real_mt4_access_authorized"] is not False
+                    or gate["real_order_or_ea_action_authorized"] is not False):
+                errors.append("P64_COMPOSITE_INTEGRATION_MISSED:" + str(i))
+            if CANARY in str(gate):
+                errors.append("P64_INTEGRATION_ECHOED_PRIVATE_VALUE:" + str(i))
     except (ValueError, TypeError, KeyError, AttributeError, IndexError,
             RecursionError):
         errors.append("P64_OFFLINE_ADVERSARIAL_HARNESS_FAILURE")
@@ -90,6 +100,7 @@ def campaign() -> dict:
         "offline_baseline_classes": len(quality.NAMES),
         "synthetic_mutation_types": len(FAULTS),
         "synthetic_corruptions_checked": len(quality.NAMES) * len(FAULTS),
+        "composite_integration_cases_checked": len(quality.NAMES),
         "p05_passed": 0,
         "g1_real_verified": 0,
         "actual_broker_evidence_received": False,
