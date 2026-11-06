@@ -19,8 +19,8 @@
   "proposed_only": true,
   "historical_g1_attribute_count": 20,
   "target_g1_attribute_count": 15,
-  "legacy_g1_gate_scope_unchanged": true,
-  "g1_scope_revision_approved": false,
+  "legacy_g1_gate_scope_unchanged": false,
+  "g1_scope_revision_approved": true,
   "form01_owner_decision": "NOT_RECORDED",
   "form01_implementation_approved": false,
   "fx_saf_implementation_approved": false,
@@ -509,5 +509,7 @@
     "過去の4ペアの実口座目視報告は3ペアG1の契約確認を証明しない",
     "RISK-3P-03のV3テンプレートは数値null、RISK-3P-04の損失計算は合成値のみ",
     "PRマージとCI PASSはFORM-01、G1、FX-SAFの実装承認ではない"
-  ]
+  ],
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "legacy_g1_saved_snapshot_ref": "specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json"
 }

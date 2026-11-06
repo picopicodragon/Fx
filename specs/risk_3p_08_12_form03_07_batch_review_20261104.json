@@ -1,0 +1,319 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-08-12-FORM03-07-BATCH-OWNER-REVIEW-20261104",
+  "date": "2026-11-04",
+  "baseline_main_sha": "8ac478698d5f96bc05256cf6e13ac4eb110316ec",
+  "scope": "OFFLINE_SYNTHETIC_BATCH_AND_OWNER_REVIEW_ONLY",
+  "design_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "forms": [
+    {
+      "risk_id": "RISK-3P-08",
+      "form_id": "FORM-03",
+      "title": "EUR/USD quote-loss USD to JPY conversion",
+      "recommendation": "EUR/USDの正の合成USD損失にUSD/JPY askを乗ずる例だけを比較。市場レート・損益符号・side別bid/ask・実口座通貨・tick value単位に関する正式換算則は未承認。",
+      "unresolved": [
+        "JPY入金通貨とブローカー損益通貨の確認",
+        "loss/profit符号別・bid/ask選択と逆数換算の根拠",
+        "3ペア価格epoch/観測時刻/受領証跡と独立照合",
+        "gap時のJPY換算ストレス"
+      ],
+      "source_form_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "owner_approval_recorded": false,
+      "implementation_approved": false,
+      "real_world_verified": false
+    },
+    {
+      "risk_id": "RISK-3P-09",
+      "form_id": "FORM-04",
+      "title": "Spread/commission/swap/slippage ledger",
+      "recommendation": "各費用をSPREAD/COMMISSION/SWAP/SLIPPAGEへ分類し、ADDITIONALとINCLUDED_IN_BASEを区別する合成ケース。未確認の費用やギャップは拒否。",
+      "unresolved": [
+        "手数料・spread・swapの通貨と計上時点、二重計上識別",
+        "spreadが建値または損失額に含まれるかの独立証拠",
+        "SLやギャップ時の有限最悪損失が算定不能な場合の拒否",
+        "費用が発生したときの残高評価と日次/DD反映"
+      ],
+      "source_form_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "owner_approval_recorded": false,
+      "implementation_approved": false,
+      "real_world_verified": false
+    },
+    {
+      "risk_id": "RISK-3P-10",
+      "form_id": "FORM-05",
+      "title": "Single snapshot and in-flight reservations",
+      "recommendation": "同一合成epochで口座/quote/予約を比較し、broker・pending・inflight・通貨別照合flagとdispatch確定を要求。未知・競合・再送では拒否。",
+      "unresolved": [
+        "外部brokerスナップショット/時刻の真正性",
+        "独立CAS予約、同時writer、二重発注とクラッシュ後の失効・照合",
+        "OUTCOME_UNKNOWN/CANCEL_REQUESTED状態の証拠と再開条件",
+        "他EA・手動注文による口座状態の変更検知"
+      ],
+      "source_form_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "owner_approval_recorded": false,
+      "implementation_approved": false,
+      "real_world_verified": false
+    },
+    {
+      "risk_id": "RISK-3P-11",
+      "form_id": "FORM-06",
+      "title": "Gross loss and split-filled/remaining exposures",
+      "recommendation": "USD/EUR/JPY三角関係でも建玉/未約定/予約/新規候補の損失を非相殺合算し、部分約定はFILLEDとREMAINDERの別sliceに分けて両方計上。",
+      "unresolved": [
+        "OCO/約定取消がブローカーで保証されない間の両脚評価",
+        "分割約定の一意性/残lotとの整合・保守的同時発動",
+        "通貨別net/gross集中上限と市場ショックの数値決定",
+        "重複ID/親子関係/スナップショット競合への対処"
+      ],
+      "source_form_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "owner_approval_recorded": false,
+      "implementation_approved": false,
+      "real_world_verified": false
+    },
+    {
+      "risk_id": "RISK-3P-12",
+      "form_id": "FORM-07",
+      "title": "Decimal limits and lot-grid precision",
+      "recommendation": "合成10万円に対する候補500円/総額1000円の厳密比較をDecimalで確認。500.01や1000.01を切り捨ててPASSさせず、実lotを丸めて増量しない。",
+      "unresolved": [
+        "楽天MT4の契約別lot min/step/max/小数桁の実証",
+        "JPY換算後の最終金額と費用端数の安全側比較規則",
+        "上限等号、端数切捨てを認めない方法の本人承認",
+        "連続発注時の資産更新と予約損失の重複消費対策"
+      ],
+      "source_form_status": "UNDECIDED_IMPLEMENTATION_DETAIL",
+      "owner_approval_recorded": false,
+      "implementation_approved": false,
+      "real_world_verified": false
+    }
+  ],
+  "owner_decisions": [
+    {
+      "id": "FORM03-1",
+      "question": "JPY入金通貨とブローカー損益通貨の確認",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM03-2",
+      "question": "loss/profit符号別・bid/ask選択と逆数換算の根拠",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM03-3",
+      "question": "3ペア価格epoch/観測時刻/受領証跡と独立照合",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM03-4",
+      "question": "gap時のJPY換算ストレス",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM04-1",
+      "question": "手数料・spread・swapの通貨と計上時点、二重計上識別",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM04-2",
+      "question": "spreadが建値または損失額に含まれるかの独立証拠",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM04-3",
+      "question": "SLやギャップ時の有限最悪損失が算定不能な場合の拒否",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM04-4",
+      "question": "費用が発生したときの残高評価と日次/DD反映",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM05-1",
+      "question": "外部brokerスナップショット/時刻の真正性",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM05-2",
+      "question": "独立CAS予約、同時writer、二重発注とクラッシュ後の失効・照合",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM05-3",
+      "question": "OUTCOME_UNKNOWN/CANCEL_REQUESTED状態の証拠と再開条件",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM05-4",
+      "question": "他EA・手動注文による口座状態の変更検知",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM06-1",
+      "question": "OCO/約定取消がブローカーで保証されない間の両脚評価",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM06-2",
+      "question": "分割約定の一意性/残lotとの整合・保守的同時発動",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM06-3",
+      "question": "通貨別net/gross集中上限と市場ショックの数値決定",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM06-4",
+      "question": "重複ID/親子関係/スナップショット競合への対処",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM07-1",
+      "question": "楽天MT4の契約別lot min/step/max/小数桁の実証",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM07-2",
+      "question": "JPY換算後の最終金額と費用端数の安全側比較規則",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM07-3",
+      "question": "上限等号、端数切捨てを認めない方法の本人承認",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    },
+    {
+      "id": "FORM07-4",
+      "question": "連続発注時の資産更新と予約損失の重複消費対策",
+      "proposal_status": "PROPOSED_NOT_APPROVED",
+      "owner_decision": "NOT_RECORDED",
+      "approval_reference": null,
+      "real_world_evidence_verified": false
+    }
+  ],
+  "upstream_drafts": [
+    "RISK-3P-03",
+    "RISK-3P-04",
+    "RISK-3P-05",
+    "RISK-3P-06",
+    "RISK-3P-07"
+  ],
+  "downstream_unresolved": [
+    "G1",
+    "FORM-01",
+    "FORM-02",
+    "FORM-08",
+    "FORM-09",
+    "FORM-10",
+    "FX-SAF-001",
+    "FX-SAF-002"
+  ],
+  "batch_purpose": "MINIMIZE_MANUAL_MERGES_WITHOUT_WEAKENING_FINAL_OWNER_REVIEW",
+  "previous_merge_policy": "OWNER_MANUAL_MAIN_MERGE",
+  "allow_unreviewed_main_merge": false,
+  "simulated_fx_loss_conversion": "POSITIVE_USD_QUOTE_LOSS_MULTIPLIED_BY_SYNTHETIC_USDJPY_ASK_ONLY",
+  "simulated_cost_modes": [
+    "ADDITIONAL",
+    "INCLUDED_IN_BASE"
+  ],
+  "simulated_risk_segments": [
+    "POSITION",
+    "PENDING",
+    "CANDIDATE",
+    "RESERVED"
+  ],
+  "simulated_partial_portions": [
+    "WHOLE",
+    "FILLED",
+    "REMAINDER"
+  ],
+  "existing_caps": {
+    "individual": "0.005",
+    "aggregate": "0.010",
+    "daily": "0.015",
+    "max_drawdown": "0.05",
+    "dd4_no_new_orders": true
+  },
+  "real_loss_bound_verified": false,
+  "form03_07_owner_approval_recorded": false,
+  "g1_scope_change_approved": false,
+  "fx_saf_implementation_approved": false,
+  "production_authorized": false,
+  "broker_connection_authorized": false,
+  "mt4_script_execution_authorized": false,
+  "order_allowed": false,
+  "stop_release_allowed": false,
+  "runtime_go_no_go": "NO_GO",
+  "phase_1": "BLOCKED",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "scope_caveats": [
+    "3ペアのMT4実シンボル、契約サイズ、tick値、実円換算レートは未検証",
+    "試験のquote損失・費用・口座整合flagはすべて合成入力",
+    "他の4ペアの歴史的証拠/旧G1 4×5は改変しない",
+    "現在の正式G1〜G9全件UNRESOLVED、FX-SAF-001〜015未承認",
+    "PRの手動マージでもFORM03〜07が正式承認されたことにはならない"
+  ]
+}

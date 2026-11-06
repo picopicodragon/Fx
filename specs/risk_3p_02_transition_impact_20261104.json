@@ -23,7 +23,7 @@
   "target_g1_fields_per_pair": 5,
   "target_g1_attribute_count": 15,
   "historical_g1_attribute_count": 20,
-  "target_g1_status": "DESIGN_TARGET_UNVERIFIED_NOT_G1_ACCEPTANCE",
+  "target_g1_status": "OWNER_APPROVED_FORMAL_SCOPE_UNVERIFIED_NOT_G1_ACCEPTANCE",
   "implementation_authorized": false,
   "production_authorized": false,
   "broker_connection_authorized": false,
@@ -135,8 +135,8 @@
     {
       "path": "specs/p0_01_d5_25_gap_verification_matrix.json",
       "category": "GATE_CURRENT_LEGACY_SCOPE",
-      "next_action": "OWNER_REVIEW_REQUIRED",
-      "finding": "正式G1の4x5/20属性はUNRESOLVEDのまま。将来本人審査で3x5改版し受入証拠を再取得。"
+      "next_action": "OWNER_SCOPE_APPROVED_EVIDENCE_PENDING",
+      "finding": "G1正式審査対象は2026-11-04本人承認により新3x5=15へ改版。旧4x5=20の未解決歴史記録は独立snapshotで保存。G1実証0/15でNO_GO不変。"
     },
     {
       "path": "specs/p0_01_d5_26_transition_priority_plan.json",
@@ -267,7 +267,10 @@
     "Quote direction, spread/fees, JPY conversion when EUR/USD quote currency is USD, consistent price snapshot",
     "Independent broker equity and all position/pending-order reconciliation, partial fills, unknown status",
     "Per-currency concentration and stress shock thresholds, signed exposure with contract units",
-    "Owner approval of versioned FX-SAF-001/002 specifications and G1 3x5 scope; current formal G1 still 4x5 BLOCKED"
+    "FX-SAF-001/002の実装別承認・原議照合、G1新3x5の実値15項目と独立確認は未実施。本人は対象範囲のみ承認済み"
   ],
-  "risk_3p_03_progress": "OFFLINE_TEMPLATE_AND_FORMAT_REVIEW_ONLY_UNVERIFIED"
+  "risk_3p_03_progress": "OFFLINE_TEMPLATE_AND_FORMAT_REVIEW_ONLY_UNVERIFIED",
+  "g1_scope_approval_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "formal_scope_now": "3_PAIRS_X_5_FIELDS_OWNER_APPROVED_STILL_UNRESOLVED",
+  "historical_g1_snapshot_ref": "specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json"
 }

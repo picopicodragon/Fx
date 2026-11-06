@@ -545,3 +545,17 @@ Windowsでは`tzdata==2026.5`が導入され、LinuxではシステムのIANAタ
 ## P0-01：完全オフラインの5属性モック検証設計（2026-10-28）
 
 PR #105のマージ後、本人Windowsで**421件/OK**報告を受領。[モック検証の設計](docs/p0_01_offline_five_field_mock_design_20261028.md)と[機械可読ルール](specs/p0_01_five_field_offline_mock_design.json)を追加。4ペア×5属性を**合成データのみ・Decimal文字列のみ**で検査し、欠損、NaN/無限、0/負値、通貨とtick単位の混同、デモ500万円と仮想本番10万円の混同などを次PRでテストする設計。**モック検証コードの実装・MT4接続・EX4起動は未実施**。合成テスト全PASSでも`verified_values=null`、`FORM-01/03`未承認、PHASE-1 BLOCKEDのまま。
+
+
+## 2026-11-04 RISK-3P-28：G1正式審査対象の範囲変更を本人承認
+
+本人が**G1正式審査対象をUSD/JPY・EUR/JPY・EUR/USDの3通貨ペア×主要5契約属性＝15項目にする方針**を明示承認。これは単なる将来案ではなく、**審査対象範囲のみの承認済み決定**として記録した。旧G1 4ペア×5属性＝20項目の未解決履歴は[`legacy scope snapshot`](specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json)に非破壊保存。現行G1台帳の対象を更新したが、契約属性の実証は**0/15**、G1自体はUNRESOLVEDのまま。補助属性（1lot契約数量、口座通貨、stop/freeze等）を省略しない。
+
+決定記録：[`specs/risk_3p_28_g1_scope_owner_decision_20261104.json`](specs/risk_3p_28_g1_scope_owner_decision_20261104.json)、[範囲変更と安全境界の説明](docs/risk_3p_28_g1_owner_scope_approval_20261104.md)。本決定ではFX-SAF原議・FORMの実装詳細・実MT4閲覧/EA/注文/停止解除は承認されていない。**G1〜G9 UNRESOLVED、PHASE-1 BLOCKED、runtime NO_GO**を維持。
+
+
+## 2026-11-04 RISK-3P-29〜31：P02/P04の手順方針を本人承認
+
+本人はP02（FX-SAF原議とFORM元資料のローカル照合手順）とP04（既存デモEA・建玉・注文に干渉しない、単一セッション・秘密情報非公開・Git外記録の非破壊MT4観測**方法**）を明示的に承認した。**方法を採用したことと、実際の原議確認やMT4セッションへの操作権限は別**。原議原本の照合はまだ0/15、FORMの実装判断は0/43、G1実契約証拠も0/15。P05の事前安全確認は0/8でBLOCKED、P06観測は未許可、既存MACD Sampleと建玉/未約定注文の現況は不明。口座に接続せず、EA/注文/AutoTrading/SL/STOPを変更しない。
+
+新たな承認記録：[`specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json`](specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json)。安全審査詳細：[`docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md`](docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md)。**G1〜G9 UNRESOLVED、PHASE-1 BLOCKED、runtime NO_GO、safety_hold_latched=true**を維持。

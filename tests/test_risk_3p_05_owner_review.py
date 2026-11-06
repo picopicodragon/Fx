@@ -39,12 +39,12 @@ class OwnerRiskDraftTests(unittest.TestCase):
         self.check_edit(lambda d, s: d.update(historic_pair_scope=[
             "USD/JPY", "EUR/JPY", "EUR/USD"]), "PAIR_SCOPE_CHANGED")
 
-    def test_3_by_5_draft_does_not_approve_replacing_4_by_5_g1(self):
+    def test_3_by_5_scope_approved_but_broker_evidence_still_missing(self):
         self.assertEqual(self.draft["proposed_g1_attributes"], 15)
         self.assertEqual(self.draft["old_g1_attributes"], 20)
-        self.assertFalse(self.draft["g1_scope_change_approved"])
-        self.check_edit(lambda d, s: d.update(g1_scope_change_approved=True),
-                        "FALSE_APPROVAL_OR_REAL_EVIDENCE:g1_scope_change_approved")
+        self.assertTrue(self.draft["g1_scope_change_approved"])
+        self.check_edit(lambda d, s: d.update(g1_scope_change_approved=False),
+                        "G1_APPROVED_SCOPE_RECORD_MISSING")
         self.check_edit(lambda d, s: d.update(proposed_g1_attributes=20),
                         "G1_ATTRIBUTE_SCOPE_CHANGED")
 

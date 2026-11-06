@@ -41,7 +41,11 @@ def audit(root: Path = ROOT, draft: object = None, source: object = None) -> lis
             errors.append("G1_ATTRIBUTE_SCOPE_CHANGED")
         if d.get("hard_limits_unchanged") != HARD_LIMITS:
             errors.append("HARD_LIMIT_CHANGED")
-        for key in ("g1_scope_change_approved", "g1_real_world_verified",
+        if (d.get("g1_scope_change_approved") is not True
+                or d.get("g1_scope_decision_ref") !=
+                "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
+            errors.append("G1_APPROVED_SCOPE_RECORD_MISSING")
+        for key in ("g1_real_world_verified",
                     "owner_approval_recorded", "fx_saf_implementation_approved",
                     "production_authorized", "real_broker_or_cloud_actions_authorized",
                     "stop_release_authorized"):
@@ -121,7 +125,7 @@ def main() -> None:
     print("RISK-3P-05 OWNER REVIEW: PASS (DOCUMENT-ONLY)")
     print("FORM-01..10: all UNDECIDED_IMPLEMENTATION_DETAIL")
     print("USD/JPY, EUR/JPY, EUR/USD: DESIGN SCOPE ONLY")
-    print("G1 3x5: PROPOSED AND UNVERIFIED; HISTORIC 4x5: BLOCKED")
+    print("G1 scope 3x5 OWNER APPROVED, NO BROKER EVIDENCE; old 4x5 archive retained")
     print("PHASE-1 BLOCKED | runtime NO_GO | safety_hold_latched=true")
 
 

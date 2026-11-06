@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-35-P05-08-UNSIGNED-REVIEW-PACKET-20261106",
+  "created_on_jst_date": "2026-11-06",
+  "scope": "OFFLINE_HUMAN_REVIEW_CHECKLIST_DRAFT_ONLY",
+  "source_p05": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "source_g1": "specs/risk_3p_33_p05_07_offline_provenance_readiness_20261106.json",
+  "source_p05_07_audit": "scripts/audit_risk_3p_33_p05_07_offline_preflight.py",
+  "source_synthetic_validator": "scripts/validate_risk_3p_34_synthetic_provenance.py",
+  "items": [
+    {
+      "check_id": "P05-01",
+      "criterion": "Existing demo account and environment identity",
+      "current_summary_code": "DEMO_ACCOUNT_UI_ONLY_SERVER_IDENTITY_UNVERIFIED",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    },
+    {
+      "check_id": "P05-02",
+      "criterion": "MACD Sample and other EA state",
+      "current_summary_code": "MACD_VISIBLE_AUTOTRADING_OFF_SAD_FACE_NO_EA_EXECUTION_PROOF",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    },
+    {
+      "check_id": "P05-03",
+      "criterion": "Open positions and pending orders",
+      "current_summary_code": "BALANCE_ONLY_TRADE_TAB_SERVER_ORDERS_UNRECONCILED",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    },
+    {
+      "check_id": "P05-04",
+      "criterion": "Single session and no second demo account",
+      "current_summary_code": "SINGLE_MT4_SESSION_OWNER_REPORT_BROKER_SESSIONS_UNVERIFIED",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    },
+    {
+      "check_id": "P05-05",
+      "criterion": "Read-only no-execution interaction boundary",
+      "current_summary_code": "READ_ONLY_TERMINAL_INTERFERENCE_NOT_INDEPENDENTLY_TESTED",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    },
+    {
+      "check_id": "P05-06",
+      "criterion": "Private evidence storage and minimization",
+      "current_summary_code": "PRIVATE_STORAGE_AND_ANCESTORS_OWNER_ACCEPTED_OFFLINE_ONLY",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    },
+    {
+      "check_id": "P05-07",
+      "criterion": "Observation provenance and source consistency",
+      "current_summary_code": "THREE_PAIRS_FIFTEEN_ATTRIBUTES_ZERO_BROKER_EVIDENCE",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    },
+    {
+      "check_id": "P05-08",
+      "criterion": "Human P05 safety review and execution boundary",
+      "current_summary_code": "SEPARATE_HUMAN_P05_ACCEPTANCE_NOT_GRANTED",
+      "independent_environment_evidence": "NOT_VERIFIED",
+      "human_specific_acceptance": "PENDING_NOT_REQUESTED",
+      "item_accepted": false,
+      "private_log_or_account_id_collected": false
+    }
+  ],
+  "safety": {
+    "required_checks": 8,
+    "p05_passed": 0,
+    "real_broker_g1_items_verified": 0,
+    "real_mt4_account_session_authorized": false,
+    "observation_or_script_authorized": false,
+    "sensitive_data_read_or_upload_authorized": false,
+    "ea_or_order_changes_authorized": false,
+    "p06_authorized": false,
+    "broker_order_or_position_absence_verified": false,
+    "human_p05_signoff_reference": null,
+    "human_phase_1_signoff_reference": null,
+    "form_implementation_approvals": 0,
+    "fx_saf_originals_verified": 0,
+    "main_auto_merge_allowed": false,
+    "main_manual_merge_owner_review_required": true,
+    "phase_1": "BLOCKED",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": true,
+    "verified_values": null
+  },
+  "decision": "PENDING_SEPARATE_OWNER_APPROVAL_AFTER_INDEPENDENT_EVIDENCE",
+  "next_step": "REVIEW_OPEN_BLOCKERS_OFFLINE_NO_MT4_OPERATION"
+}

@@ -54,7 +54,7 @@ def audit(root: Path, document: object = None) -> list[str]:
             errors.append("LEGACY_EXCLUSIONS_CHANGED")
         if d.get("target_g1_attribute_count") != 15 or d.get("historical_g1_attribute_count") != 20:
             errors.append("G1_SCOPE_COUNTS_CHANGED")
-        if (d.get("target_g1_status") != "DESIGN_TARGET_UNVERIFIED_NOT_G1_ACCEPTANCE"
+        if (d.get("target_g1_status") != "OWNER_APPROVED_FORMAL_SCOPE_UNVERIFIED_NOT_G1_ACCEPTANCE"
                 or d.get("status") != "INVENTORIED_NOT_MIGRATED"):
             errors.append("FALSE_MIGRATION_ACCEPTANCE")
         if (any(d.get(k) is not False for k in (
@@ -118,8 +118,11 @@ def audit(root: Path, document: object = None) -> list[str]:
         if (g1["implementation_status"] != "UNRESOLVED"
                 or g1["release_blocker"] is not True
                 or g1["real_world_verified"] is not False
-                or "4通貨ペア" not in g1["subject"]):
-            errors.append("HISTORICAL_G1_GATE_WAS_PROMOTED_OR_RELABELED")
+                or "3通貨ペア×5主要契約属性" not in g1["subject"]):
+            errors.append("FORMAL_G1_SCOPE_OR_NO_GO_DRIFT")
+        from scripts.audit_risk_3p_28_owner_g1_scope import audit as audit_scope
+        if audit_scope(root):
+            errors.append("G1_SCOPE_APPROVAL_OR_HISTORY_CORRUPTED")
         trace = json.loads((root / "specs/traceability.json")
                            .read_text(encoding="utf-8"))
         m = [x for x in trace["offline_synthetic_mappings"]
@@ -144,7 +147,7 @@ def main() -> None:
     print("LEGACY_4P_CODE_REQUIRES_MIGRATION: " +
           str(len(data["legacy_code_paths"])))
     print("INVENTORY_FILES: " + str(len(data["inventory"])))
-    print("G1 3x5: DESIGN_UNVERIFIED; formal G1 4x5: BLOCKED")
+    print("G1 3x5: OWNER-APPROVED FORMAL REVIEW SCOPE, 0/15 VERIFIED; historic 4x5 archived")
     print("PHASE-1 BLOCKED | runtime NO_GO | safety_hold_latched=true")
 
 

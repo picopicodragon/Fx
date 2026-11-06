@@ -59,12 +59,15 @@ def audit(root: Path = ROOT, draft: object = None) -> list[str]:
                 or d.get("required_g1_five_fields") != list(FIVE)
                 or d.get("historical_g1_attribute_count") != 20
                 or d.get("target_g1_attribute_count") != len(PAIRS) * len(FIVE)
-                or d.get("legacy_g1_gate_scope_unchanged") is not True):
+                or d.get("legacy_g1_gate_scope_unchanged") is not False
+                or d.get("g1_scope_revision_approved") is not True
+                or d.get("g1_scope_decision_ref") !=
+                "specs/risk_3p_28_g1_scope_owner_decision_20261104.json"):
             errors.append("G1_DESIGN_SCOPE_DRIFT")
         if d.get("risk_caps_unmodified") != CAPS:
             errors.append("HARD_RISK_CAP_CHANGED")
         for field in (
-            "g1_scope_revision_approved", "form01_implementation_approved",
+            "form01_implementation_approved",
             "fx_saf_implementation_approved", "real_world_verified",
             "production_authorized", "broker_connection_authorized",
             "terminal_execution_approved", "stop_release_authorized",

@@ -3,51 +3,212 @@
   "description": "Q109: source/test coverage by most-specific protected prefix. active means source + registered tests exist, not a safety approval. Trading-order components remain planned.",
   "offline_synthetic_mappings": [
     {
+      "source": "scripts/audit_risk_3p_29_31_p02_p04_p05.py",
+      "spec_ids": [
+        "Q3",
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_29_31_p02_p04_p05.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/audit_risk_3p_28_owner_g1_scope.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q110",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_28_owner_g1_scope.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/review_g1_synthetic_evidence_envelope.py",
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q116",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_21_g1_synthetic_evidence_envelope.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/phase1_form08_10_synthetic_controls.py",
+      "spec_ids": [
+        "Q9",
+        "Q11",
+        "Q12",
+        "Q14",
+        "Q80",
+        "Q109",
+        "Q117",
+        "Q118",
+        "Q119",
+        "Q122",
+        "Q147"
+      ],
+      "tests": [
+        "tests/test_risk_3p_13_15_synthetic_controls.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/phase1_form03_07_synthetic_bundle.py",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q116",
+        "Q120",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_08_12_synthetic_bundle.py"
+      ],
+      "production_authorized": false
+    },
+    {
       "source": "scripts/phase1_form02_synthetic_stop_scenarios.py",
-      "spec_ids": ["Q6", "Q7", "Q13", "Q109", "Q116", "FX-SAF-001", "FX-SAF-002"],
-      "tests": ["tests/test_risk_3p_07_form02_stop_scenarios.py"],
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q116",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_07_form02_stop_scenarios.py"
+      ],
       "production_authorized": false
     },
     {
       "source": "scripts/phase1_three_pair_synthetic_stop_conversion.py",
-      "spec_ids": ["Q6", "Q7", "Q13", "Q116", "FX-SAF-001", "FX-SAF-002", "Q109"],
-      "tests": ["tests/test_risk_3p_04_synthetic_stop_conversion.py"],
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q116",
+        "FX-SAF-001",
+        "FX-SAF-002",
+        "Q109"
+      ],
+      "tests": [
+        "tests/test_risk_3p_04_synthetic_stop_conversion.py"
+      ],
       "production_authorized": false
     },
     {
       "source": "scripts/review_mt4_manual_symbol_3p_v3.py",
-      "spec_ids": ["Q3", "Q6", "Q7", "Q13", "Q109", "Q116", "FX-SAF-001", "FX-SAF-002"],
-      "tests": ["tests/test_risk_3p_03_symbol_v3.py"],
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q116",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_risk_3p_03_symbol_v3.py"
+      ],
       "production_authorized": false
     },
     {
       "source": "scripts/phase1_three_pair_synthetic_risk.py",
-      "spec_ids": ["Q3", "Q6", "Q7", "Q13", "Q116", "FX-SAF-001", "FX-SAF-002"],
-      "tests": ["tests/test_phase1_three_pair_synthetic_risk.py"],
+      "spec_ids": [
+        "Q3",
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q116",
+        "FX-SAF-001",
+        "FX-SAF-002"
+      ],
+      "tests": [
+        "tests/test_phase1_three_pair_synthetic_risk.py"
+      ],
       "production_authorized": false
     },
     {
       "source": "scripts/phase1_h3_synthetic_anchor.py",
-      "spec_ids": ["G6-01", "G6-02", "G6-03", "G6-04", "G6-08", "Q109"],
-      "tests": ["tests/test_phase1_h3_synthetic_anchor.py"],
+      "spec_ids": [
+        "G6-01",
+        "G6-02",
+        "G6-03",
+        "G6-04",
+        "G6-08",
+        "Q109"
+      ],
+      "tests": [
+        "tests/test_phase1_h3_synthetic_anchor.py"
+      ],
       "production_authorized": false
     },
     {
       "source": "scripts/phase1_synthetic_persistence.py",
-      "spec_ids": ["G6-05", "G6-06", "Q197", "Q198"],
-      "tests": ["tests/test_phase1_synthetic_persistence.py"],
+      "spec_ids": [
+        "G6-05",
+        "G6-06",
+        "Q197",
+        "Q198"
+      ],
+      "tests": [
+        "tests/test_phase1_synthetic_persistence.py"
+      ],
       "production_authorized": false
     },
     {
       "source": "scripts/check_phase1_way_e.py",
-      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
-      "tests": ["tests/test_phase1_way_e_audit.py"],
+      "spec_ids": [
+        "Q109",
+        "Q110",
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q115"
+      ],
+      "tests": [
+        "tests/test_phase1_way_e_audit.py"
+      ],
       "production_authorized": false
     },
     {
       "source": "scripts/phase1_way_e_synthetic_review.py",
-      "spec_ids": ["Q197", "Q198", "Q199"],
-      "tests": ["tests/test_phase1_way_e_synthetic_review.py"],
+      "spec_ids": [
+        "Q197",
+        "Q198",
+        "Q199"
+      ],
+      "tests": [
+        "tests/test_phase1_way_e_synthetic_review.py"
+      ],
       "production_authorized": false
     }
   ],

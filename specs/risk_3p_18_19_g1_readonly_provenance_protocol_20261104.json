@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "id": "RISK-3P-18-19-G1-READONLY-PROVENANCE-PROTOCOL-20261104",
+  "as_of": "2026-11-04",
+  "scope": "DOCUMENT_ONLY_NO_MT4_ACCESS_OR_EVIDENCE_COLLECTION",
+  "source_g1": "specs/p0_01_d5_25_gap_verification_matrix.json",
+  "source_three_pair_draft": "specs/risk_3p_06_form01_evidence_draft_20261104.json",
+  "source_template": "specs/mt4_manual_symbol_3p_v3_template.json",
+  "target_pairs": [
+    "USD/JPY",
+    "EUR/JPY",
+    "EUR/USD"
+  ],
+  "historical_scope_retained": "LEGACY_4X5_UNRESOLVED",
+  "proposed_scope": "FORMAL_OWNER_APPROVED_3X5_UNVERIFIED",
+  "expected_g1_items": 15,
+  "field_methodology": [
+    {
+      "field": "min_lot",
+      "meaning": "最小取引数量（lot）",
+      "manual_display_hint": "MT4銘柄仕様上の最小数量表示（ある場合のみ）",
+      "independent_evidence_type": "BROKER_RULE_MINIMUM_LOT",
+      "why_no_shortcut": "数量単位、account/pairが一致しない場合は拒否",
+      "ui_field_presence": "UNKNOWN_NOT_VISUALLY_CONFIRMED",
+      "independent_source_available": false,
+      "assumption_is_broker_verified": false,
+      "cannot_use_digits_or_pip_proxy_without_unit_proof": true
+    },
+    {
+      "field": "lot_step",
+      "meaning": "取引数量の増分（lot）",
+      "manual_display_hint": "MT4銘柄仕様上の数量ステップ表示（ある場合のみ）",
+      "independent_evidence_type": "BROKER_RULE_VOLUME_INCREMENT",
+      "why_no_shortcut": "min/maxおよび実取引単位の確認なしではlot丸め禁止",
+      "ui_field_presence": "UNKNOWN_NOT_VISUALLY_CONFIRMED",
+      "independent_source_available": false,
+      "assumption_is_broker_verified": false,
+      "cannot_use_digits_or_pip_proxy_without_unit_proof": true
+    },
+    {
+      "field": "point_quote",
+      "meaning": "1pointのquote通貨価格幅",
+      "manual_display_hint": "表示小数桁とpoint単位の出典（単なるdigits値の代入は根拠不足）",
+      "independent_evidence_type": "INDEPENDENT_POINT_UNIT_EVIDENCE",
+      "why_no_shortcut": "digits、point、tickを混同しない",
+      "ui_field_presence": "UNKNOWN_NOT_VISUALLY_CONFIRMED",
+      "independent_source_available": false,
+      "assumption_is_broker_verified": false,
+      "cannot_use_digits_or_pip_proxy_without_unit_proof": true
+    },
+    {
+      "field": "tick_size_points",
+      "meaning": "1tickの大きさ（point換算）",
+      "manual_display_hint": "tick sizeとpointがともに確認できる出典（両者が見えない場合はUNKNOWN）",
+      "independent_evidence_type": "INDEPENDENT_TICK_SIZE_AND_POINT_UNIT_EVIDENCE",
+      "why_no_shortcut": "tick sizeを1pointと仮定しない",
+      "ui_field_presence": "UNKNOWN_NOT_VISUALLY_CONFIRMED",
+      "independent_source_available": false,
+      "assumption_is_broker_verified": false,
+      "cannot_use_digits_or_pip_proxy_without_unit_proof": true
+    },
+    {
+      "field": "tick_value_deposit_currency",
+      "meaning": "基準lotでの1tick価値（口座入金通貨）",
+      "manual_display_hint": "tick value表示の単位、口座通貨、換算時点の3要素を独立に確認",
+      "independent_evidence_type": "BROKER_TICK_VALUE_UNIT_AND_DYNAMIC_CONVERSION",
+      "why_no_shortcut": "EUR/USDはUSD損益とJPY口座の換算を要検証。静的値の固定採用禁止",
+      "ui_field_presence": "UNKNOWN_NOT_VISUALLY_CONFIRMED",
+      "independent_source_available": false,
+      "assumption_is_broker_verified": false,
+      "cannot_use_digits_or_pip_proxy_without_unit_proof": true
+    }
+  ],
+  "proposed_observations": [
+    {
+      "pair": "USD/JPY",
+      "field": "min_lot",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "lot_step",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "point_quote",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "tick_size_points",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "USD/JPY",
+      "field": "tick_value_deposit_currency",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "min_lot",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "lot_step",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "point_quote",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "tick_size_points",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/JPY",
+      "field": "tick_value_deposit_currency",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "min_lot",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "lot_step",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "point_quote",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "tick_size_points",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    },
+    {
+      "pair": "EUR/USD",
+      "field": "tick_value_deposit_currency",
+      "status": "NOT_OBSERVED",
+      "verified_value": null,
+      "unit_provenance": null,
+      "terminal_symbol": null,
+      "account_environment_alias": null,
+      "observation_at_utc": null,
+      "broker_source_reference": null,
+      "independent_source_reference": null,
+      "independent_crosscheck": "NOT_PERFORMED",
+      "real_world_verified": false
+    }
+  ],
+  "preflight_checks": [
+    {
+      "id": "P18-01",
+      "check": "既存デモ/MT4に第三者EAや既存建玉・注文があるか事前の現状情報を確認",
+      "current_status": "KNOWN_EXISTING_MACD_SAMPLE_AND_ORDERS_NOT_CLEARED",
+      "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
+    },
+    {
+      "id": "P18-02",
+      "check": "同一デモ口座の同時ログイン、別環境同時運用、追加口座作成は行わない",
+      "current_status": "SINGLE_SESSION_ONLY",
+      "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
+    },
+    {
+      "id": "P18-03",
+      "check": "実際の観測先の口座区分とterminalの同一性を秘密情報を含めずに確認できる方法を別審査",
+      "current_status": "NOT_AUTHORIZED",
+      "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
+    },
+    {
+      "id": "P18-04",
+      "check": "一切のスクリプト、EA、発注、SL変更、既存建玉の決済、AutoTrading変更を禁止",
+      "current_status": "NO_EXECUTION_AUTHORIZED",
+      "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
+    },
+    {
+      "id": "P18-05",
+      "check": "本人による独立した閲覧手順/証拠保管/安全上の停止条件の明示承認が必要",
+      "current_status": "OWNER_PROTOCOL_METHOD_APPROVED_P05_NOT_CHECKED",
+      "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
+    },
+    {
+      "id": "P18-06",
+      "check": "承認後の将来の観測も既存terminal/既存EA/建玉/注文を変更しない手順に限定",
+      "current_status": "PROPOSED_ONLY",
+      "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
+    },
+    {
+      "id": "P18-07",
+      "check": "実データはGitとChatGPTへ生値/口座識別子/資格情報を送らず、個人のGit外保存に限定",
+      "current_status": "RULE_PROPOSED",
+      "if_unverified": "STOP_BEFORE_TERMINAL_ACTION"
+    }
+  ],
+  "evidence_required_for_each_field": [
+    "account_environment_alias_consistent_without_real_identifier",
+    "exact_mt4_terminal_symbol_name_from_observed_terminal",
+    "captured_utc_timestamp_and_source_kind",
+    "explicit_numeric_unit_and_broker_contract_definition",
+    "second_independent_reference_or_documented_gap",
+    "contract_change_or_staleness_recheck",
+    "human_evidence_review_reference_with_no_sensitive_payload"
+  ],
+  "environment_readonly_steps": [
+    {
+      "id": "OBS-01",
+      "status": "NOT_AUTHORIZED",
+      "description": "単一MT4セッション/既存EA・建玉の現況を本人が承認済みの方法で確認する計画。承認前は操作しない"
+    },
+    {
+      "id": "OBS-02",
+      "status": "NOT_AUTHORIZED",
+      "description": "MT4がユーザーが選んだDEMO等の対象環境か識別子なしで審査し、異なる/不明なら停止"
+    },
+    {
+      "id": "OBS-03",
+      "status": "NOT_AUTHORIZED",
+      "description": "Market Watch→銘柄仕様など表示だけの閲覧手順を仮案とする。正確なUI表示/5項目があるかは未実証"
+    },
+    {
+      "id": "OBS-04",
+      "status": "NOT_AUTHORIZED",
+      "description": "各銘柄の5属性・補助属性・単位/出典/UTC観測時刻を個人Git外メモに記録する手順案。非表示はnullで保持"
+    },
+    {
+      "id": "OBS-05",
+      "status": "NOT_AUTHORIZED",
+      "description": "別経路の契約仕様/単位/時刻を照合できない項目はPENDINGを維持。tick valueとUSDJPY換算を個別検証"
+    },
+    {
+      "id": "OBS-06",
+      "status": "NOT_AUTHORIZED",
+      "description": "差分を再確認し、本人の別承認・FX-SAF/G1/G2〜G9/FORMが揃わなければNO_GOを維持"
+    }
+  ],
+  "allowed_actions_now": [
+    "DOCUMENT_REVIEW",
+    "OFFLINE_SYNTHETIC_TESTS",
+    "PR_DIFF_AND_CI_REVIEW"
+  ],
+  "forbidden_actions_now": [
+    "OPEN_OR_LOGIN_MT4",
+    "START_OR_DISABLE_EA",
+    "MODIFY_AUTOTRADING",
+    "MODIFY_OPEN_POSITION",
+    "MODIFY_STOP_LOSS",
+    "SEND_ORDER",
+    "CREATE_DEMO_ACCOUNT",
+    "UPLOAD_PRIVATE_BROKER_VALUES",
+    "DECLARE_G1_VERIFIED",
+    "RELEASE_SAFETY_HOLD"
+  ],
+  "evidence_collected": false,
+  "owner_approved_real_read": false,
+  "g1_3x5_scope_approved": true,
+  "g1_real_world_verified": false,
+  "fx_saf_implementation_approved": false,
+  "production_authorized": false,
+  "order_allowed": false,
+  "stop_release_allowed": false,
+  "auto_merge_authorized": false,
+  "human_manual_merge_required": true,
+  "phase_1": "BLOCKED",
+  "runtime_go_no_go": "NO_GO",
+  "safety_hold_latched": true,
+  "verified_values": null,
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "p04_readonly_protocol_method_owner_approved": true,
+  "p02_p04_owner_method_decision_ref": "specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json",
+  "p05_environment_precheck_status": "BLOCKED_SAFETY_CONDITIONS_UNKNOWN"
+}

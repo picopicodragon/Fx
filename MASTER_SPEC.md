@@ -922,3 +922,17 @@ AIが原議の当時のユーザー発言を基準として矛盾・欠落・実
 ## 2026-11-04後続指示：取引対象3ペアと通貨別合算リスクの検討
 
 Q3に記載した4ペアは**当時の決定履歴**として保持する。本人の新しい方針により、今後の設計対象は **USD/JPY、EUR/JPY、EUR/USD**。GBP/USD・AUD/USDは新規設計対象から外す。通貨別ネット・グロス・同時発動/三角関係のリスク重複を評価する設計を追加する。ただし、Q116の円換算最大想定損失の非相殺合算、1取引0.5%、全体1.0%、日次1.5%、DD5%、停止理由と本人承認ゲートは維持する。通貨別集中閾値やストレス算式、EUR/USD実契約仕様、実装承認は未決。`docs/three_pair_aggregate_currency_risk_design_20261104.md` を参照。原議欠落・FX-SAF-001〜015未承認、G1〜G9/PHASE-1 BLOCKED、runtime NO_GO、safety_hold_latched=true、verified_values=nullを変更しない。
+
+
+## 2026-11-04 RISK-3P-28：G1正式審査対象の範囲変更を本人承認
+
+本人が**G1正式審査対象をUSD/JPY・EUR/JPY・EUR/USDの3通貨ペア×主要5契約属性＝15項目にする方針**を明示承認。これは単なる将来案ではなく、**審査対象範囲のみの承認済み決定**として記録した。旧G1 4ペア×5属性＝20項目の未解決履歴は[`legacy scope snapshot`](specs/p0_01_d5_25_g1_legacy_scope_snapshot_20261104.json)に非破壊保存。現行G1台帳の対象を更新したが、契約属性の実証は**0/15**、G1自体はUNRESOLVEDのまま。補助属性（1lot契約数量、口座通貨、stop/freeze等）を省略しない。
+
+決定記録：[`specs/risk_3p_28_g1_scope_owner_decision_20261104.json`](specs/risk_3p_28_g1_scope_owner_decision_20261104.json)、[範囲変更と安全境界の説明](docs/risk_3p_28_g1_owner_scope_approval_20261104.md)。本決定ではFX-SAF原議・FORMの実装詳細・実MT4閲覧/EA/注文/停止解除は承認されていない。**G1〜G9 UNRESOLVED、PHASE-1 BLOCKED、runtime NO_GO**を維持。
+
+
+## 2026-11-04 RISK-3P-29〜31：P02/P04の手順方針を本人承認
+
+本人はP02（FX-SAF原議とFORM元資料のローカル照合手順）とP04（既存デモEA・建玉・注文に干渉しない、単一セッション・秘密情報非公開・Git外記録の非破壊MT4観測**方法**）を明示的に承認した。**方法を採用したことと、実際の原議確認やMT4セッションへの操作権限は別**。原議原本の照合はまだ0/15、FORMの実装判断は0/43、G1実契約証拠も0/15。P05の事前安全確認は0/8でBLOCKED、P06観測は未許可、既存MACD Sampleと建玉/未約定注文の現況は不明。口座に接続せず、EA/注文/AutoTrading/SL/STOPを変更しない。
+
+新たな承認記録：[`specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json`](specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json)。安全審査詳細：[`docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md`](docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md)。**G1〜G9 UNRESOLVED、PHASE-1 BLOCKED、runtime NO_GO、safety_hold_latched=true**を維持。

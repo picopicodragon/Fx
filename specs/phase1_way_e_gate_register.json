@@ -9,12 +9,12 @@
   "gates": [
     {
       "id": "G2",
-      "subject": "\u5358\u4e00MT4\u53e3\u5ea7\u306e\u540c\u4e00\u6027\u3001\u65e2\u5b58EA\u3001\u5efa\u7389\u30fb\u4e88\u7d04\u6ce8\u6587\u306e\u672a\u7167\u5408",
+      "subject": "単一MT4口座の同一性、既存EA、建玉・予約注文の未照合",
       "severity": "CRITICAL",
       "depends_on": [],
       "rank": 1,
       "external_or_real_evidence_required": [
-        "\u65e7\u30c7\u30e2A\u3068\u4f11\u7720\u53e3\u5ea7\u306e\u540c\u4e00\u6027\u30fb\u5bfe\u8c61\u6642\u9593\u30fbEA\u88c5\u7740\u30fb\u5efa\u7389\u30fb\u4e88\u7d04\u6ce8\u6587\u3092\u5c06\u6765\u5225\u9014\u8a31\u53ef\u3055\u308c\u305f\u7bc4\u56f2\u3067\u7167\u5408"
+        "旧デモAと休眠口座の同一性・対象時間・EA装着・建玉・予約注文を将来別途許可された範囲で照合"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -24,12 +24,12 @@
     },
     {
       "id": "G6",
-      "subject": "\u539f\u5b50\u7684\u6c38\u7d9a\u5316\u30fb\u6539\u3056\u3093\u9632\u6b62\u30fb\u5dfb\u623b\u3057\u30fb\u540c\u6642\u66f8\u8fbc\u307f",
+      "subject": "原子的永続化・改ざん防止・巻戻し・同時書込み",
       "severity": "HIGH",
       "depends_on": [],
       "rank": 2,
       "external_or_real_evidence_required": [
-        "\u72ec\u7acbTrust Anchor\u3001\u30af\u30e9\u30c3\u30b7\u30e5\u6574\u5408\u6027\u3001\u7f72\u540d/\u9375\u7ba1\u7406\u3001\u5358\u8abf\u306a\u5916\u90e8\u57fa\u6e96\u3001\u539f\u5b50\u7684\u6c38\u7d9a\u5316\u3001\u5b9f\u30b9\u30c8\u30ec\u30fc\u30b8\u969c\u5bb3\u3092\u5225\u9014\u5b9f\u8a3c"
+        "独立Trust Anchor、クラッシュ整合性、署名/鍵管理、単調な外部基準、原子的永続化、実ストレージ障害を別途実証"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -39,14 +39,14 @@
     },
     {
       "id": "G8",
-      "subject": "\u672c\u4eba\u8a8d\u8a3c\u30fb\u500b\u5225\u64cd\u4f5c\u627f\u8a8d\u30fb\u53d6\u6d88\u3057\u30fb\u901a\u77e5",
+      "subject": "本人認証・個別操作承認・取消し・通知",
       "severity": "HIGH",
       "depends_on": [
         "G6"
       ],
       "rank": 3,
       "external_or_real_evidence_required": [
-        "\u672c\u4eba\u78ba\u8a8d\u30fb\u7f72\u540d\u4ed8\u304d\u6a29\u9650\u30fb\u78ba\u5b9f\u306a\u53d6\u6d88\u3057\u3068\u30ea\u30d7\u30ec\u30a4\u5bfe\u7b56\u30fbLINE\u3068\u30e1\u30fc\u30eb\u306e\u901a\u77e5\u306e\u5b9f\u8a3c"
+        "本人確認・署名付き権限・確実な取消しとリプレイ対策・LINEとメールの通知の実証"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -56,14 +56,14 @@
     },
     {
       "id": "G7",
-      "subject": "\u5358\u8abf\u5897\u52a0\u6642\u8a08\u30fbUTC\u540c\u671f\u30fb\u518d\u8d77\u52d5\u9023\u7d9a\u6027\u30fbDST",
+      "subject": "単調増加時計・UTC同期・再起動連続性・DST",
       "severity": "HIGH",
       "depends_on": [
         "G6"
       ],
       "rank": 4,
       "external_or_real_evidence_required": [
-        "Windows\u5b9f\u6642\u8a08\u3001\u540c\u671f\u8aa4\u5dee\u3001\u518d\u8d77\u52d5\u6642\u306e\u9023\u7d9a\u6027\u3001\u505c\u6b62\u304b\u3089\u306e\u5fa9\u5e30\u7981\u6b62\u3092\u5b9f\u88c5\u30fb\u691c\u8a3c"
+        "Windows実時計、同期誤差、再起動時の連続性、停止からの復帰禁止を実装・検証"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -73,7 +73,7 @@
     },
     {
       "id": "G3",
-      "subject": "\u5b9fMT4/EA/Python\u306e\u7dca\u6025\u505c\u6b62\u3068\u767a\u6ce8\u906e\u65ad\u306e\u5f37\u5236\u529b",
+      "subject": "実MT4/EA/Pythonの緊急停止と発注遮断の強制力",
       "severity": "CRITICAL",
       "depends_on": [
         "G2",
@@ -83,7 +83,7 @@
       ],
       "rank": 5,
       "external_or_real_evidence_required": [
-        "\u5b9f\u7aef\u672b\u30fbEA\u30fbPython\u9593\u3067\u505c\u6b62\u304c\u6ce8\u6587\u7d4c\u8def\u306b\u5f37\u5236\u3055\u308c\u308b\u3053\u3068\u3092\u3001\u5225\u9014\u8a31\u53ef\u3055\u308c\u305f\u624b\u9806\u3067\u691c\u8a3c"
+        "実端末・EA・Python間で停止が注文経路に強制されることを、別途許可された手順で検証"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -93,14 +93,15 @@
     },
     {
       "id": "G1",
-      "subject": "4\u901a\u8ca8\u30da\u30a2\u00d75\u9805\u76ee\u306e\u30d6\u30ed\u30fc\u30ab\u30fc\u5951\u7d04\u5c5e\u6027",
+      "subject": "3通貨ペア×5主要契約属性のブローカー実証（正式審査対象15項目、実証未了）",
       "severity": "CRITICAL",
       "depends_on": [
         "G2"
       ],
       "rank": 6,
       "external_or_real_evidence_required": [
-        "USD/JPY\u3001EUR/JPY\u3001GBP/USD\u3001AUD/USD\u306e20\u9805\u76ee\u306b\u3064\u3044\u3066\u5b9f\u53e3\u5ea7\u5074\u304b\u3089\u51fa\u5178\u30fb\u6642\u523b\u3092\u4ed8\u3057\u305f\u5951\u7d04\u5024\u3092\u5c06\u6765\u5225\u9014\u8a31\u53ef\u3055\u308c\u305f\u65b9\u6cd5\u3067\u78ba\u8a8d"
+        "USD/JPY、EUR/JPY、EUR/USDの各5主要契約属性（計15項目）について、別途承認された非破壊手順で、実端末シンボル・対象口座・数値単位・出典・UTC観測時刻・独立照合を確認する。現在は全件未取得。",
+        "1lot契約数量、口座入金通貨、最大lot、digits、stop/freeze level、約定/取引制約、損益通貨とJPY換算等の追加検証を維持。5属性のみで最大損失額の実証としない。"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -110,7 +111,7 @@
     },
     {
       "id": "G5",
-      "subject": "\u5b9f\u73fe\u640d\u76ca\u30fb\u542b\u307f\u640d\u76ca\u30fb\u624b\u6570\u6599\u30fb\u30b9\u30ef\u30c3\u30d7\u3068NY17\u65e5\u6b21\u640d\u5931",
+      "subject": "実現損益・含み損益・手数料・スワップとNY17日次損失",
       "severity": "HIGH",
       "depends_on": [
         "G1",
@@ -118,7 +119,7 @@
       ],
       "rank": 7,
       "external_or_real_evidence_required": [
-        "\u5b9f\u7d04\u5b9a\u30fb\u640d\u76ca\u30fb\u8cbb\u7528\u30fb\u30ed\u30fc\u30eb\u30aa\u30fc\u30d0\u30fc\u306e\u5b9a\u7fa9\u3068\u51fa\u5178\u3092\u5c06\u6765\u5225\u9014\u691c\u8a3c"
+        "実約定・損益・費用・ロールオーバーの定義と出典を将来別途検証"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -128,7 +129,7 @@
     },
     {
       "id": "G9",
-      "subject": "\u30d6\u30ed\u30fc\u30ab\u30fc\u55b6\u696d\u65e5/\u30bb\u30c3\u30b7\u30e7\u30f3\u30fb\u4f11\u5834\u3068NY17\u5883\u754c",
+      "subject": "ブローカー営業日/セッション・休場とNY17境界",
       "severity": "HIGH",
       "depends_on": [
         "G1",
@@ -136,7 +137,7 @@
       ],
       "rank": 8,
       "external_or_real_evidence_required": [
-        "\u697d\u5929MT4\u306e\u5b9f\u53d6\u5f15\u6642\u9593\u3001\u795d\u65e5\u3001\u4f11\u5834\u3001\u65e5\u8de8\u304e\u5224\u5b9a\u3068\u4f8b\u5916\u306e\u691c\u8a3c"
+        "楽天MT4の実取引時間、祝日、休場、日跨ぎ判定と例外の検証"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,
@@ -146,7 +147,7 @@
     },
     {
       "id": "G4",
-      "subject": "\u5b9f\u6ce8\u6587\u306e\u9045\u5ef6\u3001\u62d2\u5426\u3001\u518d\u9001\u3001\u5207\u65ad\u3001\u5efa\u7389\u4e0d\u6574\u5408",
+      "subject": "実注文の遅延、拒否、再送、切断、建玉不整合",
       "severity": "CRITICAL",
       "depends_on": [
         "G3",
@@ -155,7 +156,7 @@
       ],
       "rank": 9,
       "external_or_real_evidence_required": [
-        "\u5c06\u6765\u306e\u660e\u793a\u627f\u8a8d\u3068\u9694\u96e2\u6761\u4ef6\u306e\u3082\u3068\u3067\u5b9f\u63a5\u7d9a\u306e\u969c\u5bb3\u30fb\u7167\u5408\u30fb\u51aa\u7b49\u6027\u3092\u691c\u8a3c"
+        "将来の明示承認と隔離条件のもとで実接続の障害・照合・冪等性を検証"
       ],
       "implementation_status": "UNRESOLVED",
       "release_blocker": true,

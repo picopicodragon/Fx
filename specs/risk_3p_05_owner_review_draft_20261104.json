@@ -18,7 +18,7 @@
   ],
   "old_g1_attributes": 20,
   "proposed_g1_attributes": 15,
-  "g1_scope_change_approved": false,
+  "g1_scope_change_approved": true,
   "g1_real_world_verified": false,
   "owner_approval_recorded": false,
   "fx_saf_implementation_approved": false,
@@ -237,5 +237,7 @@
     "C: separately verify 3x5 G1 contract evidence and reconcile old 4x5 scope with owner approval",
     "D: validate FX-SAF-001/002 and other safety conditions with source and independent tests",
     "E: separately authorize future read-only MT4 review and later operational gating"
-  ]
+  ],
+  "g1_scope_decision_ref": "specs/risk_3p_28_g1_scope_owner_decision_20261104.json",
+  "g1_approval_semantics": "SCOPE_ONLY_NO_REAL_WORLD_EVIDENCE_OR_FORM_IMPLEMENTATION_APPROVAL"
 }
