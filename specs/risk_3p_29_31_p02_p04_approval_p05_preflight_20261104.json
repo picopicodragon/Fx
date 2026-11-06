@@ -204,7 +204,7 @@
     {
       "check_id": "P05-06",
       "title": "Private evidence storage and minimization",
-      "current_status": "OWNER_REPORTED_EVERYONE_NOT_VISIBLE_SECURITY_UNVERIFIED",
+      "current_status": "OWNER_ACCEPTED_LOCAL_FOLDER_AND_PARENTS_FOR_OFFLINE_PLANNING_ONLY",
       "known_historical_condition": "NO_ACCOUNT_IDENTIFIERS_NO_PRIVATE_LOGS_IN_GITHUB",
       "required_for_future": "pre-identify safe local out-of-repo private storage and redaction",
       "evidence_reference": null,
@@ -287,6 +287,32 @@
         "acl_or_folder_modified_by_assistant": false,
         "confidential_data_collection_authorized": false,
         "p05_accepted": false
+      },
+      "owner_reported_unfamiliar_principals": {
+        "source": "USER_EXPLICIT_NO_UNFAMILIAR_GROUPS_OR_ACCOUNTS_CURRENT_CHAT",
+        "reported_on_jst_date": "2026-11-06",
+        "observation": "NO_UNFAMILIAR_ACCOUNTS_OR_GROUPS_DISPLAYED",
+        "classification": "OWNER_REPORTED_UI_OBSERVATION_ONLY",
+        "all_effective_ntfs_acl_principals_independently_verified": false,
+        "inheritance_or_nested_group_memberships_independently_verified": false,
+        "raw_account_names_or_windows_path_collected": false,
+        "share_or_acl_setting_modified": false,
+        "p05_accepted": false
+      },
+      "owner_accepted_storage_security_scope": {
+        "source": "USER_EXPLICIT_ACCEPT_FOLDER_AND_PARENT_SECURITY_AS_SATISFACTORY_CURRENT_CHAT",
+        "decision_on_jst_date": "2026-11-06",
+        "decision": "OWNER_ACCEPTS_FOLDER_AND_PARENT_SECURITY_FOR_CONTINUED_OFFLINE_WORK",
+        "accepted_for": "OFFLINE_DESIGN_AND_SYNTHETIC_TEST_PLANNING_ONLY",
+        "applies_to_reported_private_folder_and_ancestors": true,
+        "not_an_independent_windows_security_audit": true,
+        "effective_ntfs_acl_independently_verified": false,
+        "cloud_backup_absence_independently_verified": false,
+        "real_mt4_session_or_data_collection_authorized": false,
+        "p05_independent_preflight_accepted": false,
+        "private_broker_data_upload_authorized": false,
+        "trade_or_order_execution_authorized": false,
+        "safety_hold_release_authorized": false
       }
     },
     {
