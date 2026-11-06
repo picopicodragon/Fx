@@ -747,7 +747,8 @@
         "tests/test_risk_3p_79_84_numeric_boundaries.py",
         "tests/test_risk_3p_91_96_decimal_context_isolation.py",
         "tests/test_risk_3p_97_102_fraction_oracle.py",
-        "tests/test_risk_3p_103_108_loss_handoff_binding.py"
+        "tests/test_risk_3p_103_108_loss_handoff_binding.py",
+        "tests/test_risk_3p_109_114_exposure_exactness.py"
       ],
       "production_authorized": false
     },
