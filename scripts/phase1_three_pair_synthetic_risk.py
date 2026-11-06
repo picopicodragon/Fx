@@ -93,7 +93,8 @@ def review_synthetic_portfolio(
         return _reject("ACCOUNT_OR_PENDING_STATE_UNKNOWN")
     if (type(asof) is not int or not 0 <= asof <= MAX_SYNTHETIC_ASOF
             or type(snapshot_id) is not str or not snapshot_id
-            or len(snapshot_id) > MAX_SIMULATED_ID_CHARS):
+            or len(snapshot_id) > MAX_SIMULATED_ID_CHARS
+            or not snapshot_id.isprintable()):
         return _reject("INVALID_SYNTHETIC_SNAPSHOT_IDENTITY")
     equity = _decimal(equity_jpy)
     if equity is None or equity <= 0:
@@ -135,6 +136,7 @@ def review_synthetic_portfolio(
                 return _reject("INVALID_TRADE")
             if (type(trade.trade_id) is not str or not trade.trade_id
                     or len(trade.trade_id) > MAX_SIMULATED_ID_CHARS
+                    or not trade.trade_id.isprintable()
                     or trade.trade_id in seen):
                 return _reject("DUPLICATE_OR_INVALID_TRADE_ID")
             seen.add(trade.trade_id)
