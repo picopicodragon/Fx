@@ -163,10 +163,13 @@ class DecimalContextIsolationTests(unittest.TestCase):
     def test_caller_context_is_not_modified_by_either_calculator(self):
         with localcontext() as ctx:
             hostile_decimal_context()
-            before = ctx.copy()
+            before = (ctx.prec, ctx.Emax, ctx.Emin, ctx.rounding,
+                      ctx.clamp, dict(ctx.traps))
             stops()
             portfolio_review(ts=portfolio_trades_from_stops())
-            self.assertEqual(ctx, before)
+            after = (ctx.prec, ctx.Emax, ctx.Emin, ctx.rounding,
+                     ctx.clamp, dict(ctx.traps))
+            self.assertEqual(after, before)
             self.assertEqual(ctx.prec, 3)
             self.assertTrue(ctx.traps[Inexact])
             self.assertEqual(ctx.Emax, 9)
