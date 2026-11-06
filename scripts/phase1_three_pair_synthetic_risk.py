@@ -218,6 +218,21 @@ def _handoff_reject(code: str) -> SyntheticHandoffReview:
     return SyntheticHandoffReview(code)
 
 
+def _mock_plain_three_pair_map(value: object) -> bool:
+    """Reject hostile mapping keys before hashing or comparing any key.
+
+    A built-in dict may contain user-defined keys. Constructing a set from
+    keys invokes their hash method and possibly custom equality. Inspect
+    exact key types by iteration first; hash only plain built-in strings.
+    This protects only the in-memory synthetic 3-pair boundary.
+    """
+    if type(value) is not dict or len(value) != len(PAIRS):
+        return False
+    keys = tuple(value)
+    return (all(type(key) is str for key in keys)
+            and set(keys) == set(PAIRS))
+
+
 def _mock_plain_report(report: object, expected: type) -> bool:
     """Require inert primitive child report fields before any comparisons.
 
@@ -331,11 +346,9 @@ def review_synthetic_loss_handoff(
             or not tickets or len(tickets) != len(trades)
             or len(tickets) > MAX_SYNTHETIC_TRADES):
         return _handoff_reject("P103_MISSING_OR_MISMATCHED_MOCK_ROWS")
-    if (type(contracts) is not dict or set(contracts) != set(PAIRS)
-            or type(stop_quotes) is not dict
-            or set(stop_quotes) != set(PAIRS)
-            or type(portfolio_quotes) is not dict
-            or set(portfolio_quotes) != set(PAIRS)):
+    if (not _mock_plain_three_pair_map(contracts)
+            or not _mock_plain_three_pair_map(stop_quotes)
+            or not _mock_plain_three_pair_map(portfolio_quotes)):
         return _handoff_reject("P103_MOCK_THREE_PAIR_SCOPE_MISMATCH")
     if not (_mock_stop_protected(stop_result)
             and _mock_portfolio_protected(portfolio_result)):
