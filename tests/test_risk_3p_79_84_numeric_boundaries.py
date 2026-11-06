@@ -7,7 +7,7 @@ positive loss just above the 0.5% or 1.0% ceilings.
 from __future__ import annotations
 
 from dataclasses import replace
-from decimal import Decimal, localcontext
+from decimal import Decimal, getcontext, localcontext
 import unittest
 
 from scripts import phase1_three_pair_synthetic_risk as mod
@@ -221,6 +221,53 @@ class NumericFailClosedTests(unittest.TestCase):
         self.assertEqual(r.runtime_go_no_go, "NO_GO")
         self.assertFalse(r.order_allowed)
         self.assertIsNone(r.verified_values)
+
+
+    def test_decimal_context_is_restored_after_synthetic_review(self):
+        previous = getcontext().prec
+        evaluate()
+        self.assertEqual(getcontext().prec, previous)
+        r = evaluate(t=[replace(trades()[0],
+                    max_loss_jpy="500.00000000000000000000000000000000001")])
+        self.assertTrue(r.candidate_exceeds_existing_limit)
+        self.assertEqual(getcontext().prec, previous)
+        self.held(r)
+
+    def test_untrusted_decimal_formats_never_get_rounded_or_coerced(self):
+        for bad in ("01", "001.1", "1e3", "Infinity", "NaN",
+                    "-0.001", "+100", "1_000", "1,000", " 500"):
+            with self.subTest(value=bad):
+                rows = trades()
+                rows[0] = replace(rows[0], max_loss_jpy=bad)
+                r = evaluate(t=rows)
+                self.assertEqual(
+                    r.reason, "UNVERIFIABLE_SYNTHETIC_QUANTITY_OR_LOSS")
+                self.held(r)
+
+    def test_pending_order_risk_adds_without_currency_offset(self):
+        rows = [
+            mod.Trade("new", "USD/JPY", "BUY", "CANDIDATE", "1",
+                      "500"),
+            mod.Trade("old", "USD/JPY", "SELL", "PENDING", "1",
+                      "500.00000000000000000000000000000000001"),
+        ]
+        r = evaluate(t=rows)
+        self.assertTrue(r.arithmetic_complete)
+        self.assertTrue(r.total_exceeds_existing_limit)
+        self.assertFalse(r.candidate_exceeds_existing_limit)
+        self.assertEqual(Decimal(dict(r.net_native)["USD"]), Decimal("0"))
+        self.held(r)
+
+    def test_extra_pair_or_unproved_positions_remain_no_go(self):
+        q = quotes()
+        q["GBP/USD"] = mod.Quote("GBP/USD", "1.3", "1.3", 123,
+                                 "SIM-BOUNDARY")
+        r = evaluate(q=q)
+        self.assertEqual(r.reason, "QUOTE_SET_INCOMPLETE_OR_EXTRA")
+        self.held(r)
+        r = evaluate(positions=False)
+        self.assertEqual(r.reason, "ACCOUNT_OR_PENDING_STATE_UNKNOWN")
+        self.held(r)
 
 
 if __name__ == "__main__":
