@@ -87,5 +87,111 @@ class MockOwnerConsentTests(unittest.TestCase):
             self.assertNotIn("CANARY_51", str(result))
 
 
+    def test_fake_permission_boolean_false_is_not_integer_zero(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is bool and not value:
+                with self.subTest(key=key):
+                    self.refuse(lambda d,k=key: d["safety"].update({k:0}),
+                                "P51_STOP_OR_P05_AUTHORIZATION_FORGED")
+
+    def test_fake_permission_integer_zero_is_not_bool_false(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is int and value == 0:
+                with self.subTest(key=key):
+                    self.refuse(lambda d,k=key: d["safety"].update({k:False}),
+                                "P51_STOP_OR_P05_AUTHORIZATION_FORGED")
+
+    def test_root_poison_key_not_rehashed_during_validation(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("classification")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        val = d.pop("classification")
+        d[Key()] = val
+        Key.calls = 0
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P51_INVALID_OR_UNEXPECTED_PRIVATE_FIELDS", state["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_poison_observation_key_not_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("simulated_pr_merged")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        val = d["observations"].pop("simulated_pr_merged")
+        d["observations"][Key()] = val
+        Key.calls = 0
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P51_PRIOR_REPORT_OR_SYNTHETIC_RESULT_RELABELED",
+                      state["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_poison_check_id_comparator_not_executed(self):
+        class Value:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        d["unsigned_p05"][0]["check_id"] = Value()
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P51_OWNER_OR_BROKER_APPROVAL_FORGED:1", state["errors"])
+        self.assertEqual(Value.calls, 0)
+
+    def test_poison_classification_comparator_not_executed(self):
+        class Value:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        d["classification"] = Value()
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P51_REAL_PERMISSION_SCOPE_SPOOFED", state["errors"])
+        self.assertEqual(Value.calls, 0)
+
+    def test_safety_dict_subclass_comparator_not_executed(self):
+        class Rogue(dict):
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        d["safety"] = Rogue(d["safety"])
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P51_STOP_OR_P05_AUTHORIZATION_FORGED", state["errors"])
+        self.assertEqual(Rogue.calls, 0)
+
+    def test_p05_signature_stays_unsigned_with_mixed_type_spoof(self):
+        d = copy.deepcopy(self.base)
+        d["unsigned_p05"][0]["real_evidence_verified"] = 0
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P51_OWNER_OR_BROKER_APPROVAL_FORGED:1", state["errors"])
+        self.assertFalse(state["owner_p05_approval_recorded"])
+        self.assertEqual(state["runtime_go_no_go"], "NO_GO")
+
+
 if __name__ == "__main__":
     unittest.main()
