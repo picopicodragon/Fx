@@ -123,13 +123,14 @@ class ExactSevenChildGateTests(unittest.TestCase):
     def setUpClass(cls):
         cls.baselines = dict(zip(gate.NAMES, gate._outputs()))
 
-    def reject(self, name, mutate):
+    def reject(self, name, mutate,
+               expected_prefix="P71_UNREVIEWED_CHILD_FIELD_OR_TYPE"):
         target = copy.deepcopy(self.baselines[name])
         mutate(target)
         r = gate.evaluate(injected={name: target})
         self.assertEqual(r["status"], "FAIL_CLOSED", r)
         self.assertIn(
-            "P71_UNREVIEWED_CHILD_FIELD_OR_TYPE:"
+            expected_prefix + ":"
             + str(gate.NAMES.index(name) + 1), r["errors"], r)
         self.assertEqual(r["runtime_go_no_go"], "NO_GO")
         self.assertTrue(r["safety_hold_latched"])
@@ -157,7 +158,8 @@ class ExactSevenChildGateTests(unittest.TestCase):
     def test_missing_errors_field_rejected_on_each_child(self):
         for name in gate.NAMES:
             with self.subTest(name=name):
-                self.reject(name, lambda d: d.pop("errors"))
+                self.reject(name, lambda d: d.pop("errors"),
+                            "P71_CHILD_REPORT_MISSING_OR_INVALID")
 
     def test_integer_counter_booleans_rejected_as_type_confusion(self):
         cases = (
