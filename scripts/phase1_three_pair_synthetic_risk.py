@@ -359,12 +359,24 @@ def review_synthetic_loss_handoff(
         return _handoff_reject("P103_MOCK_STOP_REPORT_ROW_MISMATCH")
     try:
         for ticket, trade, item in zip(tickets, trades, report_rows):
-            if (not _mock_plain_dataclass(ticket, stop_conversion.Ticket)
-                    or not _mock_plain_dataclass(trade, Trade)
+            if (type(ticket) is not stop_conversion.Ticket
+                    or type(trade) is not Trade
                     or type(item) is not tuple or len(item) != 2
                     or type(item[0]) is not str
-                    or type(item[1]) is not str
-                    or (ticket.ticket_id, ticket.pair, ticket.side, ticket.status)
+                    or type(item[1]) is not str):
+                return _handoff_reject("P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
+            if (not _mock_plain_dataclass(ticket, stop_conversion.Ticket)
+                    or not _mock_plain_dataclass(trade, Trade)):
+                if (any(type(getattr(ticket, name)) is not str
+                        for name in (
+                            "volume_lots", "planned_entry", "stop_price",
+                            "adverse_buffer_quote_per_base",
+                            "additional_cost_jpy"))
+                        or type(trade.base_units) is not str
+                        or type(trade.max_loss_jpy) is not str):
+                    return _handoff_reject("P103_MOCK_UNPARSABLE_AMOUNT")
+                return _handoff_reject("P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
+            if ((ticket.ticket_id, ticket.pair, ticket.side, ticket.status)
                     != (trade.trade_id, trade.pair, trade.side, trade.status)
                     or item[0] != ticket.ticket_id):
                 return _handoff_reject("P103_MOCK_IDENTITY_OR_ORDER_CHANGED")
