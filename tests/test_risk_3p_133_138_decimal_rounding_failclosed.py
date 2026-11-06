@@ -174,7 +174,7 @@ class DecimalRoundingFailClosedTests(unittest.TestCase):
     def test_rounded_only_flag_is_distinct_from_inexact_and_still_rejected(self):
         with localcontext(NativeContext(prec=8)) as ctx:
             value = Decimal("100000000000") * Decimal("100000000000")
-            self.assertEqual(value, Decimal("100000000000000000000000"))
+            self.assertEqual(value, Decimal("1e22"))
             self.assertTrue(ctx.flags[Rounded])
             self.assertFalse(ctx.flags[Inexact])
         q = portfolio_quotes()
