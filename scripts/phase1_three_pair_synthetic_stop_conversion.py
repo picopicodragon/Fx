@@ -122,7 +122,7 @@ def _parse(value: object, *, zero: bool = False) -> Decimal | None:
         return None
 
 
-def review_synthetic_stop_risk(
+def _review_synthetic_stop_risk_impl(
     contracts: object, quotes: object, tickets: object, *,
     equity_jpy: object, asof: object, snapshot_id: object,
     positions_reconciled: object, pending_reconciled: object,
@@ -267,3 +267,25 @@ def review_synthetic_stop_risk(
         candidate_exceeds_existing_fraction=candidate_over,
         aggregate_exceeds_existing_fraction=aggregate_over,
     )
+
+
+def review_synthetic_stop_risk(
+    contracts: object, quotes: object, tickets: object, *,
+    equity_jpy: object, asof: object, snapshot_id: object,
+    positions_reconciled: object, pending_reconciled: object,
+    inflight_reservations_reconciled: object,
+) -> Review:
+    """Fail closed on fictional Decimal traps or any unexpected mock fault.
+
+    Rejects instead of throwing/returning a partial loss illustration.
+    An exception and this wrapper never authorize real MT4 or any order.
+    """
+    try:
+        return _review_synthetic_stop_risk_impl(
+            contracts, quotes, tickets, equity_jpy=equity_jpy,
+            asof=asof, snapshot_id=snapshot_id,
+            positions_reconciled=positions_reconciled,
+            pending_reconciled=pending_reconciled,
+            inflight_reservations_reconciled=inflight_reservations_reconciled)
+    except Exception:
+        return _reject("SYNTHETIC_ARITHMETIC_EXCEPTION_FAIL_CLOSED")

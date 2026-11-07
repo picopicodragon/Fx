@@ -84,7 +84,7 @@ def _reject(reason: str) -> Review:
     return Review(reason=reason)
 
 
-def review_synthetic_portfolio(
+def _review_synthetic_portfolio_impl(
     quotes: object, trades: object, *, asof: object,
     snapshot_id: object, equity_jpy: object,
     positions_reconciled: object, pending_orders_reconciled: object,
@@ -201,6 +201,27 @@ def review_synthetic_portfolio(
             candidate_exceeds_existing_limit=candidate_over,
             total_exceeds_existing_limit=total_over,
         )
+
+
+def review_synthetic_portfolio(
+    quotes: object, trades: object, *, asof: object,
+    snapshot_id: object, equity_jpy: object,
+    positions_reconciled: object, pending_orders_reconciled: object,
+) -> Review:
+    """Keep all fictional numerical failures fail-closed, without traceback data.
+
+    Decimal traps (Overflow, InvalidOperation), narrow exponent bounds, and
+    unexpected calculation exceptions must never become a partial/positive
+    mock result. This is not a sandbox or real broker-risk approval.
+    """
+    try:
+        return _review_synthetic_portfolio_impl(
+            quotes, trades, asof=asof, snapshot_id=snapshot_id,
+            equity_jpy=equity_jpy,
+            positions_reconciled=positions_reconciled,
+            pending_orders_reconciled=pending_orders_reconciled)
+    except Exception:
+        return _reject("SYNTHETIC_ARITHMETIC_EXCEPTION_FAIL_CLOSED")
 
 
 @dataclass(frozen=True)
