@@ -297,5 +297,177 @@ class SyntheticIngressTests(unittest.TestCase):
 
 
 
+    def _patched_child(self, label, forged):
+        module, key = {
+            "CHAIN": (mod.chain, "P55_UNTRUSTED_SYNTHETIC_CHAIN"),
+            "WITNESSES": (mod.witness, "P55_UNTRUSTED_SYNTHETIC_WITNESSES"),
+            "REVIEW": (mod.consent, "P55_UNTRUSTED_SYNTHETIC_REVIEW"),
+        }[label]
+        with patch.object(module, "evaluate", return_value=forged):
+            r = mod.evaluate(copy.deepcopy(self.base))
+        self.assertEqual(r["status"], "FAIL_CLOSED", r)
+        self.assertIn(key, r["errors"])
+        self.assertFalse(r["real_mt4_read_authorized"])
+        self.assertFalse(r["orders_or_ea_authorized"])
+        self.assertFalse(r["human_p05_signoff"])
+        self.assertEqual(r["runtime_go_no_go"], "NO_GO")
+        self.assertTrue(r["safety_hold_latched"])
+        self.assertNotIn("PRIVATE_CANARY_163", str(r))
+        return r
+
+    def test_real_child_reports_match_explicit_contract_exactly(self):
+        data = mod.fixture()
+        for label, result in (
+                ("CHAIN", mod.chain.evaluate(data["event_chain"])),
+                ("WITNESSES", mod.witness.evaluate(data["two_witnesses"])),
+                ("REVIEW", mod.consent.evaluate(data["owner_review"]))):
+            with self.subTest(label=label):
+                self.assertTrue(mod._safe_child_result(result, label))
+                self.assertEqual(result, mod.EXPECTED_CHILD_REPORTS[label])
+        self.assertEqual(mod.evaluate(data)["status"],
+                         "PASS_SYNTHETIC_INGRESS_FORMAT_ONLY")
+
+    def test_each_child_extra_positive_authorization_field_is_rejected(self):
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            with self.subTest(label=label):
+                forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+                forged["order_execution_authorized"] = True
+                self._patched_child(label, forged)
+
+    def test_each_child_explicit_real_mt4_access_is_rejected(self):
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            with self.subTest(label=label):
+                forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+                forged["real_mt4_read_authorized"] = True
+                self._patched_child(label, forged)
+
+    def test_each_child_false_permission_masquerading_as_zero_rejected(self):
+        for label, expected in mod.EXPECTED_CHILD_REPORTS.items():
+            for key, value in expected.items():
+                if type(value) is bool and value is False:
+                    with self.subTest(label=label, key=key):
+                        forged = copy.deepcopy(expected)
+                        forged[key] = 0
+                        self._patched_child(label, forged)
+
+    def test_each_child_true_permission_masquerading_as_one_rejected(self):
+        for label, expected in mod.EXPECTED_CHILD_REPORTS.items():
+            for key, value in expected.items():
+                if type(value) is bool and value is True:
+                    with self.subTest(label=label, key=key):
+                        forged = copy.deepcopy(expected)
+                        forged[key] = 1
+                        self._patched_child(label, forged)
+
+    def test_each_child_counter_integer_zero_masquerading_as_false_rejected(self):
+        for label, expected in mod.EXPECTED_CHILD_REPORTS.items():
+            for key, value in expected.items():
+                if type(value) is int and value == 0:
+                    with self.subTest(label=label, key=key):
+                        forged = copy.deepcopy(expected)
+                        forged[key] = False
+                        self._patched_child(label, forged)
+
+    def test_each_child_mismatched_coverage_counter_is_rejected(self):
+        for label, key in (
+                ("CHAIN", "simulated_events_checked"),
+                ("WITNESSES", "fictitious_fields"),
+                ("REVIEW", "p05_items_still_unsigned")):
+            with self.subTest(label=label):
+                forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+                forged[key] += 1
+                self._patched_child(label, forged)
+
+    def test_each_child_missing_required_field_is_rejected(self):
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            with self.subTest(label=label):
+                forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+                del forged["errors"]
+                self._patched_child(label, forged)
+
+    def test_each_child_nonempty_errors_never_pass(self):
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            with self.subTest(label=label):
+                forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+                forged["errors"] = ["PRIVATE_CANARY_163"]
+                self._patched_child(label, forged)
+
+    def test_each_child_bad_error_field_type_never_pass(self):
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            for candidate in (None, (), "", False):
+                with self.subTest(label=label, type=type(candidate).__name__):
+                    forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+                    forged["errors"] = candidate
+                    self._patched_child(label, forged)
+
+    def test_each_child_unknown_status_is_rejected(self):
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            with self.subTest(label=label):
+                forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+                forged["status"] = "PASS_REAL_BROKER_AUTHENTICATED"
+                self._patched_child(label, forged)
+
+    def test_each_child_status_and_latch_only_no_longer_suffice(self):
+        for label, expected in mod.EXPECTED_CHILD_REPORTS.items():
+            with self.subTest(label=label):
+                forged = {"status": expected["status"],
+                          "runtime_go_no_go": "NO_GO",
+                          "safety_hold_latched": True}
+                self._patched_child(label, forged)
+
+    def test_children_with_user_defined_field_comparator_are_rejected(self):
+        class Poison:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_163")
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_163")
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+            forged["runtime_go_no_go"] = Poison()
+            self._patched_child(label, forged)
+        self.assertEqual(Poison.calls, 0)
+
+    def test_children_with_poisoned_extra_key_are_not_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("status")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_163")
+        for label in mod.EXPECTED_CHILD_REPORTS:
+            forged = copy.deepcopy(mod.EXPECTED_CHILD_REPORTS[label])
+            forged[Key()] = "PRIVATE_CANARY_163"
+            Key.calls = 0
+            self._patched_child(label, forged)
+            self.assertEqual(Key.calls, 0)
+
+    def test_child_dict_subclass_never_runs_custom_items(self):
+        class PoisonDict(dict):
+            calls = 0
+            def items(self):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_163")
+        for label, expected in mod.EXPECTED_CHILD_REPORTS.items():
+            forged = PoisonDict(expected)
+            self._patched_child(label, forged)
+        self.assertEqual(PoisonDict.calls, 0)
+
+    def test_all_three_children_unchanged_return_no_go_and_no_authorization(self):
+        r = mod.evaluate(self.base)
+        self.assertEqual(r["status"], "PASS_SYNTHETIC_INGRESS_FORMAT_ONLY")
+        self.assertIs(r["real_mt4_read_authorized"], False)
+        self.assertIs(r["human_p05_signoff"], False)
+        self.assertIs(r["orders_or_ea_authorized"], False)
+        self.assertEqual(r["p05_passed"], 0)
+        self.assertEqual(r["g1_real_verified"], 0)
+        self.assertEqual(r["runtime_go_no_go"], "NO_GO")
+        self.assertIs(r["safety_hold_latched"], True)
+
+
 if __name__ == "__main__":
     unittest.main()
