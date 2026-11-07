@@ -23,6 +23,20 @@ SAFETY = {
 }
 
 
+def _exact_keys(value: object, names: tuple[str, ...]) -> bool:
+    if type(value) is not dict or len(value) != len(names):
+        return False
+    keys = tuple(value)
+    return all(type(k) is str for k in keys) and set(keys) == set(names)
+
+
+def _safe_safety(value: object) -> bool:
+    if not _exact_keys(value, tuple(SAFETY)):
+        return False
+    return all(type(value[k]) is type(SAFETY[k]) and value[k] == SAFETY[k]
+               for k in SAFETY)
+
+
 def fixture() -> dict:
     streams = []
     for origin, session, tickbase in zip(ORIGINS, SESSIONS, (100, 200)):
@@ -54,9 +68,11 @@ def _parse_fake_utc(raw: object):
 
 def _validate_stream(value: object, origin: str, session: str):
     errors = []
-    if type(value) is not dict or set(value) != set(STREAM_KEYS):
+    if not _exact_keys(value, STREAM_KEYS):
         return ["P57_STREAM_MISSING_OR_SENSITIVE_FIELDS"], None
-    if value["origin"] != origin or value["session_alias"] != session:
+    if (type(value["origin"]) is not str or value["origin"] != origin
+            or type(value["session_alias"]) is not str
+            or value["session_alias"] != session):
         errors.append("P57_SOURCE_IDENTITY_OR_SESSION_CHANGED")
     samples = value["samples"]
     if type(samples) is not list or len(samples) != 3:
@@ -64,7 +80,7 @@ def _validate_stream(value: object, origin: str, session: str):
     parsed = []
     for i, row in enumerate(samples):
         label = str(i + 1)
-        if (type(row) is not dict or set(row) != set(SAMPLE_KEYS)
+        if (not _exact_keys(row, SAMPLE_KEYS)
                 or type(row.get("seq")) is not int
                 or row.get("seq") != i + 1
                 or type(row.get("synthetic_monotonic_ticks")) is not int
@@ -88,14 +104,16 @@ def _validate_stream(value: object, origin: str, session: str):
 
 def evaluate(data: object) -> dict:
     errors = []
-    if type(data) is not dict or set(data) != set(ROOT_KEYS):
+    if not _exact_keys(data, ROOT_KEYS):
         errors.append("P57_ENVELOPE_MISSING_OR_PRIVATE_FIELDS")
     else:
-        if (data["classification"] !=
+        if (type(data["classification"]) is not str
+                or data["classification"] !=
                 "SIM_TIMELINE_NOT_REAL_TIME_OR_BROKER_EVIDENCE"
+                or type(data["account_alias"]) is not str
                 or data["account_alias"] != ACCOUNT):
             errors.append("P57_REAL_SOURCE_OR_ACCOUNT_SPOOF")
-        if data["safety"] != SAFETY:
+        if not _safe_safety(data["safety"]):
             errors.append("P57_REAL_FRESHNESS_OR_RUNTIME_PERMISSION_FORGED")
         sources = []
         for label, origin, session in (
