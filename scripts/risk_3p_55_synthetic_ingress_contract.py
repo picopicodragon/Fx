@@ -27,6 +27,37 @@ SAFETY = {
 }
 
 
+def _exact_keys(value: object, keys: tuple[str, ...]) -> bool:
+    """Inspect only built-in string keys before hashing/comparing anything."""
+    if type(value) is not dict or len(value) != len(keys):
+        return False
+    raw = tuple(value)
+    return all(type(key) is str for key in raw) and set(raw) == set(keys)
+
+
+def _safe_synthetic_permissions(value: object) -> bool:
+    """Never accept 0 for False, 1 for True, or user-defined __eq__."""
+    expected = tuple(SAFETY)
+    if not _exact_keys(value, expected):
+        return False
+    return all(type(value[k]) is type(SAFETY[k]) and value[k] == SAFETY[k]
+               for k in expected)
+
+
+def _safe_child_result(value: object, status: str) -> bool:
+    """Only fixed inert child status fields can establish mock format PASS."""
+    if type(value) is not dict or len(value) > 32:
+        return False
+    if any(type(key) is not str for key in value):
+        return False
+    return (type(value.get("status")) is str
+            and value["status"] == status
+            and type(value.get("runtime_go_no_go")) is str
+            and value["runtime_go_no_go"] == "NO_GO"
+            and type(value.get("safety_hold_latched")) is bool
+            and value["safety_hold_latched"] is True)
+
+
 def fixture() -> dict:
     return {
         "schema_version": 1,
@@ -41,17 +72,19 @@ def fixture() -> dict:
 
 def evaluate(package: object) -> dict:
     errors = []
-    if type(package) is not dict or set(package) != set(PACKAGE_KEYS):
+    if not _exact_keys(package, PACKAGE_KEYS):
         errors.append("P55_INGRESS_ENVELOPE_MISSING_OR_SENSITIVE_FIELDS")
     else:
         if (type(package["schema_version"]) is not int
                 or package["schema_version"] != 1
+                or type(package["classification"]) is not str
                 or package["classification"] !=
                 "SIMULATED_INTAKE_CONTRACT_NEVER_REAL_EVIDENCE"
+                or type(package["source_mode"]) is not str
                 or package["source_mode"] !=
                 "TWO_IN_MEMORY_FAKE_SOURCES_NO_EXTERNAL_AUTH"):
             errors.append("P55_REAL_SOURCE_OR_ACCESS_SCOPE_SPOOFED")
-        if package["safety"] != SAFETY:
+        if not _safe_synthetic_permissions(package["safety"]):
             errors.append("P55_BROKER_OR_APPROVAL_PERMISSION_FORGED")
         for key, evaluator, expected, label in (
             ("event_chain", chain.evaluate, "PASS_SYNTHETIC_HASH_CHAIN_ONLY",
@@ -63,12 +96,11 @@ def evaluate(package: object) -> dict:
         ):
             try:
                 result = evaluator(package[key])
-                if (result.get("status") != expected
-                        or result.get("runtime_go_no_go") != "NO_GO"
-                        or result.get("safety_hold_latched") is not True):
+                if not _safe_child_result(result, expected):
                     errors.append("P55_UNTRUSTED_SYNTHETIC_" + label)
-            except (KeyError, ValueError, TypeError, IndexError,
-                    AttributeError, OverflowError):
+            except Exception:
+                # A child evaluator can fail on malformed fiction, but its
+                # exception text must not reveal untrusted private canaries.
                 errors.append("P55_MALFORMED_SYNTHETIC_" + label)
     return {
         "status": "PASS_SYNTHETIC_INGRESS_FORMAT_ONLY" if not errors
