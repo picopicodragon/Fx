@@ -27,6 +27,22 @@ SAFETY = {
 }
 
 
+
+def _exact_keys(value: object, names: tuple[str, ...]) -> bool:
+    if type(value) is not dict or len(value) != len(names):
+        return False
+    keys = tuple(value)
+    return all(type(key) is str for key in keys) and set(keys) == set(names)
+
+
+def _safe_safety(value: object) -> bool:
+    if not _exact_keys(value, tuple(SAFETY)):
+        return False
+    return all(type(value[k]) is type(SAFETY[k]) and value[k] == SAFETY[k]
+               for k in SAFETY)
+
+
+
 def fixture() -> dict:
     return {
         "classification": "OFFLINE_OWNER_APPROVAL_BOUNDARY_MOCK_ONLY",
@@ -52,28 +68,30 @@ def fixture() -> dict:
 
 def evaluate(data: object) -> dict:
     errors: list[str] = []
-    if type(data) is not dict or set(data) != set(REQUIRED):
+    if not _exact_keys(data, REQUIRED):
         errors.append("P51_INVALID_OR_UNEXPECTED_PRIVATE_FIELDS")
     else:
-        if data["classification"] != "OFFLINE_OWNER_APPROVAL_BOUNDARY_MOCK_ONLY":
+        if (type(data["classification"]) is not str
+                or data["classification"] !=
+                "OFFLINE_OWNER_APPROVAL_BOUNDARY_MOCK_ONLY"):
             errors.append("P51_REAL_PERMISSION_SCOPE_SPOOFED")
         observations = data["observations"]
-        if (type(observations) is not dict or
-                set(observations) != set(OBS_KEYS) or
-                any(observations.get(k) is not True for k in OBS_KEYS)):
+        if (not _exact_keys(observations, OBS_KEYS)
+                or any(observations[k] is not True for k in OBS_KEYS)):
             errors.append("P51_PRIOR_REPORT_OR_SYNTHETIC_RESULT_RELABELED")
         rows = data["unsigned_p05"]
         if type(rows) is not list or len(rows) != 8:
             errors.append("P51_EIGHT_UNSIGNED_P05_ROWS_REQUIRED")
         else:
             for i, row in enumerate(rows, 1):
-                if (type(row) is not dict or set(row) != set(ROW_KEYS)
-                        or row.get("check_id") != f"P05-{i:02d}"
-                        or any(row.get(k) is not False for k in ROW_KEYS
+                if (not _exact_keys(row, ROW_KEYS)
+                        or type(row["check_id"]) is not str
+                        or row["check_id"] != f"P05-{i:02d}"
+                        or any(row[k] is not False for k in ROW_KEYS
                                if k != "check_id")):
                     errors.append("P51_OWNER_OR_BROKER_APPROVAL_FORGED:"
                                   + str(i))
-        if data["safety"] != SAFETY:
+        if not _safe_safety(data["safety"]):
             errors.append("P51_STOP_OR_P05_AUTHORIZATION_FORGED")
     return {
         "status": "PASS_NO_REAL_APPROVAL_ONLY" if not errors else "FAIL_CLOSED",

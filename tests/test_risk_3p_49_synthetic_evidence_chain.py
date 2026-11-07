@@ -99,5 +99,114 @@ class MockChainTests(unittest.TestCase):
             self.assertNotIn("CANARY_49", str(state))
 
 
+    def test_bool_false_vs_integer_zero_not_accepted_in_safety(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is bool and value is False:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k:0}),
+                                "P49_FORGED_P05_OR_BROKER_PERMISSION")
+
+    def test_integer_zero_vs_boolean_false_not_accepted_in_safety(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is int and value == 0:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k:False}),
+                                "P49_FORGED_P05_OR_BROKER_PERMISSION")
+
+    def test_poison_key_in_package_never_rehashed_or_compared(self):
+        class Poison:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("genesis")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        d.pop("genesis")
+        d[Poison()] = "SIM_GENESIS_NO_BROKER_PROOF"
+        Poison.calls = 0
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P49_INVALID_OR_SENSITIVE_PACKAGE_FIELDS", state["errors"])
+        self.assertEqual(Poison.calls, 0)
+
+    def test_poison_key_in_row_never_rehashed_or_compared(self):
+        class Poison:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("kind")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        row = d["rows"][0]
+        content = row.pop("kind")
+        row[Poison()] = content
+        Poison.calls = 0
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P49_INVALID_ROW_OR_SECRET_FIELD:1", state["errors"])
+        self.assertEqual(Poison.calls, 0)
+
+    def test_bad_sequence_does_not_enter_digest_payload_computation(self):
+        class Poison:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        d["rows"][0]["sequence"] = Poison()
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P49_EVENT_ORDER_OR_SYNTHETIC_SOURCE_DRIFT:1",
+                      state["errors"])
+        self.assertEqual(Poison.calls, 0)
+
+    def test_poison_genesis_comparison_is_not_called(self):
+        class Poison:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        d["genesis"] = Poison()
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P49_REAL_WORLD_AUTHORITY_CLAIMED", state["errors"])
+        self.assertEqual(Poison.calls, 0)
+
+    def test_poison_digest_never_leaks_into_following_link_comparison(self):
+        class Poison:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_157")
+        d = copy.deepcopy(self.base)
+        d["rows"][0]["digest"] = Poison()
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P49_DIGEST_INVALID:1", state["errors"])
+        self.assertEqual(Poison.calls, 0)
+        self.assertNotIn("PRIVATE_CANARY_157", str(state))
+
+    def test_wrong_row_field_classification_no_broker_authentication(self):
+        d = copy.deepcopy(self.base)
+        d["rows"][1]["kind"] = 42
+        state = mod.evaluate(d)
+        self.assertEqual(state["status"], "FAIL_CLOSED")
+        self.assertIn("P49_EVENT_ORDER_OR_SYNTHETIC_SOURCE_DRIFT:2",
+                      state["errors"])
+        self.assertFalse(state["broker_origin_verified"])
+        self.assertEqual(state["runtime_go_no_go"], "NO_GO")
+
+
 if __name__ == "__main__":
     unittest.main()

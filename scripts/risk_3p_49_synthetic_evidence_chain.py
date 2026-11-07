@@ -36,6 +36,22 @@ SAFETY = {
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 
 
+
+def _exact_keys(value: object, names: tuple[str, ...]) -> bool:
+    if type(value) is not dict or len(value) != len(names):
+        return False
+    keys = tuple(value)
+    return all(type(key) is str for key in keys) and set(keys) == set(names)
+
+
+def _safe_safety(value: object) -> bool:
+    if not _exact_keys(value, tuple(SAFETY)):
+        return False
+    return all(type(value[k]) is type(SAFETY[k]) and value[k] == SAFETY[k]
+               for k in SAFETY)
+
+
+
 def digest_payload(*, sequence: int, kind: str, fake_time: str,
                    source_token: str, previous_hash: str) -> str:
     """Canonical mock data checksum. Do not use as an authority signature."""
@@ -70,12 +86,15 @@ def fixture() -> dict:
 
 def evaluate(data: object) -> dict:
     errors: list[str] = []
-    if type(data) is not dict or set(data) != set(PACKAGE_KEYS):
+    if not _exact_keys(data, PACKAGE_KEYS):
         errors.append("P49_INVALID_OR_SENSITIVE_PACKAGE_FIELDS")
     else:
-        if data["classification"] != CLASSIFICATION or data["genesis"] != GENESIS:
+        if (type(data["classification"]) is not str
+                or data["classification"] != CLASSIFICATION
+                or type(data["genesis"]) is not str
+                or data["genesis"] != GENESIS):
             errors.append("P49_REAL_WORLD_AUTHORITY_CLAIMED")
-        if data["safety"] != SAFETY:
+        if not _safe_safety(data["safety"]):
             errors.append("P49_FORGED_P05_OR_BROKER_PERMISSION")
         rows = data["rows"]
         if type(rows) is not list or len(rows) != 3:
@@ -84,30 +103,42 @@ def evaluate(data: object) -> dict:
             prev = GENESIS
             for i, row in enumerate(rows):
                 n = str(i + 1)
-                if type(row) is not dict or set(row) != set(ROW_KEYS):
+                if not _exact_keys(row, ROW_KEYS):
                     errors.append("P49_INVALID_ROW_OR_SECRET_FIELD:" + n)
                     continue
-                if (type(row["sequence"]) is not int
-                        or row["sequence"] != i + 1
-                        or row["kind"] != KINDS[i]
-                        or row["fake_time"] != TIMES[i]
-                        or row["source_token"] != TOKENS[i]):
+                identity_ok = (
+                    type(row["sequence"]) is int
+                    and row["sequence"] == i + 1
+                    and type(row["kind"]) is str and row["kind"] == KINDS[i]
+                    and type(row["fake_time"]) is str
+                    and row["fake_time"] == TIMES[i]
+                    and type(row["source_token"]) is str
+                    and row["source_token"] == TOKENS[i])
+                if not identity_ok:
                     errors.append("P49_EVENT_ORDER_OR_SYNTHETIC_SOURCE_DRIFT:" + n)
-                if row["previous_hash"] != prev:
+                prev_hash = row["previous_hash"]
+                prev_ok = type(prev_hash) is str and prev_hash == prev
+                if not prev_ok:
                     errors.append("P49_HASH_CHAIN_DISCONNECTED:" + n)
-                if (type(row["digest"]) is not str
-                        or HEX64.fullmatch(row["digest"]) is None):
+                digest = row["digest"]
+                digest_ok = (type(digest) is str
+                             and HEX64.fullmatch(digest) is not None)
+                if not digest_ok:
                     errors.append("P49_DIGEST_INVALID:" + n)
-                else:
-                    expected = digest_payload(
-                        sequence=row["sequence"], kind=row["kind"],
-                        fake_time=row["fake_time"],
-                        source_token=row["source_token"],
-                        previous_hash=row["previous_hash"],
-                    )
-                    if row["digest"] != expected:
+                elif identity_ok and type(prev_hash) is str:
+                    try:
+                        expected = digest_payload(
+                            sequence=row["sequence"], kind=row["kind"],
+                            fake_time=row["fake_time"],
+                            source_token=row["source_token"],
+                            previous_hash=prev_hash)
+                        if digest != expected:
+                            errors.append("P49_DIGEST_CONTENT_MISMATCH:" + n)
+                    except Exception:
+                        # Neither untrusted objects nor hash formatting errors
+                        # can turn an invalid fake event into authority.
                         errors.append("P49_DIGEST_CONTENT_MISMATCH:" + n)
-                prev = row["digest"]
+                prev = digest if type(digest) is str else ""
     return {
         "status": "PASS_SYNTHETIC_HASH_CHAIN_ONLY" if not errors else "FAIL_CLOSED",
         "simulated_events_checked": 3,
