@@ -44,18 +44,71 @@ def _safe_synthetic_permissions(value: object) -> bool:
                for k in expected)
 
 
-def _safe_child_result(value: object, status: str) -> bool:
-    """Only fixed inert child status fields can establish mock format PASS."""
-    if type(value) is not dict or len(value) > 32:
+# Explicit schema of the three *fictional* child reports. Neither a child
+# status string nor NO_GO alone proves its other safety fields were preserved.
+# Keep fixed literal expectations independent from the child implementations.
+EXPECTED_CHILD_REPORTS = {
+    "CHAIN": {
+        "status": "PASS_SYNTHETIC_HASH_CHAIN_ONLY",
+        "simulated_events_checked": 3,
+        "cryptographic_authenticity_verified": False,
+        "immutable_storage_verified": False,
+        "broker_origin_verified": False,
+        "real_account_data_collected": False,
+        "human_approval_verified": False,
+        "p05_passed": 0,
+        "g1_verified": 0,
+        "real_mt4_read_authorized": False,
+        "order_action_authorized": False,
+        "runtime_go_no_go": "NO_GO",
+        "safety_hold_latched": True,
+        "errors": [],
+    },
+    "WITNESSES": {
+        "status": "PASS_TWO_FAKE_WITNESSES_ONLY",
+        "fictitious_fields": 15,
+        "actual_broker_fields_verified": 0,
+        "actual_source_independence_verified": False,
+        "human_approval_verified": False,
+        "p05_passed": 0,
+        "real_mt4_read_authorized": False,
+        "orders_authorized": False,
+        "runtime_go_no_go": "NO_GO",
+        "safety_hold_latched": True,
+        "errors": [],
+    },
+    "REVIEW": {
+        "status": "PASS_NO_REAL_APPROVAL_ONLY",
+        "p05_items_still_unsigned": 8,
+        "p05_passed": 0,
+        "g1_real_verified": 0,
+        "real_account_identity_verified": False,
+        "owner_p05_approval_recorded": False,
+        "real_mt4_read_authorized": False,
+        "real_order_execution_authorized": False,
+        "phase1_approved": False,
+        "runtime_go_no_go": "NO_GO",
+        "safety_hold_latched": True,
+        "errors": [],
+    },
+}
+
+
+def _safe_child_result(value: object, label: str) -> bool:
+    """Compare every child report field with a fixed mock-only contract."""
+    expected = EXPECTED_CHILD_REPORTS[label]
+    if not _exact_keys(value, tuple(expected)):
         return False
-    if any(type(key) is not str for key in value):
-        return False
-    return (type(value.get("status")) is str
-            and value["status"] == status
-            and type(value.get("runtime_go_no_go")) is str
-            and value["runtime_go_no_go"] == "NO_GO"
-            and type(value.get("safety_hold_latched")) is bool
-            and value["safety_hold_latched"] is True)
+    for key, known in expected.items():
+        actual = value[key]
+        if type(actual) is not type(known):
+            return False
+        if type(known) is list:
+            if actual != []:
+                return False
+        elif actual != known:
+            return False
+    return True
 
 
 def fixture() -> dict:
@@ -86,17 +139,14 @@ def evaluate(package: object) -> dict:
             errors.append("P55_REAL_SOURCE_OR_ACCESS_SCOPE_SPOOFED")
         if not _safe_synthetic_permissions(package["safety"]):
             errors.append("P55_BROKER_OR_APPROVAL_PERMISSION_FORGED")
-        for key, evaluator, expected, label in (
-            ("event_chain", chain.evaluate, "PASS_SYNTHETIC_HASH_CHAIN_ONLY",
-             "CHAIN"),
-            ("two_witnesses", witness.evaluate, "PASS_TWO_FAKE_WITNESSES_ONLY",
-             "WITNESSES"),
-            ("owner_review", consent.evaluate, "PASS_NO_REAL_APPROVAL_ONLY",
-             "REVIEW"),
+        for key, evaluator, label in (
+            ("event_chain", chain.evaluate, "CHAIN"),
+            ("two_witnesses", witness.evaluate, "WITNESSES"),
+            ("owner_review", consent.evaluate, "REVIEW"),
         ):
             try:
                 result = evaluator(package[key])
-                if not _safe_child_result(result, expected):
+                if not _safe_child_result(result, label):
                     errors.append("P55_UNTRUSTED_SYNTHETIC_" + label)
             except Exception:
                 # A child evaluator can fail on malformed fiction, but its
