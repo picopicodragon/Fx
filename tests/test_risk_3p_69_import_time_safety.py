@@ -73,5 +73,105 @@ class ImportTimeSourceTests(unittest.TestCase):
         self.assertFalse(r["real_mt4_read_authorized"])
 
 
+    def test_poison_override_key_not_hashed_or_compared(self):
+        class PoisonKey:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash(mod.TARGETS[0])
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_145")
+        source = {PoisonKey(): "PRIVATE_CANARY_145"}
+        PoisonKey.calls = 0
+        result = mod.snapshot(overrides=source)
+        self.assertEqual(result["status"], "FAIL_CLOSED")
+        self.assertEqual(result["errors"],
+                         ["P69_UNSAFE_OR_UNKNOWN_OVERRIDE"])
+        self.assertEqual(PoisonKey.calls, 0)
+        self.assertNotIn("PRIVATE_CANARY_145", str(result))
+
+    def test_str_subclass_key_not_hashed_or_compared(self):
+        class PoisonStr(str):
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash(str(self))
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_145")
+        source = {PoisonStr(mod.TARGETS[0]): "x=1"}
+        PoisonStr.calls = 0
+        self.assertEqual(mod.audit(overrides=source),
+                         ["P69_UNSAFE_OR_UNKNOWN_OVERRIDE"])
+        self.assertEqual(PoisonStr.calls, 0)
+
+    def test_dict_subclass_override_not_visited(self):
+        class PoisonDict(dict):
+            calls = 0
+            def items(self):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_145")
+        value = PoisonDict({mod.TARGETS[0]: "x=1"})
+        self.assertEqual(mod.audit(overrides=value),
+                         ["P69_UNSAFE_OR_UNKNOWN_OVERRIDE"])
+        self.assertEqual(PoisonDict.calls, 0)
+
+    def test_unsafe_annotation_without_future_import_is_rejected(self):
+        for src in ("def f(x: dangerous.payload):\n    pass",
+                    "def f() -> attacker[0]:\n    pass",
+                    "x: dangerous.attribute",
+                    "x: dangerous.attribute = 1"):
+            with self.subTest(source=src):
+                self.assertIn("P69_UNPOSTPONED_ANNOTATION_EVALUATION",
+                              mod.inspect_source(src))
+
+    def test_postponed_annotations_do_not_execute_at_import_time(self):
+        for src in (
+                "from __future__ import annotations\n"
+                "def f(x: dangerous.payload):\n    pass",
+                "from __future__ import annotations\n"
+                "x: dangerous.attribute"):
+            with self.subTest(source=src):
+                self.assertEqual(mod.inspect_source(src), [])
+
+    def test_known_call_in_annotation_remains_rejected_even_if_postponed(self):
+        src = ("from __future__ import annotations\n"
+               "def f(x: injected()):\n    pass")
+        self.assertIn("P69_IMPORT_TIME_DECORATOR_OR_DEFAULT_CALL",
+                      mod.inspect_source(src))
+
+    def test_oversized_import_time_source_fails_before_ast(self):
+        src = "x = 1\n" + "#" * mod.MAX_STATIC_SOURCE_CHARS
+        self.assertEqual(mod.inspect_source(src), ["P69_SOURCE_TOO_LARGE"])
+        self.assertEqual(
+            mod.audit(overrides={mod.TARGETS[0]: src}),
+            ["P69_UNSAFE_OR_UNKNOWN_OVERRIDE"])
+
+    def test_source_at_exact_resource_bound_does_not_fail_size_check(self):
+        prefix = "x = 1\n"
+        src = prefix + "#" * (mod.MAX_STATIC_SOURCE_CHARS - len(prefix))
+        self.assertEqual(len(src), mod.MAX_STATIC_SOURCE_CHARS)
+        self.assertEqual(mod.inspect_source(src), [])
+
+    def test_unknown_override_with_poison_value_is_not_stringified(self):
+        class BadValue:
+            def __str__(self):
+                raise RuntimeError("PRIVATE_CANARY_145")
+        result = mod.snapshot(overrides={mod.TARGETS[0]: BadValue()})
+        self.assertEqual(result["status"], "FAIL_CLOSED")
+        self.assertEqual(result["errors"],
+                         ["P69_UNSAFE_OR_UNKNOWN_OVERRIDE"])
+
+    def test_original_six_sources_still_pass_but_cannot_trade(self):
+        result = mod.snapshot()
+        self.assertEqual(result["status"], "PASS_NARROW_IMPORT_TIME_AST_ONLY")
+        self.assertFalse(result["runtime_side_effect_freedom_proven"])
+        self.assertFalse(result["transitive_dependencies_verified"])
+        self.assertFalse(result["order_execution_authorized"])
+        self.assertEqual(result["runtime_go_no_go"], "NO_GO")
+        self.assertTrue(result["safety_hold_latched"])
+
+
 if __name__ == "__main__":
     unittest.main()
