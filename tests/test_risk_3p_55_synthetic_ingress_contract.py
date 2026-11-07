@@ -435,7 +435,8 @@ class SyntheticIngressTests(unittest.TestCase):
             calls = 0
             def __hash__(self):
                 type(self).calls += 1
-                return hash("status")
+                # Insertion must not collide with an existing string key.
+                return hash("UNLISTED_PRIVATE_CANARY_163")
             def __eq__(self, other):
                 type(self).calls += 1
                 raise RuntimeError("PRIVATE_CANARY_163")
