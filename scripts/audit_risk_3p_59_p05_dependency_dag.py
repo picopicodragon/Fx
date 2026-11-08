@@ -123,9 +123,10 @@ def audit(root: Path = ROOT, injected: dict | None = None) -> list[str]:
         sources = injected if injected is not None else {
             path: _read(root, path) for path in (GRAPH, P05)
         }
+        if not _plain_keys(sources) or set(sources) != {GRAPH, P05}:
+            return ["P59_MALFORMED_OR_MISSING_SOURCE"]
         doc, p05 = (sources[key] for key in (GRAPH, P05))
-        if (not _plain_keys(sources) or not _plain_keys(doc)
-                or not _plain_keys(p05)):
+        if not _plain_keys(doc) or not _plain_keys(p05):
             return ["P59_MALFORMED_OR_MISSING_SOURCE"]
         if (set(doc) != set(META) | {"checks", "state"}
                 or any(not _same(doc.get(k), v) for k, v in META.items())):
