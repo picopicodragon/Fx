@@ -26,23 +26,43 @@ def _read(root: Path, name: str):
     return json.loads((root / name).read_text(encoding="utf-8"))
 
 
+def _plain_keys(record: object) -> bool:
+    """Reject unknown key comparison hooks before any set, get or lookup."""
+    return type(record) is dict and all(type(key) is str for key in record)
+
+
+def _safety_matches(safety: object) -> bool:
+    if not _plain_keys(safety) or set(safety) != set(EXPECTED_SAFETY):
+        return False
+    return all(type(safety[name]) is type(expected)
+               and safety[name] == expected
+               for name, expected in EXPECTED_SAFETY.items())
+
+
 def audit(root: Path = ROOT, injected: dict | None = None) -> list[str]:
-    errors = []
+    errors: list[str] = []
     try:
         docs = injected if injected is not None else {
             p: _read(root, p) for p in (TRACE, PINNED)}
-        trace, index = docs[TRACE], docs[PINNED]
-        if type(trace) is not dict or type(index) is not dict:
+        if not _plain_keys(docs):
             return ["P67_SOURCE_INDEX_OR_TRACE_INVALID"]
+        trace, index = docs[TRACE], docs[PINNED]
+        if not _plain_keys(trace) or not _plain_keys(index):
+            return ["P67_SOURCE_INDEX_OR_TRACE_INVALID"]
+
         if (set(index) != set(PIN_FIELDS)
                 or type(index.get("schema_version")) is not int
                 or index["schema_version"] != 1
+                or type(index.get("classification")) is not str
                 or index["classification"] !=
                 "OFFLINE_SOURCE_INDEX_NOT_PRODUCTION_APPROVAL"
+                or type(index.get("scope")) is not str
                 or index["scope"] != "RISK-3P-67-72"):
             errors.append("P67_PINNED_INDEX_SCOPE_CHANGED")
-        if index.get("safety") != EXPECTED_SAFETY:
+
+        if not _safety_matches(index.get("safety")):
             errors.append("P67_REAL_PERMISSION_OR_MERGE_FORGED")
+
         sources = index.get("sources")
         mappings = trace.get("offline_synthetic_mappings")
         if (type(sources) is not list or len(sources) != 45
@@ -50,18 +70,20 @@ def audit(root: Path = ROOT, injected: dict | None = None) -> list[str]:
                 or sources != sorted(set(sources))):
             errors.append("P67_EXPECTED_45_UNIQUE_SOURCE_NAMES")
         if (type(mappings) is not list or len(mappings) != 45
-                or any(type(row) is not dict
+                or any(not _plain_keys(row)
                        or set(row) != {"source", "spec_ids", "tests",
                                        "production_authorized"}
                        or type(row.get("source")) is not str
                        or row.get("production_authorized") is not False
                        for row in mappings)):
             errors.append("P67_TRACEABILITY_ROWS_NOT_OFFLINE")
-        elif type(sources) is list:
+        elif type(sources) is list and all(type(x) is str for x in sources):
             current = [row["source"] for row in mappings]
             if len(set(current)) != len(current) or sorted(current) != sources:
                 errors.append("P67_OMITTED_OR_UNREVIEWED_SOURCE_MAPPING")
-    except (OSError, ValueError, TypeError, KeyError, AttributeError):
+    except Exception:
+        # Untrusted synthetic records can raise arbitrary Python exceptions.
+        # Never expose exception text or a partial source mapping.
         errors.append("P67_PUBLIC_INDEX_READ_OR_SCHEMA_FAILURE")
     return errors
 
