@@ -38,7 +38,21 @@ SIM_UTC = re.compile(r"SIM_(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\Z")
 
 
 def _exact(obj: object, keys: tuple[str, ...]) -> bool:
-    return type(obj) is dict and set(obj) == set(keys)
+    """Never hash or compare custom Python keys from an already-built dict."""
+    if type(obj) is not dict or len(obj) != len(keys):
+        return False
+    found = tuple(obj)
+    return all(type(k) is str for k in found) and set(found) == set(keys)
+
+
+def _plain_string(value: object, expected: str) -> bool:
+    return type(value) is str and value == expected
+
+
+def _plain_string_list(value: object, expected: tuple[str, ...]) -> bool:
+    return (type(value) is list and len(value) == len(expected)
+            and all(type(x) is str for x in value)
+            and value == list(expected))
 
 
 def _positive_decimal(value: object) -> bool:
@@ -65,12 +79,12 @@ def _fake_utc(text: object) -> bool:
 
 def _source(obj: object) -> bool:
     return (_exact(obj, SOURCE_KEYS)
-            and obj.get("kind") == "FICTITIOUS_TEST_SOURCE"
+            and _plain_string(obj.get("kind"), "FICTITIOUS_TEST_SOURCE")
             and type(obj.get("token")) is str
             and SIM_TOKEN.fullmatch(obj["token"]) is not None)
 
 
-def check_synthetic_package(package: object) -> dict:
+def _check_synthetic_package_impl(package: object) -> dict:
     """Never returns submitted data or tokens; errors use fixed codes/row indices."""
     errors: list[str] = []
     if not _exact(package, PACKAGE_KEYS):
@@ -78,12 +92,13 @@ def check_synthetic_package(package: object) -> dict:
     else:
         if (type(package["schema_version"]) is not int
                 or package["schema_version"] != 1
-                or package["classification"] != "SYNTHETIC_ONLY_NOT_BROKER_DATA"
-                or package["target_pairs"] != list(PAIRS)
-                or package["target_fields"] != list(FIELDS)):
+                or not _plain_string(package["classification"],
+                                     "SYNTHETIC_ONLY_NOT_BROKER_DATA")
+                or not _plain_string_list(package["target_pairs"], PAIRS)
+                or not _plain_string_list(package["target_fields"], FIELDS)):
             errors.append("P34_SCOPE_OR_CLASSIFICATION_DRIFT")
-        if (package["p05_status"] != "BLOCKED"
-                or package["runtime_go_no_go"] != "NO_GO"
+        if (not _plain_string(package["p05_status"], "BLOCKED")
+                or not _plain_string(package["runtime_go_no_go"], "NO_GO")
                 or package["safety_hold_latched"] is not True
                 or package["broker_evidence_verified"] is not False
                 or package["mt4_read_authorized"] is not False
@@ -100,13 +115,16 @@ def check_synthetic_package(package: object) -> dict:
                 if not _exact(row, ROW_KEYS):
                     errors.append("P34_ROW_SHAPE_OR_SECRET_FIELD:" + code)
                     continue
-                if (row["pair"] != pair or row["field"] != field
-                        or row["status"] != "SYNTHETIC_NO_BROKER_PROOF"):
+                if (not _plain_string(row["pair"], pair)
+                        or not _plain_string(row["field"], field)
+                        or not _plain_string(row["status"],
+                                             "SYNTHETIC_NO_BROKER_PROOF")):
                     errors.append("P34_PAIR_FIELD_OR_STATUS_MISMATCH:" + code)
                 if (not _positive_decimal(row["synthetic_value_decimal"])
-                        or row["unit"] != UNITS[field]
-                        or row["synthetic_terminal_symbol_alias"] !=
-                        ALIASES[pair] or not _fake_utc(
+                        or not _plain_string(row["unit"], UNITS[field])
+                        or not _plain_string(
+                            row["synthetic_terminal_symbol_alias"],
+                            ALIASES[pair]) or not _fake_utc(
                             row["synthetic_timestamp_utc"])):
                     errors.append("P34_UNITS_VALUE_OR_FAKE_TIME_INVALID:" + code)
                 primary, independent = (row["primary_source"],
@@ -126,6 +144,28 @@ def check_synthetic_package(package: object) -> dict:
         "safety_hold_latched": True,
         "errors": errors,
     }
+
+
+
+def check_synthetic_package(package: object) -> dict:
+    """All malformed synthetic inputs fail closed with constant public codes.
+
+    This is a narrow in-memory validation boundary, not a Python sandbox.
+    """
+    try:
+        return _check_synthetic_package_impl(package)
+    except Exception:
+        return {
+            "status": "FAIL_CLOSED",
+            "synthetic_rows_expected": 15,
+            "real_broker_values_verified": 0,
+            "p05_passed": 0,
+            "real_mt4_read_authorized": False,
+            "order_authorized": False,
+            "runtime_go_no_go": "NO_GO",
+            "safety_hold_latched": True,
+            "errors": ["P34_SYNTHETIC_VALIDATION_EXCEPTION"],
+        }
 
 
 def make_synthetic_fixture() -> dict:
