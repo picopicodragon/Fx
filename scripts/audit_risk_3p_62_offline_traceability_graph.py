@@ -40,19 +40,24 @@ def _safe(path: object, folder: str) -> bool:
     return True
 
 
+def _plain_keys(record: object) -> bool:
+    """Reject custom key hashing/comparison before accessing manifest fields."""
+    return type(record) is dict and all(type(key) is str for key in record)
+
+
 def audit(root: Path = ROOT, data: object = None) -> list[str]:
     errors = []
     try:
         record = (data if data is not None else
                   json.loads((root / TRACE).read_text(encoding="utf-8")))
-        if type(record) is not dict or type(
+        if not _plain_keys(record) or type(
                 record.get("offline_synthetic_mappings")) is not list:
             return ["P62_INVALID_TRACEABILITY_MANIFEST"]
         rows = record["offline_synthetic_mappings"]
         seen = set()
         for i, row in enumerate(rows, 1):
             idx = str(i)
-            if type(row) is not dict or set(row) != set(FIELDS):
+            if not _plain_keys(row) or set(row) != set(FIELDS):
                 errors.append("P62_SCHEMA_OR_SECRET_FIELD:" + idx)
                 continue
             source = row.get("source")
@@ -93,7 +98,8 @@ def audit(root: Path = ROOT, data: object = None) -> list[str]:
         if pinned.audit(injected={pinned.TRACE: record,
                                  pinned.PINNED: pinned_doc}):
             errors.append("P62_PINNED_SOURCE_INVENTORY_DRIFT")
-    except (OSError, ValueError, TypeError, KeyError, AttributeError):
+    except Exception:
+        # The injected manifest is untrusted; never expose exception text.
         errors.append("P62_CANNOT_READ_PUBLIC_TRACEABILITY")
     return errors
 
