@@ -111,8 +111,9 @@ def evaluate(root: Path = ROOT, injected: dict | None = None) -> dict:
             # contract verifier after an earlier shape or authority error.
             if not errors:
                 errors.extend(strict.snapshot(selected)["errors"])
-        except (OSError, TypeError, ValueError, KeyError, IndexError,
-                AttributeError, RecursionError):
+        except Exception:
+            # Offline child exceptions are untrusted: never expose text,
+            # partial reports or a successful status.
             errors.append("P60_MISSING_OR_INVALID_OFFLINE_INPUT")
     return {
         "status": "PASS_COMBINED_OFFLINE_DESIGN_QA_ONLY"
