@@ -25,3 +25,7 @@ python -m unittest discover -s tests -p "test*.py"
 P05 0/8 BLOCKED、G1実証0/15、FX-SAF原議0/15、FORM承認0/43、PHASE-1 BLOCKED、runtime NO_GO、停止ラッチtrue、verified_values=null、production_authorized=false。Q109固定45オフラインソース、0.5%/1%/日次1.5%損失制約、DD4%/5%の制御、NY17:00境界は不変。楽天MT4、EA、ブローカー、注文、建玉、未約定、ローカル秘密ログを使用しない。mainマージは本人のみが判断する。
 
 最新headに対するWindows Python 3.13 / IANA time zonesとRepository checksの両ジョブをCIで検証する。
+
+## PR監査チェック
+
+PR本文の必須項目「関連仕様ID」「テスト結果」「本人確認」を明示し、オフラインCIの再確認対象とした。これは本番取引の承認や安全認証を追加する変更ではない。
