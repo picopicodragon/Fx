@@ -41,6 +41,35 @@ def _safe_safety(value: object) -> bool:
 
 
 
+
+# Independent literal schema for the result of the *mock* upstream G1 validator.
+# A child status string alone cannot license any fabricated broker claim.
+EXPECTED_PRIMARY_REPORT = {
+    "status": "PASS_SYNTHETIC_CONTRACT_ONLY",
+    "synthetic_rows_expected": 15,
+    "real_broker_values_verified": 0,
+    "p05_passed": 0,
+    "real_mt4_read_authorized": False,
+    "order_authorized": False,
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": True,
+    "errors": [],
+}
+
+
+def _safe_primary_report(value: object) -> bool:
+    if not _exact_keys(value, tuple(EXPECTED_PRIMARY_REPORT)):
+        return False
+    for key, known in EXPECTED_PRIMARY_REPORT.items():
+        actual = value[key]
+        if type(actual) is not type(known):
+            return False
+        if actual != known:
+            return False
+    return True
+
+
+
 def fixture() -> dict:
     primary = base.make_synthetic_fixture()
     witness = {
@@ -79,10 +108,7 @@ def evaluate(data: object) -> dict:
             errors.append("P50_FORGED_REAL_EVIDENCE_OR_PERMISSION")
         try:
             first = base.check_synthetic_package(data["primary"])
-            first_ok = (type(first) is dict
-                        and all(type(k) is str for k in first)
-                        and type(first.get("status")) is str
-                        and first["status"] == "PASS_SYNTHETIC_CONTRACT_ONLY")
+            first_ok = _safe_primary_report(first)
         except Exception:
             first_ok = False
         if not first_ok:

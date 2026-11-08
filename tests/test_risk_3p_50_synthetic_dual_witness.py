@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import unittest
+from unittest.mock import patch
 
 from scripts import risk_3p_50_synthetic_dual_witness as mod
 
@@ -193,6 +194,155 @@ class FictionalDualWitnessTests(unittest.TestCase):
         self.assertEqual(state["status"], "FAIL_CLOSED")
         self.assertIn("P50_WITNESS_SCOPE_OR_FAKE_TIMESTAMP_INVALID", state["errors"])
         self.assertEqual(Value.calls, 0)
+
+
+    def _forged_primary(self, report):
+        with patch.object(mod.base, "check_synthetic_package",
+                          return_value=report):
+            result = mod.evaluate(copy.deepcopy(self.data))
+        self.assertEqual(result["status"], "FAIL_CLOSED")
+        self.assertIn("P50_PRIMARY_SYNTHETIC_PROVENANCE_INVALID",
+                      result["errors"])
+        self.assertEqual(result["actual_broker_fields_verified"], 0)
+        self.assertFalse(result["actual_source_independence_verified"])
+        self.assertFalse(result["real_mt4_read_authorized"])
+        self.assertFalse(result["orders_authorized"])
+        self.assertEqual(result["runtime_go_no_go"], "NO_GO")
+        self.assertTrue(result["safety_hold_latched"])
+        self.assertNotIn("PRIVATE_CANARY_175", str(result))
+
+    def test_actual_upstream_validator_matches_complete_fixed_schema(self):
+        parent = mod.base.check_synthetic_package(self.data["primary"])
+        self.assertEqual(parent, mod.EXPECTED_PRIMARY_REPORT)
+        self.assertTrue(mod._safe_primary_report(parent))
+        accepted = mod.evaluate(self.data)
+        self.assertEqual(accepted["status"], "PASS_TWO_FAKE_WITNESSES_ONLY")
+        self.assertFalse(accepted["orders_authorized"])
+
+    def test_forged_primary_access_true_cannot_produce_witness_pass(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["real_mt4_read_authorized"] = True
+        self._forged_primary(fake)
+
+    def test_forged_primary_order_authorization_true_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["order_authorized"] = True
+        self._forged_primary(fake)
+
+    def test_forged_primary_extra_permission_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["live_order_authorized"] = True
+        self._forged_primary(fake)
+
+    def test_forged_primary_broker_evidence_count_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["real_broker_values_verified"] = 15
+        self._forged_primary(fake)
+
+    def test_forged_primary_passed_p05_count_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["p05_passed"] = 1
+        self._forged_primary(fake)
+
+    def test_forged_primary_coverage_count_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["synthetic_rows_expected"] = 14
+        self._forged_primary(fake)
+
+    def test_forged_primary_no_go_changed_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["runtime_go_no_go"] = "GO"
+        self._forged_primary(fake)
+
+    def test_forged_primary_latch_false_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["safety_hold_latched"] = False
+        self._forged_primary(fake)
+
+    def test_forged_primary_bool_int_type_spoof_rejected(self):
+        for key, known in mod.EXPECTED_PRIMARY_REPORT.items():
+            if type(known) is bool:
+                with self.subTest(field=key):
+                    fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+                    fake[key] = int(known)
+                    self._forged_primary(fake)
+            elif type(known) is int:
+                with self.subTest(field=key):
+                    fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+                    fake[key] = bool(known)
+                    self._forged_primary(fake)
+
+    def test_forged_primary_nonempty_error_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["errors"] = ["PRIVATE_CANARY_175"]
+        self._forged_primary(fake)
+
+    def test_forged_primary_error_field_missing_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        del fake["errors"]
+        self._forged_primary(fake)
+
+    def test_forged_primary_errors_string_instead_of_list_rejected(self):
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["errors"] = ""
+        self._forged_primary(fake)
+
+    def test_forged_primary_status_only_is_insufficient(self):
+        fake = {"status": "PASS_SYNTHETIC_CONTRACT_ONLY"}
+        self._forged_primary(fake)
+
+    def test_forged_primary_dict_subclass_rejected_without_custom_items(self):
+        class Rogue(dict):
+            calls = 0
+            def items(self):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_175")
+        fake = Rogue(mod.EXPECTED_PRIMARY_REPORT)
+        self._forged_primary(fake)
+        self.assertEqual(Rogue.calls, 0)
+
+    def test_forged_primary_comparator_not_executed(self):
+        class Poison:
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_175")
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_175")
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake["runtime_go_no_go"] = Poison()
+        self._forged_primary(fake)
+        self.assertEqual(Poison.calls, 0)
+
+    def test_forged_primary_unknown_object_key_not_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("UNKNOWN_PRIVATE_CANARY_175")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_175")
+        fake = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake[Key()] = False
+        Key.calls = 0
+        self._forged_primary(fake)
+        self.assertEqual(Key.calls, 0)
+
+    def test_forged_primary_malformed_result_does_not_echo_secret(self):
+        for value in (None, [], "PRIVATE_CANARY_175", 1, False):
+            with self.subTest(value=repr(value)):
+                self._forged_primary(value)
+
+    def test_strict_primary_report_unchanged_after_forgery_attempts(self):
+        before = copy.deepcopy(mod.EXPECTED_PRIMARY_REPORT)
+        fake = copy.deepcopy(before)
+        fake["errors"].append("PRIVATE_CANARY_175")
+        self._forged_primary(fake)
+        self.assertEqual(mod.EXPECTED_PRIMARY_REPORT, before)
+        self.assertTrue(mod._safe_primary_report(
+            mod.base.check_synthetic_package(self.data["primary"])))
 
 
 if __name__ == "__main__":
