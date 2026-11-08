@@ -51,6 +51,25 @@ META = {
 }
 
 
+def _plain_keys(value: object) -> bool:
+    return type(value) is dict and all(type(k) is str for k in value)
+
+
+def _same(value: object, expected: object) -> bool:
+    """Compare only exact builtin types, never arbitrary user __eq__ hooks."""
+    if type(value) is not type(expected):
+        return False
+    if type(expected) is dict:
+        return (_plain_keys(value) and set(value) == set(expected)
+                and all(_same(value[k], v) for k, v in expected.items()))
+    if type(expected) in (list, tuple):
+        return (len(value) == len(expected)
+                and all(_same(a, b) for a, b in zip(value, expected)))
+    if type(expected) not in (str, int, bool, type(None)):
+        return False
+    return value == expected
+
+
 def check_acyclic(items: object) -> list[str]:
     """Independent graph checks, no reflection or dynamic source execution."""
     if type(items) is not list or len(items) != 8:
@@ -59,7 +78,7 @@ def check_acyclic(items: object) -> list[str]:
     mapping = {}
     errors = []
     for i, row in enumerate(items):
-        if type(row) is not dict or set(row) != set(ROW_KEYS):
+        if not _plain_keys(row) or set(row) != set(ROW_KEYS):
             errors.append("P59_ROW_SCHEMA:" + str(i + 1))
             continue
         name, depends = row.get("check_id"), row.get("depends_on")
@@ -105,44 +124,45 @@ def audit(root: Path = ROOT, injected: dict | None = None) -> list[str]:
             path: _read(root, path) for path in (GRAPH, P05)
         }
         doc, p05 = (sources[key] for key in (GRAPH, P05))
-        if type(doc) is not dict or type(p05) is not dict:
+        if (not _plain_keys(sources) or not _plain_keys(doc)
+                or not _plain_keys(p05)):
             return ["P59_MALFORMED_OR_MISSING_SOURCE"]
         if (set(doc) != set(META) | {"checks", "state"}
-                or any(doc.get(k) != v for k, v in META.items())):
+                or any(not _same(doc.get(k), v) for k, v in META.items())):
             errors.append("P59_DEPENDENCY_PLAN_SCOPE_DRIFT")
-        if doc.get("state") != STATE:
+        if not _same(doc.get("state"), STATE):
             errors.append("P59_REAL_BROKER_OR_OWNER_APPROVAL_FORGED")
         rows = doc.get("checks")
         errors.extend(check_acyclic(rows))
         if type(rows) is list and len(rows) == 8:
             for i, row in enumerate(rows):
-                if (type(row) is not dict or set(row) != set(ROW_KEYS)
-                        or row.get("check_id") != IDS[i]
-                        or row.get("criterion") != CRITERIA[i]
-                        or row.get("depends_on") != list(EDGES[i])
+                if (not _plain_keys(row) or set(row) != set(ROW_KEYS)
+                        or not _same(row.get("check_id"), IDS[i])
+                        or not _same(row.get("criterion"), CRITERIA[i])
+                        or not _same(row.get("depends_on"), list(EDGES[i]))
                         or row.get("independent_evidence_verified") is not False
                         or row.get("owner_signed") is not False
-                        or row.get("status") !=
-                        "BLOCKED_NOT_INDEPENDENTLY_VERIFIED"):
+                        or not _same(row.get("status"),
+                                     "BLOCKED_NOT_INDEPENDENTLY_VERIFIED")):
                     errors.append("P59_GATE_ORDER_OR_AUTHORIZATION_PROMOTED:"
                                   + str(i + 1))
         original = p05.get("p05_checks")
         if (type(original) is not list or len(original) != 8
-                or p05.get("p05_passed_checks") != 0
+                or not _same(p05.get("p05_passed_checks"), 0)
                 or p05.get("p05_human_safety_signoff") is not False
                 or p05.get("p06_observation_authorized") is not False
-                or p05.get("runtime_go_no_go") != "NO_GO"
+                or not _same(p05.get("runtime_go_no_go"), "NO_GO")
                 or p05.get("safety_hold_latched") is not True):
             errors.append("P59_SOURCE_P05_STILL_UNACCEPTED_REQUIRED")
         else:
             for i, row in enumerate(original):
-                if (type(row) is not dict
-                        or row.get("check_id") != IDS[i]
+                if (not _plain_keys(row)
+                        or not _same(row.get("check_id"), IDS[i])
                         or row.get("p05_accepted") is not False
                         or row.get("safe_to_proceed") is not False):
                     errors.append("P59_SOURCE_HUMAN_SIGNOFF_FALSE:"
                                   + str(i + 1))
-    except (OSError, TypeError, ValueError, KeyError, AttributeError):
+    except Exception:
         errors.append("P59_INVALID_OR_MISSING_OFFLINE_SPEC")
     return errors
 
