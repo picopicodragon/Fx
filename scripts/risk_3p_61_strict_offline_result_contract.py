@@ -75,16 +75,28 @@ EXPECTED_NAMES = (
 )
 
 
+def _plain_text_keys(record: object, expected_keys: object) -> bool:
+    """Reject user-defined hash/eq hooks before any key set or lookup."""
+    if type(record) is not dict:
+        return False
+    if any(type(key) is not str for key in record):
+        return False
+    return set(record) == set(expected_keys)
+
+
 def _strict_same(actual: object, expected: object) -> bool:
     if type(actual) is not type(expected):
         return False
-    if type(actual) is dict:
-        return (set(actual) == set(expected)
+    if type(expected) is dict:
+        return (_plain_text_keys(actual, expected)
                 and all(_strict_same(actual[key], value)
                         for key, value in expected.items()))
-    if type(actual) is list:
+    if type(expected) is list:
         return (len(actual) == len(expected)
                 and all(_strict_same(a, b) for a, b in zip(actual, expected)))
+    # The expected contract contains only built-in primitives. No custom __eq__.
+    if type(expected) not in (str, int, bool, type(None)):
+        return False
     return actual == expected
 
 
@@ -100,7 +112,7 @@ def check(name: object, record: object) -> list[str]:
 
 def snapshot(records: object) -> dict:
     errors = []
-    if type(records) is not dict or set(records) != set(EXPECTED_NAMES):
+    if not _plain_text_keys(records, EXPECTED_NAMES):
         errors.append("P61_REQUIRED_SEVEN_REPORTS_OR_EXTRA_PAYLOAD")
     else:
         for name in EXPECTED_NAMES:
