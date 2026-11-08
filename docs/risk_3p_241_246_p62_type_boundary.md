@@ -17,3 +17,7 @@ python -m unittest discover -s tests -p "test*.py"
 Q109の固定45ソース・テスト対応・承認台帳・production_authorized=falseは不変更。P05 0/8 BLOCKED、G1実証0/15、FX-SAF原議0/15、FORM承認0/43、PHASE-1 BLOCKED、runtime NO_GO、停止ラッチtrue、verified_values=null、1取引0.5%、同時1.0%、日次1.5%、DD4%・5%、NY17:00の安全条件を維持。mainへのマージは本人のみ。
 
 合成・公開仕様の検査PASSは実ブローカーの安全性、本人承認、稼働許可を意味しない。GitHub ActionsのWindows Python 3.13/IANA time zonesとRepository checksで最新headを確認する。
+
+## PR監査チェック
+
+PR本文の必須項目「関連仕様ID」「テスト結果」「本人確認」を明示し、オフラインCIの再確認対象とした。これは本番取引の承認や安全認証を追加する変更ではない。
