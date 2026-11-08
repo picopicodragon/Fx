@@ -91,8 +91,9 @@ def campaign() -> dict:
                 errors.append("P64_COMPOSITE_INTEGRATION_MISSED:" + str(i))
             if CANARY in str(gate):
                 errors.append("P64_INTEGRATION_ECHOED_PRIVATE_VALUE:" + str(i))
-    except (ValueError, TypeError, KeyError, AttributeError, IndexError,
-            RecursionError):
+    except Exception:
+        # A mock subcheck can raise unexpected Exception subclasses.
+        # Keep a fixed code: never echo an injected value or partial result.
         errors.append("P64_OFFLINE_ADVERSARIAL_HARNESS_FAILURE")
     return {
         "status": "PASS_SEVENTY_MOCK_CORRUPTIONS_ONLY"
