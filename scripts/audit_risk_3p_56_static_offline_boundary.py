@@ -59,7 +59,7 @@ ALLOWED_SCRIPT_MODULES = frozenset((
 ))
 
 
-def _inspect_source(source: object) -> list[str]:
+def _inspect_source_impl(source: object) -> list[str]:
     """Fixed error codes only; never echo or run untrusted source."""
     if type(source) is not str or not source:
         return ["P56_INVALID_SOURCE"]
@@ -108,6 +108,14 @@ def _inspect_source(source: object) -> list[str]:
     return list(dict.fromkeys(errors))
 
 
+def _inspect_source(source: object) -> list[str]:
+    """Only fixed error codes leave the static scanner on failure."""
+    try:
+        return _inspect_source_impl(source)
+    except Exception:
+        return ["P56_INVALID_PYTHON_SYNTAX"]
+
+
 def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
     errors = []
     # Inspect the actual built-in dict key/value types before any membership
@@ -127,7 +135,7 @@ def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
                 overrides[path] if type(overrides) is dict and path in overrides
                 else (root / path).read_text(encoding="utf-8"))
             findings = _inspect_source(source)
-        except (OSError, UnicodeError, ValueError):
+        except Exception:
             findings = ["P56_TARGET_MISSING_OR_UNREADABLE"]
         errors.extend(f"P56_TARGET_{position}:" + code for code in findings)
     return errors
