@@ -70,8 +70,9 @@ def campaign() -> dict:
                 errors.append("P70_SENSITIVE_RESULT_ECHOED")
         if completed != EXPECTED_SCENARIOS:
             errors.append("P70_INCOMPLETE_29_MOCK_FAULT_CAMPAIGN")
-    except (OSError, KeyError, ValueError, TypeError,
-            IndexError, AttributeError, RecursionError):
+    except Exception:
+        # A synthetic audit source may raise arbitrary Exception subclasses.
+        # Never leak its message or report partial success as authorization.
         errors.append("P70_SYNTHETIC_CAMPAIGN_INPUT_INVALID")
     return {
         "status": "PASS_TWENTY_NINE_OFFLINE_ATTACKS_ONLY"
