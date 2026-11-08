@@ -98,5 +98,131 @@ class SyntheticClockTests(unittest.TestCase):
             self.assertNotIn("CANARY_57", str(state))
 
 
+    def test_safety_false_to_zero_is_not_a_real_permission(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is bool and value is False:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k: 0}),
+                                "P57_REAL_FRESHNESS_OR_RUNTIME_PERMISSION_FORGED")
+
+    def test_safety_true_to_one_is_rejected(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is bool and value is True:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k: 1}),
+                                "P57_REAL_FRESHNESS_OR_RUNTIME_PERMISSION_FORGED")
+
+    def test_safety_zero_counter_to_false_is_rejected(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is int and value == 0:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k: False}),
+                                "P57_REAL_FRESHNESS_OR_RUNTIME_PERMISSION_FORGED")
+
+    def test_poison_root_key_not_rehashed_in_evaluate(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("account_alias")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.data)
+        v = d.pop("account_alias")
+        d[Key()] = v
+        Key.calls = 0
+        r = mod.evaluate(d)
+        self.assertEqual(r["status"], "FAIL_CLOSED")
+        self.assertIn("P57_ENVELOPE_MISSING_OR_PRIVATE_FIELDS", r["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_poison_stream_key_not_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("origin")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.data)
+        v = d["terminal"].pop("origin")
+        d["terminal"][Key()] = v
+        Key.calls = 0
+        r = mod.evaluate(d)
+        self.assertEqual(r["status"], "FAIL_CLOSED")
+        self.assertIn("P57_STREAM_MISSING_OR_SENSITIVE_FIELDS:terminal",
+                      r["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_poison_sample_key_not_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("seq")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.data)
+        v = d["terminal"]["samples"][0].pop("seq")
+        d["terminal"]["samples"][0][Key()] = v
+        Key.calls = 0
+        r = mod.evaluate(d)
+        self.assertEqual(r["status"], "FAIL_CLOSED")
+        self.assertIn("P57_BAD_SEQUENCE_OR_MONOTONIC_SAMPLE:1:terminal",
+                      r["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_poison_account_alias_comparator_never_invoked(self):
+        class Value:
+            calls = 0
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.data)
+        d["account_alias"] = Value()
+        r = mod.evaluate(d)
+        self.assertIn("P57_REAL_SOURCE_OR_ACCOUNT_SPOOF", r["errors"])
+        self.assertEqual(Value.calls, 0)
+
+    def test_poison_stream_origin_comparator_never_invoked(self):
+        class Value:
+            calls = 0
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.data)
+        d["witness"]["origin"] = Value()
+        r = mod.evaluate(d)
+        self.assertIn("P57_SOURCE_IDENTITY_OR_SESSION_CHANGED:witness",
+                      r["errors"])
+        self.assertEqual(Value.calls, 0)
+
+    def test_poison_safety_dict_subclass_never_calls_custom_equality(self):
+        class Rogue(dict):
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.data)
+        d["safety"] = Rogue(d["safety"])
+        r = mod.evaluate(d)
+        self.assertIn("P57_REAL_FRESHNESS_OR_RUNTIME_PERMISSION_FORGED",
+                      r["errors"])
+        self.assertEqual(Rogue.calls, 0)
+
+    def test_normal_synthetic_timeline_still_never_authorizes_orders(self):
+        r = mod.evaluate(self.data)
+        self.assertEqual(r["status"], "PASS_SIMULATED_CLOCK_CONSISTENCY_ONLY")
+        self.assertEqual(r["synthetic_sample_pairs"], 3)
+        self.assertIs(r["real_timestamp_authenticity_verified"], False)
+        self.assertIs(r["real_clock_monotonicity_verified"], False)
+        self.assertIs(r["order_or_ea_action_authorized"], False)
+        self.assertEqual(r["runtime_go_no_go"], "NO_GO")
+        self.assertTrue(r["safety_hold_latched"])
+
+
 if __name__ == "__main__":
     unittest.main()

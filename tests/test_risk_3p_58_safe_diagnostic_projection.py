@@ -90,5 +90,130 @@ class PrivateFreeDiagnosticTests(unittest.TestCase):
                 self.assertNotIn("PRIVATE_CANARY_58", str(result))
 
 
+    def test_safety_false_to_zero_is_not_an_authorized_status(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is bool and value is False:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k: 0}),
+                                "P58_SCOPE_OR_PERMISSION_SPOOF")
+
+    def test_safety_true_to_one_is_rejected(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is bool and value is True:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k: 1}),
+                                "P58_SCOPE_OR_PERMISSION_SPOOF")
+
+    def test_safety_zero_count_to_false_is_rejected(self):
+        for key, value in mod.SAFETY.items():
+            if type(value) is int and value == 0:
+                with self.subTest(key=key):
+                    self.reject(lambda d,k=key: d["safety"].update({k: False}),
+                                "P58_SCOPE_OR_PERMISSION_SPOOF")
+
+    def test_poison_root_key_not_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("classification")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.base)
+        v = d.pop("classification")
+        d[Key()] = v
+        Key.calls = 0
+        r = mod.summarize(d)
+        self.assertIn("P58_UNKNOWN_ENVELOPE_OR_RAW_DATA_FIELD", r["errors"])
+        self.assertEqual(Key.calls, 0)
+        self.assertNotIn("PRIVATE_CANARY_181", str(r))
+
+    def test_poison_check_key_not_rehashed(self):
+        class Key:
+            calls = 0
+            def __hash__(self):
+                type(self).calls += 1
+                return hash("name")
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.base)
+        v = d["checks"][0].pop("name")
+        d["checks"][0][Key()] = v
+        Key.calls = 0
+        r = mod.summarize(d)
+        self.assertIn("P58_UNSAFE_OR_UNTRUSTED_RESULT:1", r["errors"])
+        self.assertEqual(Key.calls, 0)
+
+    def test_poison_classification_comparison_not_invoked(self):
+        class Value:
+            calls = 0
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.base)
+        d["classification"] = Value()
+        r = mod.summarize(d)
+        self.assertIn("P58_SCOPE_OR_PERMISSION_SPOOF", r["errors"])
+        self.assertEqual(Value.calls, 0)
+
+    def test_poison_check_name_comparison_not_invoked(self):
+        class Value:
+            calls = 0
+            def __ne__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.base)
+        d["checks"][0]["name"] = Value()
+        r = mod.summarize(d)
+        self.assertIn("P58_UNSAFE_OR_UNTRUSTED_RESULT:1", r["errors"])
+        self.assertEqual(Value.calls, 0)
+
+    def test_untrusted_raw_error_list_subclass_not_accepted(self):
+        class Raw(list):
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.base)
+        d["checks"][0]["raw_errors"] = Raw()
+        r = mod.summarize(d)
+        self.assertIn("P58_UNSAFE_OR_UNTRUSTED_RESULT:1", r["errors"])
+        self.assertEqual(Raw.calls, 0)
+
+    def test_nonempty_raw_errors_never_echo_private_strings(self):
+        d = copy.deepcopy(self.base)
+        d["checks"][0]["raw_errors"] = ["PRIVATE_CANARY_181"]
+        r = mod.summarize(d)
+        self.assertEqual(r["status"], "FAIL_CLOSED")
+        self.assertNotIn("PRIVATE_CANARY_181", str(r))
+        self.assertEqual(r["synthetic_checks_consistent"], 0)
+
+    def test_safety_subclass_does_not_run_unsafe_equality(self):
+        class Rogue(dict):
+            calls = 0
+            def __eq__(self, other):
+                type(self).calls += 1
+                raise RuntimeError("PRIVATE_CANARY_181")
+        d = copy.deepcopy(self.base)
+        d["safety"] = Rogue(d["safety"])
+        r = mod.summarize(d)
+        self.assertIn("P58_SCOPE_OR_PERMISSION_SPOOF", r["errors"])
+        self.assertEqual(Rogue.calls, 0)
+
+    def test_baseline_diagnostic_summary_never_becomes_broker_proof(self):
+        r = mod.summarize(self.base)
+        self.assertEqual(r["status"], "PASS_SAFE_FAKE_SUMMARY_ONLY")
+        self.assertEqual(r["synthetic_checks_consistent"], 4)
+        self.assertEqual(r["p05_passed"], 0)
+        self.assertEqual(r["g1_real_verified"], 0)
+        self.assertIs(r["submitted_values_echoed"], False)
+        self.assertIs(r["order_execution_authorized"], False)
+        self.assertIs(r["real_mt4_read_authorized"], False)
+        self.assertEqual(r["runtime_go_no_go"], "NO_GO")
+        self.assertTrue(r["safety_hold_latched"])
+
+
 if __name__ == "__main__":
     unittest.main()

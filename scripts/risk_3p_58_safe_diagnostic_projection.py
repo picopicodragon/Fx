@@ -23,6 +23,32 @@ SAFETY = {
 }
 
 
+def _exact_keys(value: object, names: tuple[str, ...]) -> bool:
+    if type(value) is not dict or len(value) != len(names):
+        return False
+    found = tuple(value)
+    return all(type(k) is str for k in found) and set(found) == set(names)
+
+
+def _safe_safety(value: object) -> bool:
+    if not _exact_keys(value, tuple(SAFETY)):
+        return False
+    return all(type(value[k]) is type(SAFETY[k]) and value[k] == SAFETY[k]
+               for k in SAFETY)
+
+
+def _safe_mock_check(value: object, name: str, expected: str) -> bool:
+    if not _exact_keys(value, CHECK_KEYS):
+        return False
+    return (type(value["name"]) is str and value["name"] == name
+            and type(value["mock_status"]) is str
+            and value["mock_status"] == expected
+            and value["mock_only"] is True
+            and value["real_evidence_verified"] is False
+            and type(value["raw_errors"]) is list
+            and value["raw_errors"] == [])
+
+
 def fixture() -> dict:
     return {
         "classification": "FICTIONAL_QA_SUMMARY_NO_REAL_PAYLOAD",
@@ -39,12 +65,13 @@ def fixture() -> dict:
 def summarize(untrusted: object) -> dict:
     """All output keys/values are locally constructed fixed codes and counts."""
     codes = []
-    if type(untrusted) is not dict or set(untrusted) != set(ROOT_KEYS):
+    if not _exact_keys(untrusted, ROOT_KEYS):
         codes.append("P58_UNKNOWN_ENVELOPE_OR_RAW_DATA_FIELD")
     else:
-        if (untrusted["classification"] !=
+        if (type(untrusted["classification"]) is not str
+                or untrusted["classification"] !=
                 "FICTIONAL_QA_SUMMARY_NO_REAL_PAYLOAD"
-                or untrusted["safety"] != SAFETY):
+                or not _safe_safety(untrusted["safety"])):
             codes.append("P58_SCOPE_OR_PERMISSION_SPOOF")
         checks = untrusted["checks"]
         if type(checks) is not list or len(checks) != 4:
@@ -52,12 +79,7 @@ def summarize(untrusted: object) -> dict:
         else:
             for i, (name, expected) in enumerate(zip(NAMES, EXPECTED), 1):
                 value = checks[i - 1]
-                if (type(value) is not dict or set(value) != set(CHECK_KEYS)
-                        or value.get("name") != name
-                        or value.get("mock_status") != expected
-                        or value.get("mock_only") is not True
-                        or value.get("real_evidence_verified") is not False
-                        or value.get("raw_errors") != []):
+                if not _safe_mock_check(value, name, expected):
                     codes.append("P58_UNSAFE_OR_UNTRUSTED_RESULT:" + str(i))
     return {
         "status": "PASS_SAFE_FAKE_SUMMARY_ONLY" if not codes else "FAIL_CLOSED",
