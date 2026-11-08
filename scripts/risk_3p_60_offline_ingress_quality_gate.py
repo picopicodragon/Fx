@@ -63,37 +63,57 @@ def _outputs(root: Path = ROOT):
     )
 
 
+def _plain_keys(record: object) -> bool:
+    """Check exact plain-string keys before hashing, membership or lookup."""
+    return (type(record) is dict
+            and all(type(key) is str for key in record))
+
+
 def evaluate(root: Path = ROOT, injected: dict | None = None) -> dict:
-    errors = []
-    try:
-        outputs = _outputs(root)
-        for i, (name, status, actual) in enumerate(
-                zip(NAMES, EXPECTED, outputs), 1):
-            result = injected.get(name, actual) if type(injected) is dict else actual
-            if (type(result) is not dict
-                    or result.get("status") != status
-                    or result.get("errors") != []
-                    or result.get("runtime_go_no_go") != "NO_GO"
-                    or result.get("safety_hold_latched") is not True):
-                errors.append("P60_OFFLINE_CASE_UNTRUSTED:" + str(i))
-                continue
-            if any(key in result and result[key] is not False
-                   for key in DENIED_TRUE):
-                errors.append("P60_REAL_WORLD_PERMISSION_FORGED:" + str(i))
-            if any(key in result and
-                   (type(result[key]) is not int or result[key] != 0)
-                   for key in ZERO_COUNTERS):
-                errors.append("P60_UNVERIFIED_COUNT_PROMOTED:" + str(i))
-        selected = {name: injected.get(name, actual)
-                    if type(injected) is dict else actual
-                    for name, actual in zip(NAMES, outputs)}
-        errors.extend(strict.snapshot(selected)["errors"])
-        if injected is not None and (type(injected) is not dict
-                                     or set(injected) - set(NAMES)):
-            errors.append("P60_UNAUTHORIZED_OR_PRIVATE_CASE_INSERTION")
-    except (OSError, TypeError, ValueError, KeyError, IndexError,
-            AttributeError, RecursionError):
-        errors.append("P60_MISSING_OR_INVALID_OFFLINE_INPUT")
+    errors: list[str] = []
+    # Do not call dict.get on a user-controlled dictionary before validating
+    # its keys. A custom __hash__/__eq__ could otherwise run at lookup time.
+    valid_injection = injected is None or _plain_keys(injected)
+    if not valid_injection:
+        errors.append("P60_UNAUTHORIZED_OR_PRIVATE_CASE_INSERTION")
+    elif injected is not None and set(injected) - set(NAMES):
+        errors.append("P60_UNAUTHORIZED_OR_PRIVATE_CASE_INSERTION")
+
+    if not errors:
+        try:
+            outputs = _outputs(root)
+            selected = {}
+            for i, (name, status, actual) in enumerate(
+                    zip(NAMES, EXPECTED, outputs), 1):
+                row = injected.get(name, actual) if injected is not None else actual
+                if not _plain_keys(row):
+                    errors.append("P60_OFFLINE_CASE_UNTRUSTED:" + str(i))
+                    continue
+                status_value = row.get("status")
+                err_value = row.get("errors")
+                runtime_value = row.get("runtime_go_no_go")
+                if (type(status_value) is not str or status_value != status
+                        or type(err_value) is not list or err_value != []
+                        or type(runtime_value) is not str
+                        or runtime_value != "NO_GO"
+                        or row.get("safety_hold_latched") is not True):
+                    errors.append("P60_OFFLINE_CASE_UNTRUSTED:" + str(i))
+                    continue
+                if any(key in row and row[key] is not False
+                       for key in DENIED_TRUE):
+                    errors.append("P60_REAL_WORLD_PERMISSION_FORGED:" + str(i))
+                if any(key in row and
+                       (type(row[key]) is not int or row[key] != 0)
+                       for key in ZERO_COUNTERS):
+                    errors.append("P60_UNVERIFIED_COUNT_PROMOTED:" + str(i))
+                selected[name] = row
+            # No potentially untrusted nested record reaches the strict
+            # contract verifier after an earlier shape or authority error.
+            if not errors:
+                errors.extend(strict.snapshot(selected)["errors"])
+        except (OSError, TypeError, ValueError, KeyError, IndexError,
+                AttributeError, RecursionError):
+            errors.append("P60_MISSING_OR_INVALID_OFFLINE_INPUT")
     return {
         "status": "PASS_COMBINED_OFFLINE_DESIGN_QA_ONLY"
         if not errors else "FAIL_CLOSED",
