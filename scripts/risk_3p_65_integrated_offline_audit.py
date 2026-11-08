@@ -100,44 +100,63 @@ def _outputs(root: Path = ROOT) -> tuple[dict, ...]:
     )
 
 
+def _plain_keys(record: object) -> bool:
+    """Never hash or compare injected keys before an exact built-in type check."""
+    return type(record) is dict and all(type(k) is str for k in record)
+
+
 def evaluate(root: Path = ROOT, injected: dict | None = None) -> dict:
     errors: list[str] = []
-    try:
-        records = _outputs(root)
-        for i, (name, status, allowed, current) in enumerate(
-                zip(NAMES, STATUS, EXPECTED_FIELDS, records), 1):
-            row = injected.get(name, current) if type(injected) is dict else current
-            code = str(i)
-            if (type(row) is not dict or set(row) != set(allowed)
-                    or row.get("status") != status
-                    or row.get("errors") != []
-                    or row.get("runtime_go_no_go") != "NO_GO"
-                    or row.get("safety_hold_latched") is not True):
-                errors.append("P65_INVALID_INTEGRATION_RESULT:" + code)
-                continue
-            if any(key in row and row[key] is not False
-                   for key in REQUIRE_FALSE):
-                errors.append("P65_FORGED_REAL_WORLD_AUTHORITY:" + code)
-            if any(key in row and
-                   (type(row[key]) is not int or row[key] != 0)
-                   for key in ZERO):
-                errors.append("P65_FALSE_ACCEPTANCE_COUNTER:" + code)
-            if any(key in row and
-                   (type(row[key]) is not int or row[key] != num)
-                   for key, num in COUNTS):
-                errors.append("P65_TEST_COVERAGE_COUNT_DRIFT:" + code)
-            if name == "existing_mock_quality" and row.get(
-                    "synthetic_data_only") is not True:
-                errors.append("P65_NOT_SYNTHETIC_ONLY")
-            if name == "blocked_p05_dependencies" and row.get(
-                    "owner_storage_accepted_for_offline_planning") is not True:
-                errors.append("P65_OWNER_OFFLINE_STORAGE_SCOPE_DRIFT")
-        if injected is not None and (
-                type(injected) is not dict or set(injected) - set(NAMES)):
+    if injected is not None:
+        if not _plain_keys(injected):
             errors.append("P65_UNKNOWN_OR_PRIVATE_RESULT_INJECTION")
-    except (OSError, TypeError, KeyError, ValueError,
-            AttributeError, IndexError, RecursionError):
-        errors.append("P65_OFFLINE_QUALITY_INPUT_INVALID")
+        elif set(injected) - set(NAMES):
+            errors.append("P65_UNKNOWN_OR_PRIVATE_RESULT_INJECTION")
+
+    if not errors:
+        try:
+            records = _outputs(root)
+            for i, (name, status, allowed, current) in enumerate(
+                    zip(NAMES, STATUS, EXPECTED_FIELDS, records), 1):
+                row = injected.get(name, current) if injected is not None else current
+                code = str(i)
+                # A malicious key must never reach set(row), get or membership.
+                if not _plain_keys(row):
+                    errors.append("P65_INVALID_INTEGRATION_RESULT:" + code)
+                    continue
+                actual_status = row.get("status")
+                actual_errors = row.get("errors")
+                actual_runtime = row.get("runtime_go_no_go")
+                if (set(row) != set(allowed)
+                        or type(actual_status) is not str
+                        or actual_status != status
+                        or type(actual_errors) is not list
+                        or actual_errors != []
+                        or type(actual_runtime) is not str
+                        or actual_runtime != "NO_GO"
+                        or row.get("safety_hold_latched") is not True):
+                    errors.append("P65_INVALID_INTEGRATION_RESULT:" + code)
+                    continue
+                if any(key in row and row[key] is not False
+                       for key in REQUIRE_FALSE):
+                    errors.append("P65_FORGED_REAL_WORLD_AUTHORITY:" + code)
+                if any(key in row and
+                       (type(row[key]) is not int or row[key] != 0)
+                       for key in ZERO):
+                    errors.append("P65_FALSE_ACCEPTANCE_COUNTER:" + code)
+                if any(key in row and
+                       (type(row[key]) is not int or row[key] != num)
+                       for key, num in COUNTS):
+                    errors.append("P65_TEST_COVERAGE_COUNT_DRIFT:" + code)
+                if name == "existing_mock_quality" and row.get(
+                        "synthetic_data_only") is not True:
+                    errors.append("P65_NOT_SYNTHETIC_ONLY")
+                if name == "blocked_p05_dependencies" and row.get(
+                        "owner_storage_accepted_for_offline_planning") is not True:
+                    errors.append("P65_OWNER_OFFLINE_STORAGE_SCOPE_DRIFT")
+        except (OSError, TypeError, KeyError, ValueError,
+                AttributeError, IndexError, RecursionError):
+            errors.append("P65_OFFLINE_QUALITY_INPUT_INVALID")
     return {
         "status": "PASS_GOVERNANCE_DESIGN_ONLY" if not errors
         else "FAIL_CLOSED",
