@@ -132,42 +132,60 @@ def _outputs(root: Path = ROOT) -> tuple[dict, ...]:
     )
 
 
+def _plain_keys(record: object) -> bool:
+    """Reject custom hash/equality hooks before set(), get() or membership."""
+    return type(record) is dict and all(type(key) is str for key in record)
+
+
 def evaluate(root: Path = ROOT, injected: dict | None = None) -> dict:
-    errors = []
-    try:
-        if injected is not None and (type(injected) is not dict
-                                     or set(injected) - set(NAMES)):
+    errors: list[str] = []
+    # Unknown injected root data is never needed for ordinary offline checks.
+    # Verify it before any set arithmetic, dict lookup or child evaluation.
+    if injected is not None:
+        if not _plain_keys(injected) or set(injected) - set(NAMES):
             errors.append("P71_UNKNOWN_OR_PRIVATE_RESULT_NAME")
-        records = _outputs(root)
-        for n, (name, expected, row) in enumerate(
-                zip(NAMES, STATUS, records), 1):
-            code = str(n)
-            if type(injected) is dict:
-                row = injected.get(name, row)
-            if (type(row) is not dict
-                    or row.get("status") != expected
-                    or row.get("errors") != []
-                    or row.get("runtime_go_no_go") != "NO_GO"
-                    or row.get("safety_hold_latched") is not True):
-                errors.append("P71_CHILD_REPORT_MISSING_OR_INVALID:" + code)
-                continue
-            if not exact._strict_same(row, EXPECTED_CHILD_REPORTS[n - 1]):
-                errors.append("P71_UNREVIEWED_CHILD_FIELD_OR_TYPE:" + code)
-            if any(k in row and row[k] is not False for k in FALSE_FLAGS):
-                errors.append("P71_REAL_PERMISSION_OR_FALSE_PROOF:" + code)
-            if any(k in row and
-                   (type(row[k]) is not int or row[k] != 0)
-                   for k in ZERO_FLAGS):
-                errors.append("P71_P05_G1_FAKE_PASS:" + code)
-            if any(k in row and
-                   (type(row[k]) is not int or row[k] != value)
-                   for k, value in COUNT_FIELDS):
-                errors.append("P71_COVERAGE_COUNTER_CHANGED:" + code)
-        if len(records) != len(NAMES):
-            errors.append("P71_INCOMPLETE_SEVEN_GATE_CHAIN")
-    except (OSError, KeyError, TypeError, ValueError, AttributeError,
-            IndexError, RecursionError):
-        errors.append("P71_OFFLINE_EVALUATOR_FAILURE")
+
+    if not errors:
+        try:
+            records = _outputs(root)
+            if type(records) not in (list, tuple) or len(records) != len(NAMES):
+                errors.append("P71_INCOMPLETE_SEVEN_GATE_CHAIN")
+            else:
+                for n, (name, status, row) in enumerate(
+                        zip(NAMES, STATUS, records), 1):
+                    code = str(n)
+                    if injected is not None:
+                        row = injected.get(name, row)
+                    if not _plain_keys(row):
+                        errors.append("P71_CHILD_REPORT_MISSING_OR_INVALID:" + code)
+                        continue
+                    actual_status = row.get("status")
+                    actual_errors = row.get("errors")
+                    actual_runtime = row.get("runtime_go_no_go")
+                    if (type(actual_status) is not str
+                            or actual_status != status
+                            or type(actual_errors) is not list
+                            or actual_errors != []
+                            or type(actual_runtime) is not str
+                            or actual_runtime != "NO_GO"
+                            or row.get("safety_hold_latched") is not True):
+                        errors.append("P71_CHILD_REPORT_MISSING_OR_INVALID:" + code)
+                        continue
+                    if not exact._strict_same(row, EXPECTED_CHILD_REPORTS[n - 1]):
+                        errors.append("P71_UNREVIEWED_CHILD_FIELD_OR_TYPE:" + code)
+                    if any(k in row and row[k] is not False for k in FALSE_FLAGS):
+                        errors.append("P71_REAL_PERMISSION_OR_FALSE_PROOF:" + code)
+                    if any(k in row and
+                           (type(row[k]) is not int or row[k] != 0)
+                           for k in ZERO_FLAGS):
+                        errors.append("P71_P05_G1_FAKE_PASS:" + code)
+                    if any(k in row and
+                           (type(row[k]) is not int or row[k] != value)
+                           for k, value in COUNT_FIELDS):
+                        errors.append("P71_COVERAGE_COUNTER_CHANGED:" + code)
+        except Exception:
+            # A child may raise an unexpected exception; never echo its text.
+            errors.append("P71_OFFLINE_EVALUATOR_FAILURE")
     return {
         "status": "PASS_OFFLINE_INTEGRITY_ONLY" if not errors else "FAIL_CLOSED",
         "offline_subchecks": len(NAMES),
