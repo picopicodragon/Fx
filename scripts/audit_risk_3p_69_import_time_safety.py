@@ -33,7 +33,7 @@ def _literal_only(node: object) -> bool:
     return False
 
 
-def inspect_source(source: object) -> list[str]:
+def _inspect_source_impl(source: object) -> list[str]:
     if type(source) is not str or not source:
         return ["P69_EMPTY_OR_INVALID_SOURCE"]
     if len(source) > MAX_STATIC_SOURCE_CHARS:
@@ -124,6 +124,14 @@ def inspect_source(source: object) -> list[str]:
         errors.append("P69_UNREVIEWED_IMPORT_TIME_STATEMENT")
     return list(dict.fromkeys(errors))
 
+def inspect_source(source: object) -> list[str]:
+    """Untrusted text and parser failures never escape or reflect input."""
+    try:
+        return _inspect_source_impl(source)
+    except Exception:
+        return ["P69_BAD_PYTHON_SYNTAX"]
+
+
 def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
     errors = []
     # Do not construct set(overrides) or inspect any unknown key before
@@ -143,7 +151,9 @@ def audit(root: Path = ROOT, overrides: dict | None = None) -> list[str]:
                       and path in overrides else
                       (root / path).read_text(encoding="utf-8"))
             findings = inspect_source(source)
-        except (OSError, UnicodeError, ValueError, RecursionError):
+        except Exception:
+            # A public-file reader or static AST scanner can fail unexpectedly.
+            # Never copy exception messages or partial source into findings.
             findings = ["P69_SOURCE_UNAVAILABLE"]
         errors.extend("P69_SOURCE_" + str(i) + ":" + f for f in findings)
     return errors
