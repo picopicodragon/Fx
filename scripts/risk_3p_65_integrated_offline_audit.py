@@ -154,8 +154,9 @@ def evaluate(root: Path = ROOT, injected: dict | None = None) -> dict:
                 if name == "blocked_p05_dependencies" and row.get(
                         "owner_storage_accepted_for_offline_planning") is not True:
                     errors.append("P65_OWNER_OFFLINE_STORAGE_SCOPE_DRIFT")
-        except (OSError, TypeError, KeyError, ValueError,
-                AttributeError, IndexError, RecursionError):
+        except Exception:
+            # Offline child exceptions are untrusted: use only a fixed code,
+            # never reflect exception text or accept partial results.
             errors.append("P65_OFFLINE_QUALITY_INPUT_INVALID")
     return {
         "status": "PASS_GOVERNANCE_DESIGN_ONLY" if not errors
