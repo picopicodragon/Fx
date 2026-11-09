@@ -183,13 +183,41 @@ class OfficialDatasetTests(unittest.TestCase):
                       "code": "unsupported_value"}
         }).encode("utf-8")
         self.assertEqual(ai._safe_http_detail(body),
-                         ("text.format", "unsupported_value"))
+                         ("text.format", "unsupported_value", "UNCLASSIFIED_INPUT_ERROR"))
         bad = json.dumps({
             "error": {"param": "api_key_secret", "code": "secret_leak"}
         }).encode()
-        self.assertEqual(ai._safe_http_detail(bad), ("UNKNOWN", "UNKNOWN"))
+        self.assertEqual(ai._safe_http_detail(bad), ("UNKNOWN", "UNKNOWN", "UNKNOWN"))
         self.assertEqual(ai._safe_http_detail(b"not-json"),
                          ("UNKNOWN", "UNKNOWN"))
+
+    def test_structured_macro_api_input_contract(self):
+        from research import macro_ai_generate as ai
+        payload = json.loads(ai.build_request_payload(
+            "model-test", "Return only JSON", {"event": "historical sample"}))
+        self.assertEqual(payload["input"][0]["role"], "user")
+        self.assertEqual(payload["input"][0]["content"][0]["type"], "input_text")
+        self.assertEqual(
+            json.loads(payload["input"][0]["content"][0]["text"]),
+            {"event": "historical sample"})
+        self.assertEqual(payload["tools"], [])
+        self.assertIs(payload["store"], False)
+        self.assertEqual(payload["text"]["format"]["type"], "json_object")
+
+    def test_safe_provider_input_reason_is_categorical_only(self):
+        from research import macro_ai_generate as ai
+        samples = [
+            ("Invalid type for 'input': expected array", "INPUT_SCHEMA_REJECTED"),
+            ("This input is too long.", "INPUT_TOO_LONG"),
+            ("Some feature is unsupported", "UNSUPPORTED_OPTION"),
+            ("disallowed content", "CONTENT_POLICY_RESTRICTION"),
+            ("Private 12345 message", "UNCLASSIFIED_INPUT_ERROR"),
+        ]
+        for message, expected in samples:
+            with self.subTest(message=message):
+                body = json.dumps({"error": {"message": message, "param": "input",
+                                             "code": None}}).encode()
+                self.assertEqual(ai._safe_http_detail(body)[2], expected)
 
     def test_role_annotation_for_failing_analyst(self):
         from research import macro_ai_generate as ai
