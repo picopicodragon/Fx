@@ -8,7 +8,7 @@
       "published_at_utc": "2025-01-10T13:30:00Z",
       "available_at_utc": "2025-01-10T13:30:00Z",
       "text": "US BLS Employment Situation released Jan 10 2025: December 2024 nonfarm payroll employment rose by 256,000; unemployment rate was 4.1%.",
-      "market_expectation": "",
+      "market_expectation": "Econoday survey pre-release consensus: nonfarm payrolls +157000; unemployment 4.2%.",
       "observed_result": "Payroll +256000; unemployment rate 4.1%"
     },
     {
@@ -18,7 +18,7 @@
       "published_at_utc": "2025-01-15T13:30:00Z",
       "available_at_utc": "2025-01-15T13:30:00Z",
       "text": "US BLS CPI released Jan 15 2025: December 2024 seasonally adjusted CPI rose 0.4% month over month, while unadjusted annual CPI rose 2.9%.",
-      "market_expectation": "",
+      "market_expectation": "Reuters economist pre-release poll as reported Jan 15: headline CPI +0.3% m/m; +2.9% y/y.",
       "observed_result": "CPI headline +0.4% m/m; +2.9% y/y"
     },
     {
@@ -48,7 +48,7 @@
       "published_at_utc": "2025-02-07T13:30:00Z",
       "available_at_utc": "2025-02-07T13:30:00Z",
       "text": "US BLS Employment Situation released Feb 7 2025: January 2025 nonfarm payrolls increased 143,000; unemployment rate declined to 4.0%.",
-      "market_expectation": "",
+      "market_expectation": "Econoday survey pre-release consensus: nonfarm payrolls +168000; unemployment 4.1%.",
       "observed_result": "Payroll +143000; unemployment rate 4.0%"
     },
     {
@@ -58,7 +58,7 @@
       "published_at_utc": "2025-02-12T13:30:00Z",
       "available_at_utc": "2025-02-12T13:30:00Z",
       "text": "US BLS CPI released Feb 12 2025: January 2025 seasonally adjusted CPI rose 0.5% month over month; unadjusted 12-month increase was 3.0%.",
-      "market_expectation": "",
+      "market_expectation": "Econoday survey pre-release consensus: headline CPI +0.3% m/m; +2.9% y/y.",
       "observed_result": "CPI headline +0.5% m/m; +3.0% y/y"
     },
     {
@@ -68,7 +68,7 @@
       "published_at_utc": "2025-03-07T13:30:00Z",
       "available_at_utc": "2025-03-07T13:30:00Z",
       "text": "US BLS Employment Situation released Mar 7 2025: February 2025 nonfarm payroll employment increased by 151,000; unemployment rate was 4.1%.",
-      "market_expectation": "",
+      "market_expectation": "Econoday survey pre-release consensus: nonfarm payrolls +160000; unemployment 4.0%.",
       "observed_result": "Payroll +151000; unemployment rate 4.1%"
     },
     {
@@ -78,7 +78,7 @@
       "published_at_utc": "2025-03-12T12:30:00Z",
       "available_at_utc": "2025-03-12T12:30:00Z",
       "text": "US BLS CPI released Mar 12 2025: February 2025 seasonally adjusted headline CPI rose 0.2% m/m and 2.8% y/y unadjusted.",
-      "market_expectation": "",
+      "market_expectation": "CME/Econoday Market Focus Mar 12 (before release): headline CPI +0.3% m/m; +2.9% y/y.",
       "observed_result": "CPI headline +0.2% m/m; +2.8% y/y"
     },
     {
