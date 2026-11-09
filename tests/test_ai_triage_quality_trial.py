@@ -97,7 +97,7 @@ class QualityTrialTests(unittest.TestCase):
             self.assertEqual(r["ground_truth_status"],
                              "SYNTHETIC_RUBRIC_ONLY_NOT_HUMAN_VALIDATED")
             self.assertEqual(len(r["paired_prompt_changes"]), 48)
-            self.assertEqual(len(r["case_level_discrepancies"]), 3*13)
+            self.assertEqual(len(r["case_level_discrepancies"]), 3*14)
             for name in trial.PROVIDERS:
                 self.assertEqual(
                     r["variant_provider_metrics"]["v2/"+name][
@@ -178,7 +178,7 @@ class QualityTrialTests(unittest.TestCase):
         with self.assertRaises(InputError):
             trial.verify(j, self.cases, self.sha)
         j = trial.empty_journal(self.cases, self.sha)
-        j["requests_started"] = 2
+        j["requests_started"] = 97
         with self.assertRaises(InputError):
             trial.verify(j, self.cases, self.sha)
 
