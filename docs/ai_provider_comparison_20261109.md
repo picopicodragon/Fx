@@ -83,3 +83,8 @@ python -m research.ai_provider_comparison `
 ## CIの監査条件
 
 GitHub ActionsのRepository checksはPR本文に「関連仕様ID」「テスト結果」「本人確認」の見出しが存在することも検査する。これは人間承認の実施を証明せず、差分レビュー可能性の最小条件にすぎない。Windows Python 3.13およびLinux Python 3.12の単体テストが通過しても、利用者のAPI資格情報・契約・月額円予算と実プロバイダー接続が確認できたとは扱わない。
+
+
+## 比較レポートの読み方
+
+`descriptive_comparison`には各プロバイダーのHIGH/MEDIUM/LOW/UNKNOWN・YES/NO/UNKNOWNの件数、同一事例に対する3候補の判定一致/不一致、`UNKNOWN`扱いの事例数、実呼び出しにおける平均遅延ミリ秒を記録する。これは**記述統計**であって正解率・妥当性・投資利益・較正の評価ではない。原資料の独立ラベルが未確定なら`human_labeled_accuracy=null`とする。費用についても正式料金とトークン消費量の実測証拠を収集するまでは`estimated_usd_cost=null`。
