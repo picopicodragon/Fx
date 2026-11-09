@@ -47,11 +47,25 @@ class OfficialDatasetTests(unittest.TestCase):
                 self.assertTrue(event["source_url"].startswith(
                     ("https://www.bls.gov/", "https://www.federalreserve.gov/",
                      "https://www.boj.or.jp/")))
-                self.assertEqual(event["market_expectation"], "")
+                self.assertIsInstance(event["market_expectation"], str)
                 self.assertGreaterEqual(timestamp(event["available_at_utc"]),
                                         timestamp(event["published_at_utc"]))
                 self.assertLess(timestamp(event["available_at_utc"]),
                                 datetime(2025, 4, 1, tzinfo=timezone.utc))
+
+    def test_consensus_sources_disclose_missing_snapshot_authentication(self):
+        path = (pipeline.DEFAULT_EVIDENCE.parent /
+                "official_2025q1_consensus_provenance.json")
+        sidecar = json.loads(path.read_text(encoding="utf-8"))
+        events, _ = macro.evidence_file(pipeline.DEFAULT_EVIDENCE)
+        self.assertEqual(sidecar["schema"], "fx_macro_consensus_provenance_v1")
+        records = sidecar["records"]
+        self.assertEqual(len(records), 6)
+        self.assertEqual({r["id"] for r in records},
+                         {k for k, v in events.items() if v["market_expectation"]})
+        self.assertTrue(all(r["forecast_source_url"].startswith("https://")
+                            and r["verified_asof_snapshot"] is False
+                            for r in records))
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -73,7 +87,7 @@ class OfficialDatasetTests(unittest.TestCase):
         self.assertFalse(info["ai_backtest_executed"])
         self.assertEqual(info["runtime_go_no_go"], "NO_GO")
         self.assertTrue(info["safety_hold_latched"])
-        self.assertEqual(info["market_consensus_values_missing"], 10)
+        self.assertEqual(info["market_consensus_values_missing"], 4)
         self.assertEqual(len(info["input_price_checksums"]), 6)
         self.assertGreater(info["priced_bars"], 80)
 
