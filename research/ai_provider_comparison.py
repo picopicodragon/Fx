@@ -86,6 +86,13 @@ def _packet_text(packet: dict) -> str:
     return raw
 
 
+
+class _NoProviderRedirect(urllib.request.HTTPRedirectHandler):
+    """Never forward bearer credentials to a redirect target."""
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 def _safe_http(endpoint: str, data: dict, key: str) -> dict:
     if endpoint not in (OPENAI_DECISIONS, TYPESAFE_SYSTEMONE):
         raise InputError("provider endpoint not allowlisted")
@@ -99,7 +106,8 @@ def _safe_http(endpoint: str, data: dict, key: str) -> dict:
         headers={"Authorization": "Bearer " + key,
                  "Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(request, timeout=60) as response:
+        with urllib.request.build_opener(_NoProviderRedirect).open(
+                request, timeout=60) as response:
             data = response.read(MAX_RESPONSE_BYTES + 1)
         if len(data) > MAX_RESPONSE_BYTES:
             raise ProviderError("RESPONSE_TOO_LARGE")
