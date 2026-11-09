@@ -603,3 +603,8 @@ PR #105のマージ後、本人Windowsで**421件/OK**報告を受領。[モッ�
 ## 2026-11-10 FX-FWD-007〜010：公的RSS明示取得・AIシャドー分析・観測周期・MT4 CSV
 
 実時間フォワードへの準備として、[公的RSSと研究用シャドー分析](docs/forward_official_rss_shadow_20261110.md)を追加。`research/forward_rss.py`はBLS公式雇用統計/CPIとFRB金融政策の公開RSSだけを`--allow-network`で1回取得し、受領時刻・公表時刻を区別してFWD-01に登録する。`research/forward_ai_shadow.py`は事前保存済みイベントの主推論AI/異なるモデルIDの独立反証を、明示課金上限と不明時再送禁止ジャーナルによって研究用に実行し、別コマンドでFWD-01へ記録可能。`research/forward_shadow_cycle.py`は既存のFWD-03/05を1回ずつ監査、`research/forward_mt4_quote_import.py`は手動記録したDEMO申告価格を厳格なCSVで取得する。外部データ真正性、価格の常時配信、通貨別全イベントカレンダー、独立した口座認証、MT4読み取り専用接続、デモ発注、正式モデル承認、PHASE受入は**なお未完了**。実口座・デモ口座の注文は一切有効にしない。`NO_GO`・安全停止ラッチを維持。
+
+
+## 2026-11-10 FX-FWD-002B：BLS将来経済指標発表予定の安全な部分観測
+
+`research/forward_bls_calendar.py`により公式BLSの`https://www.bls.gov/schedule/news_release/bls.ics`を、ユーザー明示オプトイン時のみ収集し、ニューヨーク現地の夏時間/UTC換算、31日以内の発表予定、発表±15分の研究用注意フラグをレポート出力する。現在の公表スケジュールはBLSの一部に限られ、全3ペア向けに金融政策や経済指標が網羅されるわけではない。未検証のカレンダーは`NO_GO`解除・自動注文許可にならない。詳細は[フォワード公式情報収集](docs/forward_official_rss_shadow_20261110.md)。
