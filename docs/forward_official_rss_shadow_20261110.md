@@ -160,3 +160,19 @@ python -m research.forward_shadow_cycle `
 4. `TimeGMT()`は**PC時刻に由来**し、ブローカーのtickの正しい受信時刻を保証しない。USD/JPY、EUR/JPYの円換算=1、EUR/USDはUSDJPY BIDを研究上の概算として参照。配信鮮度/スプレッド/換算同時性/営業許可の証明にはならない。
 
 **導入を自動化しない**：実MT4に対するコンパイル/配置/スクリプト実行は本PRでは行っていない。例外として必要なレビューが済むまで、研究用の手動CSVを優先する。本人の明示的なデモ実行承認が別途必要な注文プログラムではないものの、MT4の実稼働環境への変更はこの段階では避ける。
+
+
+## 6. FWD-02B：BLS公式の今後の発表予定（ICS）の研究用監視
+
+公式BLSは[発表予定のオンラインカレンダー](https://www.bls.gov/schedule/news_release/empsit.htm)から`https://www.bls.gov/schedule/news_release/bls.ics`を案内している。RSSは過去/公開済み記事しか扱えないため、**将来の重要イベント時刻の見落としに備えて別のICSスナップショット**を実装。
+
+`research/forward_bls_calendar.py`：明示`--allow-network`時に固定URLから1回だけ取得、350KB以下、12秒上限、リダイレクト禁止。ISO UTCまたは`America/New_York`の現地時刻を夏時間込みでUTCへ変換、DST非存在/重複時間帯、欠落日付や長大入力は拒否。最大31日/500件の範囲だけを保存し、発表予定の±15分を`imminent_research_event_halt_suggested`として報告。情報が発表延期・日時変更された場合、このスナップショット単独では検知できない。
+
+```powershell
+python -m research.forward_bls_calendar `
+  --out out/bls_calendar_20261110.json `
+  --allow-network `
+  --days-forward 14
+```
+
+このコマンドは**市場データを自動取得せず、取引を停止/再開する既存の安全ゲートに直接接続しない**。ICSの将来予定はBLS対象のみであり、FOMC、ECB、日銀、他国データを網羅しない。信用レベル`PUBLISHED_SCHEDULE_UNVERIFIED`であり、出典/更新時刻・実際の発表・予想値の確認は別ゲート。レポートが「予定なし」でも、新規売買許可にはならない。
