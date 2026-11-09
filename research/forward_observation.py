@@ -21,7 +21,7 @@ SCHEMA = "fx_forward_observation_v1"
 CAPTURE_KINDS = ("PRICE_QUOTE", "MACRO_EVENT", "MACRO_HYPOTHESIS",
                  "INDEPENDENT_REVIEW")
 SAFE_NAME = re.compile(r"^[a-z][a-z0-9_-]{0,39}$")
-FILES = re.compile(r"^[0-9]{8}\\.json$")
+FILES = re.compile(r"^[0-9]{8}\.json$")
 MAX_SNAPSHOT_BYTES = 24000
 MAX_RECORDS = 100000
 REDACT_MARKERS = ("api_key", "authorization", "bearer ", "access_token",
