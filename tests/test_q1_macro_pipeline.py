@@ -34,17 +34,19 @@ def fake_h1(pair: str, side: str) -> str:
 
 
 class OfficialDatasetTests(unittest.TestCase):
-    def test_official_release_archive_eight_real_dates(self):
+    def test_official_release_archive_ten_real_dates(self):
         events, meta = macro.evidence_file(pipeline.DEFAULT_EVIDENCE)
-        self.assertEqual(meta["evidence_event_count"], 8)
+        self.assertEqual(meta["evidence_event_count"], 10)
         self.assertEqual(set(events), {
             "US_NFP_20250110", "US_CPI_20250115", "US_FOMC_20250129",
             "US_NFP_20250207", "US_CPI_20250212", "US_NFP_20250307",
-            "US_CPI_20250312", "US_FOMC_20250319"})
+            "US_CPI_20250312", "US_FOMC_20250319",
+            "JP_BOJ_20250124", "JP_BOJ_20250319"})
         for key, event in events.items():
             with self.subTest(key=key):
                 self.assertTrue(event["source_url"].startswith(
-                    ("https://www.bls.gov/", "https://www.federalreserve.gov/")))
+                    ("https://www.bls.gov/", "https://www.federalreserve.gov/",
+                     "https://www.boj.or.jp/")))
                 self.assertEqual(event["market_expectation"], "")
                 self.assertGreaterEqual(timestamp(event["available_at_utc"]),
                                         timestamp(event["published_at_utc"]))
@@ -66,12 +68,12 @@ class OfficialDatasetTests(unittest.TestCase):
     def test_preflight_has_no_ai_and_no_real_orders(self):
         sources, info = pipeline.preflight(
             self.price_dir, pipeline.DEFAULT_EVIDENCE)
-        self.assertEqual(len(sources), 8)
+        self.assertEqual(len(sources), 10)
         self.assertFalse(info["ai_api_called"])
         self.assertFalse(info["ai_backtest_executed"])
         self.assertEqual(info["runtime_go_no_go"], "NO_GO")
         self.assertTrue(info["safety_hold_latched"])
-        self.assertEqual(info["market_consensus_values_missing"], 8)
+        self.assertEqual(info["market_consensus_values_missing"], 10)
         self.assertEqual(len(info["input_price_checksums"]), 6)
         self.assertGreater(info["priced_bars"], 80)
 
