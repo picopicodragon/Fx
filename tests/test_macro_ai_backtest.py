@@ -214,7 +214,7 @@ class MacroReplayTests(unittest.TestCase):
 
     def test_generator_batches_multiple_sources_same_hour(self):
         other = event("E002", available="2025-01-02T10:10:00Z")
-        grouped = {"E001": event(), "E002": other}
+        grouped = {"E001": event(available="2025-01-02T10:05:00Z"), "E002": other}
         def fake(model, instruction, data, *, key):
             if model == "mock-analyst-a":
                 return {"action": "HOLD", "hypothesis": "No sufficient data",
