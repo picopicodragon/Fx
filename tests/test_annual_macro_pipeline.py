@@ -19,7 +19,7 @@ from research.offline_backtest import InputError, PAIRS
 class AnnualEvidenceTests(unittest.TestCase):
     def test_seed_uses_same_q1_events_and_extends_all_four_quarters(self):
         events, _ = replay.evidence_file(annual.DATASET)
-        self.assertEqual(len(events), 23)
+        self.assertEqual(len(events), 25)
         self.assertEqual(set(PAIRS), {"USD/JPY", "EUR/JPY", "EUR/USD"})
         old, _ = replay.evidence_file(
             Path(__file__).parent.parent / "research" / "datasets" /
@@ -44,9 +44,9 @@ class AnnualEvidenceTests(unittest.TestCase):
             return {"verdict": "APPROVED", "rationale": "Cautious HOLD"}
         result = ai.generate(sources, analyst_model="fake-analyst",
                              reviewer_model="fake-reviewer",
-                             api_key="TEST_ONLY", max_decisions=69,
+                             api_key="TEST_ONLY", max_decisions=75,
                              inference=mock_inference)
-        self.assertEqual(len(result["decisions"]), 69)
+        self.assertEqual(len(result["decisions"]), 75)
         self.assertEqual(result["decisions"][-1]["pair"], "EUR/USD")
         self.assertEqual(result["decisions"][-1]["asof_utc"],
                          "2025-12-10T19:00:00Z")
@@ -103,9 +103,9 @@ class AnnualPriceTests(unittest.TestCase):
     def test_annual_preflight_has_full_year_data_and_no_api(self):
         evidence, report = annual.preflight(self.price_dir, annual.DATASET)
         self.assertEqual(len(evidence), 23)
-        self.assertEqual(report["possible_decisions"], 69)
-        self.assertEqual(report["estimated_full_inference_api_calls"], 138)
-        self.assertEqual(report["missing_consensus_event_count"], 17)
+        self.assertEqual(report["possible_decisions"], 75)
+        self.assertEqual(report["estimated_full_inference_api_calls"], 150)
+        self.assertEqual(report["missing_consensus_event_count"], 19)
         self.assertGreater(report["aligned_bars_per_pair"], 5500)
         self.assertEqual(report["runtime_go_no_go"], "NO_GO")
         self.assertEqual(report["paid_api_calls"], 0)
@@ -132,8 +132,8 @@ class AnnualPriceTests(unittest.TestCase):
                         "--prices-dir", str(self.price_dir),
                         "--analyst-model", "test-analyst",
                         "--reviewer-model", "test-reviewer",
-                        "--max-decisions", "69",
-                        "--max-api-calls", "137",
+                        "--max-decisions", "75",
+                        "--max-api-calls", "149",
                         "--journal-out", str(self.root / "unwritten.json"),
                         "--report-out", str(self.root / "unwritten_report.json"),
                         "--allow-external-api"])
