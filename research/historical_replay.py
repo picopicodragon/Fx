@@ -88,7 +88,7 @@ def prepare(files: dict[str, tuple[Path, Path]], *,
     for symbol in SYMBOLS:
         paths = files[symbol]
         if (type(paths) is not tuple or len(paths) != 2
-                or any(type(p) is not Path for p in paths)
+                or any(not isinstance(p, Path) for p in paths)
                 or paths[0] == paths[1]):
             raise InputError("bid and ask files must differ")
         bid, bid_hash = load_side(paths[0])
