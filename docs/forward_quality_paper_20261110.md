@@ -76,3 +76,30 @@ AI仮説・レビュー・その後の2時点の見積がなければ、`hypothe
 運用費用（API従量料金）を意図しないよう、FWD-02〜05研究CLIはローカルのみで0回の外部API呼び出しに限定した。最新の2025年バックテスト研究結果や人工期待値を本番許可条件として扱わない。
 
 固定安全状態：`runtime_go_no_go=NO_GO`、`safety_hold_latched=true`、`real_orders_permitted=false`、`demo_order_execution_enabled=false`。
+
+
+## FWD-06：楽天MT4デモ手動状態の読み取り専用チェック（追加）
+
+`research/mt4_manual_status_review.py`で、MT4にアクセスせず**ユーザーが手で確認した情報のJSON**を検査する。取引タブの建玉・未約定注文、EA/スクリプトの存在、AutoTrading表示、接続表示、DEMO/LIVE申告を入力し、競合の疑いがある場合に注意フラグを出す。**手入力の情報は証明書でも接続認証でもない。** 表示条件がすべて良好でも`NO_GO`であり、MT4との双方向通信やデモ発注は許可されない。
+
+```powershell
+$nowUtc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+@{
+  schema = "fx_mt4_observer_status_v1"
+  sampled_at_utc = $nowUtc
+  account_type = "DEMO"
+  connection_display = "UNKNOWN"
+  autotrading_display = "OFF_LIKE"
+  scripts_or_eas_present = $true
+  open_positions = 0
+  pending_orders = 0
+  source = "MANUAL_UNVERIFIED_STATUS"
+} | ConvertTo-Json -Depth 5 |
+  Set-Content out/mt4_manual_review_input.json -Encoding UTF8
+
+python -m research.mt4_manual_status_review `
+  --input out/mt4_manual_review_input.json `
+  --out out/mt4_manual_review_output.json
+```
+
+入力は**例示値**であり実MT4の状態を反映しない。実際に確認した項目だけを代入する。口座番号、ログインID、認証情報、取引履歴は含めない。出力の`read_only_review_flags`がゼロでも口座照合済みとは扱わない。FWD-06の実MT4読取専用アダプター実装は未完了のまま。
