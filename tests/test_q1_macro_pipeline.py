@@ -175,5 +175,81 @@ class OfficialDatasetTests(unittest.TestCase):
         self.assertFalse((self.root / "decisions.json").exists())
 
 
+    def test_http_error_param_allowlisted_only(self):
+        from research import macro_ai_generate as ai
+        body = json.dumps({
+            "error": {"message": "PRIVATE INPUT SECRET DO NOT PRINT",
+                      "param": "text.format",
+                      "code": "unsupported_value"}
+        }).encode("utf-8")
+        self.assertEqual(ai._safe_http_detail(body),
+                         ("text.format", "unsupported_value"))
+        bad = json.dumps({
+            "error": {"param": "api_key_secret", "code": "secret_leak"}
+        }).encode()
+        self.assertEqual(ai._safe_http_detail(bad), ("UNKNOWN", "UNKNOWN"))
+        self.assertEqual(ai._safe_http_detail(b"not-json"),
+                         ("UNKNOWN", "UNKNOWN"))
+
+    def test_role_annotation_for_failing_analyst(self):
+        from research import macro_ai_generate as ai
+        events, _ = macro.evidence_file(pipeline.DEFAULT_EVIDENCE)
+        def failing(model, instruction, data, *, key):
+            raise ai.MacroAPIError(
+                "HTTP_400_INVALID_REQUEST_OR_MODEL_OPTIONS",
+                api_param="max_output_tokens", api_code="unsupported_value")
+        with self.assertRaises(ai.MacroAPIError) as result:
+            ai.generate(events, analyst_model="a", reviewer_model="b",
+                        max_decisions=1, api_key="DUMMY", inference=failing)
+        self.assertEqual(result.exception.role, "ANALYST")
+        self.assertEqual(result.exception.api_param, "max_output_tokens")
+
+    def test_role_annotation_for_failing_reviewer(self):
+        from research import macro_ai_generate as ai
+        events, _ = macro.evidence_file(pipeline.DEFAULT_EVIDENCE)
+        def mixed(model, instruction, data, *, key):
+            if model == "a":
+                return {"action": "HOLD", "hypothesis": "Test only",
+                        "counterevidence": "Insufficient source"}
+            raise ai.MacroAPIError(
+                "HTTP_400_INVALID_REQUEST_OR_MODEL_OPTIONS",
+                api_param="text.format", api_code="unsupported_value")
+        with self.assertRaises(ai.MacroAPIError) as result:
+            ai.generate(events, analyst_model="a", reviewer_model="b",
+                        max_decisions=1, api_key="DUMMY", inference=mixed)
+        self.assertEqual(result.exception.role, "REVIEWER")
+        self.assertEqual(result.exception.api_param, "text.format")
+
+    def test_error_output_includes_safe_role_param_not_provider_text(self):
+        import contextlib
+        import io as iomod
+        import os
+        from unittest.mock import patch
+        from research import macro_ai_generate as ai
+        out = iomod.StringIO()
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "PRIVATE_KEY"}):
+            with patch.object(
+                ai, "generate",
+                side_effect=ai.MacroAPIError(
+                    "HTTP_400_INVALID_REQUEST_OR_MODEL_OPTIONS",
+                    role="REVIEWER", api_param="text.format",
+                    api_code="unsupported_value")):
+                with contextlib.redirect_stdout(out):
+                    result = pipeline.main([
+                        "--prices-dir", str(self.price_dir),
+                        "--decisions-out", str(self.root / "d.json"),
+                        "--report-out", str(self.root / "r.json"),
+                        "--analyst-model", "a", "--reviewer-model", "b",
+                        "--allow-external-api"])
+        info = json.loads(out.getvalue())
+        self.assertEqual(result, 2)
+        self.assertEqual(info["failure_stage"], "AI_GENERATION")
+        self.assertEqual(info["ai_role"], "REVIEWER")
+        self.assertEqual(info["api_error_param"], "text.format")
+        self.assertEqual(info["api_error_code"], "unsupported_value")
+        self.assertEqual(info["runtime_go_no_go"], "NO_GO")
+        self.assertNotIn("PRIVATE_KEY", out.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()
