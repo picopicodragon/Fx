@@ -208,5 +208,52 @@ class AdapterTests(unittest.TestCase):
             self.assertIn("FAIL_CLOSED", buf.getvalue())
 
 
+    def test_role_registry_restricts_generation_and_independent_review(self):
+        with self.assertRaises(InputError):
+            gateway.ResearchRoleRegistry(
+                analyst_model="same", reviewer_model="same")
+        registry = gateway.ResearchRoleRegistry(
+            analyst_model="mock-analyst", reviewer_model="mock-reviewer")
+        calls = []
+        def mock_response(model, instruction, data, *, key):
+            calls.append((model, instruction, data))
+            if model == "mock-analyst":
+                return {"action": "HOLD", "hypothesis": "No supported trade",
+                        "counterevidence": "Incomplete consensus"}
+            return {"verdict": "APPROVED", "rationale": "Safe hold"}
+        a = registry.macro_hypothesis(
+            self.packet, api_key="TEST", inference=mock_response)
+        v = registry.independent_review(
+            self.packet, a["result"], api_key="TEST",
+            inference=mock_response)
+        self.assertEqual([c[0] for c in calls],
+                         ["mock-analyst", "mock-reviewer"])
+        self.assertEqual(v["result"]["verdict"], "APPROVED")
+        self.assertEqual(a["result"]["action"], "HOLD")
+        self.assertEqual(a["runtime_go_no_go"], "NO_GO")
+        with self.assertRaises(InputError):
+            registry.independent_review(
+                self.packet, {"action": "LONG"}, api_key="TEST",
+                inference=mock_response)
+
+    def test_role_registry_rejects_invalid_review_and_hypothesis(self):
+        registry = gateway.ResearchRoleRegistry(
+            analyst_model="analyst", reviewer_model="reviewer")
+        with self.assertRaises(InputError):
+            registry.macro_hypothesis(
+                self.packet, api_key="TEST",
+                inference=lambda *a, **k: {
+                    "action": "BUY", "hypothesis": "bad",
+                    "counterevidence": "bad"})
+        with self.assertRaises(InputError):
+            registry.independent_review(
+                self.packet,
+                {"action": "HOLD", "hypothesis": "safe",
+                 "counterevidence": "missing data"},
+                api_key="TEST",
+                inference=lambda *a, **k: {
+                    "verdict": "GO_LIVE", "rationale": "bad"})
+
+
 if __name__ == "__main__":
     unittest.main()
