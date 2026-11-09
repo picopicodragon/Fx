@@ -189,7 +189,7 @@ class OfficialDatasetTests(unittest.TestCase):
         }).encode()
         self.assertEqual(ai._safe_http_detail(bad), ("UNKNOWN", "UNKNOWN", "UNKNOWN"))
         self.assertEqual(ai._safe_http_detail(b"not-json"),
-                         ("UNKNOWN", "UNKNOWN"))
+                         ("UNKNOWN", "UNKNOWN", "UNKNOWN"))
 
     def test_structured_macro_api_input_contract(self):
         from research import macro_ai_generate as ai
