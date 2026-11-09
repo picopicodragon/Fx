@@ -115,6 +115,8 @@ def main(argv=None):
                                else "UNKNOWN",
             "api_error_code": exc.api_code if isinstance(exc, ai.MacroAPIError)
                               else "UNKNOWN",
+            "api_message_category": exc.message_category if isinstance(exc, ai.MacroAPIError)
+                                    else "UNKNOWN",
             "error": "MACRO_PIPELINE_INPUT_OR_API_FAILURE"}))
         return 2
     print(json.dumps({
