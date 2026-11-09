@@ -133,5 +133,47 @@ class OfficialDatasetTests(unittest.TestCase):
         self.assertFalse((self.root / "report.json").exists())
 
 
+    def test_macro_api_http_category_does_not_echo_secrets(self):
+        from research import macro_ai_generate as ai
+        for code, expected in (
+            (400, "HTTP_400_INVALID_REQUEST_OR_MODEL_OPTIONS"),
+            (401, "HTTP_401_INVALID_API_KEY"),
+            (403, "HTTP_403_PERMISSION_DENIED"),
+            (404, "HTTP_404_MODEL_UNAVAILABLE_OR_NOT_FOUND"),
+            (429, "HTTP_429_RATE_OR_QUOTA_LIMIT"),
+            (503, "HTTP_5XX_PROVIDER_FAILURE"),
+        ):
+            with self.subTest(code=code):
+                self.assertEqual(ai._http_failure(code), expected)
+
+    def test_failed_external_ai_reports_stage_without_credential(self):
+        import contextlib
+        import io as iomod
+        from unittest.mock import patch
+        import os
+        from research import macro_ai_generate as ai
+        out = iomod.StringIO()
+        secret = "DONT_EXPOSE_TEST_KEY"
+        with patch.dict(os.environ, {"OPENAI_API_KEY": secret}):
+            with patch.object(ai, "generate",
+                              side_effect=ai.MacroAPIError("HTTP_429_RATE_OR_QUOTA_LIMIT")):
+                with contextlib.redirect_stdout(out):
+                    status = pipeline.main([
+                        "--prices-dir", str(self.price_dir),
+                        "--decisions-out", str(self.root / "decisions.json"),
+                        "--report-out", str(self.root / "report.json"),
+                        "--analyst-model", "model-a",
+                        "--reviewer-model", "model-b",
+                        "--allow-external-api"])
+        parsed = json.loads(out.getvalue())
+        self.assertEqual(status, 2)
+        self.assertEqual(parsed["failure_stage"], "AI_GENERATION")
+        self.assertEqual(parsed["failure_reason"],
+                         "HTTP_429_RATE_OR_QUOTA_LIMIT")
+        self.assertEqual(parsed["runtime_go_no_go"], "NO_GO")
+        self.assertNotIn(secret, out.getvalue())
+        self.assertFalse((self.root / "decisions.json").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
