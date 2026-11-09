@@ -16,7 +16,7 @@ def make_csv(pair, side, *, count=55):
     base = {"usdjpy": 150.0, "eurjpy": 160.0, "eurusd": 1.08}[pair]
     tick = 0.01 if pair.endswith("jpy") else 0.0001
     stream = io.StringIO()
-    writer = csv.writer(stream, lineterminator="\\n")
+    writer = csv.writer(stream, lineterminator="\n")
     writer.writerow(["timestamp", "open", "high", "low", "close"])
     for i in range(count):
         drift = (i if i < 30 else 60 - i) * tick * 2
