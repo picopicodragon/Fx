@@ -163,7 +163,9 @@ def evaluate(provider: str, variant: str, p: dict, *, credentials: dict,
         model = "gpt-6-luna"
     return {
         "provider": provider, "model": model, "contract": V2,
-        "evidence_sha256": _sha(p), "result": normalized,
+        "evidence_sha256": hashlib.sha256(
+            gateway._packet_text(p).encode("utf-8")).hexdigest(),
+        "result": normalized,
         "elapsed_ms": round(max(0, time.monotonic() - start) * 1000, 2),
         "outcome": "BOUNDED_RESEARCH_ONLY",
         "runtime_go_no_go": "NO_GO", "safety_hold_latched": True,
@@ -215,7 +217,8 @@ def verify(journal: dict, items: list[dict], sha: str) -> None:
                 row.get("provider") != provider or
                 row.get("contract") !=
                 (gateway.QUESTION_VERSION if variant == "v1" else V2) or
-                row.get("evidence_sha256") != _sha(p) or
+                row.get("evidence_sha256") != hashlib.sha256(
+                    gateway._packet_text(p).encode("utf-8")).hexdigest() or
                 row.get("runtime_go_no_go") != "NO_GO" or
                 row.get("safety_hold_latched") is not True or
                 row.get("real_orders_permitted") is not False or
