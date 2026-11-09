@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from research import forward_observation as obs
 from research import forward_rss as rss
@@ -93,9 +93,14 @@ class ForwardRssTests(unittest.TestCase):
             rss.get_feed("not_allowlisted")
         file = self.root / "raw.xml"
         file.write_bytes(xml())
-        self.assertEqual(rss.main([
-            "--store", str(self.store), "--feed", "bls_empsit",
-            "--xml-file", str(file)]), 0)
+        real_import = rss.import_xml
+        with patch.object(
+                rss, "import_xml",
+                side_effect=lambda store, feed, data, **kwargs:
+                    real_import(store, feed, data, now=NOW, **kwargs)):
+            self.assertEqual(rss.main([
+                "--store", str(self.store), "--feed", "bls_empsit",
+                "--xml-file", str(file)]), 0)
         self.assertEqual(rss.main([
             "--store", str(self.store), "--feed", "bls_empsit"]), 2)
         self.assertEqual(obs.audit(self.store)["record_count"], 1)
