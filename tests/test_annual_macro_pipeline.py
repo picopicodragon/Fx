@@ -92,7 +92,7 @@ class AnnualPriceTests(unittest.TestCase):
                              f"{val-0.04:.5f},{price}" for ts in rows)
                 path = cls.price_dir / (
                     f"{symbol}-h1-{side}-2025-01-01-2026-01-01.csv")
-                path.write_text("\\n".join(lines) + "\\n",
+                path.write_text("\n".join(lines) + "\n",
                                 encoding="utf-8")
 
     @classmethod
