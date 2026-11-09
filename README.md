@@ -598,3 +598,8 @@ PR #105のマージ後、本人Windowsで**421件/OK**報告を受領。[モッ�
 ## 2026-11-10 FX-FWD-002〜005：フォワード観測の品質・AI審査証跡・仮想取引
 
 [FWD-02〜05研究機能](docs/forward_quality_paper_20261110.md)を追加。FWD-01で取得・記録済みのローカル価格・マクロ情報を`research/forward_quality.py`で時間鮮度・コンセンサス・遅延・既知イベント時間帯を監査。`research/forward_paper.py`で、別モデルIDの独立審査済みマクロ仮説と以降に記録されたbid/askから明示的な**単一仮想シナリオ**の数量・仮想SL/TP・損益を再生。実時間のニュース/価格配信、自動AI推論、MT4読取専用・デモ発注、本番損失/DD計算は未実装。仮想結果は利益予測でも発注許可でもない。PHASE/MODULEの受入、人間承認、G1〜G9、本番NO_GOを維持。
+
+
+## 2026-11-10 FX-FWD-007〜010：公的RSS明示取得・AIシャドー分析・観測周期・MT4 CSV
+
+実時間フォワードへの準備として、[公的RSSと研究用シャドー分析](docs/forward_official_rss_shadow_20261110.md)を追加。`research/forward_rss.py`はBLS公式雇用統計/CPIとFRB金融政策の公開RSSだけを`--allow-network`で1回取得し、受領時刻・公表時刻を区別してFWD-01に登録する。`research/forward_ai_shadow.py`は事前保存済みイベントの主推論AI/異なるモデルIDの独立反証を、明示課金上限と不明時再送禁止ジャーナルによって研究用に実行し、別コマンドでFWD-01へ記録可能。`research/forward_shadow_cycle.py`は既存のFWD-03/05を1回ずつ監査、`research/forward_mt4_quote_import.py`は手動記録したDEMO申告価格を厳格なCSVで取得する。外部データ真正性、価格の常時配信、通貨別全イベントカレンダー、独立した口座認証、MT4読み取り専用接続、デモ発注、正式モデル承認、PHASE受入は**なお未完了**。実口座・デモ口座の注文は一切有効にしない。`NO_GO`・安全停止ラッチを維持。
