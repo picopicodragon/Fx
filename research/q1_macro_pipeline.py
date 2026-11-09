@@ -16,7 +16,7 @@ from research import macro_ai_generate as ai
 from research.offline_backtest import InputError
 
 DEFAULT_EVIDENCE = (Path(__file__).parent / "datasets" /
-                    "official_2025q1_us_macro_evidence.json")
+                    "official_2025q1_macro_evidence.json")
 FILE_TAG = "2025-01-01-2025-04-01"
 
 
@@ -60,7 +60,7 @@ def main(argv=None):
                     default=Path("out/macro_ai_backtest_2025Q1.json"))
     ap.add_argument("--analyst-model", default="")
     ap.add_argument("--reviewer-model", default="")
-    ap.add_argument("--max-decisions", type=int, default=24)
+    ap.add_argument("--max-decisions", type=int, default=30)
     ap.add_argument("--allow-external-api", action="store_true")
     args = ap.parse_args(argv)
     try:
