@@ -206,5 +206,56 @@ class SimulationTests(unittest.TestCase):
         self.assertEqual(output["runtime_go_no_go"], "NO_GO")
 
 
+    def test_true_bid_low_triggers_stop_when_mid_proxy_would_not(self):
+        t0 = datetime(2025, 1, 7, 0, tzinfo=timezone.utc)
+        t1 = datetime(2025, 1, 7, 1, tzinfo=timezone.utc)
+        first = bt.Bar(t0, "USD/JPY", D("150"), D("150.1"),
+                       D("149.9"), D("150"), D("1"), D("1"), "LONG")
+        # Mid low 149.85 minus proxy half spread .005 = 149.845.
+        # Actual executable BID low is 149.79, beneath the 149.81 stop.
+        second = bt.Bar(t1, "USD/JPY", D("150.005"), D("150.1"),
+                        D("149.85"), D("150.005"), D("1"), D("1"), "HOLD",
+                        (D("150"), D("150.09"), D("149.79"), D("150")),
+                        (D("150.01"), D("150.11"), D("149.91"), D("150.01")))
+        report = bt.simulate([first, second])
+        self.assertEqual(report["trades"][0]["reason"], "STOP")
+        self.assertEqual(D(report["net_pnl_jpy"]), D("-400"))
+
+    def test_closed_market_gap_signal_not_executed(self):
+        import datetime as dt
+        first = bt.Bar(datetime(2025, 1, 3, 21, tzinfo=timezone.utc),
+                       "USD/JPY", D("150"), D("150.1"), D("149.9"),
+                       D("150"), D("0"), D("1"), "LONG")
+        after = replace(first, time=datetime(2025, 1, 5, 22,
+                                            tzinfo=timezone.utc),
+                        signal="HOLD")
+        report = bt.simulate([first, after])
+        self.assertEqual(report["trade_count"], 0)
+        self.assertEqual(report["stale_gap_signals_suppressed"], 1)
+        self.assertEqual(report["signals_rejected"], 0)
+
+    def test_rejection_reasons_accounting(self):
+        rows = [row(0, signal="LONG"),
+                row(1, o="150", h="150.01", l="149.7",
+                    c="150", signal="LONG"),
+                row(2, o="150", h="150.01", l="149.7",
+                    c="150", signal="LONG"),
+                row(3, o="150", h="150.01", l="149.7",
+                    c="150", signal="LONG")]
+        out = self.run_rows(rows)
+        self.assertEqual(sum(out["signals_rejected_by_reason"].values()),
+                         out["signals_rejected"])
+        self.assertIs(out["safety_hold_latched"], True)
+
+    def test_reject_inconsistent_actual_bid_ask_candles(self):
+        t = datetime(2025, 1, 7, tzinfo=timezone.utc)
+        bad = bt.Bar(t, "USD/JPY", D("150"), D("150.1"),
+                     D("149.9"), D("150"), D("1"), D("1"), "HOLD",
+                     (D("150"), D("150.1"), D("149.9"), D("150")),
+                     (D("149"), D("150.1"), D("149.9"), D("150")))
+        with self.assertRaises(bt.InputError):
+            bt.simulate([bad])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -10,6 +10,7 @@ import csv
 import hashlib
 import json
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from decimal import Decimal as D
 from pathlib import Path
 
@@ -25,6 +26,19 @@ MAX_ROWS = 35_000
 INTERVAL_MS = 3_600_000  # v2 accepts H1 only
 FAST = 10
 SLOW = 30
+MARKET_TZ = ZoneInfo("America/New_York")
+
+
+def market_open(t: int) -> bool:
+    """Conservative standard FX weekly session: Sun 17 NY to Fri 17 NY.
+
+    This does not validate special holidays, broker trading schedules, or
+    irregular market closures, which remain separately unverified.
+    """
+    ny = datetime.fromtimestamp(t / 1000, timezone.utc).astimezone(MARKET_TZ)
+    day, hour = ny.weekday(), ny.hour
+    return (day < 4 or (day == 4 and hour < 17)
+            or (day == 6 and hour >= 17))
 
 
 def load_side(path: Path) -> tuple[dict[int, dict[str, D]], str]:
@@ -97,6 +111,17 @@ def prepare(files: dict[str, tuple[Path, Path]], *,
         hashes[symbol + "_bid_sha256"] = bid_hash
         hashes[symbol + "_ask_sha256"] = ask_hash
 
+    # Drop provider-generated H1 weekend flats BEFORE aligning feeds.
+    # Prevent Sat/Sun artificial candles from causing synthetic entries.
+    closed_counts = {}
+    for symbol in SYMBOLS:
+        bid, ask = series[symbol]
+        closed_counts[symbol] = {}
+        for label, side in (("bid", bid), ("ask", ask)):
+            closed = [t for t in side if not market_open(t)]
+            closed_counts[symbol][label] = len(closed)
+            for t in closed:
+                del side[t]
     timesets = [set(side) for pair in series.values() for side in pair]
     common = sorted(set.intersection(*timesets))
     total = len(set.union(*timesets))
@@ -159,16 +184,22 @@ def prepare(files: dict[str, tuple[Path, Path]], *,
             # Explicit lag; do not use same-bar close to size an entry at open.
             conversion = (mids["usdjpy"][common[i-1]]["close"]
                           if symbol == "eurusd" else D(1))
+            bid, ask = series[symbol]
             rows.append(Bar(datetime.fromtimestamp(t / 1000, timezone.utc),
                             pair, mid["open"], mid["high"], mid["low"],
                             mid["close"], spreads[symbol][t], conversion,
-                            signals[symbol][t]))
+                            signals[symbol][t],
+                            tuple(bid[t][k] for k in ("open", "high", "low", "close")),
+                            tuple(ask[t][k] for k in ("open", "high", "low", "close"))))
     metadata = {
         "data_source": SOURCE_ID,
         "historical_market_data_authenticity_independently_verified": False,
         "original_data_committed_or_uploaded": False,
         "timeframe": "h1_utc", "paired_bid_ask": True,
-        "fill_model": "mid_OHLC_and_max_open_close_spread_estimate",
+        "fill_model": "actual_bid_ask_OHLC_stop_first_ambiguous",
+        "weekend_candles_removed_by_pair_and_side": closed_counts,
+        "weekly_session_rule": "Sun17_to_Fri17_America/New_York_DST",
+        "special_holidays_verified": False,
         "conversion_model": "EURUSD_uses_previous_aligned_USDJPY_close",
         "strategy": "RESEARCH_SMA_CROSSOVER_NOT_AI_MACRO_STRATEGY",
         "sma_fast": fast, "sma_slow": slow,
@@ -180,7 +211,8 @@ def prepare(files: dict[str, tuple[Path, Path]], *,
         "signal_counts": signal_counts, "input_checksums": hashes,
         "known_limitations": [
             "OHLC intrabar execution cannot reconstruct tick ordering",
-            "Bid/ask OHLC does not model exact executable bid/ask tick spreads",
+            "Actual bid/ask H1 OHLC sides used; tick order and intrabar spreads unknown",
+            "Special FX holidays and broker-specific sessions unverified",
             "No swaps, margin calls, slippage, market impact or broker contract validation",
             "External data licensing and history provenance not certified",
             "SMA strategy is only a research baseline, not AI macro hypothesis",
