@@ -63,6 +63,7 @@ def main(argv=None):
     ap.add_argument("--max-decisions", type=int, default=30)
     ap.add_argument("--allow-external-api", action="store_true")
     args = ap.parse_args(argv)
+    stage = "PREFLIGHT"
     try:
         sources, info = preflight(args.prices_dir, args.evidence)
         if not args.allow_external_api:
@@ -76,6 +77,7 @@ def main(argv=None):
             raise InputError("refuse unavailable credentials or overwrite")
         # First complete local price/evidence validation; then only when
         # explicitly enabled send text to external models.
+        stage = "AI_GENERATION"
         journal = ai.generate(
             sources, analyst_model=args.analyst_model,
             reviewer_model=args.reviewer_model,
@@ -83,17 +85,30 @@ def main(argv=None):
             api_key=os.environ["OPENAI_API_KEY"])
         # Check journal against the source and price timeline before saving.
         # Repository data and user-owned CSVs are never uploaded by this tool.
+        stage = "DECISIONS_WRITE"
         with args.decisions_out.open("x", encoding="utf-8") as handle:
             json.dump(journal, handle, ensure_ascii=False, indent=2)
+        stage = "HISTORICAL_REPLAY"
         result = replay.run(prices(args.prices_dir), args.evidence,
                             args.decisions_out)
+        stage = "REPORT_WRITE"
         with args.report_out.open("x", encoding="utf-8") as handle:
             json.dump(result, handle, ensure_ascii=False, indent=2)
-    except (InputError, OSError, TypeError, ValueError, ArithmeticError):
+    except (InputError, OSError, TypeError, ValueError, ArithmeticError) as exc:
+        # Strict enum only, never log API keys, HTTP body, input text or paths.
+        known = {
+            "PREFLIGHT", "AI_GENERATION", "DECISIONS_WRITE",
+            "HISTORICAL_REPLAY", "REPORT_WRITE"
+        }
+        reason = (exc.reason if isinstance(exc, ai.MacroAPIError)
+                  else ("INVALID_AI_GENERATION_CONFIG_OR_RESPONSE"
+                        if stage == "AI_GENERATION" else "INVALID_STAGE_INPUT"))
         print(json.dumps({
             "status": "FAIL_CLOSED", "runtime_go_no_go": "NO_GO",
             "safety_hold_latched": True,
             "ai_or_historical_replay_complete": False,
+            "failure_stage": stage if stage in known else "UNKNOWN",
+            "failure_reason": reason,
             "error": "MACRO_PIPELINE_INPUT_OR_API_FAILURE"}))
         return 2
     print(json.dumps({
