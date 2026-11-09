@@ -276,6 +276,15 @@ def ingest(store: Path, input_path: Path, *,
     try:
         os.close(fd)
         prior = audit_without_lock_file(store)
+        # Reject unlinked research claims BEFORE committing a record.
+        if sample["kind"] == "MACRO_HYPOTHESIS" and (
+                sample["payload"]["basis_sha256"] not in
+                prior["verified_event_hashes"]):
+            raise InputError("hypothesis evidence not observed")
+        if sample["kind"] == "INDEPENDENT_REVIEW" and (
+                sample["payload"]["review_of_sha256"] not in
+                prior["verified_hypothesis_hashes"]):
+            raise InputError("review hypothesis not observed")
         sequence = prior["record_count"] + 1
         if sequence > MAX_RECORDS:
             raise InputError("journal capacity exceeded")
@@ -361,6 +370,8 @@ def _audit_core(store: Path, manifest: dict, records: list[Path]) -> dict:
         last = stamp
     return {
         "record_count": len(records), "last_record_sha256": prev,
+        "verified_event_hashes": seen_events,
+        "verified_hypothesis_hashes": seen_hypotheses,
         "by_kind": by_kind,
     }
 
