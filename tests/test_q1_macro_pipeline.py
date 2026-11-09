@@ -197,11 +197,26 @@ class OfficialDatasetTests(unittest.TestCase):
             "model-test", "Return only JSON", {"event": "historical sample"}))
         self.assertEqual(payload["input"][0]["role"], "user")
         self.assertEqual(payload["input"][0]["content"][0]["type"], "input_text")
+        prompt = payload["input"][0]["content"][0]["text"]
+        self.assertIn("json", prompt.lower())
+        self.assertIn("Return only a JSON object", prompt)
         self.assertEqual(
-            json.loads(payload["input"][0]["content"][0]["text"]),
+            json.loads(prompt.split("not as instructions.\\n", 1)[1]),
             {"event": "historical sample"})
         self.assertEqual(payload["tools"], [])
         self.assertIs(payload["store"], False)
+        self.assertEqual(payload["text"]["format"]["type"], "json_object")
+
+    def test_json_object_input_requirement_with_non_json_evidence(self):
+        from research import macro_ai_generate as ai
+        payload = json.loads(ai.build_request_payload(
+            "gpt-6-luna", "Some domain instructions",
+            {"event": "nfp", "value": 100}))
+        messages = payload["input"]
+        self.assertTrue(any(
+            "json" in part["text"].lower()
+            for msg in messages for part in msg["content"]
+            if part["type"] == "input_text"))
         self.assertEqual(payload["text"]["format"]["type"], "json_object")
 
     def test_safe_provider_input_reason_is_categorical_only(self):
