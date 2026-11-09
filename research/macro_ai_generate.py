@@ -19,7 +19,7 @@ from research.macro_ai_backtest import (
 from research.offline_backtest import InputError, PAIRS, timestamp
 
 ENDPOINT = "https://api.openai.com/v1/responses"
-MAX_REQUESTS = 60
+MAX_REQUESTS = 240
 MAX_REPLY_BYTES = 80_000
 
 
@@ -190,7 +190,7 @@ not approve claims based on your current knowledge of what happened later.
 def generate(evidence: dict, *, analyst_model: str, reviewer_model: str,
              max_decisions: int, api_key: str,
              inference=response_json) -> dict:
-    if (not 1 <= max_decisions <= 30 or not api_key
+    if (not 1 <= max_decisions <= MAX_REQUESTS // 2 or not api_key
             or not analyst_model or not reviewer_model
             or analyst_model == reviewer_model
             or not all(len(m) <= 100 and m.isascii()
@@ -213,7 +213,7 @@ def generate(evidence: dict, *, analyst_model: str, reviewer_model: str,
         subset = [e for e in events
                   if timestamp(e["available_at_utc"]) <= asof]
         # Frozen source subset, no full-year context in prompt.
-        subset = sorted(subset, key=lambda e: e["id"])[:30]
+        # Keep only the most recent 30 already available sources. This is\n        # a bounded, time-causal context window (not the first 30 ever).\n        subset = sorted(subset, key=lambda e: (e["available_at_utc"],\n                                               e["id"]))[-30:]\n        subset = sorted(subset, key=lambda e: e["id"])
         if event["id"] not in {s["id"] for s in subset}:
             raise InputError("too many same-asof evidence sources")
         ids = [s["id"] for s in subset]
