@@ -578,3 +578,8 @@ PR #105のマージ後、本人Windowsで**421件/OK**報告を受領。[モッ�
 ## 2026-11-09 FX-AI-ARCH-002：三系統AIの研究用交換アダプターと比較テスト
 
 本人の指示により、`research/ai_provider_comparison.py` にOpenAI Responses、TypeSafe Jev、OpenAI Decisions APIの固定選択による補助判断アダプターと、マクロ仮説・独立反証を別役割として維持する研究用`ResearchRoleRegistry`を追加。比較は同じ過去資料、時刻、通貨ペア、分類規約で実施する。アダプターのモック検証と有料APIの明示許可/回数上限の安全テストを含む。APIの実利用権、実測優劣、モデル本番採用の承認は**未取得**。基幹売買システムへ暗黙ルーティングしない。既存の3ペア、損失上限、G1〜G9/FX-SAF/PHASE-1の未承認状態、`runtime_go_no_go=NO_GO`を維持。詳細：[研究用3系統比較](docs/ai_provider_comparison_20261109.md)。
+
+
+## 2026-11-09 FX-AI-ARCH-003：2025年25イベントの3系統比較と不一致監査
+
+研究用`research/ai_provider_annual_audit.py`を追加し、OpenAI Responses／TypeSafe Jev／OpenAI Decisionsの2025年25イベント×3系統の重要度・再分析要否判断を同一as-of資料で比較可能化。既存1イベント実測を入力SHA-256照合で再利用可能（最大3課金呼び出し省略）。有料API呼び出し前の保留状態を耐障害ジャーナルに保存し、結果不明時の自動再送を禁止。比較レポートは実測不一致と未収録市場予想・未ラベル等の原因**候補**を区別し、因果関係や品質優越を捏造しない。Windows実API残72件は本人端末の秘密鍵と費用確認を要するため未実行。注文権限・G1〜G9/PHASE-1・`NO_GO`は不変。詳細：[25イベント比較・不一致監査](docs/ai_provider_2025_25_event_audit.md)。
