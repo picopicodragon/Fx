@@ -26,7 +26,7 @@ class AnnualEvidenceTests(unittest.TestCase):
             "official_2025q1_macro_evidence.json")
         for key, value in old.items():
             self.assertEqual(events[key], value)
-        q = {int(v["available_at_utc"][5:7]) // 3
+        q = {(int(v["available_at_utc"][5:7]) - 1) // 3
              for v in events.values()}
         self.assertGreaterEqual(len(q), 4)
         self.assertTrue(all(v["market_expectation"] == "" for k, v
@@ -85,7 +85,7 @@ class AnnualPriceTests(unittest.TestCase):
         for symbol, midpoint in (("usdjpy", 150), ("eurjpy", 160),
                                  ("eurusd", 1.08)):
             for side in ("bid", "ask"):
-                val = midpoint + (0.02 if side == "ask" else 0)
+                val = midpoint + ((0.0002 if symbol == "eurusd" else 0.02)\n                                  if side == "ask" else 0)
                 price = f"{val:.5f}"
                 lines = ["timestamp,open,high,low,close"]
                 lines.extend(f"{ts},{price},{val+0.04:.5f},"
