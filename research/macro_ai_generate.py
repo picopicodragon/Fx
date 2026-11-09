@@ -89,7 +89,7 @@ not approve claims based on your current knowledge of what happened later.
 def generate(evidence: dict, *, analyst_model: str, reviewer_model: str,
              max_decisions: int, api_key: str,
              inference=response_json) -> dict:
-    if (not 1 <= max_decisions <= 20 or not api_key
+    if (not 1 <= max_decisions <= 30 or not api_key
             or not analyst_model or not reviewer_model
             or analyst_model == reviewer_model
             or not all(len(m) <= 100 and m.isascii()
