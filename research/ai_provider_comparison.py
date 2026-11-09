@@ -274,6 +274,47 @@ class ProviderRegistry:
         }
 
 
+
+def descriptive_comparison(rows: list[dict], selected: tuple) -> dict:
+    """Agreement/abstentions and latency only; not accuracy or ROI."""
+    from collections import Counter
+    groups = {}
+    for row in rows:
+        name = row["provider"]
+        key = (row["event_id"], row["pair"], row["asof_utc"])
+        groups.setdefault(key, {})[name] = row["result"]
+    if any(set(group) != set(selected) for group in groups.values()):
+        raise InputError("incomplete provider comparison group")
+    agreement = 0
+    for group in groups.values():
+        if len({(v["priority"], v["reanalysis"])
+                for v in group.values()}) == 1:
+            agreement += 1
+    provider_metrics = {}
+    for name in selected:
+        sub = [row for row in rows if row["provider"] == name]
+        priority = Counter(row["result"]["priority"] for row in sub)
+        reanalysis = Counter(row["result"]["reanalysis"] for row in sub)
+        durations = sorted(row["elapsed_ms"] for row in sub)
+        provider_metrics[name] = {
+            "priority_counts": dict(sorted(priority.items())),
+            "reanalysis_counts": dict(sorted(reanalysis.items())),
+            "unknown_count": sum(
+                row["result"]["priority"] == "UNKNOWN" or
+                row["result"]["reanalysis"] == "UNKNOWN"
+                for row in sub),
+            "mean_latency_ms": round(sum(durations) / len(durations), 2),
+        }
+    return {
+        "matched_evidence_groups": len(groups),
+        "unanimous_choice_groups": agreement,
+        "non_unanimous_groups": len(groups) - agreement,
+        "per_provider": provider_metrics,
+        "human_labeled_accuracy": None,
+        "trading_profitability_evaluated": False,
+    }
+
+
 def compare(sources: dict, *, selected: tuple, pair: str,
             max_events: int, credentials: dict,
             registry: ProviderRegistry | None = None,
@@ -302,6 +343,7 @@ def compare(sources: dict, *, selected: tuple, pair: str,
         "contract": QUESTION_VERSION, "providers": list(selected),
         "event_count": len(events), "actual_api_requests": len(rows),
         "research_decisions": rows,
+        "descriptive_comparison": descriptive_comparison(rows, selected),
         "estimated_usd_cost": None,  # no ungrounded provider billing
         "human_labeled_quality_verified": False,
         "real_orders_permitted": False,
