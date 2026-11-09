@@ -102,7 +102,7 @@ class AnnualPriceTests(unittest.TestCase):
 
     def test_annual_preflight_has_full_year_data_and_no_api(self):
         evidence, report = annual.preflight(self.price_dir, annual.DATASET)
-        self.assertEqual(len(evidence), 23)
+        self.assertEqual(len(evidence), 25)
         self.assertEqual(report["possible_decisions"], 75)
         self.assertEqual(report["estimated_full_inference_api_calls"], 150)
         self.assertEqual(report["missing_consensus_event_count"], 19)
