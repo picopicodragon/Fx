@@ -15,7 +15,7 @@
 - 2025-03-19T02:25Z: BOJ maintained around 0.5%; local release **11:25 JST**: https://www.boj.or.jp/en/mopo/mpmdeci/state_2025/k250319a.htm
 - 2025-03-19T18:00Z: FOMC retained 4.25-4.50% and announced Treasury runoff slowdown: https://www.federalreserve.gov/newsevents/pressreleases/monetary20250319a.htm
 
-**重大な留保：**米CPI・雇用統計の事前市場コンセンサス、FOMC・BOJの事前市場期待値は、この資料群だけでは確認していない。空文字の`market_expectation`として扱い、実績や後から判明した情報で置き換えない。公表・利用可能時刻は一次資料の明記時刻に基づくが、ミリ秒単位のマーケット受信遅延までは検証できない。短い要約だけでは、事前織り込みを正確に推定できない。**ニュースや当時のインフレ/金利予想の網羅性・実際のAI予測精度は保証しない。**
+**重大な留保：**米雇用統計3件・米CPI3件については、CME/Econoday・Reutersの「発表前コンセンサス」として記載された数値を第二次資料で照合し、`market_expectation`に追加した。**予想値の事前配信時刻が当時のアーカイブで厳密に立証されたわけではない。** 6件の出典URL・確証不足を`research/datasets/official_2025q1_consensus_provenance.json`に別記し、全件`verified_asof_snapshot=false`とした。残りFOMC2件・BOJ2件の市場期待値は引き続き未確認の空文字。実績や後から判明した情報で偽の予想値を作成しない。公表・利用可能時刻は一次資料の明記時刻に基づくが、ミリ秒単位のマーケット受信遅延までは検証できない。短い要約だけでは、事前織り込みを正確に推定できない。**ニュースや当時のインフレ/金利予想の網羅性・実際のAI予測精度は保証しない。**
 
 ## Windows実行手順（3ペアの2025Q1 bid/ask CSV6本を既に取得済みの場合）
 
