@@ -38,10 +38,10 @@ class OfficialDatasetTests(unittest.TestCase):
         events, meta = macro.evidence_file(pipeline.DEFAULT_EVIDENCE)
         self.assertEqual(meta["evidence_event_count"], 10)
         self.assertEqual(set(events), {
-            "US_NFP_20250110", "US_CPI_20250115", "US_FOMC_20250129",
-            "US_NFP_20250207", "US_CPI_20250212", "US_NFP_20250307",
-            "US_CPI_20250312", "US_FOMC_20250319",
-            "JP_BOJ_20250124", "JP_BOJ_20250319"})
+            "USNFP20250110", "USCPI20250115", "USFOMC20250129",
+            "USNFP20250207", "USCPI20250212", "USNFP20250307",
+            "USCPI20250312", "USFOMC20250319",
+            "JPBOJ20250124", "JPBOJ20250319"})
         for key, event in events.items():
             with self.subTest(key=key):
                 self.assertTrue(event["source_url"].startswith(
