@@ -573,3 +573,8 @@ PR #105のマージ後、本人Windowsで**421件/OK**報告を受領。[モッ�
 ## 2026-11-09 FX-BT-011：2025年通年マクロ研究と一次資料拡充
 
 2025Q1の10件に2025Q2〜Q4の公的一次資料15件を追加し、25イベントの研究用シードを `research/datasets/official_2025_macro_evidence_seed.json` に追加。3ペア（USD/JPY、EUR/JPY、EUR/USD）の通年H1双方向価格6ファイルを別途ローカルに用意し、API未使用のプリフライト、明示的な有料API回数上限、通年の独立モデル仮説・検証、年間/四半期別の確定損益分析を開発。資料は全ニュースを網羅せず、当時の市場コンセンサスを厳密に証明できない新規資料の予想値は空欄。Q4は参考比較のみで厳密な未来情報排除の保証なし。実価格の実行結果は未確認。**本番運用対象3ペアの決定は維持するが、本番・デモ注文許可、MT4/G1〜G9/FX-SAF・人間承認のゲート、NO_GOは変更しない。** [手順](docs/annual_macro_evidence_replay_2025.md)。
+
+
+## 2026-11-09 FX-AI-ARCH-002：三系統AIの研究用交換アダプターと比較テスト
+
+本人の指示により、`research/ai_provider_comparison.py` にOpenAI Responses、TypeSafe Jev、OpenAI Decisions APIの固定選択による補助判断アダプターと、マクロ仮説・独立反証を別役割として維持する研究用`ResearchRoleRegistry`を追加。比較は同じ過去資料、時刻、通貨ペア、分類規約で実施する。アダプターのモック検証と有料APIの明示許可/回数上限の安全テストを含む。APIの実利用権、実測優劣、モデル本番採用の承認は**未取得**。基幹売買システムへ暗黙ルーティングしない。既存の3ペア、損失上限、G1〜G9/FX-SAF/PHASE-1の未承認状態、`runtime_go_no_go=NO_GO`を維持。詳細：[研究用3系統比較](docs/ai_provider_comparison_20261109.md)。
