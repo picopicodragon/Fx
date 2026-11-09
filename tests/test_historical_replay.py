@@ -88,7 +88,10 @@ class HistoryReplayTests(unittest.TestCase):
         first = next(b for b in bars if b.pair == "USD/JPY")
         self.assertEqual(first.spread, 1)
         self.assertEqual(meta["fill_model"],
-                         "mid_OHLC_and_max_open_close_spread_estimate")
+                         "actual_bid_ask_OHLC_stop_first_ambiguous")
+        self.assertIsNotNone(first.bid)
+        self.assertIsNotNone(first.ask)
+        self.assertLess(first.bid[0], first.ask[0])
 
     def test_sma_has_no_future_close_in_earlier_signal(self):
         before, _ = hist.prepare(self.files)
@@ -177,6 +180,42 @@ class HistoryReplayTests(unittest.TestCase):
         self.assertEqual(result, 2)
         self.assertIn("FAIL_CLOSED", stdout.getvalue())
         self.assertNotIn("SECRET_CANARY_2026", stdout.getvalue())
+
+    def test_weekend_market_new_york_dstu(self):
+        from datetime import datetime, timezone
+        def stamp(x):
+            return int(datetime.fromisoformat(x).replace(
+                tzinfo=timezone.utc).timestamp() * 1000)
+        self.assertTrue(hist.market_open(stamp("2025-01-03T21:00:00")))
+        self.assertFalse(hist.market_open(stamp("2025-01-03T22:00:00")))
+        self.assertFalse(hist.market_open(stamp("2025-01-05T21:00:00")))
+        self.assertTrue(hist.market_open(stamp("2025-01-05T22:00:00")))
+        self.assertTrue(hist.market_open(stamp("2025-07-04T20:00:00")))
+        self.assertFalse(hist.market_open(stamp("2025-07-04T21:00:00")))
+        self.assertFalse(hist.market_open(stamp("2025-07-06T20:00:00")))
+        self.assertTrue(hist.market_open(stamp("2025-07-06T21:00:00")))
+
+    def test_synthetic_weekend_provider_candles_are_removed(self):
+        for symbol in hist.SYMBOLS:
+            for side in ("bid", "ask"):
+                self.replace_file(symbol, side, make_csv(symbol, side, count=110))
+        bars, meta = hist.prepare(self.files)
+        self.assertGreater(
+            meta["weekend_candles_removed_by_pair_and_side"]["usdjpy"]["bid"], 40)
+        self.assertTrue(all(hist.market_open(int(b.time.timestamp() * 1000))
+                            for b in bars))
+        self.assertEqual(meta["special_holidays_verified"], False)
+        self.assertEqual(meta["weekly_session_rule"],
+                         "Sun17_to_Fri17_America/New_York_DST")
+
+    def test_historical_bid_ask_fields_consistent(self):
+        bars, _ = hist.prepare(self.files)
+        for b in bars[:20]:
+            self.assertEqual(b.open, (b.bid[0] + b.ask[0]) / 2)
+            self.assertEqual(b.high, (b.bid[1] + b.ask[1]) / 2)
+            self.assertEqual(b.low, (b.bid[2] + b.ask[2]) / 2)
+            self.assertEqual(b.close, (b.bid[3] + b.ask[3]) / 2)
+
 
 
 if __name__ == "__main__":
