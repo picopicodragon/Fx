@@ -9,7 +9,7 @@ from research import forward_observation as obs
 from research import forward_ai_shadow as ai
 from research.offline_backtest import InputError
 
-NOW = datetime(2026, 11, 10, 8, 0, 0, tzinfo=timezone.utc)
+NOW = datetime(2026, 11, 9, 22, 0, 0, tzinfo=timezone.utc)
 
 
 class ForwardAiShadowTests(unittest.TestCase):
@@ -22,13 +22,13 @@ class ForwardAiShadowTests(unittest.TestCase):
         obs.initialize(self.store, "ai_shadow_fixture", now=NOW)
         sample = {
             "schema": obs.SCHEMA, "kind": "MACRO_EVENT",
-            "observed_at_utc": "2026-11-10T08:00:00Z",
+            "observed_at_utc": "2026-11-09T22:00:00Z",
             "source_id": "fixture",
             "payload": {
                 "pair": "USD/JPY",
                 "title": "Synthetic rate report",
                 "source_url": "https://example.invalid/synthetic",
-                "published_at_utc": "2026-11-10T07:59:00Z",
+                "published_at_utc": "2026-11-09T21:59:00Z",
                 "content": "No real market data",
                 "consensus": "0bp", "released_value": "25bp",
                 "source_status": "USER_SUPPLIED_UNVERIFIED",
