@@ -255,13 +255,19 @@ def main(argv=None) -> int:
     try:
         if args.publish_offline and (args.max_api_calls or args.allow_external_api):
             raise InputError("publication cannot request paid calls")
-        result = publish(\n            args.store, args.event_sha256, args.ledger,\n            analyst_model=args.analyst_model,\n            reviewer_model=args.reviewer_model) if args.publish_offline and (\n                args.max_api_calls == 0 and not args.allow_external_api\n            ) else run(
-            args.store, args.event_sha256, args.ledger,
-            analyst_model=args.analyst_model,
-            reviewer_model=args.reviewer_model,
-            max_api_calls=args.max_api_calls,
-            allow_external_api=args.allow_external_api,
-            api_key=os.environ.get("OPENAI_API_KEY", ""))
+        if args.publish_offline:
+            result = publish(
+                args.store, args.event_sha256, args.ledger,
+                analyst_model=args.analyst_model,
+                reviewer_model=args.reviewer_model)
+        else:
+            result = run(
+                args.store, args.event_sha256, args.ledger,
+                analyst_model=args.analyst_model,
+                reviewer_model=args.reviewer_model,
+                max_api_calls=args.max_api_calls,
+                allow_external_api=args.allow_external_api,
+                api_key=os.environ.get("OPENAI_API_KEY", ""))
         print(json.dumps(result))
         return 0
     except (InputError, ValueError, TypeError, OSError,
