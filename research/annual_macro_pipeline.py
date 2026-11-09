@@ -42,8 +42,12 @@ def preflight(folder: Path, evidence_path: Path) -> tuple[dict, dict]:
                for e in sources.values()):
         raise InputError("evidence not restricted to 2025")
     bars, market = hist.prepare(prices(folder))
-    if not bars:
-        raise InputError("missing aligned 2025 H1 bars")
+    if not bars or market["aligned_bars_per_pair"] < 5500:
+        raise InputError("insufficient aligned full-year 2025 H1 bars")
+    aligned_times = sorted({b.time for b in bars})
+    if any(next_t - current_t > timedelta(hours=96)
+           for current_t, next_t in zip(aligned_times, aligned_times[1:])):
+        raise InputError("large internal gap in annual H1 bars")
     # Do not pass off a Q1-only CSV as annual coverage.
     if bars[0].time > datetime(2025, 1, 6, tzinfo=timezone.utc) or (
             bars[-1].time < datetime(2025, 12, 29, tzinfo=timezone.utc)
