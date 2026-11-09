@@ -100,11 +100,15 @@ def generate(evidence: dict, *, analyst_model: str, reviewer_model: str,
     events = sorted(evidence.values(),
                     key=lambda e: (e["available_at_utc"], e["id"]))
     decisions = []
+    seen_cutoffs = set()
     for event in events:
         published = timestamp(event["available_at_utc"])
         asof = published.replace(minute=0, second=0, microsecond=0)
         if asof < published:
             asof += timedelta(hours=1)
+        if asof in seen_cutoffs:
+            continue  # Same H1 as-of is already represented for each pair.
+        seen_cutoffs.add(asof)
         subset = [e for e in events
                   if timestamp(e["available_at_utc"]) <= asof]
         # Frozen source subset, no full-year context in prompt.
