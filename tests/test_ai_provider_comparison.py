@@ -170,6 +170,14 @@ class AdapterTests(unittest.TestCase):
             self.assertEqual(len(hashes), 1)
         self.assertFalse(result["human_labeled_quality_verified"])
         self.assertIsNone(result["estimated_usd_cost"])
+        self.assertEqual(result["descriptive_comparison"][
+            "unanimous_choice_groups"], 2)
+        self.assertEqual(result["descriptive_comparison"][
+            "non_unanimous_groups"], 0)
+        self.assertIsNone(result["descriptive_comparison"][
+            "human_labeled_accuracy"])
+        self.assertEqual(set(result["descriptive_comparison"][
+            "per_provider"]), set(gateway.PROVIDERS))
 
     def test_default_cli_preflight_is_zero_api_calls(self):
         with tempfile.TemporaryDirectory() as temp:
