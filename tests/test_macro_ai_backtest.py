@@ -212,6 +212,23 @@ class MacroReplayTests(unittest.TestCase):
         self.assertEqual(macro.validate_decision(generated["decisions"][0],
                                                   self.sources)[2], "LONG")
 
+    def test_generator_batches_multiple_sources_same_hour(self):
+        other = event("E002", available="2025-01-02T10:10:00Z")
+        grouped = {"E001": event(), "E002": other}
+        def fake(model, instruction, data, *, key):
+            if model == "mock-analyst-a":
+                return {"action": "HOLD", "hypothesis": "No sufficient data",
+                        "counterevidence": "Evidence uncertain"}
+            return {"verdict": "PENDING", "rationale": "Insufficient"}
+        result = generator.generate(
+            grouped, analyst_model="mock-analyst-a",
+            reviewer_model="mock-reviewer-b", max_decisions=6,
+            api_key="FAKE_TEST_ONLY", inference=fake)
+        self.assertEqual(len(result["decisions"]), 3)
+        self.assertEqual(len(result["decisions"][0]["evidence_ids"]), 2)
+        self.assertEqual(len(set((d["pair"], d["asof_utc"])
+                                 for d in result["decisions"])), 3)
+
     def test_generator_rejects_same_model_or_no_key(self):
         for kwargs in (
                 {"analyst_model": "a", "reviewer_model": "a",
