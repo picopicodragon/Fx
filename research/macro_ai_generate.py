@@ -23,6 +23,30 @@ MAX_REQUESTS = 60
 MAX_REPLY_BYTES = 80_000
 
 
+class MacroAPIError(InputError):
+    """Safe, fixed-category API failure; never includes response body or key."""
+
+    def __init__(self, reason: str):
+        self.reason = reason
+        super().__init__(reason)
+
+
+def _http_failure(code: int) -> str:
+    if code == 400:
+        return "HTTP_400_INVALID_REQUEST_OR_MODEL_OPTIONS"
+    if code == 401:
+        return "HTTP_401_INVALID_API_KEY"
+    if code == 403:
+        return "HTTP_403_PERMISSION_DENIED"
+    if code == 404:
+        return "HTTP_404_MODEL_UNAVAILABLE_OR_NOT_FOUND"
+    if code == 429:
+        return "HTTP_429_RATE_OR_QUOTA_LIMIT"
+    if 500 <= code < 600:
+        return "HTTP_5XX_PROVIDER_FAILURE"
+    return "HTTP_OTHER_API_FAILURE"
+
+
 def response_json(model: str, instruction: str, data: dict, *,
                   key: str) -> dict:
     """Single isolated API response; never grants tools, web or order access."""
@@ -43,10 +67,10 @@ def response_json(model: str, instruction: str, data: dict, *,
         with urllib.request.urlopen(req, timeout=60) as response:
             body = response.read(MAX_REPLY_BYTES + 1)
         if len(body) > MAX_REPLY_BYTES:
-            raise InputError("AI output too large")
+            raise MacroAPIError("AI_RESPONSE_TOO_LARGE")
         reply = json.loads(body)
         if reply.get("status") != "completed":
-            raise InputError("AI did not complete")
+            raise MacroAPIError("INCOMPLETE_AI_RESPONSE")
         content = [
             node["text"] for message in reply.get("output", [])
             if message.get("type") == "message"
@@ -54,14 +78,19 @@ def response_json(model: str, instruction: str, data: dict, *,
             if node.get("type") == "output_text"
         ]
         if len(content) != 1:
-            raise InputError("ambiguous AI text output")
+            raise MacroAPIError("MISSING_OR_MULTIPLE_OUTPUT_TEXT")
         result = json.loads(content[0])
         if type(result) is not dict:
             raise InputError("AI result is not an object")
         return result
-    except (urllib.error.URLError, OSError, ValueError, KeyError, TypeError,
+    except urllib.error.HTTPError as exc:
+        # Never print provider error bodies, which may include request details.
+        raise MacroAPIError(_http_failure(exc.code)) from None
+    except (urllib.error.URLError, TimeoutError) as exc:
+        raise MacroAPIError("NETWORK_OR_TIMEOUT") from None
+    except (OSError, ValueError, KeyError, TypeError,
             UnicodeError, OverflowError) as exc:
-        raise InputError("external AI failed") from exc
+        raise MacroAPIError("INVALID_OR_MALFORMED_RESPONSE") from None
 
 
 ANALYST_PROMPT = """You are an offline historic FX macro HYPOTHESIS analyst, not an
