@@ -100,7 +100,7 @@ class ForwardQualityAndPaperTests(unittest.TestCase):
         }, seconds=2, name="review")
         self.add("PRICE_QUOTE", self.quote(), seconds=3, name="q1")
         self.add("PRICE_QUOTE",
-                 self.quote(bid="150.300", ask="150.310"),
+                 self.quote(bid="150.320", ask="150.330"),
                  seconds=4, name="q2")
         result = paper.replay(
             self.store, self.scenario(),
