@@ -1,0 +1,48 @@
+{
+  "schema": "fx_macro_consensus_provenance_v1",
+  "warning": "Retrospectively displayed forecasts are described by publishers as pre-release consensus. Original pre-announcement snapshot timestamps are not independently verified. Evidence schema has only one source_url (official result release); this sidecar preserves the separate forecast sources.",
+  "records": [
+    {
+      "id": "USNFP20250110",
+      "forecast_source_url": "https://www.cmegroup.com/education/events/econoday/636595",
+      "forecast_origin": "Econoday survey",
+      "forecast_reliability": "postrelease_page_labels_market_consensus_before_announcement",
+      "verified_asof_snapshot": false
+    },
+    {
+      "id": "USCPI20250115",
+      "forecast_source_url": "https://www.kitco.com/news/off-the-wire/2025-01-15/us-consumer-prices-rise-slightly-above-expectations-december",
+      "forecast_origin": "Reuters economist poll reported on release date",
+      "forecast_reliability": "retrospective_description_not_pre_release_timestamped",
+      "verified_asof_snapshot": false
+    },
+    {
+      "id": "USNFP20250207",
+      "forecast_source_url": "https://www.cmegroup.com/education/events/econoday/636596",
+      "forecast_origin": "Econoday survey",
+      "forecast_reliability": "postrelease_page_labels_market_consensus_before_announcement",
+      "verified_asof_snapshot": false
+    },
+    {
+      "id": "USCPI20250212",
+      "forecast_source_url": "https://www.cmegroup.com/education/events/econoday/636564",
+      "forecast_origin": "Econoday survey",
+      "forecast_reliability": "postrelease_page_labels_market_consensus_before_announcement",
+      "verified_asof_snapshot": false
+    },
+    {
+      "id": "USNFP20250307",
+      "forecast_source_url": "https://www.cmegroup.com/education/events/econoday/636597",
+      "forecast_origin": "Econoday survey",
+      "forecast_reliability": "postrelease_page_labels_market_consensus_before_announcement",
+      "verified_asof_snapshot": false
+    },
+    {
+      "id": "USCPI20250312",
+      "forecast_source_url": "https://www.cmegroup.com/education/events/econoday/648416",
+      "forecast_origin": "Econoday Market Focus",
+      "forecast_reliability": "dated_before_release_same_day_but_snapshot_time_not_independently_verified",
+      "verified_asof_snapshot": false
+    }
+  ]
+}
