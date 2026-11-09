@@ -62,6 +62,10 @@ class Bar:
     spread: D
     quote_to_jpy: D
     signal: str
+    # Optional actual bid/ask H1 candle sides for historical research replay.
+    # None preserves the v1 mid+fixed-spread standalone CSV interface.
+    bid: tuple[D, D, D, D] | None = None
+    ask: tuple[D, D, D, D] | None = None
 
 
 @dataclass
@@ -132,27 +136,37 @@ def session_day(t: datetime) -> str:
 def _mark(pos: Position, bar: Bar, *, opening: bool = False) -> D:
     half = bar.spread * pip(bar.pair) / 2
     mid = bar.open if opening else bar.close
-    price = mid - half if pos.direction == 1 else mid + half
+    if bar.bid is not None and bar.ask is not None:
+        idx = 0 if opening else 3
+        price = bar.bid[idx] if pos.direction == 1 else bar.ask[idx]
+    else:
+        price = mid - half if pos.direction == 1 else mid + half
     return D(pos.direction * pos.units) * (price - pos.entry) * bar.quote_to_jpy
 
 
 def _exit_price(pos: Position, bar: Bar):
     half = bar.spread * pip(bar.pair) / 2
+    if bar.bid is not None and bar.ask is not None:
+        # LONG closes at BID, SHORT closes at ASK. Intrabar stop wins ties.
+        exit_side = bar.bid if pos.direction == 1 else bar.ask
+        opening, high, low, _ = exit_side
+    else:
+        opening = bar.open - half if pos.direction == 1 else bar.open + half
+        high = bar.high - half if pos.direction == 1 else bar.high + half
+        low = bar.low - half if pos.direction == 1 else bar.low + half
     if pos.direction == 1:
-        opening = bar.open - half
         if opening <= pos.stop:
             return opening, "STOP_GAP"
-        if bar.low - half <= pos.stop:
+        if low <= pos.stop:
             return pos.stop, "STOP"
-        if bar.high - half >= pos.target:
+        if high >= pos.target:
             return pos.target, "TARGET"
     else:
-        opening = bar.open + half
         if opening >= pos.stop:
             return opening, "STOP_GAP"
-        if bar.high + half >= pos.stop:
+        if high >= pos.stop:
             return pos.stop, "STOP"
-        if bar.low + half <= pos.target:
+        if low <= pos.target:
             return pos.target, "TARGET"
     return None, None
 
@@ -191,7 +205,21 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
                 or min(b.open, b.high, b.low, b.close, b.quote_to_jpy) <= 0
                 or b.spread < 0 or b.low > min(b.open, b.close)
                 or b.high < max(b.open, b.close)
-                or (b.pair.endswith("/JPY") and b.quote_to_jpy != 1)):
+                or (b.pair.endswith("/JPY") and b.quote_to_jpy != 1)
+                or ((b.bid is None) != (b.ask is None))
+                or (b.bid is not None and (
+                    type(b.bid) is not tuple or type(b.ask) is not tuple
+                    or len(b.bid) != 4 or len(b.ask) != 4
+                    or any(type(v) is not D or not v.is_finite() or v <= 0
+                           for v in b.bid + b.ask)
+                    or any(side[2] > min(side[0], side[3])
+                           or side[1] < max(side[0], side[3])
+                           for side in (b.bid, b.ask))
+                    or any(b.ask[k] < b.bid[k] for k in (0, 3))
+                    or b.low != (b.bid[2] + b.ask[2]) / 2
+                    or b.high != (b.bid[1] + b.ask[1]) / 2
+                    or b.open != (b.bid[0] + b.ask[0]) / 2
+                    or b.close != (b.bid[3] + b.ask[3]) / 2))):
             raise InputError("invalid direct bar")
     grouped = {}
     for bar in bars:
@@ -208,6 +236,10 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
     rejected = 0
     gap_breaches = 0
     max_positions = 0
+    rejected_reasons = {"dd_halt": 0, "daily_halt": 0,
+                        "spread_too_wide": 0, "insufficient_risk_budget": 0}
+    gap_signal_suppressed = 0
+    previous_time = None
     last_group = {}
 
     def close(pos: Position, bar: Bar, price: D, why: str):
@@ -227,6 +259,13 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
 
     for t in sorted(grouped):
         group = grouped[t]
+        # A signal from Friday cannot be executed as a fresh Sunday entry.
+        # Existing positions still get next observed opening gap enforcement.
+        if previous_time is not None and t - previous_time > timedelta(hours=1):
+            gap_signal_suppressed += sum(
+                previous_signal.get(p) in ("LONG", "SHORT") for p in group)
+            previous_signal.clear()
+        previous_time = t
         day = session_day(t)
         if day != trading_day:
             trading_day = day
@@ -239,7 +278,9 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
         for pair in sorted(tuple(current), key=PAIRS.index):
             pos, bar = current[pair], group[pair]
             half = bar.spread * pip(pair) / 2
-            opening = bar.open - half if pos.direction == 1 else bar.open + half
+            opening = ((bar.bid[0] if pos.direction == 1 else bar.ask[0])
+                       if bar.bid is not None else
+                       (bar.open - half if pos.direction == 1 else bar.open + half))
             if ((pos.direction == 1 and opening <= pos.stop)
                     or (pos.direction == -1 and opening >= pos.stop)):
                 close(pos, bar, opening, "STOP_GAP")
@@ -256,11 +297,16 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
             if signal not in ("LONG", "SHORT") or pair in current or pair in exited:
                 continue
             if dd_halt or day_halt or bar.spread >= distance:
+                reason = ("dd_halt" if dd_halt else
+                          "daily_halt" if day_halt else "spread_too_wide")
+                rejected_reasons[reason] += 1
                 rejected += 1
                 continue
             direction = 1 if signal == "LONG" else -1
             half = bar.spread * pip(pair) / 2
-            entry = bar.open + half if direction == 1 else bar.open - half
+            entry = ((bar.ask[0] if direction == 1 else bar.bid[0])
+                     if bar.bid is not None else
+                     (bar.open + half if direction == 1 else bar.open - half))
             loss_per_unit = distance * pip(pair) * bar.quote_to_jpy + commission / 1000
             equity_open = cash + sum(_mark(p, group[k], opening=True)
                                      for k, p in current.items())
@@ -271,6 +317,7 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
                 rounding=ROUND_FLOOR)) if budget > 0 else 0
             units = steps * lot_step_units
             if units < min_units:
+                rejected_reasons["insufficient_risk_budget"] += 1
                 rejected += 1
                 continue
             stop_range = distance * pip(pair)
@@ -297,7 +344,9 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
             for pair in sorted(tuple(current), key=PAIRS.index):
                 pos, bar = current[pair], group[pair]
                 half = bar.spread * pip(pair) / 2
-                price = bar.close - half if pos.direction == 1 else bar.close + half
+                price = ((bar.bid[3] if pos.direction == 1 else bar.ask[3])
+                         if bar.bid is not None else
+                         (bar.close - half if pos.direction == 1 else bar.close + half))
                 close(pos, bar, price, "DD5_EXIT" if dd >= D("0.05") else "DAILY_EXIT")
             if dd >= D("0.05"):
                 dd_halt = True
@@ -308,7 +357,9 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
     for pair in sorted(tuple(current), key=PAIRS.index):
         pos, bar = current[pair], last_group[pair]
         half = bar.spread * pip(pair) / 2
-        price = bar.close - half if pos.direction == 1 else bar.close + half
+        price = ((bar.bid[3] if pos.direction == 1 else bar.ask[3])
+                 if bar.bid is not None else
+                 (bar.close - half if pos.direction == 1 else bar.close + half))
         close(pos, bar, price, "END_OF_DATA")
     return {
         "status": "RESEARCH_ONLY_NO_GO", "runtime_go_no_go": "NO_GO",
@@ -318,7 +369,9 @@ def simulate(bars: list[Bar], *, starting_jpy: str = "100000",
         "max_drawdown_observed_pct": str(max_dd * 100),
         "daily_stop_last_day": day_halt, "dd_stop_latched": dd_halt,
         "gap_risk_budget_breaches": gap_breaches,
-        "signals_rejected": rejected, "max_open_positions": max_positions,
+        "signals_rejected": rejected, "signals_rejected_by_reason": rejected_reasons,
+        "stale_gap_signals_suppressed": gap_signal_suppressed,
+        "max_open_positions": max_positions,
         "commission_jpy_per_1000_roundtrip": str(commission),
         "synthetic_or_input_data_not_authenticated": True,
         "real_mt4_read_authorized": False,
