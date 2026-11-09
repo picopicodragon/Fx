@@ -27,11 +27,13 @@ class MacroAPIError(InputError):
     """Safe, fixed-category API failure; never includes response body or key."""
 
     def __init__(self, reason: str, *, role: str = "UNKNOWN",
-                 api_param: str = "UNKNOWN", api_code: str = "UNKNOWN"):
+                 api_param: str = "UNKNOWN", api_code: str = "UNKNOWN",
+                 message_category: str = "UNKNOWN"):
         self.reason = reason
         self.role = role
         self.api_param = api_param
         self.api_code = api_code
+        self.message_category = message_category
         super().__init__(reason)
 
 SAFE_HTTP_PARAMS = frozenset({
@@ -45,8 +47,28 @@ SAFE_HTTP_CODES = frozenset({
     "insufficient_quota", "rate_limit_exceeded",
 })
 
-def _safe_http_detail(response_body: bytes) -> tuple[str, str]:
-    """Allowlist only known static identifiers; never surface server prose."""
+def _safe_message_category(error: dict) -> str:
+    """Classify provider text without ever printing the provider's wording."""
+    message = error.get("message")
+    if type(message) is not str:
+        return "UNKNOWN"
+    m = message.lower()
+    if any(x in m for x in ("too many tokens", "maximum context", "context length",
+                            "too long", "input length")):
+        return "INPUT_TOO_LONG"
+    if any(x in m for x in ("invalid input", "input must be",
+                            "input format", "invalid type for 'input'")):
+        return "INPUT_SCHEMA_REJECTED"
+    if any(x in m for x in ("not supported", "unsupported")):
+        return "UNSUPPORTED_OPTION"
+    if any(x in m for x in ("content policy", "safety policy",
+                            "disallowed content")):
+        return "CONTENT_POLICY_RESTRICTION"
+    return "UNCLASSIFIED_INPUT_ERROR"
+
+
+def _safe_http_detail(response_body: bytes) -> tuple[str, str, str]:
+    """Only fixed categorical information. Never surface provider prose."""
     try:
         obj = json.loads(response_body)
         error = obj.get("error", {})
@@ -56,9 +78,26 @@ def _safe_http_detail(response_body: bytes) -> tuple[str, str]:
             else "UNKNOWN",
             code if type(code) is str and code in SAFE_HTTP_CODES
             else "UNKNOWN",
+            _safe_message_category(error) if type(error) is dict
+            else "UNKNOWN",
         )
     except (ValueError, TypeError, AttributeError):
-        return "UNKNOWN", "UNKNOWN"
+        return "UNKNOWN", "UNKNOWN", "UNKNOWN"
+
+
+def build_request_payload(model: str, instruction: str, data: dict) -> bytes:
+    """Explicit user message with input_text content; no extra hidden sources."""
+    prompt = json.dumps(data, ensure_ascii=False, sort_keys=True)
+    if not prompt or len(prompt.encode("utf-8")) > 50_000:
+        raise MacroAPIError("INPUT_TOO_LARGE_LOCAL")
+    return json.dumps({
+        "model": model, "instructions": instruction,
+        "input": [{"role": "user", "content": [
+            {"type": "input_text", "text": prompt}
+        ]}],
+        "text": {"format": {"type": "json_object"}},
+        "tools": [], "store": False, "max_output_tokens": 1800,
+    }, ensure_ascii=False).encode("utf-8")
 
 
 
@@ -81,15 +120,7 @@ def _http_failure(code: int) -> str:
 def response_json(model: str, instruction: str, data: dict, *,
                   key: str) -> dict:
     """Single isolated API response; never grants tools, web or order access."""
-    payload = json.dumps({
-        "model": model,
-        "instructions": instruction,
-        "input": json.dumps(data, ensure_ascii=False, sort_keys=True),
-        "text": {"format": {"type": "json_object"}},
-        "tools": [],
-        "store": False,
-        "max_output_tokens": 1800,
-    }, ensure_ascii=False).encode("utf-8")
+    payload = build_request_payload(model, instruction, data)
     req = urllib.request.Request(
         ENDPOINT, data=payload, method="POST",
         headers={"Authorization": "Bearer " + key,
@@ -117,10 +148,11 @@ def response_json(model: str, instruction: str, data: dict, *,
     except urllib.error.HTTPError as exc:
         # Read only a bounded response and return fixed allowlisted fields.
         # Never surface raw HTTP body, key, source or error message.
-        api_param, api_code = _safe_http_detail(exc.read(8192))
+        api_param, api_code, message_category = _safe_http_detail(exc.read(8192))
         raise MacroAPIError(_http_failure(exc.code),
                             api_param=api_param,
-                            api_code=api_code) from None
+                            api_code=api_code,
+                            message_category=message_category) from None
     except (urllib.error.URLError, TimeoutError) as exc:
         raise MacroAPIError("NETWORK_OR_TIMEOUT") from None
     except (OSError, ValueError, KeyError, TypeError,
