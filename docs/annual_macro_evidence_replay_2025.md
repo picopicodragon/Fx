@@ -13,7 +13,9 @@
 - FOMC 2025全8会合: https://www.federalreserve.gov/newsevents/pressreleases/2025-press-fomc.htm
 - CPI過去リリース: https://www.bls.gov/bls/news-release/cpi.htm （2025年米CPIの月別公開資料）
 - CPIリリース予定時刻の照合: https://www.bls.gov/schedule/news_release/cpi.htm
-- 2025年9月5日雇用統計（8月分）: https://www.bls.gov/news.release/archives/empsit_09052025.htm\n- 2025年10月24日CPI（政府閉鎖に伴う9月分延期公表）: https://www.bls.gov/news.release/archives/cpi_10242025.htm\n- BEA 2025-04-30 Q1 GDP速報: https://www.bea.gov/news/2025/gross-domestic-product-1st-quarter-2025-advance-estimate
+- 2025年9月5日雇用統計（8月分）: https://www.bls.gov/news.release/archives/empsit_09052025.htm
+- 2025年10月24日CPI（政府閉鎖に伴う9月分延期公表）: https://www.bls.gov/news.release/archives/cpi_10242025.htm
+- BEA 2025-04-30 Q1 GDP速報: https://www.bea.gov/news/2025/gross-domestic-product-1st-quarter-2025-advance-estimate
 - ISM PMI、PCE、米金利や経済予測、日銀の他の政策発表等は**収集候補**。出典の公表日時と対象期間が一次資料で検証できるまでは自動追加しない。
 
 ## 通年価格データ
@@ -61,7 +63,7 @@ python -m research.annual_macro_pipeline `
   --allow-external-api
 ```
 
-全69件を実施する場合の指定例（**上限150回**、料金発生）：
+全75件を実施する場合の指定例（**上限150回**、料金発生）：
 
 ```powershell
 python -m research.annual_macro_pipeline `
