@@ -189,8 +189,10 @@ not approve claims based on your current knowledge of what happened later.
 
 def generate(evidence: dict, *, analyst_model: str, reviewer_model: str,
              max_decisions: int, api_key: str,
-             inference=response_json) -> dict:
-    if (not 1 <= max_decisions <= 30 or not api_key
+             inference=response_json, decision_limit: int = 30) -> dict:
+    if (type(decision_limit) is not int or not 1 <= decision_limit <= 120
+            or type(max_decisions) is not int
+            or not 1 <= max_decisions <= decision_limit or not api_key
             or not analyst_model or not reviewer_model
             or analyst_model == reviewer_model
             or not all(len(m) <= 100 and m.isascii()
@@ -212,8 +214,11 @@ def generate(evidence: dict, *, analyst_model: str, reviewer_model: str,
         seen_cutoffs.add(asof)
         subset = [e for e in events
                   if timestamp(e["available_at_utc"]) <= asof]
-        # Frozen source subset, no full-year context in prompt.
-        subset = sorted(subset, key=lambda e: e["id"])[:30]
+        # Use the 30 most recent as-of records, NOT the first 30 of the year:
+        # otherwise late-year events disappear as coverage expands.
+        subset = sorted(subset, key=lambda e:
+                        (e["available_at_utc"], e["id"]))[-30:]
+        subset = sorted(subset, key=lambda e: e["id"])
         if event["id"] not in {s["id"] for s in subset}:
             raise InputError("too many same-asof evidence sources")
         ids = [s["id"] for s in subset]
