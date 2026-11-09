@@ -3,17 +3,17 @@
 ## 状況
 
 - 公式対象は **USD/JPY、EUR/JPY、EUR/USD** の3ペアのみ。実口座/デモ/MT4注文は禁止（`NO_GO`）。
-- 2025Q1の公的資料10件をそのまま残し、2025Q2〜Q4の一次資料13件を追加した**計23イベント**を `research/datasets/official_2025_macro_evidence_seed.json` に収録。内訳は、米CPI、米GDP（advance）、FOMC声明、旧資料の米雇用統計・日銀政策決定等。
+- 2025Q1の公的資料10件をそのまま残し、2025Q2〜Q4の一次資料15件を追加した**計25イベント**を `research/datasets/official_2025_macro_evidence_seed.json` に収録。内訳は、米CPI、米GDP（advance）、FOMC声明、旧資料の米雇用統計・日銀政策決定等。
 - **完全なニュース網羅ではない**。特にQ4の政府閉鎖の影響で未公表の米統計を推測で補完していない。会合当日の投票・見通しの説明など発表文の抜粋を短く要約して収録。金融記事の全文転載をしない。
-- 新規13件の`market_expectation`は全件空文字（当時の予想値の厳密なアーカイブ確証なし）。旧10件の既存値は変更していないが、旧6件のコンセンサスの公表前タイムスタンプは未立証（`official_2025q1_consensus_provenance.json`参照）。従って予想差・織り込みはAIに捏造させずHOLD可能。
-- 新規13件の`available_at_utc`は公式リリースの掲載時刻/解禁時刻を採用した**仮定値**であり、秒単位の配信遅延は未立証。これ以上の安全性を保証しない。
+- 新規15件の`market_expectation`は全件空文字（当時の予想値の厳密なアーカイブ確証なし）。旧10件の既存値は変更していないが、旧6件のコンセンサスの公表前タイムスタンプは未立証（`official_2025q1_consensus_provenance.json`参照）。従って予想差・織り込みはAIに捏造させずHOLD可能。
+- 新規15件の`available_at_utc`は公式リリースの掲載時刻/解禁時刻を採用した**仮定値**であり、秒単位の配信遅延は未立証。これ以上の安全性を保証しない。
 
 ## 一次資料の出典
 
 - FOMC 2025全8会合: https://www.federalreserve.gov/newsevents/pressreleases/2025-press-fomc.htm
 - CPI過去リリース: https://www.bls.gov/bls/news-release/cpi.htm （2025年米CPIの月別公開資料）
 - CPIリリース予定時刻の照合: https://www.bls.gov/schedule/news_release/cpi.htm
-- BEA 2025-04-30 Q1 GDP速報: https://www.bea.gov/news/2025/gross-domestic-product-1st-quarter-2025-advance-estimate
+- 2025年9月5日雇用統計（8月分）: https://www.bls.gov/news.release/archives/empsit_09052025.htm\n- 2025年10月24日CPI（政府閉鎖に伴う9月分延期公表）: https://www.bls.gov/news.release/archives/cpi_10242025.htm\n- BEA 2025-04-30 Q1 GDP速報: https://www.bea.gov/news/2025/gross-domestic-product-1st-quarter-2025-advance-estimate
 - ISM PMI、PCE、米金利や経済予測、日銀の他の政策発表等は**収集候補**。出典の公表日時と対象期間が一次資料で検証できるまでは自動追加しない。
 
 ## 通年価格データ
@@ -45,7 +45,7 @@ python -m research.annual_macro_pipeline `
 
 ## 有料AI生成：厳格な課金上限
 
-デフォルトは無課金。明示的に `--allow-external-api` と`--max-api-calls`を指定する。上限は実際の予定最大回数で、各判断につき分析・独立レビューの**2呼び出し**。一次資料23イベントが別時刻なら3ペア合計69判断、最大138呼び出し。料金はモデルのトークン量・価格次第で不明。十分な残高・予算を事前に確認する。
+デフォルトは無課金。明示的に `--allow-external-api` と`--max-api-calls`を指定する。上限は実際の予定最大回数で、各判断につき分析・独立レビューの**2呼び出し**。一次資料25イベントが別時刻なら3ペア合計75判断、最大150呼び出し。料金はモデルのトークン量・価格次第で不明。十分な残高・予算を事前に確認する。
 
 まず1判断だけの有料試験例：
 
@@ -61,17 +61,17 @@ python -m research.annual_macro_pipeline `
   --allow-external-api
 ```
 
-全69件を実施する場合の指定例（**上限138回**、料金発生）：
+全69件を実施する場合の指定例（**上限150回**、料金発生）：
 
 ```powershell
 python -m research.annual_macro_pipeline `
   --prices-dir data/raw/dukascopy_h1 `
   --analyst-model gpt-6-luna `
   --reviewer-model gpt-6.1-sol `
-  --max-decisions 69 `
-  --max-api-calls 138 `
-  --journal-out out/macro_ai_decisions_2025_69.json `
-  --report-out out/macro_ai_report_2025_69.json `
+  --max-decisions 75 `
+  --max-api-calls 150 `
+  --journal-out out/macro_ai_decisions_2025_75.json `
+  --report-out out/macro_ai_report_2025_75.json `
   --allow-external-api
 ```
 
@@ -80,8 +80,8 @@ python -m research.annual_macro_pipeline `
 ```powershell
 python -m research.annual_macro_pipeline `
   --prices-dir data/raw/dukascopy_h1 `
-  --decisions out/macro_ai_decisions_2025_69.json `
-  --report-out out/macro_ai_report_2025_69_replay.json
+  --decisions out/macro_ai_decisions_2025_75.json `
+  --report-out out/macro_ai_report_2025_75_replay.json
 ```
 
 ジャーナル・レポートは上書き禁止。Q1と通年は入力資料の範囲が異なるため、**Q1の既存30判断と通年の再生成30判断の成績が一致する保証はない**。新しい年次シードの先頭10イベントはQ1旧資料と同じ内容。
