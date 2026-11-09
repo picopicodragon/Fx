@@ -53,3 +53,7 @@ unmatched_review.json
 
 # MQL4 compiled artifacts are not source or evidence
 *.ex4
+
+# FX-BT-002: locally obtained historical prices and external downloader cache
+.dukascopy-cache/
+download/
