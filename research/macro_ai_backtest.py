@@ -156,6 +156,8 @@ def run(files, evidence_path: Path, decisions_path: Path, **kwargs) -> dict:
         (b.time + timedelta(hours=1), b.pair), "HOLD")) for b in bars]
     result = simulate(replaced, **kwargs)
     market_meta["strategy"] = "POINT_IN_TIME_TEXT_AI_DUAL_REVIEW_REPLAY"
+    market_meta["sma_signal_counts"] = market_meta.pop("signal_counts", {})
+    market_meta["sma_signals_executed"] = False
     market_meta["historical_market_data_authenticity_independently_verified"] = False
     result["historical_research"] = market_meta
     result["macro_ai_research"] = {
