@@ -216,6 +216,15 @@ class AdapterTests(unittest.TestCase):
             self.assertIn("FAIL_CLOSED", buf.getvalue())
 
 
+    def test_bearer_key_never_follows_provider_redirect(self):
+        from urllib.request import Request
+        handler = gateway._NoProviderRedirect()
+        request = Request(gateway.TYPESAFE_SYSTEMONE,
+                          headers={"Authorization": "Bearer SECRET"})
+        self.assertIsNone(handler.redirect_request(
+            request, None, 302, "redirect", {},
+            "https://untrusted.example/steal"))
+
     def test_role_registry_restricts_generation_and_independent_review(self):
         with self.assertRaises(InputError):
             gateway.ResearchRoleRegistry(
