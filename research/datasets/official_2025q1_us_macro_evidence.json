@@ -22,6 +22,16 @@
       "observed_result": "CPI headline +0.4% m/m; +2.9% y/y"
     },
     {
+      "id": "JP_BOJ_20250124",
+      "source_url": "https://www.boj.or.jp/en/mopo/mpmdeci/state_2025/k250124a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-01-24T03:23:00Z",
+      "available_at_utc": "2025-01-24T03:23:00Z",
+      "text": "Bank of Japan Jan 24 2025 monetary policy statement: raised its uncollateralized overnight call rate target to around 0.5%, effective Jan 27. BOJ stated that real interest rates were expected to remain significantly negative and further tightening would depend on the outlook.",
+      "market_expectation": "",
+      "observed_result": "Rate target increased to around 0.5%, effective Jan 27"
+    },
+    {
       "id": "US_FOMC_20250129",
       "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250129a.htm",
       "source_type": "central_bank",
@@ -70,6 +80,16 @@
       "text": "US BLS CPI released Mar 12 2025: February 2025 seasonally adjusted headline CPI rose 0.2% m/m and 2.8% y/y unadjusted.",
       "market_expectation": "",
       "observed_result": "CPI headline +0.2% m/m; +2.8% y/y"
+    },
+    {
+      "id": "JP_BOJ_20250319",
+      "source_url": "https://www.boj.or.jp/en/mopo/mpmdeci/state_2025/k250319a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-03-19T02:25:00Z",
+      "available_at_utc": "2025-03-19T02:25:00Z",
+      "text": "Bank of Japan Mar 19 2025 monetary policy statement: retained the overnight call rate target at around 0.5%. It characterized the economy as recovering moderately and recent ex-fresh-food CPI inflation as around 3.0-3.5%.",
+      "market_expectation": "",
+      "observed_result": "Rate target held at around 0.5%"
     },
     {
       "id": "US_FOMC_20250319",
