@@ -80,7 +80,7 @@ def _valid(state: dict, base: dict) -> None:
             or type(state["published_to_observation"]) is not bool):
         raise InputError("AI shadow ledger identity mismatch")
     if state["pending_request"] is not None:
-        if state["pending_request"] not in ("analyst", "reviewer"):
+        if state["pending_request"] not in ("analyst", "reviewer", "publish"):
             raise InputError("unknown pending call")
     a = state["analyst"]
     v = state["reviewer"]
@@ -184,6 +184,63 @@ def run(store: Path, event_sha: str, ledger: Path, *,
     }
 
 
+def publish(store: Path, event_sha: str, ledger: Path, *,
+            analyst_model: str, reviewer_model: str) -> dict:
+    event = _event(store, event_sha)
+    p = packet(event)
+    base = _base(event_sha, p, analyst_model, reviewer_model)
+    state = json.loads(ledger.read_text(encoding="utf-8"))
+    _valid(state, base)
+    if (state["pending_request"] is not None or
+            state["stage"] != "COMPLETE" or
+            state["published_to_observation"]):
+        raise InputError("publication already started or incomplete")
+    # Fail closed before first file write; a partial publication is never
+    # automatically retried and must be reconciled against local journal.
+    state["pending_request"] = "publish"
+    annual._atomic_json(ledger, state)
+    from datetime import datetime, timezone
+    def envelope(kind: str, fields: dict) -> dict:
+        return {
+            "schema": obs.SCHEMA,
+            "kind": kind,
+            "observed_at_utc": datetime.now(timezone.utc)
+            .isoformat(timespec="seconds").replace("+00:00", "Z"),
+            "source_id": "forward_ai_research",
+            "payload": fields,
+        }
+    thesis = state["analyst"]
+    hypothesis_hash = _append(store, envelope("MACRO_HYPOTHESIS", {
+        "pair": event["payload"]["pair"],
+        "direction": thesis["action"] if thesis["action"] in
+        ("LONG", "SHORT") else "HOLD",
+        "thesis": thesis["hypothesis"],
+        "counterevidence": thesis["counterevidence"],
+        "model_id": analyst_model,
+        "basis_sha256": event_sha,
+        "research_only": True,
+    }))
+    review = state["reviewer"]
+    _append(store, envelope("INDEPENDENT_REVIEW", {
+        "pair": event["payload"]["pair"],
+        "review_of_sha256": hypothesis_hash,
+        "verdict": review["verdict"],
+        "rationale": review["rationale"],
+        "model_id": reviewer_model,
+        "research_only": True,
+    }))
+    state["pending_request"] = None
+    state["published_to_observation"] = True
+    annual._atomic_json(ledger, state)
+    return {
+        "status": "FORWARD_AI_SHADOW_PUBLISHED_RESEARCH_ONLY_NO_GO",
+        "event_record_sha256": event_sha,
+        "runtime_go_no_go": "NO_GO",
+        "safety_hold_latched": True,
+        "real_orders_permitted": False,
+    }
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="Opt-in forward AI shadow research")
     p.add_argument("--store", type=Path, required=True)
@@ -193,9 +250,12 @@ def main(argv=None) -> int:
     p.add_argument("--reviewer-model", required=True)
     p.add_argument("--max-api-calls", type=int, default=0)
     p.add_argument("--allow-external-api", action="store_true")
+    p.add_argument("--publish-offline", action="store_true")
     args = p.parse_args(argv)
     try:
-        result = run(
+        if args.publish_offline and (args.max_api_calls or args.allow_external_api):
+            raise InputError("publication cannot request paid calls")
+        result = publish(\n            args.store, args.event_sha256, args.ledger,\n            analyst_model=args.analyst_model,\n            reviewer_model=args.reviewer_model) if args.publish_offline and (\n                args.max_api_calls == 0 and not args.allow_external_api\n            ) else run(
             args.store, args.event_sha256, args.ledger,
             analyst_model=args.analyst_model,
             reviewer_model=args.reviewer_model,
