@@ -26,9 +26,40 @@ MAX_REPLY_BYTES = 80_000
 class MacroAPIError(InputError):
     """Safe, fixed-category API failure; never includes response body or key."""
 
-    def __init__(self, reason: str):
+    def __init__(self, reason: str, *, role: str = "UNKNOWN",
+                 api_param: str = "UNKNOWN", api_code: str = "UNKNOWN"):
         self.reason = reason
+        self.role = role
+        self.api_param = api_param
+        self.api_code = api_code
         super().__init__(reason)
+
+SAFE_HTTP_PARAMS = frozenset({
+    "model", "instructions", "input", "text", "text.format",
+    "text.format.type", "tools", "store", "max_output_tokens",
+    "reasoning", "reasoning.effort", "temperature",
+})
+SAFE_HTTP_CODES = frozenset({
+    "unsupported_parameter", "unsupported_value", "invalid_json",
+    "model_not_found", "context_length_exceeded",
+    "insufficient_quota", "rate_limit_exceeded",
+})
+
+def _safe_http_detail(response_body: bytes) -> tuple[str, str]:
+    """Allowlist only known static identifiers; never surface server prose."""
+    try:
+        obj = json.loads(response_body)
+        error = obj.get("error", {})
+        param, code = error.get("param"), error.get("code")
+        return (
+            param if type(param) is str and param in SAFE_HTTP_PARAMS
+            else "UNKNOWN",
+            code if type(code) is str and code in SAFE_HTTP_CODES
+            else "UNKNOWN",
+        )
+    except (ValueError, TypeError, AttributeError):
+        return "UNKNOWN", "UNKNOWN"
+
 
 
 def _http_failure(code: int) -> str:
@@ -84,8 +115,12 @@ def response_json(model: str, instruction: str, data: dict, *,
             raise InputError("AI result is not an object")
         return result
     except urllib.error.HTTPError as exc:
-        # Never print provider error bodies, which may include request details.
-        raise MacroAPIError(_http_failure(exc.code)) from None
+        # Read only a bounded response and return fixed allowlisted fields.
+        # Never surface raw HTTP body, key, source or error message.
+        api_param, api_code = _safe_http_detail(exc.read(8192))
+        raise MacroAPIError(_http_failure(exc.code),
+                            api_param=api_param,
+                            api_code=api_code) from None
     except (urllib.error.URLError, TimeoutError) as exc:
         raise MacroAPIError("NETWORK_OR_TIMEOUT") from None
     except (OSError, ValueError, KeyError, TypeError,
@@ -154,15 +189,23 @@ def generate(evidence: dict, *, analyst_model: str, reviewer_model: str,
                 "evidence": subset,
                 "scope": "retrospective_research_only",
             }
-            a = inference(analyst_model, ANALYST_PROMPT, context, key=api_key)
+            try:
+                a = inference(analyst_model, ANALYST_PROMPT, context, key=api_key)
+            except MacroAPIError as exc:
+                exc.role = "ANALYST"
+                raise
             if type(a) is not dict or set(a) != {
                 "action", "hypothesis", "counterevidence"
             } or a["action"] not in ACTIONS:
                 raise InputError("invalid analyst response")
             # Independent second API request, different model and prompt.
             reviewer_context = {**context, "analyst": a}
-            v = inference(reviewer_model, REVIEWER_PROMPT,
-                          reviewer_context, key=api_key)
+            try:
+                v = inference(reviewer_model, REVIEWER_PROMPT,
+                              reviewer_context, key=api_key)
+            except MacroAPIError as exc:
+                exc.role = "REVIEWER"
+                raise
             if type(v) is not dict or set(v) != {"verdict", "rationale"} or (
                     v["verdict"] not in DECISIONS):
                 raise InputError("invalid reviewer response")

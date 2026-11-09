@@ -109,6 +109,12 @@ def main(argv=None):
             "ai_or_historical_replay_complete": False,
             "failure_stage": stage if stage in known else "UNKNOWN",
             "failure_reason": reason,
+            "ai_role": exc.role if isinstance(exc, ai.MacroAPIError)
+                       else "UNKNOWN",
+            "api_error_param": exc.api_param if isinstance(exc, ai.MacroAPIError)
+                               else "UNKNOWN",
+            "api_error_code": exc.api_code if isinstance(exc, ai.MacroAPIError)
+                              else "UNKNOWN",
             "error": "MACRO_PIPELINE_INPUT_OR_API_FAILURE"}))
         return 2
     print(json.dumps({
