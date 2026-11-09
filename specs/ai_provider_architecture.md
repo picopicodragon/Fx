@@ -63,3 +63,14 @@
 - TypeSafe AI Jev 公式API仕様: https://api.typesafe.ai/redoc
 
 API提供・性能・利用料金は将来変わるため、この資料は本番接続承認ではない。
+
+
+## 2026-11-09 FX-AI-ARCH-002：研究用比較アダプター実装（本番承認は未了）
+
+本人の「OpenAI推論API・Jev・Decisions APIの比較評価と交換可能な判断構造の実装・検証」指示を受け、`research/ai_provider_comparison.py` と合成固定事例のテストを追加。
+
+- `ResearchRoleRegistry` は長文マクロ仮説（Responses / 別モデル）と独立反証（Responses / 別モデルID）と補助構造化判断（bounded）の3役割を**研究ツール内で明示分離**する。既存実行コードへ自動的に接続しない。
+- `ProviderRegistry` は補助判断として`responses`/`jev`/`decisions`の明示選択を受け、同じ `priority` および `reanalysis` の有限選択へ正規化。JeV `choice` とDecisions `choice` は異なるJSON形式を独立変換・厳格検証する。
+- 外部接続は別CLI `--allow-external-api` かつ `--max-api-calls`とローカル環境変数キーが明示されたときだけ。標準モードはAPI未使用。呼び出しエラーにプロバイダー自動切替なし。
+- 同一資料・as-of・入力ハッシュによるモック契約比較を自動テスト。**実APIの利用権限、実測費用・精度・遅延・確率較正、合格閾値、モデル本番承認は未確定。** CIが正常でも本番ルート採用とはならない。
+- 試験詳細：[`docs/ai_provider_comparison_20261109.md`](../docs/ai_provider_comparison_20261109.md)。仕様履歴の `IMPLEMENTATION_PENDING` を安全実装承認済み状態へ変更しない。G1〜G9、FX-SAF、P05、PHASE-1 BLOCKED、`NO_GO`、`safety_hold_latched=true` を維持。
