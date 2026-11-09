@@ -200,7 +200,7 @@ class HistoryReplayTests(unittest.TestCase):
             for side in ("bid", "ask"):
                 self.replace_file(symbol, side, make_csv(symbol, side, count=110))
         bars, meta = hist.prepare(self.files)
-        self.assertGreater(
+        self.assertEqual(
             meta["weekend_candles_removed_by_pair_and_side"]["usdjpy"]["bid"], 40)
         self.assertTrue(all(hist.market_open(int(b.time.timestamp() * 1000))
                             for b in bars))
