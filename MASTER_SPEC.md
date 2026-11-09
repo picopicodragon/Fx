@@ -936,3 +936,12 @@ Q3に記載した4ペアは**当時の決定履歴**として保持する。本�
 本人はP02（FX-SAF原議とFORM元資料のローカル照合手順）とP04（既存デモEA・建玉・注文に干渉しない、単一セッション・秘密情報非公開・Git外記録の非破壊MT4観測**方法**）を明示的に承認した。**方法を採用したことと、実際の原議確認やMT4セッションへの操作権限は別**。原議原本の照合はまだ0/15、FORMの実装判断は0/43、G1実契約証拠も0/15。P05の事前安全確認は0/8でBLOCKED、P06観測は未許可、既存MACD Sampleと建玉/未約定注文の現況は不明。口座に接続せず、EA/注文/AutoTrading/SL/STOPを変更しない。
 
 新たな承認記録：[`specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json`](specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json)。安全審査詳細：[`docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md`](docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md)。**G1〜G9 UNRESOLVED、PHASE-1 BLOCKED、runtime NO_GO、safety_hold_latched=true**を維持。
+
+
+## 2026-11-09：正式運用対象3通貨ペアの再確定（実稼働の承認ではない）
+
+本人の最新指示により、**研究・開発だけでなく将来の正式運用対象も USD/JPY、EUR/JPY、EUR/USD の3ペアに統一**する。旧Q3のGBP/USD・AUD/USDを含む4ペア指定は当時の歴史的決定として保存し、現在の有効な対象指定より優先しない。3ペアにはEUR/USDを含み、GBP/USD・AUD/USDは対象外。既存の2026-11-04 G1審査対象3ペア×5契約属性の決定と整合。
+
+この決定は**正式運用の対象範囲**だけを確定するものであり、実口座売買やMT4稼働・本番Go/No-Goを許可しない。EUR/USDの契約仕様検証、三角相関・共通通貨のネット/グロス集中リスク、FX-SAF審査および人間承認は依然未完了。1取引0.5%、同時合計1%、日次1.5%、DD5%等の既存安全閾値は変更しない。
+
+今回の研究追加は [`docs/macro_revision_audit_comparison_v1.md`](docs/macro_revision_audit_comparison_v1.md) を参照。外部API利用は明示許可時のみ、最大2回のREVISIONとオフライン比較を実施。既存の売買判断JSONを保存したまま、追加判断履歴は別ファイルとして管理する。
