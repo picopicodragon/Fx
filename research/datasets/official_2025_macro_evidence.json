@@ -1,0 +1,365 @@
+{
+  "schema": "fx_macro_evidence_v1",
+  "events": [
+    {
+      "id": "USNFP20250110",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_01102025.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-01-10T13:30:00Z",
+      "available_at_utc": "2025-01-10T13:30:00Z",
+      "text": "US BLS Employment Situation released Jan 10 2025: December 2024 nonfarm payroll employment rose by 256,000; unemployment rate was 4.1%.",
+      "market_expectation": "Econoday survey pre-release consensus: nonfarm payrolls +157000; unemployment 4.2%.",
+      "observed_result": "Payroll +256000; unemployment rate 4.1%"
+    },
+    {
+      "id": "USCPI20250115",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_01152025.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-01-15T13:30:00Z",
+      "available_at_utc": "2025-01-15T13:30:00Z",
+      "text": "US BLS CPI released Jan 15 2025: December 2024 seasonally adjusted CPI rose 0.4% month over month, while unadjusted annual CPI rose 2.9%.",
+      "market_expectation": "Reuters economist pre-release poll as reported Jan 15: headline CPI +0.3% m/m; +2.9% y/y.",
+      "observed_result": "CPI headline +0.4% m/m; +2.9% y/y"
+    },
+    {
+      "id": "JPBOJ20250124",
+      "source_url": "https://www.boj.or.jp/en/mopo/mpmdeci/state_2025/k250124a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-01-24T03:23:00Z",
+      "available_at_utc": "2025-01-24T03:23:00Z",
+      "text": "Bank of Japan Jan 24 2025 monetary policy statement: raised its uncollateralized overnight call rate target to around 0.5%, effective Jan 27. BOJ stated that real interest rates were expected to remain significantly negative and further tightening would depend on the outlook.",
+      "market_expectation": "",
+      "observed_result": "Rate target increased to around 0.5%, effective Jan 27"
+    },
+    {
+      "id": "USFOMC20250129",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250129a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-01-29T19:00:00Z",
+      "available_at_utc": "2025-01-29T19:00:00Z",
+      "text": "US Federal Reserve FOMC Jan 29 2025 statement: maintained the federal funds target range at 4.25% to 4.50%. The statement described continued solid economic expansion and somewhat elevated inflation.",
+      "market_expectation": "",
+      "observed_result": "Target range held at 4.25%-4.50%"
+    },
+    {
+      "id": "USNFP20250207",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_02072025.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-02-07T13:30:00Z",
+      "available_at_utc": "2025-02-07T13:30:00Z",
+      "text": "US BLS Employment Situation released Feb 7 2025: January 2025 nonfarm payrolls increased 143,000; unemployment rate declined to 4.0%.",
+      "market_expectation": "Econoday survey pre-release consensus: nonfarm payrolls +168000; unemployment 4.1%.",
+      "observed_result": "Payroll +143000; unemployment rate 4.0%"
+    },
+    {
+      "id": "USCPI20250212",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_02122025.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-02-12T13:30:00Z",
+      "available_at_utc": "2025-02-12T13:30:00Z",
+      "text": "US BLS CPI released Feb 12 2025: January 2025 seasonally adjusted CPI rose 0.5% month over month; unadjusted 12-month increase was 3.0%.",
+      "market_expectation": "Econoday survey pre-release consensus: headline CPI +0.3% m/m; +2.9% y/y.",
+      "observed_result": "CPI headline +0.5% m/m; +3.0% y/y"
+    },
+    {
+      "id": "USNFP20250307",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_03072025.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-03-07T13:30:00Z",
+      "available_at_utc": "2025-03-07T13:30:00Z",
+      "text": "US BLS Employment Situation released Mar 7 2025: February 2025 nonfarm payroll employment increased by 151,000; unemployment rate was 4.1%.",
+      "market_expectation": "Econoday survey pre-release consensus: nonfarm payrolls +160000; unemployment 4.0%.",
+      "observed_result": "Payroll +151000; unemployment rate 4.1%"
+    },
+    {
+      "id": "USCPI20250312",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_03122025.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-03-12T12:30:00Z",
+      "available_at_utc": "2025-03-12T12:30:00Z",
+      "text": "US BLS CPI released Mar 12 2025: February 2025 seasonally adjusted headline CPI rose 0.2% m/m and 2.8% y/y unadjusted.",
+      "market_expectation": "CME/Econoday Market Focus Mar 12 (before release): headline CPI +0.3% m/m; +2.9% y/y.",
+      "observed_result": "CPI headline +0.2% m/m; +2.8% y/y"
+    },
+    {
+      "id": "JPBOJ20250319",
+      "source_url": "https://www.boj.or.jp/en/mopo/mpmdeci/state_2025/k250319a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-03-19T02:25:00Z",
+      "available_at_utc": "2025-03-19T02:25:00Z",
+      "text": "Bank of Japan Mar 19 2025 monetary policy statement: retained the overnight call rate target at around 0.5%. It characterized the economy as recovering moderately and recent ex-fresh-food CPI inflation as around 3.0-3.5%.",
+      "market_expectation": "",
+      "observed_result": "Rate target held at around 0.5%"
+    },
+    {
+      "id": "USFOMC20250319",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250319a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-03-19T18:00:00Z",
+      "available_at_utc": "2025-03-19T18:00:00Z",
+      "text": "US Federal Reserve FOMC Mar 19 2025 statement: maintained policy rate target at 4.25%-4.50%; announced slower decline of Treasury holdings from April, reducing monthly Treasury redemption cap from $25 billion to $5 billion.",
+      "market_expectation": "",
+      "observed_result": "Held 4.25%-4.50%; Treasury runoff cap to $5bn in April"
+    },
+    {
+      "id": "USNFP20250404",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_0404.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-04-04T12:30Z",
+      "available_at_utc": "2025-04-04T12:30Z",
+      "text": "Initial Employment Situation release for March 2025: nonfarm payrolls 228,000 higher; unemployment 4.2%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +228,000; unemployment 4.2%"
+    },
+    {
+      "id": "USCPI20250410",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_0410.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-04-10T12:30Z",
+      "available_at_utc": "2025-04-10T12:30Z",
+      "text": "Initial BLS CPI release for March 2025: CPI-U all-items 12-month change 2.4%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +2.4%"
+    },
+    {
+      "id": "EUECB20250417",
+      "source_url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250417~42727d0735.en.html",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-04-17T16:00Z",
+      "available_at_utc": "2025-04-17T16:00Z",
+      "text": "ECB lowered key rates by 25 basis points; deposit facility to 2.25%, effective April 23. Availability deliberately held until 16:00 UTC to avoid asserting exact publication time.",
+      "market_expectation": "",
+      "observed_result": "deposit facility 2.25%"
+    },
+    {
+      "id": "USNFP20250502",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_0502.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-05-02T12:30Z",
+      "available_at_utc": "2025-05-02T12:30Z",
+      "text": "Initial Employment Situation release for April 2025: nonfarm payrolls 177,000 higher; unemployment 4.2%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +177,000; unemployment 4.2%"
+    },
+    {
+      "id": "USFOMC20250507",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250507a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-05-07T18:00Z",
+      "available_at_utc": "2025-05-07T18:00Z",
+      "text": "Held federal funds target range at 4.25-4.50%; uncertainty over economic outlook increased.",
+      "market_expectation": "",
+      "observed_result": "4.25-4.50% target maintained"
+    },
+    {
+      "id": "USCPI20250513",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_0513.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-05-13T12:30Z",
+      "available_at_utc": "2025-05-13T12:30Z",
+      "text": "Initial BLS CPI release for April 2025: CPI-U all-items 12-month change 2.3%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +2.3%"
+    },
+    {
+      "id": "EUECB20250605",
+      "source_url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250605~3b5f67d007.en.html",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-06-05T16:00Z",
+      "available_at_utc": "2025-06-05T16:00Z",
+      "text": "ECB lowered key rates by 25 basis points; deposit facility to 2.00%, effective June 11. Availability deliberately held until 16:00 UTC to avoid asserting exact publication time.",
+      "market_expectation": "",
+      "observed_result": "deposit facility 2.00%"
+    },
+    {
+      "id": "USNFP20250606",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_0606.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-06-06T12:30Z",
+      "available_at_utc": "2025-06-06T12:30Z",
+      "text": "Initial Employment Situation release for May 2025: nonfarm payrolls 139,000 higher; unemployment 4.2%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +139,000; unemployment 4.2%"
+    },
+    {
+      "id": "USCPI20250611",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_0611.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-06-11T12:30Z",
+      "available_at_utc": "2025-06-11T12:30Z",
+      "text": "Initial BLS CPI release for May 2025: CPI-U all-items 12-month change 2.4%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +2.4%"
+    },
+    {
+      "id": "USFOMC20250618",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250618a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-06-18T18:00Z",
+      "available_at_utc": "2025-06-18T18:00Z",
+      "text": "Held federal funds target range at 4.25-4.50%; inflation remained somewhat elevated.",
+      "market_expectation": "",
+      "observed_result": "4.25-4.50% target maintained"
+    },
+    {
+      "id": "USNFP20250703",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_0703.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-07-03T12:30Z",
+      "available_at_utc": "2025-07-03T12:30Z",
+      "text": "Initial Employment Situation release for June 2025: nonfarm payrolls 147,000 higher; unemployment 4.1%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +147,000; unemployment 4.1%"
+    },
+    {
+      "id": "USCPI20250715",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_0715.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-07-15T12:30Z",
+      "available_at_utc": "2025-07-15T12:30Z",
+      "text": "Initial BLS CPI release for June 2025: CPI-U all-items 12-month change 2.7%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +2.7%"
+    },
+    {
+      "id": "USFOMC20250730",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250730a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-07-30T18:00Z",
+      "available_at_utc": "2025-07-30T18:00Z",
+      "text": "Held 4.25-4.50% target; two committee members preferred a 0.25 percentage-point cut.",
+      "market_expectation": "",
+      "observed_result": "4.25-4.50% target maintained"
+    },
+    {
+      "id": "USNFP20250801",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_0801.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-08-01T12:30Z",
+      "available_at_utc": "2025-08-01T12:30Z",
+      "text": "Initial Employment Situation release for July 2025: nonfarm payrolls 73,000 higher; unemployment 4.2%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +73,000; unemployment 4.2%"
+    },
+    {
+      "id": "USCPI20250812",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_0812.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-08-12T12:30Z",
+      "available_at_utc": "2025-08-12T12:30Z",
+      "text": "Initial BLS CPI release for July 2025: CPI-U all-items 12-month change 2.7%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +2.7%"
+    },
+    {
+      "id": "USNFP20250905",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_0905.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-09-05T12:30Z",
+      "available_at_utc": "2025-09-05T12:30Z",
+      "text": "Initial Employment Situation release for August 2025: nonfarm payrolls 22,000 higher; unemployment 4.3%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +22,000; unemployment 4.3%"
+    },
+    {
+      "id": "USCPI20250911",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_0911.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-09-11T12:30Z",
+      "available_at_utc": "2025-09-11T12:30Z",
+      "text": "Initial BLS CPI release for August 2025: CPI-U all-items 12-month change 2.9%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +2.9%"
+    },
+    {
+      "id": "EUECB20250911",
+      "source_url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp250911~6afb7a9490.en.html",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-09-11T16:00Z",
+      "available_at_utc": "2025-09-11T16:00Z",
+      "text": "ECB kept key rates unchanged; deposit facility at 2.00%. Availability deliberately held until 16:00 UTC to avoid asserting exact publication time.",
+      "market_expectation": "",
+      "observed_result": "deposit facility 2.00%"
+    },
+    {
+      "id": "USFOMC20250917",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250917a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-09-17T18:00Z",
+      "available_at_utc": "2025-09-17T18:00Z",
+      "text": "Lowered federal funds target range 0.25 percentage point to 4.00-4.25%; downside employment risks had risen.",
+      "market_expectation": "",
+      "observed_result": "4.00-4.25% target"
+    },
+    {
+      "id": "USCPI20251024",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_1024.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-10-24T12:30Z",
+      "available_at_utc": "2025-10-24T12:30Z",
+      "text": "Initial BLS CPI release for September 2025: CPI-U all-items 12-month change 3.0%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +3.0%"
+    },
+    {
+      "id": "USFOMC20251029",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251029a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-10-29T18:00Z",
+      "available_at_utc": "2025-10-29T18:00Z",
+      "text": "Lowered federal funds target range to 3.75-4.00%; decided to conclude securities portfolio runoff December 1.",
+      "market_expectation": "",
+      "observed_result": "3.75-4.00% target"
+    },
+    {
+      "id": "USNFP20251120",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_1120.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-11-20T13:30Z",
+      "available_at_utc": "2025-11-20T13:30Z",
+      "text": "Initial Employment Situation release for September 2025: nonfarm payrolls 119,000 higher; unemployment 4.4%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +119,000; unemployment 4.4%"
+    },
+    {
+      "id": "USFOMC20251210",
+      "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20251210a.htm",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-12-10T19:00Z",
+      "available_at_utc": "2025-12-10T19:00Z",
+      "text": "Lowered federal funds target range to 3.50-3.75%; described slower job gains and somewhat elevated inflation.",
+      "market_expectation": "",
+      "observed_result": "3.50-3.75% target"
+    },
+    {
+      "id": "USNFP20251216",
+      "source_url": "https://www.bls.gov/news.release/archives/empsit_1216.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-12-16T13:30Z",
+      "available_at_utc": "2025-12-16T13:30Z",
+      "text": "Initial Employment Situation release for November 2025: nonfarm payrolls 64,000 higher; unemployment 4.6%. Subsequent revisions must not overwrite these first-release figures.",
+      "market_expectation": "",
+      "observed_result": "initial nonfarm payroll change +64,000; unemployment 4.6%"
+    },
+    {
+      "id": "USCPI20251218",
+      "source_url": "https://www.bls.gov/news.release/archives/cpi_1218.htm",
+      "source_type": "economic_release",
+      "published_at_utc": "2025-12-18T13:30Z",
+      "available_at_utc": "2025-12-18T13:30Z",
+      "text": "Initial BLS CPI release for November 2025: CPI-U all-items 12-month change 2.7%. No verified contemporaneous consensus snapshot is available in this corpus.",
+      "market_expectation": "",
+      "observed_result": "all-items CPI-U 12-month +2.7%"
+    },
+    {
+      "id": "EUECB20251218",
+      "source_url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.mp251218~58b0e415a6.en.html",
+      "source_type": "central_bank",
+      "published_at_utc": "2025-12-18T16:00Z",
+      "available_at_utc": "2025-12-18T16:00Z",
+      "text": "ECB kept key rates unchanged; deposit facility at 2.00%. Availability deliberately held until 16:00 UTC to avoid asserting exact publication time.",
+      "market_expectation": "",
+      "observed_result": "deposit facility 2.00%"
+    }
+  ]
+}
