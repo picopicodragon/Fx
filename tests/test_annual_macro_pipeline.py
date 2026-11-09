@@ -85,7 +85,8 @@ class AnnualPriceTests(unittest.TestCase):
         for symbol, midpoint in (("usdjpy", 150), ("eurjpy", 160),
                                  ("eurusd", 1.08)):
             for side in ("bid", "ask"):
-                val = midpoint + ((0.0002 if symbol == "eurusd" else 0.02)\n                                  if side == "ask" else 0)
+                val = midpoint + ((0.0002 if symbol == "eurusd" else 0.02)
+                                  if side == "ask" else 0)
                 price = f"{val:.5f}"
                 lines = ["timestamp,open,high,low,close"]
                 lines.extend(f"{ts},{price},{val+0.04:.5f},"
