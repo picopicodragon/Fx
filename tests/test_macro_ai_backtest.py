@@ -12,7 +12,22 @@ from pathlib import Path
 from research import macro_ai_backtest as macro
 from research import macro_ai_generate as generator
 from research.offline_backtest import InputError
-from tests.test_historical_replay import make_csv
+def make_csv(pair, side, *, count=55):
+    base = {"usdjpy": 150.0, "eurjpy": 160.0, "eurusd": 1.08}[pair]
+    tick = 0.01 if pair.endswith("jpy") else 0.0001
+    stream = io.StringIO()
+    writer = csv.writer(stream, lineterminator="\\n")
+    writer.writerow(["timestamp", "open", "high", "low", "close"])
+    for i in range(count):
+        drift = (i if i < 30 else 60 - i) * tick * 2
+        value = base + drift + (tick if side == "ask" else 0)
+        writer.writerow([1735689600000 + i * 3600000,
+                         format(value, ".6f"),
+                         format(value + 3 * tick, ".6f"),
+                         format(value - 3 * tick, ".6f"),
+                         format(value, ".6f")])
+    return stream.getvalue()
+
 
 
 def event(event_id="E001", available="2025-01-02T10:00:00Z"):
