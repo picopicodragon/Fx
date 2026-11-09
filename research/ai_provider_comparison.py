@@ -308,6 +308,69 @@ def compare(sources: dict, *, selected: tuple, pair: str,
     }
 
 
+
+class ResearchRoleRegistry:
+    """Strict role registry; decisions engines CANNOT fill analyst/reviewer roles.
+
+    Existing production routes remain untouched. This is an isolated research
+    contract for comparing provider choice without changing safety policy.
+    """
+    def __init__(self, *, analyst_model: str, reviewer_model: str,
+                 bounded: ProviderRegistry | None = None):
+        if (type(analyst_model) is not str or
+                type(reviewer_model) is not str or
+                not analyst_model or not reviewer_model or
+                analyst_model == reviewer_model or
+                not analyst_model.isascii() or
+                not reviewer_model.isascii()):
+            raise InputError("independent model identities required")
+        self.analyst_model = analyst_model
+        self.reviewer_model = reviewer_model
+        self.bounded = bounded or ProviderRegistry()
+
+    def macro_hypothesis(self, packet: dict, *, api_key: str,
+                         inference=existing.response_json) -> dict:
+        _packet_text(packet)
+        if not api_key:
+            raise InputError("research credential missing")
+        a = inference(self.analyst_model, existing.ANALYST_PROMPT,
+                      packet, key=api_key)
+        if (type(a) is not dict or
+                set(a) != {"action", "hypothesis", "counterevidence"} or
+                a.get("action") not in macro.ACTIONS or
+                type(a.get("hypothesis")) is not str or
+                not 1 <= len(a["hypothesis"]) <= 1500 or
+                type(a.get("counterevidence")) is not str or
+                not 1 <= len(a["counterevidence"]) <= 1500):
+            raise ProviderError("INVALID_MACRO_HYPOTHESIS")
+        return {"role": "macro_hypothesis", "model": self.analyst_model,
+                "result": a, "runtime_go_no_go": "NO_GO"}
+
+    def independent_review(self, packet: dict, hypothesis: dict, *,
+                           api_key: str,
+                           inference=existing.response_json) -> dict:
+        _packet_text(packet)
+        if not api_key or type(hypothesis) is not dict or (
+                set(hypothesis) != {"action", "hypothesis", "counterevidence"}
+                or hypothesis.get("action") not in macro.ACTIONS):
+            raise InputError("review input invalid")
+        v = inference(self.reviewer_model, existing.REVIEWER_PROMPT,
+                      {**packet, "analyst": hypothesis}, key=api_key)
+        if (type(v) is not dict or
+                set(v) != {"verdict", "rationale"} or
+                v.get("verdict") not in macro.DECISIONS or
+                type(v.get("rationale")) is not str or
+                not 1 <= len(v["rationale"]) <= 1500):
+            raise ProviderError("INVALID_INDEPENDENT_REVIEW")
+        return {"role": "independent_review", "model": self.reviewer_model,
+                "result": v, "runtime_go_no_go": "NO_GO"}
+
+    def bounded_triage(self, provider: str, packet: dict, *,
+                       credentials: dict, **kwargs) -> dict:
+        return self.bounded.evaluate(
+            provider, packet, credentials=credentials, **kwargs)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(
         description="Explicit billed comparative AI triage, never trades")
