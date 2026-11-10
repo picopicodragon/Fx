@@ -56,6 +56,48 @@ class DemoTimerCaptureAuditTests(unittest.TestCase):
             self.assertIn("CAPTURE_INTERVAL_NOT_60S",
                           report["blocking_reasons"])
 
+    def test_same_usdjpy_rate_different_decimal_scale_not_mismatch(self):
+        # Reproduce MQL4: USDJPY bid prints 3 digits, conversion prints 5.
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            for symbol in PAIRS:
+                p=add(root,symbol,"20261110_060000",
+                      conversion="157.94000" if symbol=="EURUSD" else None)
+                if symbol=="USDJPY":
+                    p.write_text(p.read_text().replace(
+                        ",150.000,150.005,", ",157.940,157.945,"))
+            result=inspect(root,asof_utc=ASOF)
+            self.assertEqual(result["complete_cycle_count"],1)
+            self.assertNotIn("EURUSD_USDJPY_CONVERSION_INCONSISTENT",
+                             result["blocking_reasons"])
+            self.assertFalse(result["real_orders_permitted"])
+
+    def test_equal_with_leading_and_trailing_zeros_not_mismatch(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            for symbol in PAIRS:
+                p=add(root,symbol,"20261110_060000",
+                      conversion="150.00000" if symbol=="EURUSD" else None)
+                if symbol=="USDJPY":
+                    p.write_text(p.read_text().replace(
+                        ",150.000,150.005,", ",150.000,150.005,"))
+            result=inspect(root,asof_utc=ASOF)
+            self.assertNotIn("EURUSD_USDJPY_CONVERSION_INCONSISTENT",
+                             result["blocking_reasons"])
+
+    def test_actual_numeric_difference_still_detected_with_scale(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            for symbol in PAIRS:
+                p=add(root,symbol,"20261110_060000",
+                      conversion="157.94100" if symbol=="EURUSD" else None)
+                if symbol=="USDJPY":
+                    p.write_text(p.read_text().replace(
+                        ",150.000,150.005,", ",157.940,157.945,"))
+            result=inspect(root,asof_utc=ASOF)
+            self.assertIn("EURUSD_USDJPY_CONVERSION_INCONSISTENT",
+                          result["blocking_reasons"])
+
     def test_bad_conversion_detected(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder)

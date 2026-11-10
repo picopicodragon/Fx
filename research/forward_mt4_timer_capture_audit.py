@@ -12,6 +12,7 @@ import json
 import re
 from collections import defaultdict
 from datetime import datetime, timezone
+from decimal import Decimal
 from pathlib import Path
 
 from research.forward_mt4_v2_quote import COLUMNS, MAX_BYTES, PAIRS_V2, parse
@@ -95,8 +96,13 @@ def inspect(directory: Path, *, asof_utc: str) -> dict:
             complete += 1
             # Only a format/consistency assertion, NOT authenticated pricing.
             # EURUSD's research-only quote-to-JPY uses USDJPY same-cycle BID.
-            usd = found["USDJPY"]["bid"]
-            conversion = found["EURUSD"]["quote_to_jpy_research_only"]
+            # parse() preserves numeric values as decimal strings. Compare
+            # their mathematical values, not formatting: e.g. 157.940 and
+            # 157.94000 represent exactly the same USDJPY conversion rate.
+            # Decimal avoids binary floating point and tolerance masking.
+            usd = Decimal(found["USDJPY"]["bid"])
+            conversion = Decimal(
+                found["EURUSD"]["quote_to_jpy_research_only"])
             if usd != conversion:
                 blockers.add("EURUSD_USDJPY_CONVERSION_INCONSISTENT")
         cycle_details.append({
