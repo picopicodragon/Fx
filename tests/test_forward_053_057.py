@@ -1,4 +1,4 @@
-"""FWD-053..057 four-pair v2 manual read-only contract and failures."""
+"""FWD-053..057 three-pair v2 manual read-only contract and failures."""
 import copy
 import json
 import tempfile
@@ -33,7 +33,7 @@ def source_v2():
 
 
 class V2QuoteTests(unittest.TestCase):
-    def test_all_four_pairs_research_only(self):
+    def test_all_three_pairs_research_only(self):
         for pair in PAIRS_V2:
             with self.subTest(pair=pair):
                 report = parse(csv_sample(pair), asof_utc=NOW)
@@ -42,9 +42,11 @@ class V2QuoteTests(unittest.TestCase):
                 self.assertFalse(report["server_timestamp_authenticated"])
                 self.assertFalse(report["independent_utc_clock_attested"])
 
-    def test_legacy_extra_eurusd_rejected(self):
-        with self.assertRaises(InputError):
-            parse(csv_sample("EUR/USD"), asof_utc=NOW)
+    def test_out_of_scope_gbpusd_and_audusd_rejected(self):
+        for pair in ("GBP/USD", "AUD/USD"):
+            with self.subTest(pair=pair):
+                with self.assertRaises(InputError):
+                    parse(csv_sample(pair), asof_utc=NOW)
 
     def test_self_reported_live_account_rejected(self):
         with self.assertRaises(InputError):
@@ -108,19 +110,19 @@ class V2QuoteTests(unittest.TestCase):
         self.assertFalse(scanned["real_orders_permitted"])
 
 
-class FourPairTests(unittest.TestCase):
-    def test_all_four_never_licenses_orders(self):
+class ThreePairTests(unittest.TestCase):
+    def test_all_three_never_licenses_orders(self):
         values = [parse(csv_sample(pair), asof_utc=NOW) for pair in PAIRS_V2]
         report = review(values, asof_utc=NOW)
-        self.assertEqual(len(report["pairs_present"]), 4)
+        self.assertEqual(len(report["pairs_present"]), 3)
         self.assertFalse(report["real_orders_permitted"])
         self.assertFalse(report["legacy_three_pair_pipeline_migrated"])
         self.assertFalse(report["mt4_terminal_execution_verified"])
 
     def test_missing_pair_is_explicit_blocker(self):
-        values = [parse(csv_sample(pair), asof_utc=NOW) for pair in PAIRS_V2[:3]]
+        values = [parse(csv_sample(pair), asof_utc=NOW) for pair in PAIRS_V2[:2]]
         out = review(values, asof_utc=NOW)
-        self.assertIn("MISSING_AUD_USD", out["blocking_reasons"])
+        self.assertIn("MISSING_EUR_USD", out["blocking_reasons"])
 
     def test_duplicate_pair_rejected(self):
         values = [parse(csv_sample("USD/JPY"), asof_utc=NOW)] * 2
@@ -138,12 +140,12 @@ class FourPairTests(unittest.TestCase):
         result = review([value], asof_utc="2026-11-10T03:02:00Z")
         self.assertIn("STALE_USD_JPY", result["blocking_reasons"])
 
-    def test_four_pair_cli_never_overwrites(self):
+    def test_three_pair_cli_never_overwrites(self):
         with tempfile.TemporaryDirectory() as root:
             d = Path(root)
             a = d / "first.json"
             a.write_text(json.dumps(parse(csv_sample(), asof_utc=NOW)))
-            out = d / "four.json"
+            out = d / "three.json"
             args = ["--report", str(a), "--asof-utc", NOW,
                     "--out", str(out)]
             self.assertEqual(four_main(args), 0)
