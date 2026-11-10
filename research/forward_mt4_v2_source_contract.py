@@ -1,4 +1,4 @@
-"""FWD-057: offline v2 MQL4 export-contract audit, not executable certification.
+"""FWD-060 (corrected approved three-pair scope): offline v2 MQL4 export-contract audit, not executable certification.
 
 Inspect the source text only. The MT4 executable, MetaEditor compiler,
 broker session, terminal permissions, data license and clock are NOT tested.
@@ -45,11 +45,11 @@ def review(raw: bytes) -> dict:
     for token in NEEDED:
         if token not in clean:
             failures.append("MISSING_SOURCE_TOKEN_" + token)
-    for source_name in ("USDJPY", "EURJPY", "GBPUSD", "AUDUSD"):
+    for source_name in ("USDJPY", "EURJPY", "EURUSD"):
         if ('symbol == "' + source_name + '"') not in clean:
             failures.append("MISSING_SYMBOL_" + source_name)
-    if tuple(PAIRS_V2) != ("USD/JPY", "EUR/JPY", "GBP/USD", "AUD/USD"):
-        failures.append("FOUR_PAIR_CONTRACT_UNEXPECTED")
+    if tuple(PAIRS_V2) != ("USD/JPY", "EUR/JPY", "EUR/USD"):
+        failures.append("THREE_PAIR_CONTRACT_UNEXPECTED")
     if tuple(COLUMNS) != (
             "observed_at_utc", "pair", "bid", "ask", "quote_to_jpy",
             "server_tick_time", "server_now_time", "tick_age_seconds",
