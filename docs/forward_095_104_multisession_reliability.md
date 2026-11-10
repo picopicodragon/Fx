@@ -47,3 +47,7 @@ $asof = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"); python -m research.
 ## 安全条件
 
 `runtime_go_no_go=NO_GO`、`safety_hold_latched=true`、`real_orders_permitted=false`、`demo_orders_permitted=false`。リスク上限、イベント停止、G1〜G9、契約属性3×5=15、MT4単一デモ口座の制約は維持。PythonからMT4を制御しない。GitHub CI成功は実端末の運用認定ではない。
+
+## PRチェック・補足
+
+GitHub ActionsのRepository checksはPR本文に`関連仕様ID`、`変更概要`、`リスク影響`、`テスト結果`、`本人確認`の見出しがあることを要求する。本文を整えた後のCIでコードも検証する。最終的な実機認定はこのCIに含まれない。
