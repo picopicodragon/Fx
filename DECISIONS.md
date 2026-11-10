@@ -361,3 +361,6 @@ SQLiteのWAL・チェックポイント観測値とPythonアプリ側の書き�
 本人はP02（FX-SAF原議とFORM元資料のローカル照合手順）とP04（既存デモEA・建玉・注文に干渉しない、単一セッション・秘密情報非公開・Git外記録の非破壊MT4観測**方法**）を明示的に承認した。**方法を採用したことと、実際の原議確認やMT4セッションへの操作権限は別**。原議原本の照合はまだ0/15、FORMの実装判断は0/43、G1実契約証拠も0/15。P05の事前安全確認は0/8でBLOCKED、P06観測は未許可、既存MACD Sampleと建玉/未約定注文の現況は不明。口座に接続せず、EA/注文/AutoTrading/SL/STOPを変更しない。
 
 新たな承認記録：[`specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json`](specs/risk_3p_29_31_p02_p04_approval_p05_preflight_20261104.json)。安全審査詳細：[`docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md`](docs/risk_3p_29_31_p02_p04_method_approval_p05_preflight_20261104.md)。**G1〜G9 UNRESOLVED、PHASE-1 BLOCKED、runtime NO_GO、safety_hold_latched=true**を維持。
+
+## 2026-11-10：FWD-058〜062 正式通貨ペアの本人再確認
+本人指示：**正式仕様はUSD/JPY・EUR/JPY・EUR/USDの3ペア**。PR #251の4ペア用FWD-053〜057の実装は誤りとして修正する。旧Q3の4ペア決定は変更・削除せず過去の決定として残し、現行指定と混同しない。3ペアの研究システム、G1 3×5=15属性の審査範囲を維持し、GBP/USD・AUD/USDを正式許可リストに含めない。本人確認は通貨ペアの仕様範囲だけを承認し、MetaEditorコンパイル、MT4端末操作、デモ発注、本番稼働や安全重要コードを新規承認したものではない。G1〜G9/FX-SAF/PHASE-1未承認、NO_GO維持。
