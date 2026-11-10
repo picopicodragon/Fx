@@ -1,4 +1,4 @@
-"""FWD-054/055: strict local v2 CSV intake for four specified FX pairs.
+"""FWD-054/055: strict local v2 CSV intake for three specified FX pairs.
 
 The broker's server-local clock offset is UNKNOWN: the server-relative
 last-tick age is useful for rejecting obvious staleness, but NOT a proof of
@@ -19,7 +19,7 @@ from pathlib import Path
 from research.offline_backtest import InputError, decimal, timestamp
 
 SCHEMA = "fx_forward_mt4_v2_manual_quote_v1"
-PAIRS_V2 = ("USD/JPY", "EUR/JPY", "GBP/USD", "AUD/USD")
+PAIRS_V2 = ("USD/JPY", "EUR/JPY", "EUR/USD")
 COLUMNS = ("observed_at_utc", "pair", "bid", "ask", "quote_to_jpy",
            "server_tick_time", "server_now_time", "tick_age_seconds",
            "account_type", "origin")
@@ -108,7 +108,7 @@ def parse(raw: bytes, *, asof_utc: str) -> dict:
 
 
 def main(argv=None) -> int:
-    p = argparse.ArgumentParser(description="Offline four-pair MT4 v2 snapshot check")
+    p = argparse.ArgumentParser(description="Offline three-pair MT4 v2 snapshot check")
     p.add_argument("--csv", required=True, type=Path)
     p.add_argument("--asof-utc", required=True)
     p.add_argument("--out", required=True, type=Path)
