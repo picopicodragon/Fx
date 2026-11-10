@@ -42,8 +42,22 @@ def inspect(files: list[Path], *, asof_utc: str,
         if digest in hashes:
             raise InputError("replayed identical CSV bytes")
         hashes.add(digest)
-        sample = parse(raw, asof_utc=asof_utc)
-        obs = timestamp(sample["observed_at_utc"])
+        # Validate historical snapshots at their own declared capture time;
+        # the aggregate cutoff is checked separately for age/future evidence.
+        import csv
+        import io
+        from research.forward_mt4_v2_quote import COLUMNS
+        head = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")), strict=True)
+        if tuple(head.fieldnames or ()) != COLUMNS:
+            raise InputError("incorrect historical v2 header")
+        historical_rows = list(head)
+        if len(historical_rows) != 1:
+            raise InputError("incorrect historical v2 row count")
+        observed_raw = historical_rows[0].get("observed_at_utc")
+        obs = timestamp(observed_raw)
+        if obs > now:
+            raise InputError("future snapshot")
+        sample = parse(raw, asof_utc=observed_raw)
         by_pair[sample["pair"]].append((
             obs,
             server_time(sample["server_tick_time_unverified"]),
