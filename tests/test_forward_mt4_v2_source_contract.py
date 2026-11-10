@@ -31,8 +31,8 @@ class SourceContractV2Tests(unittest.TestCase):
         self.assertFalse(result["static_contract_passed"])
 
     def test_missing_pair_rejected(self):
-        result = review(source().replace(b'symbol == "AUDUSD"',
-                                         b'symbol == "EURUSD"'))
+        result = review(source().replace(b'symbol == "EURUSD"',
+                                         b'symbol == "GBPUSD"'))
         self.assertFalse(result["static_contract_passed"])
 
     def test_no_network_api_allowed(self):
