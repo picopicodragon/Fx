@@ -48,6 +48,9 @@ def review(raw: bytes) -> dict:
     for source_name in ("USDJPY", "EURJPY", "EURUSD"):
         if ('symbol == "' + source_name + '"') not in clean:
             failures.append("MISSING_SYMBOL_" + source_name)
+    for obsolete_symbol in ("GBPUSD", "AUDUSD"):
+        if re.search(r'symbol\s*==\s*"'+obsolete_symbol+r'"', clean):
+            failures.append("OUT_OF_SCOPE_SYMBOL_" + obsolete_symbol)
     if tuple(PAIRS_V2) != ("USD/JPY", "EUR/JPY", "EUR/USD"):
         failures.append("THREE_PAIR_CONTRACT_UNEXPECTED")
     if tuple(COLUMNS) != (
