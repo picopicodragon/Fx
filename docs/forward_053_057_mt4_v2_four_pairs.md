@@ -1,41 +1,19 @@
-# FX-FWD-053〜057：4ペア・ティック時刻対応、読み取り専用MT4 v2
+# FX-FWD-053〜057 訂正記録（2026-11-10）：正式対象3ペアへの整合
 
-## 重要な仕様差分
-旧研究用バックテストやシャドー監視が使う `PAIRS` は `USD/JPY, EUR/JPY, EUR/USD` の3ペアである。しかし**正式なFX取引対象**は `USD/JPY, EUR/JPY, GBP/USD, AUD/USD` の4ペアである。旧3ペアへの互換性を壊す一括置換は行わず、まず独立した**4ペア用読み取り専用観測v2**を用意した。旧研究基盤が4ペアに対応したという意味ではない。今後はバックテスト・建玉リスク・仮説・保護停止・経済イベントの全経路で、明示的な4ペアへの移行とテストが必要。
+このファイル名は既存参照への互換性のため維持する。過去の記載「正式4ペア」は誤り。**現行正式仕様はUSD/JPY・EUR/JPY・EUR/USDの3ペア**であり、README.md、MASTER_SPEC.mdの2026-11-04後続指示、DECISIONS.mdの新しい指定に一致する。旧Q3の4ペアは**歴史的決定**としてのみ保持する。GBP/USDとAUD/USDは取引・観測v2の対象外である。
 
-| 工程 | 実装 | 保証しないこと |
-| --- | --- | --- |
-| FWD-053 | `research/mt4_readonly/FxForwardReadOnlyQuoteV2.mq4`。4ペア、単発手動CSV出力、DEMO/接続ガード、MODE_TIMEとTimeCurrentの差からサーバー内相対ティック経過秒を算出。90秒超は出力しない | MetaEditorでのコンパイル、楽天MT4実機動作、ブローカー時刻のUTC変換・真偽 |
-| FWD-054/055 | `research.forward_mt4_v2_quote`。v2専用CSV10列、口座DEMO自己申告、両側レート、ペア、PC時刻、サーバー内ティック差、JPY換算研究値を厳密検証 | ライブレート、独立時計、配信契約、取引可能なレート品質 |
-| FWD-056 | `research.forward_mt4_v2_four_pair`。4ペアのスナップショット重複・欠損・鮮度検査。良好な入力でも常時NO_GO | 旧バックテストの4ペア対応、実建玉連動 |
-| FWD-057 | `research.forward_mt4_v2_source_contract`。MQL4ソースに必要な関数、列定義、危険API混入を静的に検査する | 実機バイナリの動作やMQL4コンパイラの安全性 |
+## v2の現在の定義（FWD-058〜062訂正後）
+- `research/mt4_readonly/FxForwardReadOnlyQuoteV2.mq4`：未配備の単発読み取り専用MQL4ソース。USDJPY/EURJPY/EURUSDのみ。DEMO判定、接続判定、Bid/Ask/最終ティックのサーバー内相対時刻差が要件を満たさない場合はCSV出力を中止する。
+- `research.forward_mt4_v2_quote`：3ペア許可リスト、CSV10列、PC時計による`observed_at_utc`、`server_tick_time`、`server_now_time`、`tick_age_seconds`を厳密に検査。GBP/USD・AUD/USDは拒否する。
+- `research.forward_mt4_v2_four_pair`：**モジュール名は旧バージョン互換のため残すが内容は3ペア照合**。レポートスキーマは`fx_forward_mt4_v2_three_pair_review_v1`、ステータスは`MT4_V2_THREE_PAIR_RESEARCH_HOLD_NO_GO`。旧4ペアレポートの暗黙変換・再利用は行わない。
+- `research.forward_mt4_v2_source_contract`：MQL4静的ソースにUSDJPY/EURJPY/EURUSDを要求。古いGBPUSD/AUDUSDの取引・研究対象指定を受け入れない。
 
-## 注意：MT4のTimeGMTとTimeCurrentの性質
-- `TimeGMT()`はPC時計から得たUTC相当の値。外部時計との同期は独立検証されていない。
-- `MODE_TIME`は指定シンボルの最終ティック時刻、`TimeCurrent()`は端末に見えているブローカーサーバー時間である。同一時間基準と仮定した差分で、古いティックを検出する。
-- ただし市場停止、配信障害、端末オフラインなどでは**両方のサーバー時刻が止まり、差分が小さいままでも古い価格を新鮮と誤認し得る**。v2はPC側のUTCを別に確認するが、サーバー時間とPC UTCの独立した相関を証明できないため、発注判断には一切使わない。
-- USD/JPYからのGBP/USD・AUD/USD換算値も未認証の研究用参考値。運用中の正式リスク円換算に使わない。
+## MT4時刻に関する限界
 
-## Windowsでのコード側の事前検証
-```powershell
-python -m research.forward_mt4_v2_source_contract `
-  --source research/mt4_readonly/FxForwardReadOnlyQuoteV2.mq4 `
-  --out out/fwd_v2_source_contract_001.json
+`TimeGMT()`はPC時計から得るUTC相当時刻であり、`MODE_TIME`と`TimeCurrent()`は端末のサーバー時間を使用する。相対時刻差が小さくても配信停止時に両時刻が停止していれば鮮度は保証できない。サーバーのUTCオフセット、ブローカーの価格真正性、USDJPYを用いるEURUSD円換算係数、実行可能な証拠金・リスクは未検証。
 
-python -m research.forward_mt4_v2_quote `
-  --csv out/manual_mt4_v2_example.csv `
-  --asof-utc 2026-11-10T03:00:00Z `
-  --out out/v2_quote_report_001.json
-```
-入力ファイルと日時は**形式例**。偽の価格・時刻を実際の観測と扱わない。新しい入力CSVは次の列順で作る必要がある：
+## 改訂に関する扱い
 
-```text
-observed_at_utc,pair,bid,ask,quote_to_jpy,server_tick_time,server_now_time,tick_age_seconds,account_type,origin
-```
+今回のユーザー指示は現行正式通貨ペアの確認・修正であり、**ライブ・デモ注文許可、口座稼働、MT4へのスクリプト配置・コンパイル許可ではない**。全出力は`runtime_go_no_go=NO_GO`、`safety_hold_latched=true`、`real_orders_permitted=false`、デモ発注無効。
 
-`server_tick_time`と`server_now_time`はオフセットを持たないサーバー側ローカル時計の表記。UTCとして誤読してはならない。
-
-## 実機着手条件
-GitHub CIはWindowsのPythonを実行するが、**ユーザーの楽天MT4/MetaEditorを操作しない**。新しいMQL4をローカルに配置・コンパイル・実行するのは、ユーザーの既存デモ口座と単一端末で安全性と出力先を確認できた後の別工程。AutoTradingはOFFを維持し、いかなる注文も実施しない。勝手にタスク登録、並列ログイン、別デモ口座作成をしない。
-
-全レポート `runtime_go_no_go=NO_GO`、`safety_hold_latched=true`、`real_orders_permitted=false`、`demo_order_execution_enabled=false`。
+既存研究エンジンの`research.offline_backtest.PAIRS`はすでに正式3ペアと一致するため変更しない。相関/通貨別集中リスク、リスク上限、FX-SAF、G1〜G9未承認条件は従来どおり。
