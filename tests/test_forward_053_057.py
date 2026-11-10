@@ -116,7 +116,7 @@ class ThreePairTests(unittest.TestCase):
         report = review(values, asof_utc=NOW)
         self.assertEqual(len(report["pairs_present"]), 3)
         self.assertFalse(report["real_orders_permitted"])
-        self.assertFalse(report["legacy_three_pair_pipeline_migrated"])
+        self.assertTrue(report["three_pair_scope_consistent_with_research"])
         self.assertFalse(report["mt4_terminal_execution_verified"])
 
     def test_missing_pair_is_explicit_blocker(self):
