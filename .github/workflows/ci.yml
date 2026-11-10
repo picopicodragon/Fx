@@ -49,10 +49,11 @@ jobs:
       - name: Run currently available Python unit tests
         shell: bash
         run: |
-          if [ -d tests ] && find tests -type f -name 'test*.py' | grep -q .; then
+          if [ -d tests ] && [ -n "$(find tests -type f -name 'test*.py' -print -quit)" ]; then
             python -m unittest discover -s tests -p 'test*.py' -v
           else
-            echo "::warning::No Python unit tests are registered yet. This green check does not certify FX trading safety."
+            echo "::error::No Python unit tests found. Refusing a false-green check."
+            exit 1
           fi
 
   windows-portability:
