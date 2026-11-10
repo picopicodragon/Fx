@@ -6,7 +6,7 @@ from pathlib import Path
 
 from research.forward_cycle_chain_audit import verify
 from research.offline_backtest import InputError
-from tests.test_forward_multicycle import report
+from test_forward_multicycle import report
 
 
 class CycleChainAuditTests(unittest.TestCase):
