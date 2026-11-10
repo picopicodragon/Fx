@@ -1,7 +1,7 @@
 """FWD-058/059 (historical filename kept for import compatibility): three-pair offline completeness of v2 manually supplied quote reports.
 
 Rejects duplicate pair identities, reused source evidence and mismatched
-timestamps. Remains NO_GO even when all four reports are present/fresh.
+timestamps. Remains NO_GO even when all three reports are present/fresh.
 """
 from __future__ import annotations
 
