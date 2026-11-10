@@ -28,8 +28,8 @@ def add(directory: Path, symbol: str, stamp: str) -> Path:
         "DEMO", "MANUAL_MT4_DEMO_V2_UNVERIFIED"
     ]
     file = directory / f"FxFwdV3_{symbol}_{stamp}.csv"
-    file.write_text(",".join(COLUMNS) + "\\n" +
-                    ",".join(fields) + "\\n", encoding="utf-8")
+    file.write_text(",".join(COLUMNS) + "\n" +
+                    ",".join(fields) + "\n", encoding="utf-8")
     return file
 
 
