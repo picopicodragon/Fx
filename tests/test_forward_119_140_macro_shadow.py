@@ -229,6 +229,17 @@ class CausalReplayTests(unittest.TestCase):
                              ["exit_observed_at_utc"],
                              "2026-11-10T06:02:00Z")
 
+    def test_snapshot_gap_loss_is_not_hidden_by_risk_budget(self):
+        with tempfile.TemporaryDirectory() as t:
+            d=fixture(Path(t),"s1",down_at=2)
+            r=inspect_replay([("s1",d)],hypothesis=macro(),
+                             scenario=scenario(),asof_utc=ASOF)
+            self.assertTrue(r["hypothetical_mark_ledger"]
+                            ["loss_exceeded_reserved_risk"])
+            self.assertIn("SYNTHETIC_MARK_LOSS_EXCEEDS_RESERVED_RISK",
+                          r["unresolved_safety_holds"])
+            self.assertFalse(r["real_orders_permitted"])
+
     def test_pending_macro_vetoes_even_if_prices_good(self):
         with tempfile.TemporaryDirectory() as t:
             d=fixture(Path(t),"s1")
