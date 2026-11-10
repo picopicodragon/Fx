@@ -50,9 +50,9 @@ def inspect(raw: bytes) -> dict:
             failed.append("REQUIRED_MISSING_" + phrase)
     # FWD-073: RefreshRates false means the snapshot was already current.
     # Never short-circuit the one-shot script solely on that boolean.
-    if re.search(r"\\bif\\s*\\(\\s*!\\s*RefreshRates\\s*\\(\\s*\\)\\s*\\)", clean):
+    if re.search(r"\bif\s*\(\s*!\s*RefreshRates\s*\(\s*\)\s*\)", clean):
         failed.append("INVALID_REFRESH_RATES_FAILURE_GATE")
-    if re.search(r"\\bif\\s*\\(\\s*RefreshRates\\s*\\(\\s*\\)\\s*==\\s*false", clean):
+    if re.search(r"\bif\s*\(\s*RefreshRates\s*\(\s*\)\s*==\s*false", clean):
         failed.append("INVALID_REFRESH_RATES_FAILURE_GATE")
     for symbol in SYMBOLS:
         if ('symbol == "' + symbol + '"') not in clean:
