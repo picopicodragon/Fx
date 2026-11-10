@@ -58,6 +58,20 @@ def inspect(raw: bytes) -> dict:
         failures.append("INVALID_TIMER_CYCLE_CAP")
     if not re.search(r"#define\s+FXFWD_TIMER_SECONDS\s+60\b", clean):
         failures.append("INVALID_TIMER_INTERVAL")
+    # FWD-079: MetaEditor diagnostics showed six possible-uninitialized
+    # warnings in the second-pass file writer. Require explicit full-buffer
+    # initialization in addition to the per-symbol preflight loop.
+    for declaration in (
+        "double bids[FXFWD_PAIR_COUNT] = {0.0, 0.0, 0.0};",
+        "double asks[FXFWD_PAIR_COUNT] = {0.0, 0.0, 0.0};",
+        "int digits[FXFWD_PAIR_COUNT] = {0, 0, 0};",
+        "int ages[FXFWD_PAIR_COUNT] = {0, 0, 0};",
+        "datetime ticks[FXFWD_PAIR_COUNT] = {0, 0, 0};",
+        'string filenames[FXFWD_PAIR_COUNT] = {"", "", ""};',
+    ):
+        if declaration not in clean:
+            failures.append("UNINITIALIZED_PAIR_BUFFER_" +
+                            declaration.split("[", 1)[0].split()[-1])
     for symbol, pair in (("USDJPY","USD/JPY"),
                          ("EURJPY","EUR/JPY"),
                          ("EURUSD","EUR/USD")):
