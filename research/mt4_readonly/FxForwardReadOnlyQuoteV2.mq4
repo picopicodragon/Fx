@@ -1,4 +1,4 @@
-// FWD-053: isolated, UNDEPLOYED manual MT4 DEMO read-only export v2.
+// FWD-058: corrected 3-pair, UNDEPLOYED MT4 DEMO read-only export v2.
 // One-shot script. Never enables AutoTrading, calls Order* or WebRequest.
 // This is NOT compiled/tested in MetaEditor or deployed to a real terminal.
 // Server timestamps are unverified broker-local values, not UTC attestation.
@@ -24,11 +24,10 @@ void OnStart()
    string pair = "";
    if(symbol == "USDJPY") pair = "USD/JPY";
    else if(symbol == "EURJPY") pair = "EUR/JPY";
-   else if(symbol == "GBPUSD") pair = "GBP/USD";
-   else if(symbol == "AUDUSD") pair = "AUD/USD";
+   else if(symbol == "EURUSD") pair = "EUR/USD";
    else
    {
-      Print("FWD_V2: chart symbol is not one of four specified FX pairs.");
+      Print("FWD_V2: chart symbol is not one of three specified FX pairs.");
       return;
    }
 
@@ -56,7 +55,7 @@ void OnStart()
    // Research-only JPY conversion. The unsuffixed USDJPY chart
    // must be visible and its independent freshness must be verified later.
    double quoteToJpy = 1.0;
-   if(pair == "GBP/USD" || pair == "AUD/USD")
+   if(pair == "EUR/USD")
    {
       double usdjpy = MarketInfo("USDJPY", MODE_BID);
       datetime conversionTick = (datetime)MarketInfo("USDJPY", MODE_TIME);

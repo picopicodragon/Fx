@@ -1,7 +1,7 @@
-"""FWD-056: four-pair offline completeness of v2 manually supplied quote reports.
+"""FWD-058/059 (historical filename kept for import compatibility): three-pair offline completeness of v2 manually supplied quote reports.
 
 Rejects duplicate pair identities, reused source evidence and mismatched
-timestamps. Remains NO_GO even when all four reports are present/fresh.
+timestamps. Remains NO_GO even when all three reports are present/fresh.
 """
 from __future__ import annotations
 
@@ -10,15 +10,15 @@ import json
 from pathlib import Path
 
 from research.forward_mt4_v2_quote import PAIRS_V2, SCHEMA as QUOTE_SCHEMA
-from research.offline_backtest import InputError, timestamp
+from research.offline_backtest import InputError, timestamp, PAIRS as RESEARCH_PAIRS
 
-SCHEMA = "fx_forward_mt4_v2_four_pair_review_v1"
+SCHEMA = "fx_forward_mt4_v2_three_pair_review_v1"
 
 
 def review(reports: list[dict], *, asof_utc: str) -> dict:
     now = timestamp(asof_utc)
-    if type(reports) is not list or not 1 <= len(reports) <= 4:
-        raise InputError("need one to four reports")
+    if type(reports) is not list or not 1 <= len(reports) <= 3:
+        raise InputError("need one to three reports")
     pairs = {}
     hashes = set()
     for report in reports:
@@ -64,11 +64,11 @@ def review(reports: list[dict], *, asof_utc: str) -> dict:
             blockers.append("STALE_" + pair.replace("/", "_"))
     return {
         "schema": SCHEMA,
-        "status": "MT4_V2_FOUR_PAIR_RESEARCH_HOLD_NO_GO",
+        "status": "MT4_V2_THREE_PAIR_RESEARCH_HOLD_NO_GO",
         "asof_utc": asof_utc,
         "pairs_present": sorted(pairs),
         "by_pair": pairs,
-        "legacy_three_pair_pipeline_migrated": False,
+        "three_pair_scope_consistent_with_research": tuple(PAIRS_V2) == tuple(RESEARCH_PAIRS),
         "blocking_reasons": sorted(blockers),
         "mt4_compilation_verified": False,
         "mt4_terminal_execution_verified": False,
@@ -90,7 +90,7 @@ def _read(path: Path) -> dict:
 
 
 def main(argv=None) -> int:
-    p = argparse.ArgumentParser(description="Offline four-pair research readiness, not GO")
+    p = argparse.ArgumentParser(description="Offline three-pair research readiness, not GO")
     p.add_argument("--report", type=Path, action="append", required=True)
     p.add_argument("--asof-utc", required=True)
     p.add_argument("--out", type=Path, required=True)
@@ -108,7 +108,7 @@ def main(argv=None) -> int:
         return 0
     except (InputError, OSError, ValueError, TypeError, UnicodeError, KeyError):
         print(json.dumps({"status": "FAIL_CLOSED",
-                          "reason": "FOUR_PAIR_RESEARCH_DATA_INVALID",
+                          "reason": "THREE_PAIR_RESEARCH_DATA_INVALID",
                           "runtime_go_no_go": "NO_GO",
                           "safety_hold_latched": True,
                           "real_orders_permitted": False}))
