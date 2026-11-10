@@ -81,7 +81,7 @@ def from_manifest(manifest: dict, folder: Path) -> list[dict]:
                 set(item) != {"filename", "sha256"} or
                 type(item["filename"]) is not str or
                 not __import__("re").fullmatch(
-                    r"[a-zA-Z0-9][a-zA-Z0-9_.-]{0,127}\\.json", item["filename"]) or
+                    r"[a-zA-Z0-9][a-zA-Z0-9_.-]{0,127}[.]json", item["filename"]) or
                 type(item["sha256"]) is not str or
                 not __import__("re").fullmatch(
                     r"[0-9a-f]{64}", item["sha256"]) or
