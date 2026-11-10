@@ -55,7 +55,7 @@ void OnDeinit(const int reason)
 void OnTimer()
 {
    fxFwdCycles++;
-   if(fxFwdCycles >= FXFWD_MAX_CYCLES)
+   if(fxFwdCycles > FXFWD_MAX_CYCLES)
    {
       EventKillTimer();
       Print("FXFWD_OBSERVER: 30-cycle safety cap reached; timer stopped.");
