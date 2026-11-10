@@ -49,6 +49,22 @@ class Mt4V3SourceTests(unittest.TestCase):
         unsafe = V3.read_bytes() + b"\nvoid bad(){ int flags=FILE_COMMON; }\n"
         self.assertFalse(inspect(unsafe)["static_preflight_passed"])
 
+    def test_refresh_rates_false_does_not_abort_export(self):
+        # A false return indicates that the local copy can already be current.
+        source = V3.read_text(encoding="utf-8")
+        self.assertIn("   RefreshRates();", source)
+        self.assertNotIn("if(!RefreshRates())", source)
+        self.assertNotIn("price refresh unavailable; no file", source)
+
+    def test_static_guard_rejects_false_as_failure_regression(self):
+        original = V3.read_bytes()
+        damaged = original.replace(
+            b"   RefreshRates();",
+            b"   if(!RefreshRates()) { return; }")
+        self.assertFalse(inspect(damaged)["static_preflight_passed"])
+        self.assertIn("INVALID_REFRESH_RATES_FAILURE_GATE",
+                      inspect(damaged)["static_failures"])
+
     def test_missing_demo_guard_detected(self):
         unsafe = V3.read_bytes().replace(b"IsDemo()", b"IsTradeAllowed()")
         self.assertFalse(inspect(unsafe)["static_preflight_passed"])
