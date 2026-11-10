@@ -52,6 +52,12 @@ def inspect(raw: bytes) -> dict:
     for term in REQUIRED:
         if term not in clean:
             failures.append("REQUIRED_MISSING_" + term)
+    # Match numeric defines with a word boundary, never a prefix: 30000
+    # must not pass a required cap of 30.
+    if not re.search(r"#define\\s+FXFWD_MAX_CYCLES\\s+30\\b", clean):
+        failures.append("INVALID_TIMER_CYCLE_CAP")
+    if not re.search(r"#define\\s+FXFWD_TIMER_SECONDS\\s+60\\b", clean):
+        failures.append("INVALID_TIMER_INTERVAL")
     for symbol, pair in (("USDJPY","USD/JPY"),
                          ("EURJPY","EUR/JPY"),
                          ("EURUSD","EUR/USD")):
