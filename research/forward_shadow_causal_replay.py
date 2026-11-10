@@ -198,6 +198,9 @@ def inspect(sessions: list[tuple[str, Path]], *, hypothesis: dict,
                     exit_group["USD/JPY"]["bid" if quote_pnl >= 0 else "ask"])
             else:
                 conversion = Decimal("1")
+            marked_pnl = quote_pnl * conversion
+            if marked_pnl < -reserved_risk:
+                holds.add("SYNTHETIC_MARK_LOSS_EXCEEDS_RESERVED_RISK")
             evaluation = {
                 "entry_observed_at_utc":
                     entry_time.isoformat().replace("+00:00", "Z"),
@@ -207,13 +210,19 @@ def inspect(sessions: list[tuple[str, Path]], *, hypothesis: dict,
                 "exit_side_with_adverse_slippage": str(closing),
                 "hypothetical_stop_level": str(stop),
                 "exit_reason_observations_only": exit_reason,
-                "scenario_mark_pnl_jpy": str(quote_pnl*conversion),
+                "scenario_mark_pnl_jpy": str(marked_pnl),
+                "loss_exceeded_reserved_risk":
+                    marked_pnl < -reserved_risk,
                 "scenario_quote_to_jpy_at_mark": str(conversion),
                 "unknown_intraminute_paths": True,
                 "broker_execution_or_fill_attested": False,
             }
     # NO_GO is always mandatory. Even a hypothetical favorable mark result
     # is not permission for a demo or real order, or strategy evidence.
+    if numeric["drawdown_percent"] >= Decimal("2"):
+        holds.add("DD2_WARNING_RESEARCH_ONLY")
+    if numeric["drawdown_percent"] >= Decimal("3"):
+        holds.add("DD3_REEVALUATION_RESEARCH_ONLY")
     holds.update((
         "HYPOTHESIS_SOURCE_AND_REVIEW_UNAUTHENTICATED",
         "OBSERVATION_PC_AND_BROKER_TIME_UNATTESTED",
