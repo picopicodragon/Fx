@@ -12,7 +12,25 @@ from research.forward_mt4_observation_evidence import (
     inspect, main, START_MARK, STOP_MARK, CSV_MARK, CHANGE_STOP
 )
 from research.offline_backtest import InputError
-from tests.test_forward_080_083_mt4_capture import add, PAIRS, ASOF
+from research.forward_mt4_v2_quote import COLUMNS
+
+ASOF = "2026-11-10T07:00:00Z"
+PAIRS = {"USDJPY": "USD/JPY", "EURJPY": "EUR/JPY", "EURUSD": "EUR/USD"}
+
+
+def add(directory: Path, symbol: str, stamp: str) -> Path:
+    observed = datetime.strptime(stamp, "%Y%m%d_%H%M%S").replace(
+        tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
+    fields = [
+        observed, PAIRS[symbol], "150.000", "150.005",
+        "150.00000" if symbol == "EURUSD" else "1",
+        "2026-11-10T08:00:00", "2026-11-10T08:00:05", "5",
+        "DEMO", "MANUAL_MT4_DEMO_V2_UNVERIFIED"
+    ]
+    file = directory / f"FxFwdV3_{symbol}_{stamp}.csv"
+    file.write_text(",".join(COLUMNS) + "\\n" +
+                    ",".join(fields) + "\\n", encoding="utf-8")
+    return file
 
 
 def capture(root: Path, count: int, *, skip_symbol: str | None = None) -> Path:
