@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 from research.forward_mt4_v2_quote import PAIRS_V2, SCHEMA as QUOTE_SCHEMA
-from research.offline_backtest import InputError, timestamp
+from research.offline_backtest import InputError, timestamp, PAIRS as RESEARCH_PAIRS
 
 SCHEMA = "fx_forward_mt4_v2_three_pair_review_v1"
 
@@ -68,7 +68,7 @@ def review(reports: list[dict], *, asof_utc: str) -> dict:
         "asof_utc": asof_utc,
         "pairs_present": sorted(pairs),
         "by_pair": pairs,
-        "legacy_three_pair_pipeline_migrated": False,
+        "three_pair_scope_consistent_with_research": tuple(PAIRS_V2) == tuple(RESEARCH_PAIRS),
         "blocking_reasons": sorted(blockers),
         "mt4_compilation_verified": False,
         "mt4_terminal_execution_verified": False,
