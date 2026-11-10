@@ -31,3 +31,31 @@ python -m research.forward_evidence_gate `
 
 ## リスク・実測の限界
 この工程では実データで連続運転試験していない。研究用入力の品質診断が成功しても、実証済みのデータ提供、経済カレンダー網羅、AI勝率、楽天MT4ブローカーのSL/TP/証拠金・口座損失上限を意味しない。本番/デモ注文の`NO_GO`は変更しない。
+
+## FWD-013: 複数時点の仮想純資産を用いた研究用リスク履歴
+
+`research/forward_risk_timeline.py`を追加。外部で**仮想計算した**純資産と建玉リスクの時系列だけを受け付け、NY市場17時（夏21:00 UTC、冬22:00 UTC）区切りを`America/New_York`で計算する。口座実資産の自動取得はしない。
+
+```json
+{
+  "schema": "fx_forward_shadow_risk_timeline_v1",
+  "samples": [
+    {
+      "observed_at_utc": "2026-11-10T22:00:00Z",
+      "equity_jpy": "100000",
+      "open_risk_jpy": "0",
+      "source_status": "HYPOTHETICAL_UNVERIFIED"
+    }
+  ]
+}
+```
+
+これは**形式説明のための架空値**。同じ時刻や時刻逆行、NaN、負のリスク、権威を偽装する`source_status`は拒否。5万時点/6MBを上限とする。1日の基準資産はその日の**最初のサンプル**であり、NY17時ちょうどの価格や損失が不明な場合は日次リスクの過少計算があり得るため正式安全認定には使わない。
+
+```powershell
+python -m research.forward_risk_timeline `
+  --input out/hypothetical_risk_samples.json `
+  --out out/hypothetical_risk_report.json
+```
+
+DD2%/3%警告、4% LEVEL3（承認解除必要）、5%停止、1.5%日次損失、1.0%超の合計リスクを研究上のアラームとして出力。仮想DD4%/5%を一度超えると以降の仮想資産回復によってラッチを解除しない。**実際の注文、MT4デモ取引、再開承認、証拠金・SL計算、ウォッチドッグには接続しない。** 本番のリスク管理エンジンの認定とは明確に区別する。
