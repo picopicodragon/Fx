@@ -30,3 +30,5 @@ MQL4公式`RefreshRates()`仕様：**trueならコピーした価格データが
 
 ## 状態
 CIは**静的ソース監査と合成CSV回帰テスト**でありMetaEditor実コンパイルではない。`runtime_go_no_go=NO_GO`、`safety_hold_latched=true`、`real_orders_permitted=false`、デモ注文無効は維持。口座を再開設せず、別MT4を同時稼働させない。
+
+補足：PRの書式検査は作成時のイベント文面を参照するため、説明欄修正後は新しいコミットによって再実行する。Windows上の既存データ・EX4は自動更新しない。
