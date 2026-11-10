@@ -76,10 +76,15 @@ void OnTimer()
       return;
    }
 
-   double bids[FXFWD_PAIR_COUNT], asks[FXFWD_PAIR_COUNT];
-   int digits[FXFWD_PAIR_COUNT], ages[FXFWD_PAIR_COUNT];
-   datetime ticks[FXFWD_PAIR_COUNT];
-   string filenames[FXFWD_PAIR_COUNT];
+   // Explicitly initialize each fixed-size buffer before the validation pass.
+   // MetaEditor reports possible uninitialized values when the assignments
+   // occur in a loop but reads happen in a separate loop.
+   double bids[FXFWD_PAIR_COUNT] = {0.0, 0.0, 0.0};
+   double asks[FXFWD_PAIR_COUNT] = {0.0, 0.0, 0.0};
+   int digits[FXFWD_PAIR_COUNT] = {0, 0, 0};
+   int ages[FXFWD_PAIR_COUNT] = {0, 0, 0};
+   datetime ticks[FXFWD_PAIR_COUNT] = {0, 0, 0};
+   string filenames[FXFWD_PAIR_COUNT] = {"", "", ""};
    string stamp = FwdFileStamp(observedUtc);
 
    // Validate ALL 3 pairs before writing ANY file for this cycle.
