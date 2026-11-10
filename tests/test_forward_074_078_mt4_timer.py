@@ -24,6 +24,28 @@ class ForwardDemoTimerObserverTests(unittest.TestCase):
         for symbol in ("GBPUSD", "AUDUSD"):
             self.assertNotIn('"'+symbol+'"', src)
 
+    def test_all_second_pass_buffers_are_initialized(self):
+        report = inspect(SOURCE.read_bytes())
+        self.assertTrue(report["static_preflight_passed"], report["static_failures"])
+        source = SOURCE.read_text()
+        for name in ("bids", "asks", "digits", "ages", "ticks", "filenames"):
+            with self.subTest(name=name):
+                self.assertIn(name + "[FXFWD_PAIR_COUNT] =", source)
+
+    def test_missing_bid_buffer_initializer_is_refused(self):
+        bad = SOURCE.read_bytes().replace(
+            b"double bids[FXFWD_PAIR_COUNT] = {0.0, 0.0, 0.0};",
+            b"double bids[FXFWD_PAIR_COUNT];")
+        self.assertIn("UNINITIALIZED_PAIR_BUFFER_bids",
+                      inspect(bad)["static_failures"])
+
+    def test_missing_tick_buffer_initializer_is_refused(self):
+        bad = SOURCE.read_bytes().replace(
+            b"datetime ticks[FXFWD_PAIR_COUNT] = {0, 0, 0};",
+            b"datetime ticks[FXFWD_PAIR_COUNT];")
+        self.assertIn("UNINITIALIZED_PAIR_BUFFER_ticks",
+                      inspect(bad)["static_failures"])
+
     def test_order_call_is_refused(self):
         bad = SOURCE.read_bytes() + b"\nvoid unsafe(){ OrderSend(); }"
         self.assertFalse(inspect(bad)["static_preflight_passed"])
