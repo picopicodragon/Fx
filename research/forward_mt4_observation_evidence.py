@@ -190,7 +190,7 @@ def main(argv=None) -> int:
     try:
         if args.out.exists() or not args.out.parent.is_dir() or args.out.is_symlink():
             raise InputError("output exists or unsafe")
-        if args.out.resolve() == args.directory.resolve():
+        if args.directory.resolve() in args.out.resolve().parents:
             raise InputError("output inside evidence folder")
         result = inspect(
             args.directory, asof_utc=args.asof_utc,
