@@ -62,3 +62,17 @@ python -m research.forward_mt4_static_audit `
 4. FWD-022以降: 安全制約を外さない監視オーケストレーション、長時間シャドー運用実績、実口座とは独立したデモ売買承認審査。
 
 これらの未完了工程を実装済みとみなさない。
+
+## FWD-022: デモフォワード運用の事前不足条件
+
+`research.forward_demo_readiness` は、FWD-018/019/021の研究レポートを入力として、欠損と未承認条件を表示する**オフラインのチェックリスト**。楽天MT4への接続・インストール・プログラム実行・注文は一切しない。自己申告が全部YESでも、独立したデモ口座認証、価格/時計認証、正式承認がないため`NO_GO`は変わらない。
+
+```powershell
+python -m research.forward_demo_readiness `
+  --observability out/forward_observability_001.json `
+  --quote out/forward_quote_continuity_001.json `
+  --mt4-static out/mt4_static_audit_001.json `
+  --out out/forward_demo_readiness_001.json
+```
+
+追加のオペレーター申告ファイルは任意（`--operator-declaration`）。正式デモ口座であるかは本人の申告のみでは証明できず、注文実行許可とは無関係。既存の口座を安全に維持し、デモ口座の複数新設・複数端末同時ログインを要求しない。
