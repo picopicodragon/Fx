@@ -38,11 +38,11 @@ void OnStart()
       return;
    }
 
-   if(!RefreshRates())
-   {
-      Print("FXFWD_V3: price refresh unavailable; no file.");
-      return;
-   }
+   // RefreshRates() returns false when the local data is already current.
+   // That is NOT a failure, particularly for a newly launched one-shot script.
+   // Do not use its bool return as a feed-availability gate. Instead validate
+   // explicit Bid/Ask, MODE_TIME, and relative tick age below.
+   RefreshRates();
 
    double bid = MarketInfo(symbol, MODE_BID);
    double ask = MarketInfo(symbol, MODE_ASK);
