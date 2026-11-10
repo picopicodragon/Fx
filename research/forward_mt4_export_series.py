@@ -26,7 +26,7 @@ def inspect_exports(files: list[Path], *, asof_utc: str) -> dict:
     last_time = {}
     records = []
     for path in files:
-        if type(path) is not Path or path in seen_paths or (
+        if not isinstance(path, Path) or path in seen_paths or (
                 not path.is_file() or path.stat().st_size > MAX_BYTES):
             raise InputError("missing, repeated or oversized export")
         seen_paths.add(path)
