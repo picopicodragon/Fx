@@ -102,3 +102,21 @@ python -m research.forward_ai_shadow --store "out/forward_macro_research_001" --
 - マクロ入手元の独立認証、コンセンサスの事前入手時刻、ブローカー時刻/口座、EA停止ログ原本、全経済イベントカレンダーはまだ実務上の課題として記録。
 - 総資金10万円、単独リスク0.5%、合計1%、日次1.5%、DD4%新規停止、DD5%人間承認等を**変更しない**。このPRはリスク実装や発注経路には手を触れない。
 - 発注禁止`NO_GO`、`safety_hold_latched=true`、`real_orders_permitted=false`を固定。デモ口座の実発注も禁止。CI成功は本番運用/収益性の認証ではない。
+
+## FWD-171〜182：マクロAI研究キャンペーン統合ボード
+
+追加された`research.forward_macro_campaign_board`は、価格品質統計、観測時間帯、マクロイベント/AI研究ジャーナル、独立レビュー、レビュー後の2スナップショット比較を**一度のオフライン検査で集約**。予想差のための正当な出典を確認したりAIに判断させたりする前に、何が不足しているかを順序付きで表示する。
+
+**PR #264がmainに取り込まれた後、現有114 CSVから追加操作なしで実行できる最優先の一行：**
+
+```powershell
+$asof = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"); python -m research.forward_macro_campaign_board --session "s001=out/mt4_timer_clean_001" --session "s002=out/mt4_timer_clean_002" --asof-utc $asof --out "out/fwd_macro_campaign_$(Get-Date -Format yyyyMMdd_HHmmss).json"
+```
+
+現段階でマクロジャーナルが無いなら、期待される**構造上の**指標は`files=114`、`complete_cycles=38`、`macro_events=0`、`reviewed_candidates=0`、`descriptive_marks=0`、`API_calls_this_run=0`。実データの確認結果そのものは本人のWindowsで実行されるまで未確定。
+
+ジャーナルが存在すれば`--store "<実際の保存ディレクトリ>"`を追記し、既存AI課金台帳を検査する場合は`--ai-ledger "<実際の台帳.json>"`を追加する。課金リクエストの`pending_request`がある場合は必ず人間による課金/レスポンス照合待ち。**コマンド自体はネットワーク・OpenAI API・Jev・Decisions API・MT4を呼ばない**。
+
+出力の`maximum_two_model_api_calls_if_all_new_events_chosen`は**上限2呼び出し/イベントという仕様からの事前参考件数**に過ぎず、必要費用の金額を推測していない。過去台帳外の課金履歴がないとは断定できない。モデルコストは利用サービスの実料金を確認する。すべての`next_research_actions`は作業候補であり売買承認ではない。
+
+現有38周期だけで未実測の時間帯を補完したり、過去の真のマクロ仮説を捏造しない。既存30周期EAの自動再起動、別MT4口座、同時ログイン、取引許可は一切追加しない。
