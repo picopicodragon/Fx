@@ -41,6 +41,8 @@ ERRORS = {
     "excessive BLS events": "ICS_EVENT_COUNT_LIMIT",
     "unterminated calendar event": "ICS_EVENT_NOT_TERMINATED",
     "bounded calendar horizon required": "INVALID_HORIZON",
+    "output path already exists": "OUTPUT_PATH_ALREADY_EXISTS",
+    "output parent directory missing": "OUTPUT_PARENT_NOT_DIRECTORY",
 }
 MAX_BYTES = cal.MAX_ICS_BYTES
 
@@ -102,7 +104,8 @@ def _base(*, network: bool) -> dict:
 
 def diagnose(*, raw: bytes | None = None,
              allow_network: bool = False,
-             asof_utc: str, days_forward: int = 14) -> dict:
+             asof_utc: str, days_forward: int = 14,
+             planned_out: Path | None = None) -> dict:
     result = _base(network=allow_network)
     try:
         timestamp(asof_utc)
@@ -110,6 +113,15 @@ def diagnose(*, raw: bytes | None = None,
                 or type(days_forward) is not int
                 or not 1 <= days_forward <= 31):
             raise InputError("bounded calendar horizon required")
+        if planned_out is not None:
+            result["stage"] = "OUTPUT_PRECHECK"
+            if type(planned_out) is not Path:
+                raise InputError("output parent directory missing")
+            if planned_out.exists() or planned_out.is_symlink():
+                raise InputError("output path already exists")
+            if not planned_out.parent.is_dir():
+                raise InputError("output parent directory missing")
+            result["planned_output_status"] = "NEW_PATH_AVAILABLE_NOT_WRITTEN"
         if raw is None:
             result["stage"] = "FETCH"
             raw = cal.download()
@@ -145,6 +157,7 @@ def main(argv=None) -> int:
     group.add_argument("--allow-network", action="store_true")
     group.add_argument("--ics-file", type=Path)
     parser.add_argument("--days-forward", type=int, default=14)
+    parser.add_argument("--planned-out", type=Path)
     args = parser.parse_args(argv)
     try:
         raw = None
@@ -158,7 +171,8 @@ def main(argv=None) -> int:
             timespec="seconds").replace("+00:00", "Z")
         report = diagnose(
             raw=raw, allow_network=args.allow_network,
-            asof_utc=current, days_forward=args.days_forward)
+            asof_utc=current, days_forward=args.days_forward,
+            planned_out=args.planned_out)
     except (InputError, OSError, ValueError, UnicodeError,
             TypeError, KeyError):
         report = _base(network=args.allow_network)
