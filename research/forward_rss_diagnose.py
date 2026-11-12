@@ -133,7 +133,7 @@ def diagnose(store: Path, feed: str, *, asof_utc: str,
                 or type(max_new) is not int or not 1 <= max_new <= 5
                 or not isinstance(store, Path) or store.is_symlink()
                 or not store.is_dir()
-                or (raw is None) == allow_network):
+                or (raw is None) != allow_network):
             raise InputError("invalid diagnostic inputs")
         result["stage"] = "JOURNAL_AUDIT"
         observation.audit(store)
