@@ -53,6 +53,19 @@ def prepare(store: Path, event_sha: str, forecast_archive: dict,
             or any(c not in SHA for c in event_sha)):
         raise InputError("release/forecast mismatch")
     source = ai._event(store, event_sha)  # calls observation chain audit
+    # Avoid claiming multiple independent forward events from the same
+    # already-enriched BLS bulletin. A prepared file does not count until
+    # it is explicitly appended to the audited journal.
+    prior = obs.audit(store)
+    marker = "original_macro_event=" + event_sha
+    for seq in range(1, prior["record_count"] + 1):
+        row = json.loads(
+            (store / f"{seq:08d}.json").read_text(encoding="utf-8"))
+        old = row["snapshot"]
+        if (old["kind"] == "MACRO_EVENT"
+                and old["source_id"] == "macro_joined"
+                and marker in old["payload"]["content"]):
+            raise InputError("release event already linked in journal")
     body = source["payload"]
     feed = source["source_id"]
     event_title = archive["event_title_unverified"].lower()
