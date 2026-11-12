@@ -108,7 +108,7 @@ def _base(*, network: bool) -> dict:
 # Diagnostic only: no inference of floating times, named-zone aliases, or DST.
 # Report only bounded, sanitized DTSTART metadata; never output event times,
 # titles, the downloaded ICS body, or local file contents.
-_TZID_SAFE = re.compile(r"[A-Za-z0-9_./+\\- ]{1,80}\\Z")
+_TZID_SAFE = re.compile(r"[A-Za-z0-9_./+ -]{1,80}")
 
 
 def _dtstart_time_forms(raw: bytes) -> dict:
