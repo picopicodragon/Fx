@@ -179,8 +179,12 @@ class SecureAtomTests(unittest.TestCase):
     def test_explicit_atom_xml_no_network(self):
         f = self.root/"local.xml"
         f.write_bytes(atom())
+        original_import = rss.import_xml
         with patch.object(rss, "get_feed",
-                          side_effect=AssertionError("must not fetch")):
+                          side_effect=AssertionError("must not fetch")), (
+                patch.object(rss, "import_xml",
+                             side_effect=lambda *a, **kw: original_import(
+                                 *a, now=NOW, **kw))):
             result = rss.main(["--store", str(self.store),
                                "--feed", "bls_cpi",
                                "--xml-file", str(f)])
