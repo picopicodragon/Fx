@@ -166,6 +166,7 @@ def _dtstart_time_forms(raw: bytes) -> dict:
                   for label in labels[:20]],
         "omitted_distinct_form_count": max(0, len(labels) - 20),
         "event_titles_dates_or_body_included": False,
+        "timezone_or_release_time_inference_permitted": False,
     }
 
 
