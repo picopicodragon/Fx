@@ -164,6 +164,40 @@ class CalendarDiagnosticsTests(unittest.TestCase):
             self.assertEqual(json.loads(stream.getvalue())["reason_code"],
                              "LOCAL_CALENDAR_FILE_INVALID")
 
+    def test_existing_output_path_blocks_before_network(self):
+        with tempfile.TemporaryDirectory() as folder:
+            intended=Path(folder)/"existing.json"
+            intended.write_text("keep",encoding="utf-8")
+            with patch.object(calendar, "download",
+                              side_effect=AssertionError("network called")):
+                result=diagnostic.diagnose(
+                    allow_network=True, asof_utc=ASOF,
+                    planned_out=intended)
+            self.assertEqual(result["stage"],"OUTPUT_PRECHECK")
+            self.assertEqual(result["reason_code"],"OUTPUT_PATH_ALREADY_EXISTS")
+            self.assertEqual(intended.read_text(),"keep")
+
+    def test_missing_output_parent_blocks_before_fetch(self):
+        with tempfile.TemporaryDirectory() as folder:
+            planned=Path(folder)/"missing"/"calendar.json"
+            with patch.object(calendar, "download",
+                              side_effect=AssertionError("network called")):
+                result=diagnostic.diagnose(
+                    allow_network=True, asof_utc=ASOF,
+                    planned_out=planned)
+            self.assertEqual(result["reason_code"],"OUTPUT_PARENT_NOT_DIRECTORY")
+
+    def test_free_output_path_is_checked_without_creating(self):
+        with tempfile.TemporaryDirectory() as folder:
+            intended=Path(folder)/"calendar.json"
+            result=diagnostic.diagnose(
+                raw=ics(),asof_utc=ASOF,planned_out=intended)
+            self.assertEqual(result["planned_output_status"],
+                             "NEW_PATH_AVAILABLE_NOT_WRITTEN")
+            self.assertEqual(result["status"],
+                             "BLS_CALENDAR_DIAGNOSTIC_PREFLIGHT_OK_NO_GO")
+            self.assertFalse(intended.exists())
+
     def test_network_flag_invokes_exactly_one_existing_fetch(self):
         with patch.object(calendar,"download",return_value=ics()) as fetch:
             result=diagnostic.diagnose(allow_network=True,asof_utc=ASOF)
