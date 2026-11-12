@@ -62,6 +62,83 @@ def _when(value: str) -> str:
         timespec="seconds").replace("+00:00", "Z")
 
 
+ATOM = "{http://www.w3.org/2005/Atom}"
+BLS_ATOM_FEEDS = frozenset(("bls_cpi", "bls_empsit"))
+
+
+def _atom_when(value: str) -> str:
+    """RFC3339 timestamp converted to UTC; no naive or future guess."""
+    if type(value) is not str or not value or len(value) > 80:
+        raise InputError("ATOM_PUBLISHED_MISSING_OR_INVALID")
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise InputError("ATOM_PUBLISHED_MISSING_OR_INVALID") from exc
+    if dt.tzinfo is None or dt.utcoffset() is None:
+        raise InputError("ATOM_PUBLICATION_TIMEZONE_MISSING")
+    return dt.astimezone(timezone.utc).isoformat(
+        timespec="seconds").replace("+00:00", "Z")
+
+
+def _atom_text(entry: ET.Element, tag: str) -> str:
+    el = entry.find(ATOM + tag)
+    return ("".join(el.itertext()).strip() if el is not None else "")
+
+
+def _atom_link(entry: ET.Element) -> str:
+    """Require exactly one canonical 'alternate' news link, never feed/self."""
+    possible = []
+    for link in entry.findall(ATOM + "link"):
+        if link.get("rel", "alternate") in ("alternate", ""):
+            possible.append(link.get("href"))
+    if len(possible) != 1:
+        raise InputError("ATOM_ALTERNATE_LINK_NOT_UNIQUE")
+    url = _require_official_url(possible[0])
+    if urlparse(url).hostname != "www.bls.gov":
+        raise InputError("ATOM_NEWS_LINK_NOT_BLS")
+    return url
+
+
+def _parse_atom(root: ET.Element, feed: str, received: str) -> list[dict]:
+    if feed not in BLS_ATOM_FEEDS or root.tag != ATOM + "feed":
+        raise InputError("unexpected RSS root, fail closed")
+    entries = root.findall(ATOM + "entry")
+    if len(entries) > MAX_ITEMS:
+        raise InputError("excessive RSS items")
+    result = []
+    seen = set()
+    for entry in entries:
+        title = _atom_text(entry, "title")
+        link = _atom_link(entry)
+        # Atom 'updated' is NOT the original release time. Never silently
+        # substitute it for missing 'published' or backdate old news.
+        published = _atom_when(_atom_text(entry, "published"))
+        if timestamp(published) > timestamp(received):
+            raise InputError("future-dated RSS release")
+        summary = _atom_text(entry, "summary") or _atom_text(entry, "content")
+        if not title or len(title) > 200 or len(summary) > 5500:
+            raise InputError("invalid RSS entry size")
+        if link in seen:
+            raise InputError("duplicate item within RSS response")
+        seen.add(link)
+        result.append({
+            "schema": journal.SCHEMA, "kind": "MACRO_EVENT",
+            "observed_at_utc": received,
+            "source_id": feed,
+            "payload": {
+                "pair": "USD/JPY",
+                "title": title,
+                "source_url": link,
+                "published_at_utc": published,
+                "content": summary or title,
+                "consensus": "",
+                "released_value": "",
+                "source_status": "USER_SUPPLIED_UNVERIFIED",
+            },
+        })
+    return result
+
+
 def parse_feed(xml: bytes, feed: str, *, received_utc: str) -> list[dict]:
     if feed not in FEEDS or not isinstance(xml, bytes):
         raise InputError("unknown RSS feed")
@@ -70,6 +147,8 @@ def parse_feed(xml: bytes, feed: str, *, received_utc: str) -> list[dict]:
         raise InputError("unsafe RSS XML")
     timestamp(received_utc)
     root = ET.fromstring(xml)
+    if root.tag == ATOM + "feed":
+        return _parse_atom(root, feed, received_utc)
     if root.tag != "rss":
         raise InputError("unexpected RSS root, fail closed")
     channel = root.find("channel")
@@ -117,7 +196,7 @@ def get_feed(feed: str, *, opener=None) -> bytes:
     request = urllib.request.Request(
         FEEDS[feed],
         headers={"User-Agent": "FxResearchForwardObserver/0.1",
-                 "Accept": "application/rss+xml, application/xml"})
+                 "Accept": "application/rss+xml, application/atom+xml, application/xml"})
     opener = opener or urllib.request.build_opener(NoRedirect())
     with opener.open(request, timeout=TIMEOUT) as response:
         if response.status != 200:
