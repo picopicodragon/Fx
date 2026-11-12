@@ -89,10 +89,7 @@ def inspect(store: Path, event_sha: str, ledger: Path, *,
         holds.add("NO_AUTHORIZED_RESEARCH_PACKET")
     # Only this fixed packet readiness state is eligibility for *explicit,
     # bounded, potentially billable research*; NOT any trade authorization.
-    may_call = (scope != "UNSUPPORTED_UNVERIFIED_EVENT"
-                and "EVENT_OBSERVED_MORE_THAN_24H_AGO" not in holds
-                and state is None or False)
-    # Rewrite without precedence ambiguity and explicitly hold pending work.
+    # No implicit paid resume on ambiguous ledger state.
     may_call = (
         scope != "UNSUPPORTED_UNVERIFIED_EVENT"
         and "EVENT_OBSERVED_MORE_THAN_24H_AGO" not in holds
@@ -115,7 +112,8 @@ def inspect(store: Path, event_sha: str, ledger: Path, *,
         "pending_request": state["pending_request"] if state else None,
         "research_holds": sorted(holds),
         "estimated_new_paid_calls_upper_bound_per_invocation": (
-            2 if may_call and state is None
+            2 if may_call and
+                 (state is None or state["stage"] == "ANALYST_PENDING")
             else 1 if may_call and state["stage"] == "REVIEW_PENDING"
             else 0),
         "actual_api_called": False,
@@ -168,9 +166,10 @@ def main(argv=None) -> int:
                 analyst_model=args.analyst_model,
                 reviewer_model=args.reviewer_model)
         elif args.allow_external_api:
-            if not preflight[
-                    "research_api_dispatch_eligible_if_explicit_opt_in"]:
-                raise InputError("paid research preflight HOLD")
+            if (not preflight[
+                    "research_api_dispatch_eligible_if_explicit_opt_in"]
+                    or not os.environ.get("OPENAI_API_KEY")):
+                raise InputError("paid research preflight HOLD/credential absent")
             result = ai.run(
                 args.store, args.event_sha256, args.ledger,
                 analyst_model=args.analyst_model,
