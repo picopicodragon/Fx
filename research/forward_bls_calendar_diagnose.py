@@ -115,7 +115,7 @@ def diagnose(*, raw: bytes | None = None,
             raise InputError("bounded calendar horizon required")
         if planned_out is not None:
             result["stage"] = "OUTPUT_PRECHECK"
-            if type(planned_out) is not Path:
+            if not isinstance(planned_out, Path):
                 raise InputError("output parent directory missing")
             if planned_out.exists() or planned_out.is_symlink():
                 raise InputError("output path already exists")
