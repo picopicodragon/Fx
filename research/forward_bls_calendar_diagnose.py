@@ -9,7 +9,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import urllib.error
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -102,6 +104,71 @@ def _base(*, network: bool) -> dict:
     }
 
 
+
+# Diagnostic only: no inference of floating times, named-zone aliases, or DST.
+# Report only bounded, sanitized DTSTART metadata; never output event times,
+# titles, the downloaded ICS body, or local file contents.
+_TZID_SAFE = re.compile(r"[A-Za-z0-9_./+\\- ]{1,80}\\Z")
+
+
+def _dtstart_time_forms(raw: bytes) -> dict:
+    try:
+        lines = cal._unfold(raw)
+    except (InputError, UnicodeError, ValueError):
+        return {"available": False}
+    counts: Counter[str] = Counter()
+    inside_event = False
+    for line in lines:
+        if line == "BEGIN:VEVENT":
+            inside_event = True
+            continue
+        if line == "END:VEVENT":
+            inside_event = False
+            continue
+        if not inside_event or ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        if key != "DTSTART" and not key.startswith("DTSTART;"):
+            continue
+        parts = key.split(";")[1:]
+        tzids = [p[5:] for p in parts if p.upper().startswith("TZID=")]
+        date_only = any(p.upper() == "VALUE=DATE" for p in parts)
+        if len(tzids) > 1:
+            form = "MULTIPLE_TZID_PARAMETERS"
+        elif date_only:
+            form = "DATE_ONLY_WITH_TZID" if tzids else "DATE_ONLY"
+        elif tzids:
+            tzid = tzids[0]
+            if len(tzid) >= 2 and tzid.startswith('"') and tzid.endswith('"'):
+                tzid = tzid[1:-1]
+            if _TZID_SAFE.fullmatch(tzid):
+                safe = tzid
+            else:
+                safe = "OTHER_SHA256_" + hashlib.sha256(
+                    tzid.encode("utf-8", errors="replace")
+                ).hexdigest()[:12]
+            form = "TZID=" + safe
+            if value.endswith("Z"):
+                form += ";UTC_MARKER_CONFLICT"
+        elif value.endswith("Z"):
+            form = "UTC_Z"
+        elif parts:
+            form = "NO_TZID_WITH_PARAMETERS"
+        else:
+            form = "FLOATING_NO_TZID"
+        counts[form] += 1
+    labels = sorted(counts)
+    return {
+        "available": True,
+        "dtstart_property_count": sum(counts.values()),
+        "distinct_form_count": len(counts),
+        "forms": [{"form": label, "count": counts[label]}
+                  for label in labels[:20]],
+        "omitted_distinct_form_count": max(0, len(labels) - 20),
+        "event_titles_dates_or_body_included": False,
+    }
+
+
 def diagnose(*, raw: bytes | None = None,
              allow_network: bool = False,
              asof_utc: str, days_forward: int = 14,
@@ -147,6 +214,11 @@ def diagnose(*, raw: bytes | None = None,
             TypeError, KeyError, ArithmeticError, OverflowError) as exc:
         result["status"] = "BLS_CALENDAR_DIAGNOSTIC_FAIL_CLOSED_NO_GO"
         result["reason_code"] = _code(exc)
+        if (result["stage"] == "STRICT_PARSE"
+                and result["reason_code"] == "ICS_TIMEZONE_UNSUPPORTED"
+                and isinstance(raw, bytes)):
+            result["dtstart_timezone_observation"] = (
+                _dtstart_time_forms(raw))
     return result
 
 
