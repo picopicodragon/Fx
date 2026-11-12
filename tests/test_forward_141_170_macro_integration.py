@@ -20,6 +20,9 @@ from research.forward_macro_reviewed_outcomes import (
     inspect as outcomes, main as outcomes_main
 )
 from research.offline_backtest import InputError
+from research.forward_macro_campaign_board import (
+    inspect as campaign, main as campaign_main
+)
 
 ASOF = "2026-11-10T07:00:00Z"
 BASE = datetime(2026, 11, 10, 6, 0, tzinfo=timezone.utc)
@@ -404,6 +407,87 @@ class ReviewedMacroOutcomeTests(unittest.TestCase):
             self.assertEqual(outcomes_main(args),2)
             self.assertFalse(json.loads(out.read_text())["real_orders_permitted"])
 
+
+
+class MacroCampaignBoardTests(unittest.TestCase):
+    def test_no_journal_uses_114_style_quote_counts_without_making_signals(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t)
+            a=csv_session(root,"a",count=2)
+            b=csv_session(root,"b",count=3,start_minute=10)
+            r=campaign([("s1",a),("s2",b)],asof_utc=ASOF)
+            self.assertEqual(r["price_csv_count"],15)
+            self.assertEqual(r["complete_cycle_count"],5)
+            self.assertEqual(r["observed_macro_event_count"],0)
+            self.assertEqual(r["descriptive_two_snapshot_mark_count"],0)
+            self.assertEqual(r["API_calls_this_run"],0)
+            self.assertFalse(r["real_orders_permitted"])
+            self.assertIn("CAPTURE_REAL_POINT_IN_TIME_MACRO_EVENTS",
+                          r["next_research_actions"])
+
+    def test_source_journal_with_review_generates_only_research_mark(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t)
+            d=csv_session(root,"prices")
+            store,_=journal(root)
+            r=campaign([("s1",d)],store=store,asof_utc=ASOF)
+            self.assertEqual(r["observed_macro_event_count"],1)
+            self.assertEqual(r["reviewed_long_short_candidate_count"],1)
+            self.assertEqual(r["descriptive_two_snapshot_mark_count"],1)
+            self.assertEqual(r["API_calls_this_run"],0)
+            self.assertFalse(r["real_strategy_out_of_sample_profitability_proven"])
+
+    def test_approved_but_event_blackout_needs_followup_quotes(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t)
+            d=csv_session(root,"prices")
+            store,_=journal(root,published=z(-30))
+            r=campaign([("s1",d)],store=store,asof_utc=ASOF)
+            self.assertEqual(r["descriptive_two_snapshot_mark_count"],0)
+            self.assertIn("GATHER_POST_REVIEW_QUOTES_IN_SAME_DEMO_SESSION",
+                          r["next_research_actions"])
+
+    def test_missing_consensus_flag_keeps_no_go(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t)
+            d=csv_session(root,"prices")
+            store,_=journal(root,consensus="")
+            r=campaign([("s1",d)],store=store,asof_utc=ASOF)
+            self.assertEqual(r["missing_consensus_event_count"],1)
+            self.assertIn("OBTAIN_PRE_RELEASE_CONSENSUS_WITH_TIME_EVIDENCE",
+                          r["next_research_actions"])
+
+    def test_cli_report_does_not_overwrite(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t)
+            d=csv_session(root,"prices")
+            report=root/"campaign.json"
+            args=["--session",f"s1={d}","--asof-utc",ASOF,
+                  "--out",str(report)]
+            self.assertEqual(campaign_main(args),0)
+            self.assertEqual(campaign_main(args),2)
+            data=json.loads(report.read_text())
+            self.assertEqual(data["runtime_go_no_go"],"NO_GO")
+            self.assertEqual(data["API_calls_this_run"],0)
+
+    def test_research_board_never_uses_api_or_orders_even_with_model_ledger(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t)
+            d=csv_session(root,"prices")
+            store,event_hash=journal(root)
+            event=ai._event(store,event_hash)
+            state=ai._base(event_hash,ai.packet(event),
+                           "mock-builder","mock-verifier")
+            state["pending_request"]="analyst"
+            ledger=root/"pending.json"
+            ledger.write_text(json.dumps(state))
+            report=campaign([("s1",d)],store=store,ai_ledgers=[ledger],
+                            asof_utc=ASOF)
+            self.assertIn("MANUALLY_RECONCILE_AMBIGUOUS_PAID_API_CALL_FIRST",
+                          report["next_research_actions"])
+            self.assertEqual(report["API_calls_this_run"],0)
+            self.assertFalse(report["external_network_access_this_run"])
+            self.assertFalse(report["demo_orders_permitted"])
 
 if __name__=="__main__":
     unittest.main()
