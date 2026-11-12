@@ -270,6 +270,15 @@ class LinkedResearchSnapshotTests(unittest.TestCase):
             self.assertEqual(obs.audit(store)["record_count"],1)
             self.assertFalse(result["real_orders_permitted"])
 
+    def test_duplicate_derived_event_cannot_be_published_as_new_signal(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t)
+            store,original,derived=linked_event(root)
+            with self.assertRaises(InputError):
+                handoff.prepare(store,original,archive(),release(),
+                                asof_utc="2026-11-10T09:05:00Z")
+            self.assertEqual(obs.audit(store)["record_count"],2)
+
     def test_release_wrong_url_rejected(self):
         with tempfile.TemporaryDirectory() as t:
             store,event=make_journal(Path(t))
