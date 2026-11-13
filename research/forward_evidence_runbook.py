@@ -255,6 +255,8 @@ def main(argv=None) -> int:
         description="Single read-only batch evidence plan with optional delta")
     p.add_argument("--plan-file", type=Path)
     p.add_argument("--init-plan", type=Path)
+    p.add_argument("--init-bls-snapshot-dir", type=Path)
+    p.add_argument("--init-official-news-bundle", type=Path)
     p.add_argument("--previous-report", type=Path)
     p.add_argument("--asof-utc")
     p.add_argument("--out", type=Path)
@@ -266,8 +268,17 @@ def main(argv=None) -> int:
                     or a.init_plan.parent.is_symlink()
                     or not a.init_plan.parent.is_dir()):
                 raise InputError("unsafe plan initialization")
+            contents = empty_plan()
+            if a.init_bls_snapshot_dir is not None:
+                pth = a.init_bls_snapshot_dir.absolute()
+                contents["bls_snapshot_dir"] = str(
+                    _path(a.init_plan.parent.absolute(), str(pth), kind="dir"))
+            if a.init_official_news_bundle is not None:
+                pth = a.init_official_news_bundle.absolute()
+                contents["official_news_bundle"] = str(
+                    _path(a.init_plan.parent.absolute(), str(pth), kind="dir"))
             with a.init_plan.open("x", encoding="utf-8") as f:
-                json.dump(empty_plan(), f, ensure_ascii=False, indent=2)
+                json.dump(contents, f, ensure_ascii=False, indent=2)
             print(json.dumps({
                 "schema": SCHEMA, "status": "EMPTY_RESEARCH_PLAN_CREATED_NO_GO",
                 "filename": str(a.init_plan),
@@ -277,8 +288,9 @@ def main(argv=None) -> int:
                 "runtime_go_no_go": "NO_GO", "safety_hold_latched": True,
             }))
             return 0
-        if a.plan_file is None:
-            raise InputError("explicit plan-file required")
+        if a.plan_file is None or (a.init_bls_snapshot_dir is not None
+                                   or a.init_official_news_bundle is not None):
+            raise InputError("explicit plan-file required; init options only for init-plan")
         sources, plan_sha = read_plan(a.plan_file)
         asof = a.asof_utc or hub._now()
         previous = (json.loads(
