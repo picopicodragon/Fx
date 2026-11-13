@@ -16,6 +16,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from research import forward_bls_macro_source_gate as bls_gate
+from research import forward_multi_official_news_snapshot as official_news
 from research.forward_macro_consensus_surprise import _number
 from research.forward_macro_pre_release_capture import ALLOWED_UNITS, _url
 from research.offline_backtest import InputError, timestamp
@@ -190,12 +191,15 @@ def inspect_observations(payload: object, *, asof_utc: str) -> dict:
 
 
 def inspect(*, asof_utc: str, bls_snapshot_dir: Path | None = None,
-            external_observations: dict | None = None) -> dict:
+            external_observations: dict | None = None,
+            official_news_bundle: Path | None = None) -> dict:
     _utc(asof_utc)
     base = (inspect_observations(external_observations, asof_utc=asof_utc)
             if external_observations is not None else None)
     bls = (bls_gate.inspect(bls_snapshot_dir, asof_utc=asof_utc)
            if bls_snapshot_dir is not None else None)
+    news = (official_news.verify(official_news_bundle)
+            if official_news_bundle is not None else None)
     warnings = set(base["unresolved_holds"]) if base else {
         "NO_EXTERNAL_MACRO_EVENT_OBSERVATIONS",
         "GLOBAL_MACRO_EVENT_CALENDAR_COVERAGE_UNATTESTED",
@@ -214,6 +218,10 @@ def inspect(*, asof_utc: str, bls_snapshot_dir: Path | None = None,
     else:
         warnings.update(bls["unresolved_holds"])
         tasks.extend(bls["next_research_actions"])
+    if news is not None:
+        warnings.add("PUBLISHED_RSS_NEWS_CANNOT_REPLACE_FUTURE_EVENT_CALENDAR")
+        warnings.add("OFFICIAL_RSS_NEWS_DOES_NOT_INCLUDE_PRE_RELEASE_CONSENSUS")
+        tasks.append("CAPTURE_FUTURE_SCHEDULE_AND_PRE_RELEASE_CONSENSUS_SEPARATELY")
     warnings.update({
         "USD_EUR_JPY_MACRO_COVERAGE_NOT_CERTIFIED",
         "BROKER_BLACKOUT_AND_ORDER_SAFETY_NOT_VALIDATED",
@@ -229,6 +237,13 @@ def inspect(*, asof_utc: str, bls_snapshot_dir: Path | None = None,
             bls["missing_html_slot_instances"] if bls else None),
         "external_event_observations_supplied": (
             base["external_event_observations_supplied"] if base else 0),
+        "official_news_bundle_verified": news is not None,
+        "official_news_feed_count": news["feed_count"] if news else 0,
+        "official_news_items_observed": news["news_items_count"] if news else 0,
+        "official_news_observed_regions": (
+            news["observed_regions"] if news else
+            {"USD": 0, "EUR": 0, "JPY": 0}),
+        "official_news_provides_upcoming_events_or_consensus": False,
         "external_by_currency": (
             base["external_by_currency"] if base else
             {cur: 0 for cur in CURRENCIES}),
@@ -268,6 +283,7 @@ def main(argv=None) -> int:
     p.add_argument("--asof-utc", required=True)
     p.add_argument("--bls-snapshot-dir", type=Path)
     p.add_argument("--external-macro-file", type=Path)
+    p.add_argument("--official-news-bundle", type=Path)
     args = p.parse_args(argv)
     try:
         observations = (
@@ -276,7 +292,8 @@ def main(argv=None) -> int:
         outcome = inspect(
             asof_utc=args.asof_utc,
             bls_snapshot_dir=args.bls_snapshot_dir,
-            external_observations=observations)
+            external_observations=observations,
+            official_news_bundle=args.official_news_bundle)
         print(json.dumps(outcome, ensure_ascii=False))
         return 0
     except (InputError, OSError, UnicodeError, ValueError, TypeError,

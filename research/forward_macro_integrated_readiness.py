@@ -15,6 +15,7 @@ from research import forward_bls_macro_source_gate as source_gate
 from research import forward_bls_snapshot_diff as bls_integrity
 from research import forward_bls_dual_snapshot as bls_snapshot
 from research import forward_global_macro_evidence as global_macro
+from research import forward_multi_official_news_snapshot as official_news
 from research.forward_macro_event_windows import inspect as windows
 from research.forward_macro_pre_release_capture import (
     verify_archive as verify_forecast)
@@ -28,7 +29,8 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
             calendar: dict | None = None, forecast_archive: dict | None = None,
             ai_ledgers: list[Path] | None = None,
             bls_snapshot_dir: Path | None = None,
-            external_macro_observations: dict | None = None) -> dict:
+            external_macro_observations: dict | None = None,
+            official_news_bundle: Path | None = None) -> dict:
     timestamp(asof_utc)
     bls_sources = None
     if bls_snapshot_dir is not None:
@@ -47,6 +49,8 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
         calendar = original
     if forecast_archive is not None and calendar is None:
         raise InputError("forecast archive needs matching calendar evidence")
+    news = (official_news.verify(official_news_bundle)
+            if official_news_bundle is not None else None)
     external = (
         global_macro.inspect_observations(
             external_macro_observations, asof_utc=asof_utc)
@@ -59,6 +63,10 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
                 if forecast_archive is not None else None)
     warnings = set(price_and_ai["unresolved_warnings_and_safety_holds"])
     tasks = list(price_and_ai["next_research_actions"])
+    if news is not None:
+        warnings.add("OFFICIAL_RSS_NEWS_NOT_A_FUTURE_MACRO_CALENDAR")
+        warnings.add("OFFICIAL_RSS_NEWS_CONSENSUS_UNAVAILABLE")
+        tasks.append("COLLECT_PRE_RELEASE_CONSENSUS_SEPARATELY_FROM_NEWS")
     if external is not None:
         warnings.update(external["unresolved_holds"])
         tasks.extend(external["next_research_actions"])
@@ -113,6 +121,10 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
         "pre_release_forecast_archive_supplied": evidence is not None,
         "forecast_archive_matches_current_schedule": matched_forecast,
         "forecast_source_independently_authenticated": False,
+        "official_news_bundle_verified": news is not None,
+        "official_news_feed_count": news["feed_count"] if news else 0,
+        "official_news_item_count": news["news_items_count"] if news else 0,
+        "official_news_calendar_or_consensus_sufficient": False,
         "external_macro_evidence_supplied": external is not None,
         "external_macro_event_count": (
             external["external_event_observations_supplied"]
@@ -165,6 +177,7 @@ def main(argv=None) -> int:
     p.add_argument("--calendar-report", type=Path)
     p.add_argument("--bls-snapshot-dir", type=Path)
     p.add_argument("--external-macro-file", type=Path)
+    p.add_argument("--official-news-bundle", type=Path)
     p.add_argument("--forecast-archive", type=Path)
     p.add_argument("--ai-ledger", action="append", type=Path, default=[])
     p.add_argument("--asof-utc", required=True)
@@ -193,7 +206,8 @@ def main(argv=None) -> int:
             calendar=calendar, forecast_archive=archive,
             ai_ledgers=a.ai_ledger,
             bls_snapshot_dir=a.bls_snapshot_dir,
-            external_macro_observations=external)
+            external_macro_observations=external,
+            official_news_bundle=a.official_news_bundle)
         with a.out.open("x", encoding="utf-8") as output:
             json.dump(report, output, indent=2, ensure_ascii=False)
         print(json.dumps({
@@ -209,6 +223,10 @@ def main(argv=None) -> int:
                 report["external_macro_evidence_supplied"],
             "external_macro_event_count":
                 report["external_macro_event_count"],
+            "official_news_bundle_verified":
+                report["official_news_bundle_verified"],
+            "official_news_item_count":
+                report["official_news_item_count"],
             "external_macro_missing_consensus_count":
                 report["external_macro_missing_consensus_count"],
             "bls_html_ics_schedule_disagreement":
