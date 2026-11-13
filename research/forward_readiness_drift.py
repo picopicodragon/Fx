@@ -43,7 +43,8 @@ def _safe(data: object, *, previous: bool) -> dict:
                                ("real_orders_permitted", False),
                                ("demo_orders_permitted", False),
                                ("safety_hold_latched", True)):
-            if data.get(name) is not expected:
+            if ((type(expected) is bool and data.get(name) is not expected)
+                    or (type(expected) is str and data.get(name) != expected)):
                 raise InputError("previous runbook safety flags untrusted")
         data = data.get("fullstack_report")
     if (type(data) is not dict
@@ -55,14 +56,15 @@ def _safe(data: object, *, previous: bool) -> dict:
                           ("safety_hold_latched", True),
                           ("demo_orders_permitted", False),
                           ("real_orders_permitted", False)):
-        if data.get(key) is not expected:
+        if ((type(expected) is bool and data.get(key) is not expected)
+                or (type(expected) is str and data.get(key) != expected)):
             raise InputError("reported trading safety not NO_GO")
     holds = data.get("unresolved_holds")
     tasks = data.get("next_research_actions")
     if (type(holds) is not list or len(holds) > MAX_HOLDS
-            or len(holds) != len(set(holds))
             or any(type(h) is not str or not 1 <= len(h) <= 200
                    for h in holds)
+            or len(holds) != len(set(holds))
             or type(tasks) is not list or len(tasks) > MAX_TASKS
             or any(type(a) is not str or not 1 <= len(a) <= 200
                    for a in tasks)):
