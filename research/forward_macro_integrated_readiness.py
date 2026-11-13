@@ -11,6 +11,9 @@ import json
 from pathlib import Path
 
 from research.forward_macro_campaign_board import inspect as campaign
+from research import forward_bls_macro_source_gate as source_gate
+from research import forward_bls_snapshot_diff as bls_integrity
+from research import forward_bls_dual_snapshot as bls_snapshot
 from research.forward_macro_event_windows import inspect as windows
 from research.forward_macro_pre_release_capture import (
     verify_archive as verify_forecast)
@@ -22,8 +25,24 @@ SCHEMA = "fx_fwd_macro_integrated_forward_research_v2"
 
 def inspect(sessions, *, asof_utc: str, store: Path | None = None,
             calendar: dict | None = None, forecast_archive: dict | None = None,
-            ai_ledgers: list[Path] | None = None) -> dict:
+            ai_ledgers: list[Path] | None = None,
+            bls_snapshot_dir: Path | None = None) -> dict:
     timestamp(asof_utc)
+    bls_sources = None
+    if bls_snapshot_dir is not None:
+        # Never use an unchecked local bundle as calendar evidence.
+        bls_sources = source_gate.inspect(
+            bls_snapshot_dir, asof_utc=asof_utc,
+            forecast_archive=forecast_archive)
+        bls_integrity.verify(bls_snapshot_dir)
+        original = json.loads(bls_integrity._bytes(
+            bls_snapshot_dir, bls_snapshot.CAL_NAME,
+            bls_integrity.MAX_CALENDAR))
+        if type(original) is not dict:
+            raise InputError("saved source calendar root invalid")
+        if calendar is not None and calendar != original:
+            raise InputError("calendar report disagrees with saved BLS bundle")
+        calendar = original
     if forecast_archive is not None and calendar is None:
         raise InputError("forecast archive needs matching calendar evidence")
     price_and_ai = campaign(
@@ -34,6 +53,9 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
                 if forecast_archive is not None else None)
     warnings = set(price_and_ai["unresolved_warnings_and_safety_holds"])
     tasks = list(price_and_ai["next_research_actions"])
+    if bls_sources is not None:
+        warnings.update(bls_sources["unresolved_holds"])
+        tasks.extend(bls_sources["next_research_actions"])
     if schedule is None:
         warnings.add("NO_BLS_CALENDAR_RESEARCH_SNAPSHOT")
         tasks.append("OBTAIN_FRESH_BLS_RELEASE_CALENDAR_EXPLICITLY")
@@ -82,6 +104,21 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
         "pre_release_forecast_archive_supplied": evidence is not None,
         "forecast_archive_matches_current_schedule": matched_forecast,
         "forecast_source_independently_authenticated": False,
+        "bls_original_source_bundle_verified": bls_sources is not None,
+        "bls_html_ics_schedule_disagreement": (
+            bls_sources["html_ics_slot_count_disagreement"]
+            if bls_sources is not None else None),
+        "bls_html_only_missing_slot_instances": (
+            bls_sources["missing_html_slot_instances"]
+            if bls_sources is not None else None),
+        "bls_snapshot_older_than_24h": (
+            bls_sources["snapshot_older_than_24h"]
+            if bls_sources is not None else None),
+        "bls_saved_calendar_ics_sha256": (
+            bls_sources["calendar_ics_sha256"]
+            if bls_sources is not None else None),
+        "independent_economic_calendar_coverage_certified": False,
+        "pre_release_consensus_source_authenticity_certified": False,
         "unresolved_holds": sorted(warnings),
         "next_research_actions": list(dict.fromkeys(tasks)),
         "automatic_calendar_polling_enabled": False,
@@ -106,6 +143,7 @@ def main(argv=None) -> int:
     p.add_argument("--session", action="append", required=True)
     p.add_argument("--store", type=Path)
     p.add_argument("--calendar-report", type=Path)
+    p.add_argument("--bls-snapshot-dir", type=Path)
     p.add_argument("--forecast-archive", type=Path)
     p.add_argument("--ai-ledger", action="append", type=Path, default=[])
     p.add_argument("--asof-utc", required=True)
@@ -129,7 +167,8 @@ def main(argv=None) -> int:
         report = inspect(
             sessions, asof_utc=a.asof_utc, store=a.store,
             calendar=calendar, forecast_archive=archive,
-            ai_ledgers=a.ai_ledger)
+            ai_ledgers=a.ai_ledger,
+            bls_snapshot_dir=a.bls_snapshot_dir)
         with a.out.open("x", encoding="utf-8") as output:
             json.dump(report, output, indent=2, ensure_ascii=False)
         print(json.dumps({
@@ -139,6 +178,12 @@ def main(argv=None) -> int:
             "scheduled_bls_event_count": report["scheduled_bls_event_count"],
             "forecast_archive_matches_current_schedule":
                 report["forecast_archive_matches_current_schedule"],
+            "bls_original_source_bundle_verified":
+                report["bls_original_source_bundle_verified"],
+            "bls_html_ics_schedule_disagreement":
+                report["bls_html_ics_schedule_disagreement"],
+            "bls_html_only_missing_slot_instances":
+                report["bls_html_only_missing_slot_instances"],
             "next_research_actions": report["next_research_actions"],
             "API_calls_this_run": 0,
             "runtime_go_no_go": "NO_GO", "real_orders_permitted": False,
