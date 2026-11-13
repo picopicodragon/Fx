@@ -269,14 +269,18 @@ def main(argv=None) -> int:
                     or not a.init_plan.parent.is_dir()):
                 raise InputError("unsafe plan initialization")
             contents = empty_plan()
+            source_directories = []
             if a.init_bls_snapshot_dir is not None:
                 pth = a.init_bls_snapshot_dir.absolute()
                 contents["bls_snapshot_dir"] = str(
                     _path(a.init_plan.parent.absolute(), str(pth), kind="dir"))
+                source_directories.append(Path(contents["bls_snapshot_dir"]))
             if a.init_official_news_bundle is not None:
                 pth = a.init_official_news_bundle.absolute()
                 contents["official_news_bundle"] = str(
                     _path(a.init_plan.parent.absolute(), str(pth), kind="dir"))
+                source_directories.append(Path(contents["official_news_bundle"]))
+            hub._checked_new_output(a.init_plan, source_directories)
             with a.init_plan.open("x", encoding="utf-8") as f:
                 json.dump(contents, f, ensure_ascii=False, indent=2)
             print(json.dumps({
