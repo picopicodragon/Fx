@@ -65,7 +65,7 @@ def inner_table(rows=HTML_ROWS):
 def nested_html(inner=None):
     inner = inner_table() if inner is None else inner
     return (
-        "<!DOCTYPE html><html><body><table class='layout'>"
+        "<!DOCTYPE html><html><head><title>Schedule of Selected Releases</title></head><body><table class='layout'>"
         "<tr><td><p>BY MONTH FEBRUARY 2026 MARCH 2026 APRIL 2026</p></td>"
         "<td><h1>November 2026</h1>Month View | List View"
         + inner
