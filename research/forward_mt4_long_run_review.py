@@ -101,6 +101,14 @@ def inspect(sessions: list[tuple[str, Path]], *, asof_utc: str,
         "session_labels_with_missing_logs": missing_logs[:24],
         "source_observation_issues": (
             source["issues_and_safety_holds"] if source else []),
+        "copied_observation_intervals_unattested": [
+            {
+                "label": row["label"],
+                "first_observation_utc": row["first_observation_utc"],
+                "last_observation_utc": row["last_observation_utc"],
+            }
+            for row in summaries
+        ],
         "unresolved_holds": sorted(holds),
         "next_research_actions": list(dict.fromkeys(actions)),
         "source_broker_or_demo_identity_independently_attested": False,
