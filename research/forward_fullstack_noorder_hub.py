@@ -63,6 +63,17 @@ def inspect(*, asof_utc: str,
     mt4_report = mt4.inspect(
         sessions, asof_utc=asof_utc,
         experts=experts, compiles=compiles)
+    for subreport, expected in (
+        (macro, "GLOBAL_MACRO_FORWARD_EVIDENCE_HOLD_NO_GO"),
+        (forecasts_report, "CONSENSUS_ARCHIVE_BATCH_RESEARCH_HOLD_NO_GO"),
+        (mt4_report, "MT4_MULTIDAY_NOORDER_OBSERVATION_HOLD_NO_GO"),
+    ):
+        if (subreport.get("status") != expected
+                or subreport.get("runtime_go_no_go") != "NO_GO"
+                or subreport.get("safety_hold_latched") is not True
+                or subreport.get("real_orders_permitted") is not False
+                or subreport.get("demo_orders_permitted") is not False):
+            raise InputError("component failed NO_GO safety invariant")
     warnings = set(macro["unresolved_holds"])
     warnings.update(forecasts_report["unresolved_holds"])
     warnings.update(mt4_report["unresolved_holds"])
