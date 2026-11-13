@@ -274,10 +274,13 @@ def verify(out: Path):
         if feed in FEEDS}
     if len(raw) != len(recorded["feeds"]):
         raise InputError("unrecognized feed in snapshot")
-    reconstructed = prepare(
-        raw, captured_at_utc=recorded[
-            "captured_at_utc_local_clock_unattested"],
-        collection_mode=recorded["collection_mode"])
+    try:
+        reconstructed = prepare(
+            raw, captured_at_utc=recorded[
+                "captured_at_utc_local_clock_unattested"],
+            collection_mode=recorded["collection_mode"])
+    except (ET.ParseError, KeyError, TypeError, ValueError) as exc:
+        raise InputError("invalid RSS evidence bundle") from exc
     if reconstructed != recorded:
         raise InputError("news snapshot source or manifest modified")
     return {
