@@ -55,6 +55,7 @@ T = {
     "verified_format_copied_session_count": 2,
     "distinct_ny17_bucket_count": 2,
     "complete_observation_cycle_count": 60,
+    "copied_observation_intervals_unattested": [],
 }
 C = {
     "status": "MACRO_FORWARD_RESEARCH_CAMPAIGN_HOLD_NO_GO",
