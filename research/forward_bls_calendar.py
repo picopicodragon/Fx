@@ -78,7 +78,12 @@ def _utc(value: str, property_name: str) -> str:
             raise InputError("invalid UTC calendar datetime") from exc
         start = start.replace(tzinfo=timezone.utc)
     else:
-        if tzid not in ("America/New_York", "US/Eastern"):
+        # BLS publishes its release timetable in US Eastern Time. Its
+        # public ICS uses the legacy iCalendar TZID "US-Eastern" (hyphen).
+        # Treat exactly that spelling as an observational BLS-only alias
+        # of America/New_York; do NOT generalize arbitrary TZIDs.
+        # This is not independent event-time authentication or GO permission.
+        if tzid not in ("America/New_York", "US/Eastern", "US-Eastern"):
             raise InputError("unsupported or missing BLS calendar timezone")
         try:
             local = datetime.strptime(value, "%Y%m%dT%H%M%S")
@@ -160,6 +165,10 @@ def parse_calendar(raw: bytes, *, asof_utc: str,
         "source_authenticity_verified": False,
         "calendar_covers_all_fx_events": False,
         "release_content_or_consensus_verified": False,
+        # Provisional until independently cross-checked with release pages.
+        "calendar_timezone_alias_us_eastern_assumed": any(
+            line.startswith("DTSTART;TZID=US-Eastern:") for line in lines),
+        "release_time_independently_verified": False,
         "real_orders_permitted": False,
         "runtime_go_no_go": "NO_GO",
         "safety_hold_latched": True,
