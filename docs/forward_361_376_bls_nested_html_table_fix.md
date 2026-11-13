@@ -57,6 +57,17 @@ python -m research.forward_bls_saved_html_audit --snapshot-dir $originalBundle
 出力が `BLS_SAVED_HTML_ICS_AUDIT_HOLD_NO_GO` になった場合も、
 第三者認証や全FXイベント網羅を認めたことにはならない。
 
+
+解析できない場合でも、新規取得やパーサー緩和を行わず、同じ保存原本に対して以下の診断が可能：
+
+```powershell
+python -m research.forward_bls_html_structure_diagnose --snapshot-dir $originalBundle
+```
+
+出力は表の個数、各表の行数/列数、3列ヘッダー数、ソースSHA一致だけ。
+**日時・イベント名・元HTML本文は出力しない**。実BLSのHTML構造が
+さらに想定と異なった場合の次の最小変更に使う。
+
 ## 安全条件
 
 `NO_GO`、`safety_hold_latched=true`、
