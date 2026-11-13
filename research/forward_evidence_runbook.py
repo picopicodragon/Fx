@@ -17,6 +17,8 @@ from research import forward_fullstack_noorder_hub as hub
 from research import forward_readiness_drift as drift
 from research import forward_synthetic_safety_fault_campaign as safety_drills
 from research import forward_safety_acceptance_debt as acceptance_debt
+from research import forward_regional_source_intake as regional
+from research import forward_mt4_timer_observer_review as observer_static
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_fwd_evidence_runbook_v1"
@@ -27,7 +29,9 @@ MAX_SOURCE_PATH_CHARS = 1024
 FIELDS = frozenset((
     "schema", "bls_snapshot_dir", "official_news_bundle",
     "external_macro_file", "forecast_archives", "sessions",
-    "observation_store", "ai_ledgers"))
+    "observation_store", "ai_ledgers", "regional_source_manifest",
+    "mt4_observer_source"))
+LEGACY_FIELDS = FIELDS - {"regional_source_manifest", "mt4_observer_source"}
 SESSION_FIELDS = frozenset((
     "label", "directory", "experts_log", "compile_log"))
 LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,39}$")
@@ -43,6 +47,8 @@ def empty_plan() -> dict:
         "sessions": [],
         "observation_store": None,
         "ai_ledgers": [],
+        "regional_source_manifest": None,
+        "mt4_observer_source": None,
     }
 
 
@@ -94,7 +100,8 @@ def _unique_paths(paths: list[Path | None]) -> None:
 
 
 def decode(plan: object, *, plan_file: Path) -> dict:
-    if type(plan) is not dict or set(plan) != FIELDS or plan["schema"] != SCHEMA:
+    if (type(plan) is not dict or set(plan) not in (FIELDS, LEGACY_FIELDS)
+            or plan["schema"] != SCHEMA):
         raise InputError("unexpected runbook schema or keys")
     if (type(plan["forecast_archives"]) is not list
             or len(plan["forecast_archives"]) > 64
@@ -107,7 +114,12 @@ def decode(plan: object, *, plan_file: Path) -> dict:
     bls = _path(base, plan["bls_snapshot_dir"], kind="dir")
     news = _path(base, plan["official_news_bundle"], kind="dir")
     external = _path(base, plan["external_macro_file"], kind="file")
-    store = _path(base, plan["observation_store"], kind="file")
+    # The observation journal is an append-only DIRECTORY, not a JSON file.
+    store = _path(base, plan["observation_store"], kind="dir")
+    regional_manifest = _path(
+        base, plan.get("regional_source_manifest"), kind="file")
+    static_source = _path(
+        base, plan.get("mt4_observer_source"), kind="file")
     forecasts = [_path(base, x, kind="file")
                  for x in plan["forecast_archives"]]
     ledgers = [_path(base, x, kind="file") for x in plan["ai_ledgers"]]
@@ -135,7 +147,10 @@ def decode(plan: object, *, plan_file: Path) -> dict:
             experts[name] = expert
         if compile_log is not None:
             compiles[name] = compile_log
-    allpaths = [bls, news, external, store, *forecasts, *ledgers]
+    if regional_manifest is not None and external is not None:
+        raise InputError("select either raw regional originals or external macro JSON")
+    allpaths = [bls, news, external, store, regional_manifest,
+                static_source, *forecasts, *ledgers]
     allpaths.extend(x for _, x in sessions)
     allpaths.extend(experts.values())
     allpaths.extend(compiles.values())
@@ -148,6 +163,8 @@ def decode(plan: object, *, plan_file: Path) -> dict:
         "bls_snapshot_dir": bls,
         "official_news_bundle": news,
         "external_macro_file": external,
+        "regional_source_manifest": regional_manifest,
+        "mt4_observer_source": static_source,
         "forecast_archives": forecasts,
         "sessions": sessions,
         "experts": experts,
@@ -201,8 +218,28 @@ def prioritize(actions: object) -> list[dict]:
 
 def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
             previous_report: dict | None = None) -> dict:
-    ext = (hub.global_macro._load(plan["external_macro_file"])
-           if plan["external_macro_file"] else None)
+    origin = None
+    if plan.get("regional_source_manifest") is not None:
+        ext, origin = regional.load(
+            plan["regional_source_manifest"], asof_utc=asof_utc)
+        if (origin["runtime_go_no_go"] != "NO_GO"
+                or origin["safety_hold_latched"] is not True
+                or origin["demo_orders_permitted"] is not False
+                or origin["real_orders_permitted"] is not False):
+            raise InputError("regional evidence intake violated NO_GO")
+    else:
+        ext = (hub.global_macro._load(plan["external_macro_file"])
+               if plan["external_macro_file"] else None)
+    static = None
+    if plan.get("mt4_observer_source") is not None:
+        static = observer_static.inspect(
+            _bytes(plan["mt4_observer_source"], 60_000))
+        if (static.get("status") != "DEMO_TIMER_OBSERVER_STATIC_RESEARCH_NO_GO"
+                or static.get("runtime_go_no_go") != "NO_GO"
+                or static.get("safety_hold_latched") is not True
+                or static.get("real_orders_permitted") is not False
+                or static.get("demo_trading_allowed") is not False):
+            raise InputError("invalid static source safety report")
     report = hub.inspect(
         asof_utc=asof_utc,
         bls_snapshot_dir=plan["bls_snapshot_dir"],
@@ -240,6 +277,10 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
             "bls_bundle": int(plan["bls_snapshot_dir"] is not None),
             "official_news_bundle": int(plan["official_news_bundle"] is not None),
             "external_macro_file": int(plan["external_macro_file"] is not None),
+            "regional_original_manifest":
+                int(plan.get("regional_source_manifest") is not None),
+            "mt4_observer_source":
+                int(plan.get("mt4_observer_source") is not None),
             "forecast_archives": len(plan["forecast_archives"]),
             "mt4_sessions": len(plan["sessions"]),
             "ai_ledgers": len(plan["ai_ledgers"]),
@@ -249,6 +290,15 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
         "compared_prior_report_self_attested_only": delta is not None,
         "previous_report_change_summary": delta,
         "fullstack_report": report,
+        "regional_original_source_intake": origin,
+        "mt4_observer_source_static_review": static,
+        "additional_real_evidence_holds": [
+            "REGIONAL_ORIGINAL_PUBLISHER_AND_CLOCK_UNATTESTED"
+            if origin is not None else "NO_RAW_REGIONAL_ORIGINAL_SOURCES",
+            "MT4_STATIC_SOURCE_REVIEW_DOES_NOT_ATTEST_COMPILED_RUNTIME"
+            if static is not None and static["static_preflight_passed"]
+            else "MT4_OBSERVER_STATIC_PREFLIGHT_FAILED_OR_MISSING",
+        ],
         "synthetic_safety_fault_campaign": drills,
         "operational_acceptance_debt": operational_debt,
         "synthetic_test_green_does_not_clear_safety_hold": True,
@@ -271,6 +321,8 @@ def main(argv=None) -> int:
     p.add_argument("--init-plan", type=Path)
     p.add_argument("--init-bls-snapshot-dir", type=Path)
     p.add_argument("--init-official-news-bundle", type=Path)
+    p.add_argument("--init-regional-source-manifest", type=Path)
+    p.add_argument("--init-mt4-observer-source", type=Path)
     p.add_argument("--previous-report", type=Path)
     p.add_argument("--asof-utc")
     p.add_argument("--out", type=Path)
@@ -294,6 +346,15 @@ def main(argv=None) -> int:
                 contents["official_news_bundle"] = str(
                     _path(a.init_plan.parent.absolute(), str(pth), kind="dir"))
                 source_directories.append(Path(contents["official_news_bundle"]))
+            for arg, field in (
+                (a.init_regional_source_manifest, "regional_source_manifest"),
+                (a.init_mt4_observer_source, "mt4_observer_source"),
+            ):
+                if arg is not None:
+                    contents[field] = str(_path(
+                        a.init_plan.parent.absolute(), str(arg.absolute()),
+                        kind="file"))
+                    source_directories.append(Path(contents[field]))
             hub._checked_new_output(a.init_plan, source_directories)
             with a.init_plan.open("x", encoding="utf-8") as f:
                 json.dump(contents, f, ensure_ascii=False, indent=2)
@@ -306,8 +367,11 @@ def main(argv=None) -> int:
                 "runtime_go_no_go": "NO_GO", "safety_hold_latched": True,
             }))
             return 0
-        if a.plan_file is None or (a.init_bls_snapshot_dir is not None
-                                   or a.init_official_news_bundle is not None):
+        if a.plan_file is None or any((
+                a.init_bls_snapshot_dir is not None,
+                a.init_official_news_bundle is not None,
+                a.init_regional_source_manifest is not None,
+                a.init_mt4_observer_source is not None)):
             raise InputError("explicit plan-file required; init options only for init-plan")
         sources, plan_sha = read_plan(a.plan_file)
         asof = a.asof_utc or hub._now()
