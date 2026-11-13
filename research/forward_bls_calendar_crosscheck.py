@@ -129,6 +129,40 @@ def _validate_reference(obj: dict) -> tuple[str, Counter[str]]:
     return obj["reference_month"], slots
 
 
+def _disputed_title_evidence(calendar: dict, reference: dict,
+                             disputed_slots: list[str]) -> tuple[list[dict], int]:
+    """Show only public-title candidate sets in mismatched time slots.
+
+    The source evidence has already passed strict checks in inspect().
+    Exact string overlap is not proof of identity, release time, or coverage.
+    No aliasing, fuzzy matching or missing-event insertion is attempted.
+    """
+    # Bound output size even for a malformed-yet-bounded calendar snapshot.
+    evidence = []
+    for slot in disputed_slots[:12]:
+        observed = sorted(
+            e["title"] for e in calendar["events"]
+            if e["scheduled_at_utc"] == slot)
+        selected = sorted(
+            e["title"] for e in reference["events"]
+            if _local_et_to_utc(e["local_time_et"]).strftime(
+                "%Y-%m-%dT%H:%M:%SZ") == slot)
+        overlap = sorted(set(observed).intersection(selected))
+        evidence.append({
+            "scheduled_at_utc": slot,
+            "ics_event_title_count": len(observed),
+            "selected_html_title_count": len(selected),
+            "ics_titles_unverified": observed[:12],
+            "html_titles_unverified": selected[:12],
+            "ics_titles_omitted_count": max(0, len(observed) - 12),
+            "html_titles_omitted_count": max(0, len(selected) - 12),
+            "literal_identical_titles_unverified": overlap[:12],
+            "candidate_identity_verified": False,
+            "auto_resolve_or_backfill_allowed": False,
+        })
+    return evidence, max(0, len(disputed_slots) - 12)
+
+
 def inspect(calendar: dict, reference: dict) -> dict:
     start, end, observed = _validate_calendar(calendar)
     month, selected = _validate_reference(reference)
@@ -150,6 +184,9 @@ def inspect(calendar: dict, reference: dict) -> dict:
     # A match of timestamp multiplicities cannot authenticate titles,
     # source publication, or completeness of macro calendars.
     agreement = not missing and not extra
+    disputed = sorted(set(missing).union(extra))
+    title_evidence, omitted_slots = _disputed_title_evidence(
+        calendar, reference, disputed)
     return {
         "schema": SCHEMA,
         "status": "BLS_SECOND_SOURCE_SLOT_AUDIT_HOLD_NO_GO",
@@ -176,6 +213,10 @@ def inspect(calendar: dict, reference: dict) -> dict:
             {"scheduled_at_utc": key, "count": extra[key]}
             for key in sorted(extra)],
         "date_time_slots_only_not_titles": True,
+        "disputed_slot_title_evidence": title_evidence,
+        "disputed_slot_title_evidence_omitted_count": omitted_slots,
+        "title_alias_or_release_identity_inference_allowed": False,
+        "missing_calendar_event_auto_insert_allowed": False,
         "selected_html_does_not_cover_all_bls_releases": True,
         "all_fx_macro_events_covered": False,
         "title_or_release_identity_verified": False,
