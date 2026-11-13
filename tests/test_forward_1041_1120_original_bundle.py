@@ -245,10 +245,12 @@ class SavedOriginalPackagingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
             req,out=make(root)
-            target=root/"independent_capture.txt"
+            external=root/"independent_capture"
+            external.mkdir()
+            target=external/"independent_capture.txt"
             target.write_text(SCHEDULE)
             mutate(req,lambda d:d["sources"][0].__setitem__(
-                "source_file","../independent_capture.txt"))
+                "source_file","../independent_capture/independent_capture.txt"))
             report=pack.save(req,out,asof_utc=ASOF)
             self.assertEqual(report["source_file_count"],2)
             self.assertFalse(report["source_authenticity_independently_verified"])
