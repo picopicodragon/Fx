@@ -369,7 +369,10 @@ def main(argv=None) -> int:
                 previous=previous, plan_file=args.plan_file)
             # Neither evidence folder nor any of its parents may contain the
             # output state dir; no auto write inside saved MT4 material.
-            absolute_out = args.state_dir.absolute()
+            # Normalize both sides through the same Windows/Unix resolver.
+            # Path.absolute() may retain a different physical spelling from
+            # Path.resolve(), silently allowing an output under raw CSVs.
+            absolute_out = args.state_dir.resolve(strict=False)
             for entry in record["sessions"]:
                 source_dir = Path(entry["directory"]).resolve(strict=True)
                 if absolute_out == source_dir or source_dir in absolute_out.parents:
