@@ -25,6 +25,8 @@ METRICS = (
     "mt4_copied_observation_session_count",
     "mt4_observed_ny17_time_bucket_count",
     "mt4_complete_observation_cycles",
+    "research_blackout_pair_window_count",
+    "research_blackout_copied_quote_overlap_windows",
     "price_csv_count",
     "price_ai_macro_observation_count",
     "price_ai_independent_review_count",
