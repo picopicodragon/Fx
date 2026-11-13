@@ -13,6 +13,11 @@ from research.offline_backtest import InputError
 
 ASOF = "2026-11-13T02:49:10Z"
 M = {
+    "status": "GLOBAL_MACRO_FORWARD_EVIDENCE_HOLD_NO_GO",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": True,
+    "demo_orders_permitted": False,
+    "real_orders_permitted": False,
     "unresolved_holds": [
         "BLS_ICS_HTML_SCHEDULE_COUNT_DISAGREEMENT",
         "NO_EUR_EVENT_OBSERVATION"],
@@ -27,6 +32,11 @@ M = {
     "external_missing_consensus_count": 0,
 }
 F = {
+    "status": "CONSENSUS_ARCHIVE_BATCH_RESEARCH_HOLD_NO_GO",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": True,
+    "demo_orders_permitted": False,
+    "real_orders_permitted": False,
     "unresolved_holds": ["NO_POINT_IN_TIME_FORECAST_ARCHIVES_PROVIDED"],
     "next_research_actions": ["GET_FORECAST"],
     "archive_count": 0,
@@ -35,6 +45,11 @@ F = {
     "bls_events_without_archive_count": 4,
 }
 T = {
+    "status": "MT4_MULTIDAY_NOORDER_OBSERVATION_HOLD_NO_GO",
+    "runtime_go_no_go": "NO_GO",
+    "safety_hold_latched": True,
+    "demo_orders_permitted": False,
+    "real_orders_permitted": False,
     "unresolved_holds": ["MT4_CLOCK_UNATTESTED"],
     "next_research_actions": ["VERIFY_BROKER_TIME"],
     "verified_format_copied_session_count": 2,
