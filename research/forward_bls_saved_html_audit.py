@@ -34,49 +34,73 @@ def _tidy(text: str) -> str:
 
 
 class _TableRows(HTMLParser):
-    """Reads only the structural table cells, never outside-of-table prose."""
+    """Extract table rows at *every* nesting depth, not just layout tables.
+
+    The public BLS page can use a two-column layout table which contains
+    another Date/Time/Release table. Do not treat outer layout-cell text as
+    the schedule itself. Only a unique exact 3-column header is eligible.
+    """
     def __init__(self):
         super().__init__(convert_charrefs=True)
-        self.depth = 0
         self.tables: list[list[list[str]]] = []
-        self.current_table: list[list[str]] | None = None
-        self.current_row: list[str] | None = None
-        self.cell_parts: list[str] | None = None
+        self.stack: list[dict] = []
+        self.depth = 0
+        self.invalid_structure = False
 
     def handle_starttag(self, tag: str, attrs):
         if tag == "table":
-            if self.depth == 0:
-                self.current_table = []
-            self.depth += 1
+            if len(self.stack) >= 20:
+                self.invalid_structure = True
+                return
+            self.stack.append({"rows": [], "row": None, "cell": None})
+            self.depth = len(self.stack)
             return
-        if self.depth != 1:
+        if not self.stack:
             return
+        table = self.stack[-1]
         if tag == "tr":
-            self.current_row = []
-        elif tag in ("td", "th") and self.current_row is not None:
-            self.cell_parts = []
+            if table["row"] is not None:
+                self.invalid_structure = True
+            table["row"] = []
+        elif tag in ("td", "th"):
+            if table["row"] is not None:
+                if table["cell"] is not None:
+                    self.invalid_structure = True
+                table["cell"] = []
 
     def handle_data(self, data: str):
-        if self.depth == 1 and self.cell_parts is not None:
-            self.cell_parts.append(data)
+        if self.stack and self.stack[-1]["cell"] is not None:
+            self.stack[-1]["cell"].append(data)
 
     def handle_endtag(self, tag: str):
         if tag == "table":
-            if self.depth == 1 and self.current_table is not None:
-                self.tables.append(self.current_table)
-                self.current_table = None
-            self.depth = max(0, self.depth - 1)
+            if not self.stack:
+                self.invalid_structure = True
+                return
+            item = self.stack.pop()
+            if item["row"] is not None or item["cell"] is not None:
+                self.invalid_structure = True
+            self.tables.append(item["rows"])
+            self.depth = len(self.stack)
             return
-        if self.depth != 1:
+        if not self.stack:
             return
-        if tag in ("td", "th") and self.cell_parts is not None:
-            if self.current_row is not None:
-                self.current_row.append(_tidy("".join(self.cell_parts)))
-            self.cell_parts = None
-        elif tag == "tr":
-            if self.current_table is not None and self.current_row is not None:
-                self.current_table.append(self.current_row)
-            self.current_row = None
+        item = self.stack[-1]
+        if tag in ("td", "th") and item["cell"] is not None:
+            if item["row"] is None:
+                self.invalid_structure = True
+            else:
+                item["row"].append(_tidy("".join(item["cell"])))
+            item["cell"] = None
+        elif tag == "tr" and item["row"] is not None:
+            if item["cell"] is not None:
+                self.invalid_structure = True
+            item["rows"].append(item["row"])
+            item["row"] = None
+        elif tag in ("tr", "td", "th"):
+            # A close tag with no corresponding open row/cell is unsafe.
+            self.invalid_structure = True
+
 
 
 def _release_rows(raw_html: bytes) -> list[tuple[str, str]]:
@@ -88,8 +112,8 @@ def _release_rows(raw_html: bytes) -> list[tuple[str, str]]:
     parser = _TableRows()
     parser.feed(data)
     parser.close()
-    if parser.depth != 0:
-        raise InputError("incomplete HTML table")
+    if parser.depth != 0 or parser.invalid_structure:
+        raise InputError("incomplete or malformed HTML table")
     candidates = []
     for table in parser.tables:
         header_index = next((
