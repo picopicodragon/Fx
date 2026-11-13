@@ -19,6 +19,7 @@ from research import forward_synthetic_safety_fault_campaign as safety_drills
 from research import forward_safety_acceptance_debt as acceptance_debt
 from research import forward_regional_source_intake as regional
 from research import forward_mt4_timer_observer_review as observer_static
+from research import forward_saved_macro_conflict as source_conflict
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_fwd_evidence_runbook_v1"
@@ -240,6 +241,20 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
                 or static.get("real_orders_permitted") is not False
                 or static.get("demo_trading_allowed") is not False):
             raise InputError("invalid static source safety report")
+    crosscheck = None
+    if (plan["bls_snapshot_dir"] is not None
+            and plan.get("regional_source_manifest") is not None):
+        crosscheck = source_conflict.inspect(
+            asof_utc=asof_utc,
+            bls_bundle=plan["bls_snapshot_dir"],
+            regional_source_manifest=plan["regional_source_manifest"])
+        if (crosscheck.get("status")
+                != "SAVED_MACRO_SOURCE_CONFLICT_RESEARCH_HOLD_NO_GO"
+                or crosscheck.get("runtime_go_no_go") != "NO_GO"
+                or crosscheck.get("safety_hold_latched") is not True
+                or crosscheck.get("real_orders_permitted") is not False
+                or crosscheck.get("demo_orders_permitted") is not False):
+            raise InputError("conflicting source comparison unsafe")
     report = hub.inspect(
         asof_utc=asof_utc,
         bls_snapshot_dir=plan["bls_snapshot_dir"],
@@ -291,6 +306,8 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
         "previous_report_change_summary": delta,
         "fullstack_report": report,
         "regional_original_source_intake": origin,
+        "saved_bls_regional_original_crosscheck": crosscheck,
+        "saved_bls_regional_crosscheck_missing": crosscheck is None,
         "mt4_observer_source_static_review": static,
         "additional_real_evidence_holds": [
             "REGIONAL_ORIGINAL_PUBLISHER_AND_CLOCK_UNATTESTED"
