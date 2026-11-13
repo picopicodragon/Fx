@@ -20,6 +20,7 @@ from research import forward_safety_acceptance_debt as acceptance_debt
 from research import forward_regional_source_intake as regional
 from research import forward_mt4_timer_observer_review as observer_static
 from research import forward_saved_macro_conflict as source_conflict
+from research import forward_regional_evidence_history as history
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_fwd_evidence_runbook_v1"
@@ -31,8 +32,10 @@ FIELDS = frozenset((
     "schema", "bls_snapshot_dir", "official_news_bundle",
     "external_macro_file", "forecast_archives", "sessions",
     "observation_store", "ai_ledgers", "regional_source_manifest",
-    "mt4_observer_source"))
-LEGACY_FIELDS = FIELDS - {"regional_source_manifest", "mt4_observer_source"}
+    "mt4_observer_source", "regional_history_file"))
+OPTIONAL_FIELDS = frozenset({
+    "regional_source_manifest", "mt4_observer_source", "regional_history_file"})
+REQUIRED_FIELDS = FIELDS - OPTIONAL_FIELDS
 SESSION_FIELDS = frozenset((
     "label", "directory", "experts_log", "compile_log"))
 LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,39}$")
@@ -50,6 +53,7 @@ def empty_plan() -> dict:
         "ai_ledgers": [],
         "regional_source_manifest": None,
         "mt4_observer_source": None,
+        "regional_history_file": None,
     }
 
 
@@ -101,7 +105,9 @@ def _unique_paths(paths: list[Path | None]) -> None:
 
 
 def decode(plan: object, *, plan_file: Path) -> dict:
-    if (type(plan) is not dict or set(plan) not in (FIELDS, LEGACY_FIELDS)
+    if (type(plan) is not dict
+            or not REQUIRED_FIELDS.issubset(plan)
+            or not set(plan).issubset(FIELDS)
             or plan["schema"] != SCHEMA):
         raise InputError("unexpected runbook schema or keys")
     if (type(plan["forecast_archives"]) is not list
@@ -121,6 +127,8 @@ def decode(plan: object, *, plan_file: Path) -> dict:
         base, plan.get("regional_source_manifest"), kind="file")
     static_source = _path(
         base, plan.get("mt4_observer_source"), kind="file")
+    history_file = _path(
+        base, plan.get("regional_history_file"), kind="file")
     forecasts = [_path(base, x, kind="file")
                  for x in plan["forecast_archives"]]
     ledgers = [_path(base, x, kind="file") for x in plan["ai_ledgers"]]
@@ -151,7 +159,7 @@ def decode(plan: object, *, plan_file: Path) -> dict:
     if regional_manifest is not None and external is not None:
         raise InputError("select either raw regional originals or external macro JSON")
     allpaths = [bls, news, external, store, regional_manifest,
-                static_source, *forecasts, *ledgers]
+                static_source, history_file, *forecasts, *ledgers]
     allpaths.extend(x for _, x in sessions)
     allpaths.extend(experts.values())
     allpaths.extend(compiles.values())
@@ -166,6 +174,7 @@ def decode(plan: object, *, plan_file: Path) -> dict:
         "external_macro_file": external,
         "regional_source_manifest": regional_manifest,
         "mt4_observer_source": static_source,
+        "regional_history_file": history_file,
         "forecast_archives": forecasts,
         "sessions": sessions,
         "experts": experts,
@@ -255,6 +264,17 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
                 or crosscheck.get("real_orders_permitted") is not False
                 or crosscheck.get("demo_orders_permitted") is not False):
             raise InputError("conflicting source comparison unsafe")
+    archive_history = None
+    if plan.get("regional_history_file") is not None:
+        archive_history = history.inspect(
+            plan["regional_history_file"], asof_utc=asof_utc)
+        if (archive_history.get("status")
+                != "REGIONAL_EVIDENCE_HISTORY_RESEARCH_HOLD_NO_GO"
+                or archive_history.get("runtime_go_no_go") != "NO_GO"
+                or archive_history.get("safety_hold_latched") is not True
+                or archive_history.get("real_orders_permitted") is not False
+                or archive_history.get("demo_orders_permitted") is not False):
+            raise InputError("multi-snapshot research history escaped NO_GO")
     report = hub.inspect(
         asof_utc=asof_utc,
         bls_snapshot_dir=plan["bls_snapshot_dir"],
@@ -296,16 +316,22 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
                 int(plan.get("regional_source_manifest") is not None),
             "mt4_observer_source":
                 int(plan.get("mt4_observer_source") is not None),
+            "regional_history_file":
+                int(plan.get("regional_history_file") is not None),
             "forecast_archives": len(plan["forecast_archives"]),
             "mt4_sessions": len(plan["sessions"]),
             "ai_ledgers": len(plan["ai_ledgers"]),
         },
         "priority_research_tasks_advisory_only":
-            prioritize(report["next_research_actions"]),
+            prioritize(report["next_research_actions"] + (
+                archive_history["next_research_actions"]
+                if archive_history is not None else [])),
         "compared_prior_report_self_attested_only": delta is not None,
         "previous_report_change_summary": delta,
         "fullstack_report": report,
         "regional_original_source_intake": origin,
+        "regional_saved_history_readiness": archive_history,
+        "regional_saved_history_missing": archive_history is None,
         "saved_bls_regional_original_crosscheck": crosscheck,
         "saved_bls_regional_crosscheck_missing": crosscheck is None,
         "mt4_observer_source_static_review": static,
@@ -340,6 +366,7 @@ def main(argv=None) -> int:
     p.add_argument("--init-official-news-bundle", type=Path)
     p.add_argument("--init-regional-source-manifest", type=Path)
     p.add_argument("--init-mt4-observer-source", type=Path)
+    p.add_argument("--init-regional-history-file", type=Path)
     p.add_argument("--previous-report", type=Path)
     p.add_argument("--asof-utc")
     p.add_argument("--out", type=Path)
@@ -366,6 +393,7 @@ def main(argv=None) -> int:
             for arg, field in (
                 (a.init_regional_source_manifest, "regional_source_manifest"),
                 (a.init_mt4_observer_source, "mt4_observer_source"),
+                (a.init_regional_history_file, "regional_history_file"),
             ):
                 if arg is not None:
                     contents[field] = str(_path(
@@ -388,7 +416,8 @@ def main(argv=None) -> int:
                 a.init_bls_snapshot_dir is not None,
                 a.init_official_news_bundle is not None,
                 a.init_regional_source_manifest is not None,
-                a.init_mt4_observer_source is not None)):
+                a.init_mt4_observer_source is not None,
+                a.init_regional_history_file is not None)):
             raise InputError("explicit plan-file required; init options only for init-plan")
         sources, plan_sha = read_plan(a.plan_file)
         asof = a.asof_utc or hub._now()
