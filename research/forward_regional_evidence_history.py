@@ -45,6 +45,10 @@ def _verified_file(path: Path, max_bytes: int) -> bytes:
     return data
 
 
+def _utc_str(moment) -> str:
+    return moment.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def _entry_path(history_file: Path, name: object) -> Path:
     if (type(name) is not str or not 1 <= len(name) <= 1024
             or name.strip() != name
@@ -160,7 +164,7 @@ def inspect(history_file: Path, *, asof_utc: str) -> dict:
                         "currency": currency,
                         "event_id_unverified": event["event_id"],
                         "previous_observed_at_utc_clock_unattested":
-                            macro._utc_str(old_at),
+                            _utc_str(old_at),
                         "new_observed_at_utc_clock_unattested":
                             observed["observed_at_utc"],
                         "change_types": changes,
@@ -240,7 +244,7 @@ def inspect(history_file: Path, *, asof_utc: str) -> dict:
         "revision_preview_omitted_count":
             max(0, len(revisions) - MAX_REVISION_PREVIEW),
         "latest_manifest_observation_by_currency_unattested": {
-            c: (macro._utc_str(latest_per_currency[c])
+            c: (_utc_str(latest_per_currency[c])
                 if c in latest_per_currency else None)
             for c in CURRENCIES
         },
@@ -252,7 +256,7 @@ def inspect(history_file: Path, *, asof_utc: str) -> dict:
         "potentially_affected_pair_event_counts_research_only":
             affected_pairs,
         "earliest_upcoming_release_utc_unattested": (
-            macro._utc_str(first_future) if first_future is not None else None),
+            _utc_str(first_future) if first_future is not None else None),
         "saved_snapshots_preview": snapshots[:MAX_REVISION_PREVIEW],
         "saved_snapshots_preview_omitted_count":
             max(0, len(snapshots) - MAX_REVISION_PREVIEW),
