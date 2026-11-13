@@ -42,7 +42,8 @@ def inspect(sessions: list[tuple[str, Path]], *, asof_utc: str,
         source = reliability.inspect(
             sessions, asof_utc=asof_utc,
             experts=experts, compiles=compiles)
-        if (source["runtime_go_no_go"] != "NO_GO"
+        if (source.get("status") != "MT4_MULTISESSION_RESEARCH_HOLD_NO_GO"
+                or source["runtime_go_no_go"] != "NO_GO"
                 or source["safety_hold_latched"] is not True
                 or source["real_orders_permitted"] is not False
                 or source["demo_orders_permitted"] is not False):
