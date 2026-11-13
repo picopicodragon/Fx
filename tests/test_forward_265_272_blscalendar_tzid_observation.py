@@ -23,14 +23,14 @@ def sample(dtstart: str) -> bytes:
 
 class TimezoneFormObservationTests(unittest.TestCase):
     def test_unrecognized_tzid_is_observed_without_conversion(self):
-        raw = sample("DTSTART;TZID=US-Eastern:20261113T083000")
+        raw = sample("DTSTART;TZID=Example/UnknownZone:20261113T083000")
         report = diagnosis.diagnose(raw=raw, asof_utc=ASOF)
         self.assertEqual(report["status"],
                          "BLS_CALENDAR_DIAGNOSTIC_FAIL_CLOSED_NO_GO")
         self.assertEqual(report["reason_code"], "ICS_TIMEZONE_UNSUPPORTED")
         forms = report["dtstart_timezone_observation"]
         self.assertEqual(forms["forms"],
-                         [{"form": "TZID=US-Eastern", "count": 1}])
+                         [{"form": "TZID=Example/UnknownZone", "count": 1}])
         self.assertFalse(forms["event_titles_dates_or_body_included"])
         serialized = json.dumps(report)
         self.assertNotIn("Private event", serialized)
@@ -75,10 +75,10 @@ class TimezoneFormObservationTests(unittest.TestCase):
     def test_vtimezone_internal_dtstart_not_counted(self):
         raw = (
             b"BEGIN:VCALENDAR\nBEGIN:VTIMEZONE\n"
-            b"TZID:US-Eastern\nBEGIN:STANDARD\n"
+            b"TZID:Example/UnknownZone\nBEGIN:STANDARD\n"
             b"DTSTART:20000101T020000\nEND:STANDARD\n"
             b"END:VTIMEZONE\nBEGIN:VEVENT\n"
-            b"DTSTART;TZID=US-Eastern:20261113T083000\n"
+            b"DTSTART;TZID=Example/UnknownZone:20261113T083000\n"
             b"SUMMARY:No body\nEND:VEVENT\nEND:VCALENDAR\n"
         )
         report = diagnosis.diagnose(raw=raw, asof_utc=ASOF)
@@ -87,7 +87,7 @@ class TimezoneFormObservationTests(unittest.TestCase):
             1)
         self.assertEqual(
             report["dtstart_timezone_observation"]["forms"],
-            [{"form": "TZID=US-Eastern", "count": 1}])
+            [{"form": "TZID=Example/UnknownZone", "count": 1}])
 
     def test_offline_metadata_observation_uses_no_network(self):
         raw = sample("DTSTART;TZID=EST:20261113T083000")
