@@ -139,8 +139,11 @@ def verify_archive(report: object, *, asof_utc: str) -> dict:
             data.get("status") != "PRE_RELEASE_CONSENSUS_CAPTURED_RESEARCH_NO_GO"
             or data.get("runtime_go_no_go") != "NO_GO"
             or data.get("real_orders_permitted") is not False
+            or data.get("demo_orders_permitted") is not False
             or data.get("safety_hold_latched") is not True
-            or data.get("source_truth_authenticated") is not False):
+            or data.get("source_truth_authenticated") is not False
+            or data.get("published_at_independently_attested") is not False
+            or data.get("forecast_poll_or_web_search_performed") is not False):
         raise InputError("untrusted forecast archive scope")
     source = data["source_text_excerpt"]
     if (type(source) is not str or
@@ -150,8 +153,12 @@ def verify_archive(report: object, *, asof_utc: str) -> dict:
     captured = timestamp(data["recorded_at_utc_local_clock_unattested"])
     published = timestamp(data["source_published_at_utc_self_reported"])
     scheduled = timestamp(data["scheduled_at_utc_unverified"])
-    if not published <= captured < scheduled or captured > timestamp(asof_utc):
-        raise InputError("invalid archive timing")
+    # Archive replay must enforce the same strict 15-minute blackout
+    # boundary as validate_submission. Re-hashing a modified record cannot
+    # turn a late forecast into admissible point-in-time evidence.
+    if (not published <= captured < scheduled - timedelta(minutes=15)
+            or captured > timestamp(asof_utc)):
+        raise InputError("invalid archive timing or forecast blackout")
     if data["pair"] not in PAIRS or data["unit"] not in ALLOWED_UNITS:
         raise InputError("invalid archive pair/unit")
     _number(data["forecast_value_self_reported"])
