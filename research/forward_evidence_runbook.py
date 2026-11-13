@@ -33,8 +33,9 @@ FIELDS = frozenset((
     "external_macro_file", "forecast_archives", "sessions",
     "observation_store", "ai_ledgers", "regional_source_manifest",
     "mt4_observer_source", "regional_history_file"))
-PRIOR_FIELDS = FIELDS - {"regional_history_file"}
-LEGACY_FIELDS = PRIOR_FIELDS - {"regional_source_manifest", "mt4_observer_source"}
+OPTIONAL_FIELDS = frozenset({
+    "regional_source_manifest", "mt4_observer_source", "regional_history_file"})
+REQUIRED_FIELDS = FIELDS - OPTIONAL_FIELDS
 SESSION_FIELDS = frozenset((
     "label", "directory", "experts_log", "compile_log"))
 LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,39}$")
@@ -105,7 +106,8 @@ def _unique_paths(paths: list[Path | None]) -> None:
 
 def decode(plan: object, *, plan_file: Path) -> dict:
     if (type(plan) is not dict
-            or set(plan) not in (FIELDS, PRIOR_FIELDS, LEGACY_FIELDS)
+            or not REQUIRED_FIELDS.issubset(plan)
+            or not set(plan).issubset(FIELDS)
             or plan["schema"] != SCHEMA):
         raise InputError("unexpected runbook schema or keys")
     if (type(plan["forecast_archives"]) is not list
