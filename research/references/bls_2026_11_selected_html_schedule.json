@@ -1,0 +1,52 @@
+{
+  "schema": "fx_bls_selected_html_schedule_reference_v1",
+  "source_url": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+  "source_page_last_modified": "2026-11-03",
+  "reference_month": "2026-11",
+  "transcription_method": "MANUALLY_TRANSCRIBED_PUBLIC_BLS_HTML_LIST",
+  "source_authenticity_independently_attested": false,
+  "source_snapshot_immutable_proof_available": false,
+  "selected_release_schedule_not_exhaustive": true,
+  "events": [
+    {
+      "local_time_et": "2026-11-03T10:00:00",
+      "title": "Job Openings and Labor Turnover Survey for September 2026"
+    },
+    {
+      "local_time_et": "2026-11-05T08:30:00",
+      "title": "Productivity and Costs (P) for Third Quarter 2026"
+    },
+    {
+      "local_time_et": "2026-11-06T08:30:00",
+      "title": "Employment Situation for October 2026"
+    },
+    {
+      "local_time_et": "2026-11-10T08:30:00",
+      "title": "Consumer Price Index for October 2026"
+    },
+    {
+      "local_time_et": "2026-11-10T08:30:00",
+      "title": "Real Earnings for October 2026"
+    },
+    {
+      "local_time_et": "2026-11-13T08:30:00",
+      "title": "Producer Price Index for October 2026"
+    },
+    {
+      "local_time_et": "2026-11-17T08:30:00",
+      "title": "U.S. Import and Export Price Indexes for October 2026"
+    },
+    {
+      "local_time_et": "2026-11-18T10:00:00",
+      "title": "Employer-Reported Workplace Injuries and Illnesses (Annual) for 2025"
+    },
+    {
+      "local_time_et": "2026-11-20T10:00:00",
+      "title": "State Employment and Unemployment (Monthly) for October 2026"
+    },
+    {
+      "local_time_et": "2026-11-20T10:00:00",
+      "title": "Total Factor Productivity for Major Industries for Annual 2025"
+    }
+  ]
+}
