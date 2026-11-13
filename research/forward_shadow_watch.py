@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from research.offline_backtest import InputError, timestamp
 
@@ -43,7 +44,7 @@ def evaluate(observability: dict, quote: dict, *,
                 prior.get("runtime_go_no_go") != "NO_GO" or
                 prior.get("real_orders_permitted") is not False or
                 prior.get("safety_hold_latched") is not True or
-                prior.get("watchdog_latched") not in (True, False)):
+                type(prior.get("watchdog_latched")) is not bool):
             raise InputError("untrusted previous watchdog")
         previous_time = timestamp(prior.get("asof_utc"))
         if now <= previous_time:
@@ -52,7 +53,9 @@ def evaluate(observability: dict, quote: dict, *,
     obs_gap = (now-timestamp(observability["asof_utc"])).total_seconds()
     quote_gap = (now-timestamp(quote["asof_utc"])).total_seconds()
     latest_cycle_age = observability.get("latest_cycle_age_seconds")
-    if type(latest_cycle_age) not in (int, float) or latest_cycle_age < 0:
+    if (type(latest_cycle_age) not in (int, float)
+            or not math.isfinite(latest_cycle_age)
+            or latest_cycle_age < 0):
         raise InputError("invalid cycle age")
     ages = [obs_gap, quote_gap, obs_gap+latest_cycle_age]
     # Individual last tick freshness may differ; account for all three pairs.
@@ -66,7 +69,8 @@ def evaluate(observability: dict, quote: dict, *,
         age = row.get("latest_quote_age_seconds")
         if age is None:
             ages.append(SECOND_ALERT_SECONDS)
-        elif type(age) not in (int, float) or age < 0:
+        elif (type(age) not in (int, float)
+              or not math.isfinite(age) or age < 0):
             raise InputError("invalid quote age")
         else:
             ages.append(quote_gap+age)
@@ -102,6 +106,7 @@ def evaluate(observability: dict, quote: dict, *,
         "bidirectional_mt4_heartbeat_verified": False,
         "external_alerts_sent": False,
         "demo_order_execution_enabled": False,
+        "demo_orders_permitted": False,
         "runtime_go_no_go": "NO_GO",
         "safety_hold_latched": True,
         "real_orders_permitted": False,

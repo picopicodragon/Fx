@@ -15,6 +15,8 @@ from pathlib import Path
 
 from research import forward_fullstack_noorder_hub as hub
 from research import forward_readiness_drift as drift
+from research import forward_synthetic_safety_fault_campaign as safety_drills
+from research import forward_safety_acceptance_debt as acceptance_debt
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_fwd_evidence_runbook_v1"
@@ -217,6 +219,15 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
             or report["demo_orders_permitted"] is not False
             or report["safety_hold_latched"] is not True):
         raise InputError("integrated report violated safety conditions")
+    # Deterministic synthetic tests never authenticate the live system.
+    drills = safety_drills.inspect()
+    if (drills.get("runtime_go_no_go") != "NO_GO"
+            or drills.get("safety_hold_latched") is not True
+            or drills.get("real_orders_permitted") is not False
+            or drills.get("demo_orders_permitted") is not False
+            or drills.get("synthetic_failed_count") != 0):
+        raise InputError("synthetic safety tests did not pass fail-closed")
+    operational_debt = acceptance_debt.inspect(report, drills)
     delta = (drift.compare(previous_report, report)
              if previous_report is not None else None)
     return {
@@ -238,6 +249,9 @@ def inspect(plan: dict, *, asof_utc: str, plan_sha256: str,
         "compared_prior_report_self_attested_only": delta is not None,
         "previous_report_change_summary": delta,
         "fullstack_report": report,
+        "synthetic_safety_fault_campaign": drills,
+        "operational_acceptance_debt": operational_debt,
+        "synthetic_test_green_does_not_clear_safety_hold": True,
         "no_go_cannot_be_cleared_by_runbook": True,
         "automatic_network_or_api_calls": False,
         "network_calls_this_run": 0,
