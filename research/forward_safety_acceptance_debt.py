@@ -7,7 +7,9 @@ UNVERIFIED at actual MT4/broker runtime. No orders, APIs or external I/O.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import re
 from pathlib import Path
 
 from research.offline_backtest import InputError
@@ -60,7 +62,8 @@ def _valid_hub(data: object) -> dict:
     for key in keys[3:]:
         if type(data[key]) is not int or data[key] < 0:
             raise InputError("invalid evidence volume")
-    if data.get("bls_html_ics_event_count_disagrees") not in (True, False, None):
+    if (data.get("bls_html_ics_event_count_disagrees") is not None
+            and type(data["bls_html_ics_event_count_disagrees"]) is not bool):
         raise InputError("invalid BLS disagreement tri-state")
     return data
 
@@ -81,6 +84,27 @@ def _valid_drills(data: object) -> dict:
             or type(data.get("synthetic_failed_count")) is not int
             or data["synthetic_failed_count"] != 0):
         raise InputError("untrusted synthetic safety drill report")
+    cases = data.get("synthetic_scenarios")
+    digest = data.get("synthetic_cases_sha256")
+    if (type(cases) is not list
+            or len(cases) != data["synthetic_scenario_count"]
+            or type(digest) is not str
+            or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+            or any(type(x) is not dict
+                   or set(x) != {"case", "synthetic_contract_passed"}
+                   or type(x["case"]) is not str
+                   or not 1 <= len(x["case"]) <= 120
+                   or x["synthetic_contract_passed"] is not True
+                   for x in cases)):
+        raise InputError("invalid synthetic scenario registry")
+    names = [x["case"] for x in cases]
+    if len(names) != len(set(names)):
+        raise InputError("repeated scenario identity")
+    payload = json.dumps(
+        cases, ensure_ascii=False, sort_keys=True,
+        separators=(",", ":"), allow_nan=False).encode("utf-8")
+    if hashlib.sha256(payload).hexdigest() != digest:
+        raise InputError("synthetic case register checksum mismatch")
     return data
 
 
