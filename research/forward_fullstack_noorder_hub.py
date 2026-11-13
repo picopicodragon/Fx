@@ -90,8 +90,8 @@ def inspect(*, asof_utc: str,
         price = campaign.inspect(
             sessions, asof_utc=asof_utc,
             store=observation_store, ai_ledgers=ledgers)
-        if (price.get("status") != "MACRO_RESEARCH_CAMPAIGN_HOLD_NO_GO"
-                and price.get("runtime_go_no_go") != "NO_GO"):
+        if (price.get("status") != "MACRO_FORWARD_RESEARCH_CAMPAIGN_HOLD_NO_GO"
+                or price.get("runtime_go_no_go") != "NO_GO"):
             raise InputError("price/AI campaign escaped NO_GO scope")
         if (price.get("real_orders_permitted") is not False
                 or price.get("safety_hold_latched") is not True):
