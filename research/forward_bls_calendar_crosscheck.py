@@ -129,6 +129,57 @@ def _validate_reference(obj: dict) -> tuple[str, Counter[str]]:
     return obj["reference_month"], slots
 
 
+def _family_correspondence_for_review(
+        observed: list[str], selected: list[str]) -> dict:
+    """Candidates only, never authenticated release identities.
+
+    The sole loose rule is an exact ICS title that precedes ' for ' in an
+    HTML title. If any name has zero/multiple counterparts, or a name is
+    repeated, refuse to claim an unrepresented release family.
+    """
+    base = {
+        "relationship_status": "NO_UNIQUE_TITLE_RELATIONSHIP",
+        "provisional_title_pairs": [],
+        "html_only_title_candidates_not_in_ics": [],
+        "all_title_relationships_independently_verified": False,
+        "automatic_missing_event_creation_permitted": False,
+        "source_revision_or_omission_resolved": False,
+    }
+    if len(observed) > 12 or len(selected) > 12:
+        base["relationship_status"] = "BOUNDED_REVIEW_REQUIRED"
+        return base
+    if len(set(observed)) != len(observed) or (
+            len(set(selected)) != len(selected)):
+        base["relationship_status"] = "DUPLICATE_TITLES_AMBIGUOUS"
+        return base
+    proposed = []
+    for name in observed:
+        candidates = [
+            (reference_title, "EXACT_TITLE" if reference_title == name
+             else "ICS_TITLE_PREFIX_BEFORE_FOR")
+            for reference_title in selected
+            if reference_title == name
+            or reference_title.startswith(name + " for ")
+        ]
+        if len(candidates) != 1:
+            return base
+        proposed.append({
+            "ics_title_unverified": name,
+            "html_title_unverified": candidates[0][0],
+            "relation": candidates[0][1],
+            "correspondence_provisional_only": True,
+        })
+    if len({x["html_title_unverified"] for x in proposed}) != len(proposed):
+        base["relationship_status"] = "MANY_TO_ONE_TITLE_AMBIGUOUS"
+        return base
+    used = {x["html_title_unverified"] for x in proposed}
+    base["relationship_status"] = "UNIQUE_LEXICAL_CANDIDATES_ONLY"
+    base["provisional_title_pairs"] = proposed
+    base["html_only_title_candidates_not_in_ics"] = [
+        name for name in selected if name not in used]
+    return base
+
+
 def _disputed_title_evidence(calendar: dict, reference: dict,
                              disputed_slots: list[str]) -> tuple[list[dict], int]:
     """Show only public-title candidate sets in mismatched time slots.
@@ -157,6 +208,8 @@ def _disputed_title_evidence(calendar: dict, reference: dict,
             "ics_titles_omitted_count": max(0, len(observed) - 12),
             "html_titles_omitted_count": max(0, len(selected) - 12),
             "literal_identical_titles_unverified": overlap[:12],
+            "release_family_candidate_review":
+                _family_correspondence_for_review(observed, selected),
             "candidate_identity_verified": False,
             "auto_resolve_or_backfill_allowed": False,
         })
