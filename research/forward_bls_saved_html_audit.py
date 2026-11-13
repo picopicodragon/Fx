@@ -97,6 +97,9 @@ class _TableRows(HTMLParser):
                 self.invalid_structure = True
             item["rows"].append(item["row"])
             item["row"] = None
+        elif tag in ("tr", "td", "th"):
+            # A close tag with no corresponding open row/cell is unsafe.
+            self.invalid_structure = True
 
 
 
