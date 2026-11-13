@@ -137,17 +137,22 @@ class ForwardReadOnlyPilotTests(unittest.TestCase):
         self.assertEqual(audited["fullstack_report"]["price_csv_count"],12)
         self.assertFalse(summary["real_orders_permitted"])
 
-    def test_incomplete_cycle_remains_unverified_and_no_go(self):
+    def test_incomplete_cycle_is_refused_by_integrated_campaign(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
             copied=session(root,"partial",0,2,missing_symbol="EURUSD")
-            summary,report,_=pilot.inspect(
-                mode="audit",asof_utc=ASOF,
-                sessions=["incomplete="+str(copied)])
-        self.assertEqual(summary["complete_observation_cycle_count"],0)
-        self.assertTrue(summary["pending_holds_preview"])
-        self.assertFalse(summary["demo_orders_permitted"])
-        self.assertEqual(report["fullstack_report"]["runtime_go_no_go"],"NO_GO")
+            # The cross-component campaign insists on consistent 3-pair CSV
+            # totals. A missing pair is NOT a successful pilot observation.
+            with self.assertRaises(InputError):
+                pilot.inspect(mode="audit",asof_utc=ASOF,
+                              sessions=["incomplete="+str(copied)])
+            code,report=cli("--mode","audit","--asof-utc",ASOF,
+                            "--session","incomplete="+str(copied))
+        self.assertEqual(code,2)
+        self.assertEqual(report["status"],"MT4_READONLY_PILOT_FAIL_CLOSED_NO_GO")
+        self.assertFalse(report["demo_orders_permitted"])
+        self.assertFalse(report["real_orders_permitted"])
+        self.assertTrue(report["safety_hold_latched"])
 
     def test_existing_plan_with_manually_copied_session_is_supported(self):
         with tempfile.TemporaryDirectory() as td:
