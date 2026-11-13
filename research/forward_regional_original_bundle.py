@@ -228,7 +228,11 @@ def _safe_destination(spec_file: Path, out_dir: Path,
 
 def save(spec_file: Path, out_dir: Path, *, asof_utc: str) -> dict:
     manifest, summary, rawfiles = prepare(spec_file, asof_utc=asof_utc)
-    spec = json.loads(intake._read(spec_file, MAX_SPEC).decode("utf-8-sig"))
+    spec_raw = intake._read(spec_file, MAX_SPEC)
+    if (hashlib.sha256(spec_raw).hexdigest()
+            != summary["request_sha256_local_integrity_only"]):
+        raise InputError("package request changed during preflight")
+    spec = json.loads(spec_raw.decode("utf-8-sig"))
     paths = [_file_path(spec_file, entry["source_file"])
              for entry in spec["sources"]]
     _safe_destination(spec_file, out_dir, paths)
