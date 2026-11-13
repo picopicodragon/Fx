@@ -14,6 +14,7 @@ from research.forward_macro_campaign_board import inspect as campaign
 from research import forward_bls_macro_source_gate as source_gate
 from research import forward_bls_snapshot_diff as bls_integrity
 from research import forward_bls_dual_snapshot as bls_snapshot
+from research import forward_global_macro_evidence as global_macro
 from research.forward_macro_event_windows import inspect as windows
 from research.forward_macro_pre_release_capture import (
     verify_archive as verify_forecast)
@@ -26,7 +27,8 @@ SCHEMA = "fx_fwd_macro_integrated_forward_research_v2"
 def inspect(sessions, *, asof_utc: str, store: Path | None = None,
             calendar: dict | None = None, forecast_archive: dict | None = None,
             ai_ledgers: list[Path] | None = None,
-            bls_snapshot_dir: Path | None = None) -> dict:
+            bls_snapshot_dir: Path | None = None,
+            external_macro_observations: dict | None = None) -> dict:
     timestamp(asof_utc)
     bls_sources = None
     if bls_snapshot_dir is not None:
@@ -45,6 +47,10 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
         calendar = original
     if forecast_archive is not None and calendar is None:
         raise InputError("forecast archive needs matching calendar evidence")
+    external = (
+        global_macro.inspect_observations(
+            external_macro_observations, asof_utc=asof_utc)
+        if external_macro_observations is not None else None)
     price_and_ai = campaign(
         sessions, asof_utc=asof_utc, store=store, ai_ledgers=ai_ledgers)
     schedule = (windows(calendar, asof_utc=asof_utc)
@@ -53,6 +59,9 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
                 if forecast_archive is not None else None)
     warnings = set(price_and_ai["unresolved_warnings_and_safety_holds"])
     tasks = list(price_and_ai["next_research_actions"])
+    if external is not None:
+        warnings.update(external["unresolved_holds"])
+        tasks.extend(external["next_research_actions"])
     if bls_sources is not None:
         warnings.update(bls_sources["unresolved_holds"])
         tasks.extend(bls_sources["next_research_actions"])
@@ -104,6 +113,17 @@ def inspect(sessions, *, asof_utc: str, store: Path | None = None,
         "pre_release_forecast_archive_supplied": evidence is not None,
         "forecast_archive_matches_current_schedule": matched_forecast,
         "forecast_source_independently_authenticated": False,
+        "external_macro_evidence_supplied": external is not None,
+        "external_macro_event_count": (
+            external["external_event_observations_supplied"]
+            if external is not None else 0),
+        "external_macro_by_currency": (
+            external["external_by_currency"] if external is not None
+            else {"USD": 0, "EUR": 0, "JPY": 0}),
+        "external_macro_missing_consensus_count": (
+            external["external_missing_consensus_count"]
+            if external is not None else 0),
+        "external_macro_source_independently_attested": False,
         "bls_original_source_bundle_verified": bls_sources is not None,
         "bls_html_ics_schedule_disagreement": (
             bls_sources["html_ics_slot_count_disagreement"]
@@ -144,6 +164,7 @@ def main(argv=None) -> int:
     p.add_argument("--store", type=Path)
     p.add_argument("--calendar-report", type=Path)
     p.add_argument("--bls-snapshot-dir", type=Path)
+    p.add_argument("--external-macro-file", type=Path)
     p.add_argument("--forecast-archive", type=Path)
     p.add_argument("--ai-ledger", action="append", type=Path, default=[])
     p.add_argument("--asof-utc", required=True)
@@ -164,11 +185,15 @@ def main(argv=None) -> int:
                     if a.calendar_report else None)
         archive = (_read(a.forecast_archive, 8000)
                    if a.forecast_archive else None)
+        external = (_read(a.external_macro_file,
+                          global_macro.MAX_INPUT_BYTES)
+                    if a.external_macro_file else None)
         report = inspect(
             sessions, asof_utc=a.asof_utc, store=a.store,
             calendar=calendar, forecast_archive=archive,
             ai_ledgers=a.ai_ledger,
-            bls_snapshot_dir=a.bls_snapshot_dir)
+            bls_snapshot_dir=a.bls_snapshot_dir,
+            external_macro_observations=external)
         with a.out.open("x", encoding="utf-8") as output:
             json.dump(report, output, indent=2, ensure_ascii=False)
         print(json.dumps({
@@ -180,6 +205,12 @@ def main(argv=None) -> int:
                 report["forecast_archive_matches_current_schedule"],
             "bls_original_source_bundle_verified":
                 report["bls_original_source_bundle_verified"],
+            "external_macro_evidence_supplied":
+                report["external_macro_evidence_supplied"],
+            "external_macro_event_count":
+                report["external_macro_event_count"],
+            "external_macro_missing_consensus_count":
+                report["external_macro_missing_consensus_count"],
             "bls_html_ics_schedule_disagreement":
                 report["bls_html_ics_schedule_disagreement"],
             "bls_html_only_missing_slot_instances":
