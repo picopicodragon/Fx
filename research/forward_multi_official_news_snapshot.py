@@ -38,7 +38,7 @@ SOURCE_HOSTS = {
 }
 MAX_XML = 256_000
 MAX_ENTRIES = 50
-MAX_MANIFEST = 15_000
+MAX_MANIFEST = 100_000
 ATOM = "{http://www.w3.org/2005/Atom}"
 DC = "{http://purl.org/dc/elements/1.1/}"
 UTC_FORMAT = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
