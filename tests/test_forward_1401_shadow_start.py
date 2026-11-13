@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from research import forward_shadow_start as shadow
+from research import forward_observation as obs
 from research import forward_evidence_runbook as runbook
 from research.forward_mt4_v2_quote import COLUMNS
 from research.offline_backtest import InputError
@@ -272,6 +273,153 @@ class ForwardCampaignStartTests(unittest.TestCase):
         self.assertEqual(result["network_calls_this_run"],0)
         self.assertEqual(result["API_calls_this_run"],0)
         self.assertEqual(result["orders_sent_this_run"],0)
+
+    def _macro_journal_and_plan(self, root, sessions):
+        store=root/"macro_journal"
+        obs.initialize(store, "shadow_macro_research",
+                       now=datetime(2026,11,10,6,0,tzinfo=timezone.utc))
+        plan=runbook.empty_plan()
+        plan["sessions"]=[
+            {"label": label, "directory": str(directory),
+             "experts_log": None, "compile_log": None}
+            for label,directory in sessions
+        ]
+        plan["observation_store"]=str(store)
+        plan_path=root/"macro_plan.json"
+        plan_path.write_text(json.dumps(plan))
+        return store,plan_path
+
+    def _append_macro_event(self, root, store, n):
+        snap={
+            "schema":obs.SCHEMA,"kind":"MACRO_EVENT",
+            "observed_at_utc":f"2026-11-10T07:0{n}:00Z",
+            "source_id":"fed_policy",
+            "payload":{
+                "pair":"USD/JPY", "title":"Synthetic test only",
+                "source_url":"https://example.com/synthetic-test-not-a-source",
+                "published_at_utc":f"2026-11-10T07:0{n}:00Z",
+                "content":"synthetic chronology fixture, never live evidence",
+                "consensus":"", "released_value":"",
+                "source_status":"USER_SUPPLIED_UNVERIFIED",
+            },
+        }
+        path=root/f"event_fixture_{n}.json"
+        path.write_text(json.dumps(snap))
+        return obs.ingest(
+            store,path,now=datetime(2026,11,10,7,n,5,
+                                    tzinfo=timezone.utc))
+
+    def test_macro_evidence_refresh_without_new_quote_session(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            a=make_session(root,"first",0,6)
+            b=make_session(root,"second",15,24)
+            folder=root/"state"
+            self.assertEqual(cmd(
+                "--mode","start","--state-dir",str(folder),
+                "--session","s1="+str(a),"--session","s2="+str(b),
+                "--asof-utc",ASOF)[0],0)
+            first=shadow._load(folder)[0]["record"]
+            store,plan=self._macro_journal_and_plan(root,[("s1",a),("s2",b)])
+            self._append_macro_event(root,store,1)
+            rc,answer=cmd(
+                "--mode","refresh","--state-dir",str(folder),
+                "--plan-file",str(plan),"--asof-utc",ASOF)
+            self.assertEqual(rc,0,answer)
+            self.assertEqual(answer["status"],
+                "SHADOW_FORWARD_MACRO_EVIDENCE_REFRESHED_HOLD_NO_GO")
+            self.assertEqual(answer["registered_macro_events"],1)
+            self.assertEqual(answer["registered_review_count"],0)
+            self.assertEqual(answer["new_session_count"],0)
+            self.assertEqual(answer["orders_sent_this_run"],0)
+            self.assertEqual(answer["API_calls_this_run"],0)
+            rows=shadow._load(folder)
+            self.assertEqual(len(rows),2)
+            second=rows[1]["record"]
+            self.assertEqual(second["sessions"],first["sessions"])
+            self.assertTrue(second["old_sessions_rechecked_sha256_each_step"])
+            self.assertFalse(second["new_observation_within_24h"])
+            self.assertTrue(all(
+                v["direction"]=="NO_SIGNAL" and
+                not v["position_opened"] for v in
+                second["per_pair_shadow_decision_gate"].values()))
+
+    def test_macro_refresh_repeated_same_evidence_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            a=make_session(root,"one",0,2)
+            folder=root/"state"
+            self.assertEqual(cmd(
+                "--mode","start","--state-dir",str(folder),
+                "--session","s1="+str(a),"--asof-utc",ASOF)[0],0)
+            store,plan=self._macro_journal_and_plan(root,[("s1",a)])
+            self._append_macro_event(root,store,1)
+            args=("--mode","refresh","--state-dir",str(folder),
+                  "--plan-file",str(plan),"--asof-utc",ASOF)
+            self.assertEqual(cmd(*args)[0],0)
+            rc,report=cmd(*args)
+            self.assertEqual(rc,2)
+            self.assertEqual(report["runtime_go_no_go"],"NO_GO")
+            self.assertEqual(len(shadow._load(folder)),2)
+            self._append_macro_event(root,store,2)
+            self.assertEqual(cmd(*args)[0],0)
+            self.assertEqual(len(shadow._load(folder)),3)
+
+    def test_refresh_rejects_price_session_modification_or_resubmission(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td); a=make_session(root,"one",0,2)
+            folder=root/"state"
+            self.assertEqual(cmd(
+                "--mode","start","--state-dir",str(folder),
+                "--session","s1="+str(a),"--asof-utc",ASOF)[0],0)
+            store,plan=self._macro_journal_and_plan(root,[("s1",a)])
+            self._append_macro_event(root,store,1)
+            p=next(a.iterdir())
+            p.write_text(p.read_text()+" ")
+            rc,_=cmd(
+                "--mode","refresh","--state-dir",str(folder),
+                "--plan-file",str(plan),"--asof-utc",ASOF)
+            self.assertEqual(rc,2)
+            self.assertEqual(len(shadow._load(folder)),1)
+            rc,_=cmd(
+                "--mode","refresh","--state-dir",str(folder),
+                "--session","s1="+str(a),"--plan-file",str(plan),
+                "--asof-utc",ASOF)
+            self.assertEqual(rc,2)
+
+    def test_refresh_requires_real_observation_journal(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td); a=make_session(root,"one",0,2)
+            folder=root/"state"
+            self.assertEqual(cmd(
+                "--mode","start","--state-dir",str(folder),
+                "--session","s1="+str(a),"--asof-utc",ASOF)[0],0)
+            plan=runbook.empty_plan()
+            plan["sessions"]=[{"label":"s1","directory":str(a),
+                               "experts_log":None,"compile_log":None}]
+            p=root/"empty_macro_plan.json";p.write_text(json.dumps(plan))
+            rc,_=cmd(
+                "--mode","refresh","--state-dir",str(folder),
+                "--plan-file",str(p),"--asof-utc",ASOF)
+            self.assertEqual(rc,2)
+            self.assertEqual(len(shadow._load(folder)),1)
+
+    def test_refresh_requires_same_session_set_not_a_third_price_folder(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td); a=make_session(root,"one",0,2)
+            b=make_session(root,"two",10,2)
+            folder=root/"state"
+            self.assertEqual(cmd(
+                "--mode","start","--state-dir",str(folder),
+                "--session","s1="+str(a),"--asof-utc",ASOF)[0],0)
+            store,plan=self._macro_journal_and_plan(
+                root,[("s1",a),("s2",b)])
+            self._append_macro_event(root,store,1)
+            rc,_=cmd(
+                "--mode","refresh","--state-dir",str(folder),
+                "--plan-file",str(plan),"--asof-utc",ASOF)
+            self.assertEqual(rc,2)
+            self.assertEqual(len(shadow._load(folder)),1)
 
 
 if __name__ == "__main__":
