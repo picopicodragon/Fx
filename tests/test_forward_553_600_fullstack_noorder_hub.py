@@ -55,6 +55,7 @@ T = {
     "verified_format_copied_session_count": 2,
     "distinct_ny17_bucket_count": 2,
     "complete_observation_cycle_count": 60,
+    "copied_observation_intervals_unattested": [],
 }
 C = {
     "status": "MACRO_FORWARD_RESEARCH_CAMPAIGN_HOLD_NO_GO",
@@ -70,6 +71,23 @@ C = {
 
 
 class FullstackHubTests(unittest.TestCase):
+    def setUp(self):
+        # Legacy tests isolate the new blackout input using a strict
+        # NO_GO fixture; dedicated FWD-701 tests audit real source parsing.
+        p = patch.object(hub.blackout, "inspect", return_value={
+            "status": "OFFLINE_BLACKOUT_OBSERVATION_COVERAGE_HOLD_NO_GO",
+            "runtime_go_no_go": "NO_GO",
+            "safety_hold_latched": True,
+            "demo_orders_permitted": False,
+            "real_orders_permitted": False,
+            "unresolved_holds": [],
+            "next_research_actions": [],
+            "unique_pair_blackout_research_window_count": 0,
+            "windows_with_intersecting_copied_quotes": 0,
+        })
+        p.start()
+        self.addCleanup(p.stop)
+
     def test_no_sources_is_useful_holds_not_fake_zero_go(self):
         r=hub.inspect(asof_utc=ASOF)
         self.assertEqual(r["status"],"FULLSTACK_FORWARD_RESEARCH_READINESS_HOLD_NO_GO")

@@ -18,6 +18,7 @@ from research import forward_consensus_archive_batch as consensus
 from research import forward_mt4_long_run_review as mt4
 from research import forward_macro_campaign_board as campaign
 from research import forward_multi_official_news_snapshot as official_news
+from research import forward_blackout_observation_coverage as blackout
 from research import forward_mt4_multisession_reliability as mt4_reliability
 from research.offline_backtest import InputError
 
@@ -63,7 +64,14 @@ def inspect(*, asof_utc: str,
     mt4_report = mt4.inspect(
         sessions, asof_utc=asof_utc,
         experts=experts, compiles=compiles)
+    blackout_report = blackout.inspect(
+        asof_utc=asof_utc,
+        bls_snapshot_dir=bls_snapshot_dir,
+        external_observations=external_macro_observations,
+        copied_sessions=mt4_report[
+            "copied_observation_intervals_unattested"])
     for subreport, expected in (
+        (blackout_report, "OFFLINE_BLACKOUT_OBSERVATION_COVERAGE_HOLD_NO_GO"),
         (macro, "GLOBAL_MACRO_FORWARD_EVIDENCE_HOLD_NO_GO"),
         (forecasts_report, "CONSENSUS_ARCHIVE_BATCH_RESEARCH_HOLD_NO_GO"),
         (mt4_report, "MT4_MULTIDAY_NOORDER_OBSERVATION_HOLD_NO_GO"),
@@ -77,9 +85,11 @@ def inspect(*, asof_utc: str,
     warnings = set(macro["unresolved_holds"])
     warnings.update(forecasts_report["unresolved_holds"])
     warnings.update(mt4_report["unresolved_holds"])
+    warnings.update(blackout_report["unresolved_holds"])
     tasks = (list(macro["next_research_actions"])
              + list(forecasts_report["next_research_actions"])
-             + list(mt4_report["next_research_actions"]))
+             + list(mt4_report["next_research_actions"])
+             + list(blackout_report["next_research_actions"]))
     # The news manifest clock is self-reported. Nevertheless refuse
     # impossible future captures and mark old research observations stale.
     news_stale = None
@@ -151,6 +161,11 @@ def inspect(*, asof_utc: str,
             "distinct_ny17_bucket_count"],
         "mt4_complete_observation_cycles": mt4_report[
             "complete_observation_cycle_count"],
+        "research_blackout_pair_window_count": blackout_report[
+            "unique_pair_blackout_research_window_count"],
+        "research_blackout_copied_quote_overlap_windows": blackout_report[
+            "windows_with_intersecting_copied_quotes"],
+        "research_blackout_runtime_stopped_orders_verified": False,
         "price_ai_campaign_inspected": price is not None,
         "price_csv_count": price["price_csv_count"] if price else 0,
         "price_ai_macro_observation_count": (
