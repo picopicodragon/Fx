@@ -36,6 +36,39 @@ def _utc(when: datetime) -> datetime:
     return when.astimezone(timezone.utc).replace(microsecond=0)
 
 
+def _approved_review_in_journal(store: Path, event_sha: str,
+                                state: dict, pair: str) -> bool:
+    """Require a linked hypothesis and review in the audited local log."""
+    audited = obs.audit(store)
+    count = audited["record_count"]
+    if type(count) is not int or count < 2:
+        return False
+    hypotheses = set()
+    for number in range(1, count + 1):
+        row = json.loads((store / f"{number:08d}.json").read_text(
+            encoding="utf-8-sig"))
+        item = row["snapshot"]
+        body = item["payload"]
+        if item["kind"] == "MACRO_HYPOTHESIS":
+            if (body["basis_sha256"] == event_sha and
+                    body["pair"] == pair and
+                    body["model_id"] == state["analyst_model"] and
+                    body["direction"] == state["analyst"]["action"] and
+                    body["thesis"] == state["analyst"]["hypothesis"] and
+                    body["counterevidence"] == state["analyst"]["counterevidence"] and
+                    body["research_only"] is True):
+                hypotheses.add(row["record_sha256"])
+        elif item["kind"] == "INDEPENDENT_REVIEW":
+            if (body["review_of_sha256"] in hypotheses
+                    and body["pair"] == pair
+                    and body["model_id"] == state["reviewer_model"]
+                    and body["verdict"] == "APPROVED"
+                    and body["rationale"] == state["reviewer"]["rationale"]
+                    and body["research_only"] is True):
+                return True
+    return False
+
+
 def inspect(store: Path, event_sha: str, ledger_path: Path, *,
             account_number: int, now: datetime | None = None) -> dict:
     """Fail closed on stale, unsigned-local, missing or disagreeing AI evidence."""
@@ -78,6 +111,9 @@ def inspect(store: Path, event_sha: str, ledger_path: Path, *,
             or state["reviewer"]["verdict"] != "APPROVED"
             or state["analyst"]["action"] not in ("LONG", "SHORT")):
         raise InputError("macro AI analysis is not completed and approved")
+    if not _approved_review_in_journal(
+            store, event_sha, state, body["pair"]):
+        raise InputError("approved AI review not linked in journal")
     # No automatic conversion of a trade opinion into a live permission.
     symbol = PAIR_SYMBOLS[body["pair"]]
     side = "BUY" if state["analyst"]["action"] == "LONG" else "SELL"
