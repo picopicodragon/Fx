@@ -41,6 +41,24 @@ if (-not $OutputDirectory) {
 if (-not (Test-Path -LiteralPath $OutputDirectory)) {
   New-Item -ItemType Directory -Path $OutputDirectory -ErrorAction Stop | Out-Null
 }
+# Never create a NEW paid AI ledger if an earlier paid cycle has an
+# unknown/pending dispatch. A new timestamp must not evade reconciliation.
+if ($AllowPaidAi) {
+  $olderLedgers = @(Get-ChildItem -LiteralPath $OutputDirectory -File -Filter 'ai_*.json')
+  foreach ($prior in $olderLedgers) {
+    try {
+      $old = Get-Content -LiteralPath $prior.FullName -Raw -ErrorAction Stop |
+        ConvertFrom-Json -ErrorAction Stop
+    } catch {
+      throw 'Prior paid ledger unreadable. Manual review; no API retry. NO_GO'
+    }
+    if (($old.pending_role -in @('analyst','reviewer')) -or
+        ($old.stage -notin @('COMPLETE'))) {
+      throw ('Prior paid AI cycle incomplete or ambiguous: ' +
+        $prior.Name + '. No automatic paid retry. NO_GO')
+    }
+  }
+}
 $stamp = Get-Date -Format 'yyyyMMdd_HHmmss_fff'
 foreach ($pairName in $Pair) {
   $tag = $pairName.Replace('/','')
