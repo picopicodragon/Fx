@@ -155,7 +155,11 @@ class TestFinalDemoIntent(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
             ledger,context=self.configured(root,state())
-            with context:
+            real_inspect=demo.inspect
+            def inspection_at_fixed_test_clock(*args,**kwargs):
+                return real_inspect(*args,now=NOW,**kwargs)
+            with context, patch.object(
+                    demo,"inspect",side_effect=inspection_at_fixed_test_clock):
                 ret=demo.main([
                     "--store",str(root),
                     "--event-sha256",EVENT,
