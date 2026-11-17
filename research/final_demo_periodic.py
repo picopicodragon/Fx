@@ -75,7 +75,7 @@ SAFE_LOCAL_FAILURE_REASONS = {
 def safe_local_failure_report(exc: Exception) -> dict:
     """Minimal fixed failure code; not the potentially sensitive exception."""
     code = "LOCAL_VALIDATION_UNCLASSIFIED"
-    if isinstance(exc, InputError) and type(exc.args[0]) is str:
+    if isinstance(exc, InputError) and exc.args and type(exc.args[0]) is str:
         code = SAFE_LOCAL_FAILURE_REASONS.get(exc.args[0], code)
     return {
         "schema": SCHEMA,
