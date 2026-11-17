@@ -235,11 +235,15 @@ def run(captures: Path, bundles: list[Path], pair: str, out: Path,
     price=_read_h1(captures,now)
     technical=_technicals(price["captures"][PAIRS[pair]]["candles"])
     news_items,feeds=_news_context(bundles,pair,now)
-    complete=bool(news_items) and all(
-        c in {f for f in feeds for c in
-              ("USD" if f.startswith(("fed","bls")) else
-               "EUR" if f.startswith("ecb") else "JPY",)}
-        for c in pair.split("/"))
+    represented=set()
+    for feed in feeds:
+        if feed.startswith(("fed","bls")):
+            represented.add("USD")
+        elif feed.startswith("ecb"):
+            represented.add("EUR")
+        elif feed.startswith("boj"):
+            represented.add("JPY")
+    complete=bool(news_items) and set(pair.split("/")).issubset(represented)
     packet=_packet(pair,technical,news_items,now)
     providers._packet_text(packet)
     return {
