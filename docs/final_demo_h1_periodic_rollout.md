@@ -55,3 +55,31 @@ AI推論を実行したい場合は別途 -AllowPaidAi、二つの現実に利�
 
 ## 残りの正式テスト
 新しいMQL4の実コンパイル/端末実測、口座・PC時計の独立照合、楽天MT4のlot/tick/SL契約、デモ実約定・成績検証、NY17日次更新、通信断・再起動、異常停止・決済、通知、連続無人実行。今回のPython CIはそれらを認定しない。mainマージは利用者本人の承認のみ。
+
+
+## 2026-11-17 実API初回失敗：台帳を先に診断する
+
+利用者実機では3ペアの実H1/保存済みニュースの非課金前処理に成功。続くgpt-6.1-sol/gpt-6-astraの明示課金実行はUSD/JPYで PERIDOIC_AI_FAIL_CLOSED_CHECK_LEDGER_NO_GO（綴りは実装のPERIODIC）となり、後続ペアは未実施。注文0件。現行コマンドは詳細な安全分類をログに出さないため、台帳とAPI呼び出しの有無をまだ確定できない。
+
+同じスクリプトを「リトライ」しない。既存AI台帳は下記のローカル読み取りだけで調べる。
+
+    $dir = Join-Path $env:USERPROFILE 'Documents\FXForwardEvidence\final_demo_periodic'
+    $items = @(Get-ChildItem -LiteralPath $dir -File -Filter 'ai_USDJPY_*.json' |
+      Sort-Object LastWriteTime -Descending | Select-Object -First 3)
+    if ($items.Count -eq 0) { 'NO_USDJPY_AI_LEDGER' }
+    foreach ($f in $items) {
+      $s = Get-Content -LiteralPath $f.FullName -Raw | ConvertFrom-Json
+      [pscustomobject]@{
+        File=$f.Name
+        Stage=$s.stage
+        PendingRole=$s.pending_role
+        AnalystRecorded=($null -ne $s.analyst)
+        ReviewerRecorded=($null -ne $s.reviewer)
+      }
+    }
+
+この4属性以外の台帳の元データ・本文・APIキーはチャットへ共有しないこと。台帳が存在せず捕捉から10分超の場合、最新のH1読み取り専用スクリプトから再取得して前処理を行う。台帳にpending_roleが残る場合は課金発生の可能性があるため、API usageと原因を人間が照合するまで次の有料呼出しは禁止。既存台帳は消さず、手動でpendingを解除しない。
+
+DEMO-SPRINT-36以降は失敗時にAPIの秘匿済み分類（モデル不存在・アクセス不可・400・401・429・レスポンス不完全等）と現行台帳stage/pendingの有無を表示するよう変更。DEMO-SPRINT-38は以前のAI台帳に保留があれば、新タイムスタンプ名を用いた課金リトライを禁止する。過去の失敗の細分類は後から勝手に再構成できない。
+
+MetaEditorの既存コンパイル・MT4 AutoTrading OFF・EnableDemoOrders=falseは変更しない。実口座注文禁止を維持。
