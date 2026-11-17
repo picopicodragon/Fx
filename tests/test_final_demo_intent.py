@@ -28,6 +28,7 @@ def event(age_minutes=3, source_id="macro_joined"):
         "observed_at_utc": observation.isoformat().replace("+00:00", "Z"),
         "payload": {
             "pair": "EUR/USD",
+            "title": "Official macro observation",
             "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary2026.htm",
             "published_at_utc": (
                 observation - timedelta(minutes=1)
