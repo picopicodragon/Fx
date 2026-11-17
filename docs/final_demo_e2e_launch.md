@@ -42,3 +42,12 @@ OpenAI APIの課金を伴う処理は、実在の最新マクロイベントが�
 
 ## リリースの現状
 実口座注文は禁止。現在の口座観測ジャーナルは実イベント0件であることがユーザーのログから確認されている。今後新しいニュースを収集しても、独立AIレビュー、テクニカル、リスクのすべてを通るまでデモ注文指示は生成されない。main最終マージ、EAの実機導入、デモでの発注許可は別途本人が決定する。
+
+
+## 2026-11-17 実機MetaEditor警告への即応 (DEMO-SPRINT-19〜20)
+
+利用者の楽天MT4 MetaEditorから、FxFinalTestDemoExecutor.mq4の313行目に「check operator precedence for possible error; use parentheses to clarify precedence」と表示され、コンパイルは0 errors / 1 warningsだった。
+
+対象は既存ポジションのトレーリング管理で「自EA以外のmagic番号である」または「注文がBUYでもSELLでもない」を拒否する条件。既存の論理意味は変えず、AND条件とOR条件の括弧を明示した。今後の回帰テストはソースで明示的な括弧を確認する。
+
+Windowsでは必ず最新版PRブランチをfetchしてから、古いEAソースのバックアップを保存し、MT4の一台だけの該当デモ端末に手動配備してMetaEditor F7を再実行する。**0 errors、0 warnings**を現地で確認するまでは、取引許可をONにしない。たとえ0 warningsになっても、リスク/日次境界/実約定検証は別途残るため、EnableDemoOrders=falseを維持する。
