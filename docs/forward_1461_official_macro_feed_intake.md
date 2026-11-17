@@ -181,3 +181,30 @@ python -m research.forward_ecb_link_diagnostic --xml-file $xml
 ~~~
 
 結果が `EMPTY_URL_PATH` の場合、記事のリンクが同じホームページを指すのか等を独立確認する。`DOUBLE_SLASH_URL_PATH` の場合でも**単純なスラッシュ縮約や検証条件の解除は行わない**。原本内のリンク形状とECB公式サイトの説明を確認し、個別記事識別と出典評価ができる範囲で限定的に設計する。新しい判断を経るまで、全て `NO_GO`・非発注、マクロ/AI研究ジャーナル0を維持。
+
+## FWD-1493〜1497：ECBプレスRSSの二重スラッシュURLを原文保持で限定受理
+
+2026年11月17日の実原本（5859バイト、15記事、固有URL15件）は、記事リンクが全てHTTPS・正確なホスト www.ecb.europa.eu であり、パス先頭の二重スラッシュだけが拒否原因だった。別ホストの解放やSSL検証無効化は不要。
+
+今回の実装では、ECBの ecb_press 記事リンクのみ、HTTPS・正確な同一ホスト・認証情報なし・非標準ポートなし・フラグメントなしという既存制限を維持した上で、限定された二重スラッシュのURLパスをRSSメタデータとして保存できる。パス先頭はスラッシュちょうど2個で、最初のセグメントは press、home、pub、stats、events のいずれか。三重スラッシュ、内部二重スラッシュ、空・ドット・親ディレクトリのセグメント、バックスラッシュ、パーセント符号化は禁止。**元のURLを勝手に単一スラッシュに正規化しない。** 記事リンクへのアクセスは実行せず、BLS/FRB/BOJの従来検証も変更しない。
+
+注意: 保存済みの実原本15件が全てこの狭い条件に合致するかは未検証。1件でも形式が異なれば保存全体をFORMAT_VALIDATIONのHOLDにする。原本のリンクの安全性を独立認証したという主張はしない。
+
+Windowsでは更新版取得後、既に保存した元XMLの**完全オフライン**取り込みだけを実行する。
+
+~~~powershell
+cd C:\Users\Suzuki\Documents\ChatGPT\Fx-MACRO-FWD-20261113
+if (@(git status --porcelain).Count -gt 0) { throw "作業ツリーに未保存変更あり" }
+git fetch origin
+if ($LASTEXITCODE -ne 0) { throw "fetch失敗" }
+git switch --detach origin/feat/fwd-1441-macro-refresh-research-launch
+if ($LASTEXITCODE -ne 0) { throw "開発版切替失敗" }
+$root = "$env:USERPROFILE\Documents\FXForwardEvidence"
+$store = Join-Path $root "macro_forward_journal"
+if (-not (Test-Path -LiteralPath $xml -PathType Leaf)) { throw "ECB XML原本が見つかりません" }
+$out = Join-Path $root ("ecb_local_verified_" + (Get-Date -Format "yyyyMMdd_HHmmss_fff"))
+python -m research.forward_macro_feed_once --store $store --out-dir $out --feed ecb_press --feed-file "ecb_press=$xml"
+python -m research.forward_observation --store $store --audit
+~~~
+
+成功時に期待されるのは OFFICIAL_FEEDS_ARCHIVED_HOLD_NO_GO、feed_bundles_verified_format=1、fetched_news_items=15、new_recent_us_journal_records=0、network_calls_attempted=0、注文0。失敗時は原本を改変せずpython -m research.forward_ecb_link_diagnostic --xml-file $xml で拒否理由を確認する。この対応はRSSの事後ニュース原本の保存に限り、実経済指標の発表前予想、発表値、AIレビューや取引権限を捏造しない。
