@@ -81,6 +81,44 @@ python -m research.forward_macro_feed_once --store $store --out-dir $out --allow
 python -m research.forward_observation --store $store --audit
 ~~~
 
+## FWD-1485：11月17日実機の到達点とECB TLSの安全な切り分け
+
+11月17日13:51 JSTの明示的取得で、日銀 `boj_whatsnew` は **45記事**を形式検証してXML原本・マニフェスト保存に成功。過去の米国BLS/FRB 3系列39記事と合わせ、**4/5の公式系列で原本保存を実証**。同じ実行のECB `ecb_press` は `DOWNLOAD/TLS_CERTIFICATE_VERIFICATION_FAILURE` で停止。これは「Python側が証明書チェーンを検証できない」ことを示すが、ECBの証明書そのものの障害か、Windowsの証明書ストア・中間プロキシ・ローカルTLS設定かを識別しない。ローカルジャーナルは `record_count=0`、発注0、研究NO_GOのまま。
+
+**対応方針:** 通信のためにTLS証明書検証を無効化する処理、`verify=False`、`ssl._create_unverified_context`、環境全体の検証無効化は一切使わない。既存のPython `urllib` 経路は引き続き検証必須。以下の診断も端末上の証明書検証を有効のまま行い、公式URLのHTTPSのまま、最大1回のみ明示してアクセスする。端末内で保存する原文は公開の公式ニュースに限定し、秘密情報を付加しない。
+
+Windows PowerShell 5.1では、**OS既定の証明書検証**を用いた別経路を一度だけ明示試験できる。この方法で成功した原本は、既存の **完全オフライン** `--feed-file` 入力に渡し、同じ厳格なRSS検証・SHA保存処理を適用する（なお発表前コンセンサスは増えない）。Python側のTLS検証を迂回してPythonのネットワーク接続を行う機能ではない。
+
+~~~powershell
+cd C:\Users\Suzuki\Documents\ChatGPT\Fx-MACRO-FWD-20261113
+$root = "$env:USERPROFILE\Documents\FXForwardEvidence"
+$store = Join-Path $root "macro_forward_journal"
+$stamp = Get-Date -Format "yyyyMMdd_HHmmss_fff"
+$xml = Join-Path $root "ecb_verified_os_tls_$stamp.xml"
+$out = Join-Path $root "ecb_local_copy_$stamp"
+
+# 明示的な一度だけのHTTPS取得。OS証明書検証ON、HTTPリダイレクト禁止。
+try {
+    Invoke-WebRequest -Uri "https://www.ecb.europa.eu/rss/press.html" `
+        -OutFile $xml -UseBasicParsing -MaximumRedirection 0 `
+        -TimeoutSec 15 -ErrorAction Stop
+    Write-Host "ECB_OS_TLS_FETCH_SUCCESS"
+} catch {
+    Write-Host "ECB_OS_TLS_FETCH_FAILED_NO_GO"
+    # 例外や接続先の詳細を共有せず、安全に停止。
+    return
+}
+
+# 原XMLを別フォルダーにwrite-once保存して、既存のオフライン検証を再利用。
+python -m research.forward_macro_feed_once `
+    --store $store --out-dir $out `
+    --feed ecb_press --feed-file "ecb_press=$xml"
+
+python -m research.forward_observation --store $store --audit
+~~~
+
+注意: 上の `return` はスクリプトファイルやPowerShell関数内の実行を想定する。対話プロンプトに行ごと貼る場合、失敗時に後続を手動実行してはいけない。安全のため、PowerShellの `Invoke-WebRequest` 成功ログと元XMLの存在を確認してからオフライン取り込みに進む。オフライン検証に失敗しても `--allow-network` を追加したりリダイレクトを許したりしない。OS既定検証で失敗した場合は公式サイト閲覧・プロキシ・証明書チェーンの管理者確認を優先する。
+
 ## オフライン再現検査
 
 ネットワークを使わないテスト入力を、実在するXMLコピーを明示して実行可能。新しい保存先・オリジナル実データのみ使用し、サンプルの合成RSSを実研究ジャーナルに入れない。
