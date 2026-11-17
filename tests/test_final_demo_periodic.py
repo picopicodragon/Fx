@@ -80,6 +80,20 @@ class PeriodicTests(unittest.TestCase):
                 "PERIODIC_PRICE_MACRO_PACKET_PREPARED_RESEARCH_HOLD_NO_GO")
             self.assertFalse((root/"next.json").exists())
 
+    def test_mt4_exporter_readonly_three_pair_closed_bar_contract(self):
+        script=(Path(__file__).resolve().parents[1]/
+                "mt4"/"read_only"/"FxFinalTestH1Export.mq4")
+        raw=script.read_text("utf-8")
+        for token in ("#property strict","IsDemo()","PERIOD_H1",
+                      "FXD_BARS 120","USDJPY","EURJPY","EURUSD",
+                      "for(int n=FXD_BARS;n>=1;n--)",
+                      "FILE_CSV","capture_epoch_utc_pc",
+                      "if(FileIsExist(names[i]))"):
+            self.assertIn(token,raw)
+        for forbidden in ("OrderSend(","OrderModify(","OrderClose(",
+                          "WebRequest(","#import ","FILE_COMMON|"):
+            self.assertNotIn(forbidden,raw)
+
     def test_empty_macro_region_holds_without_fake_event(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);folder=prepare_captures(root)
