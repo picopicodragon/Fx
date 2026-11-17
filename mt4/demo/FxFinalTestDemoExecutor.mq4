@@ -309,8 +309,8 @@ void FxdTrailOwnPositions()
    for(int n = OrdersTotal()-1; n >= 0; n--)
    {
       if(!OrderSelect(n, SELECT_BY_POS, MODE_TRADES)) continue;
-      if(OrderMagicNumber() != FXD_MAGIC ||
-         OrderType() != OP_BUY && OrderType() != OP_SELL) continue;
+      if((OrderMagicNumber() != FXD_MAGIC) ||
+         ((OrderType() != OP_BUY) && (OrderType() != OP_SELL))) continue;
       string sym = OrderSymbol();
       double point = MarketInfo(sym, MODE_POINT);
       int digits = (int)MarketInfo(sym, MODE_DIGITS);
