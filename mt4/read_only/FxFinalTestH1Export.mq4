@@ -85,6 +85,5 @@ void OnStart()
       FileFlush(handle);
       FileClose(handle);
    }
-   Print("FXDEMO_H1: 3 pairs x 120 CLOSED H1 bars saved; "
-         "manual copy required; DEMO only; orders=0. PC clock unverified.");
+   Print("FXDEMO_H1: 3 pairs x 120 CLOSED H1 bars saved; manual copy required; DEMO only; orders=0; PC clock unverified.");
 }
