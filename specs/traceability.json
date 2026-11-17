@@ -914,6 +914,29 @@
         "tests/test_p0_01_mt4_readonly_observation_plan.py"
       ],
       "status": "active"
+    },
+    {
+      "group_id": "FX-MT4-DEMO-FINAL-TEST",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q26",
+        "Q27",
+        "Q41",
+        "Q42",
+        "Q43",
+        "Q57",
+        "Q109"
+      ],
+      "prefixes": [
+        "mt4/demo/"
+      ],
+      "tests": [
+        "tests/test_final_demo_intent.py",
+        "tests/test_final_demo_cycle.py"
+      ],
+      "status": "active"
     }
   ]
 }
