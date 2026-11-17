@@ -178,6 +178,8 @@ class TestFinalDemoIntent(unittest.TestCase):
             "FxdHasAnyBrokerOrder()", "FXDEMO_HALTED_",
             "OrderSend(", "OrderClose(", "OrderModify(",
             "FxDemoConsumed_", "FxdActiveRiskAllowed()",
+            "FxdOwnPositionsPresent()", "FxdRiskBaselineValid()",
+            "RISK_BASELINE_EXPIRED_WITH_OPEN_POSITION",
         ):
             self.assertIn(required,code,required)
         self.assertNotIn("FILE_COMMON",code.replace(
