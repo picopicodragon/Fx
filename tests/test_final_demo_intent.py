@@ -28,6 +28,7 @@ def event(age_minutes=3, source_id="macro_joined"):
         "observed_at_utc": observation.isoformat().replace("+00:00", "Z"),
         "payload": {
             "pair": "EUR/USD",
+            "source_url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary2026.htm",
             "published_at_utc": (
                 observation - timedelta(minutes=1)
             ).isoformat().replace("+00:00", "Z"),
@@ -94,6 +95,19 @@ class TestFinalDemoIntent(unittest.TestCase):
                 ])
                 self.assertEqual(len(list(root.iterdir())),2)
 
+    def test_fresh_official_fed_policy_can_be_reviewed_for_demo_only(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            ledger, context=self.configured(
+                root,state(side="SHORT"),
+                record=event(source_id="fed_policy"))
+            with context:
+                candidate=demo.inspect(root,EVENT,ledger,
+                    account_number=ACCOUNT,now=NOW)
+            self.assertEqual(candidate["side"],"SELL")
+            self.assertFalse(candidate["source_authenticity_independently_attested"])
+            self.assertEqual(candidate["orders_sent_this_run"],0)
+
     def test_stale_unreviewed_missing_consensus_pending_and_unpublished_rejected(self):
         candidates=[
             (state(side="HOLD"),event()),
@@ -101,7 +115,7 @@ class TestFinalDemoIntent(unittest.TestCase):
             (state(pending="analyst"),event()),
             (state(published=False),event()),
             (state(),event(age_minutes=300)),
-            (state(),event(source_id="fed_policy")),
+            (state(),event(source_id="bls_cpi")),
         ]
         for s,e in candidates:
             with self.subTest(s=s,e=e):
