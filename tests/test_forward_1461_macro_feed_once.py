@@ -137,6 +137,53 @@ class FeedCaptureTests(unittest.TestCase):
             self.assertTrue((root/"archive"/"capture_report.json").is_file())
             self.assertFalse((root/"archive"/"bls_cpi").exists())
 
+    def test_http_failure_is_diagnosed_without_leaking_server_text(self):
+        from urllib.error import HTTPError
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);store=self.setup(root)
+            def forbidden(feed):
+                raise HTTPError(news.FEEDS[feed],403,
+                                "server message must not leak",{},None)
+            result=source.run(store,root/"archive",["ecb_press"],
+                              allow_network=True,downloader=forbidden,
+                              clock=lambda:NOW)
+            self.assertEqual(result["status"],
+                             "OFFICIAL_FEEDS_ALL_FAILED_HOLD_NO_GO")
+            record=result["feeds"][0]
+            self.assertEqual(record["failure_stage"],"DOWNLOAD")
+            self.assertEqual(record["failure_reason_code"],"HTTP_STATUS_403")
+            self.assertNotIn("server message",json.dumps(result))
+            self.assertFalse((root/"archive"/"ecb_press").exists())
+            self.assertEqual(obs.audit(store)["record_count"],0)
+            self.assertFalse(result["real_orders_permitted"])
+
+    def test_invalid_live_xml_has_separate_validation_reason(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);store=self.setup(root)
+            result=source.run(store,root/"archive",["boj_whatsnew"],
+                              allow_network=True,downloader=lambda _:b"<rss>",
+                              clock=lambda:NOW)
+            record=result["feeds"][0]
+            self.assertEqual(record["failure_stage"],"FORMAT_VALIDATION")
+            self.assertEqual(record["failure_reason_code"],"XML_PARSE_FAILURE")
+            self.assertEqual(record["journal_records_added"],0)
+            self.assertEqual(obs.audit(store)["record_count"],0)
+
+    def test_valid_xml_with_off_host_news_link_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);store=self.setup(root)
+            xml=make_xml("boj_whatsnew",NOW-timedelta(minutes=1))
+            xml=xml.replace(b"www.boj.or.jp",b"example.invalid")
+            result=source.run(store,root/"archive",["boj_whatsnew"],
+                              allow_network=True,downloader=lambda _:xml,
+                              clock=lambda:NOW)
+            record=result["feeds"][0]
+            self.assertEqual(record["failure_stage"],"FORMAT_VALIDATION")
+            self.assertEqual(record["failure_reason_code"],
+                             "INPUT_OR_FORMAT_REJECTED")
+            self.assertFalse((root/"archive"/"boj_whatsnew").exists())
+            self.assertEqual(obs.audit(store)["record_count"],0)
+
     def test_network_mode_rejects_ambiguous_and_disallowed_inputs(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);store=self.setup(root)
