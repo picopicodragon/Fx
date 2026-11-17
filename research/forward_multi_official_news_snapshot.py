@@ -91,6 +91,8 @@ def _link(url: str, feed: str):
                 or parts.fragment or not parts.path.startswith("/")
                 or parts.path.startswith("//")):
             raise InputError("item link not same official source host")
+    except InputError:
+        raise
     except ValueError as exc:
         raise InputError("malformed source link") from exc
     return url
