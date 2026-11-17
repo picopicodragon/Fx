@@ -226,12 +226,14 @@ def _packet(pair: str, data: dict, news_items: list[dict],
 
 
 def run(captures: Path, bundles: list[Path], pair: str, out: Path,
-        *, now: datetime | None=None) -> dict:
+        *, now: datetime | None=None,
+        output_must_be_new: bool=True) -> dict:
     now=_clock(now or datetime.now(timezone.utc))
     if pair not in PAIRS or not bundles or len(bundles)>5:
         raise InputError("pair and verified news bundles required")
-    if (out.exists() or out.is_symlink() or not out.parent.is_dir()):
-        raise InputError("output exists or parent missing")
+    if (out.is_symlink() or not out.parent.is_dir()
+            or (output_must_be_new and out.exists())):
+        raise InputError("unsafe output or parent missing")
     price=_read_h1(captures,now)
     technical=_technicals(price["captures"][PAIRS[pair]]["candles"])
     news_items,feeds=_news_context(bundles,pair,now)
