@@ -66,13 +66,8 @@ void FxdHalt(string why)
    // new positions while the persistent halt is latched.
 }
 
-bool FxdReadiness()
+bool FxdRiskBaselineValid()
 {
-   if(!IsDemo() || !IsConnected() || AccountCurrency() != "JPY"
-       || AccountNumber() <= 0 || AccountNumber() != ExpectedDemoAccount
-       || Symbol() != "USDJPY")
-      return false;
-   if(!EnableDemoOrders || !IsTradeAllowed()) return false;
    if(VerifiedNy17StartEquityJPY <= 0.0 ||
       VerifiedPeakEquityJPY < VerifiedNy17StartEquityJPY ||
       AbsoluteMaxDemoLots <= 0.0 || AbsoluteMaxDemoLots > 0.02)
@@ -82,6 +77,17 @@ bool FxdReadiness()
       nowUtc < VerifiedNy17StartEpochUtc ||
       nowUtc - VerifiedNy17StartEpochUtc > 86400)
       return false;
+   return true;
+}
+
+bool FxdReadiness()
+{
+   if(!IsDemo() || !IsConnected() || AccountCurrency() != "JPY"
+       || AccountNumber() <= 0 || AccountNumber() != ExpectedDemoAccount
+       || Symbol() != "USDJPY")
+      return false;
+   if(!EnableDemoOrders || !IsTradeAllowed() ||
+      !FxdRiskBaselineValid()) return false;
    if(GlobalVariableCheck(FxdHaltKey())) return false;
    return true;
 }
@@ -344,6 +350,16 @@ void FxdTrailOwnPositions()
    }
 }
 
+bool FxdOwnPositionsPresent()
+{
+   for(int n=OrdersTotal()-1;n>=0;n--)
+   {
+      if(!OrderSelect(n,SELECT_BY_POS,MODE_TRADES)) continue;
+      if(OrderMagicNumber()==FXD_MAGIC) return true;
+   }
+   return false;
+}
+
 void OnTimer()
 {
    if(!IsDemo() || AccountNumber() != ExpectedDemoAccount ||
@@ -359,9 +375,24 @@ void OnTimer()
       if(IsConnected() && IsTradeAllowed()) FxdCloseOwnOnCritical();
       return;
    }
+   if(FxdOwnPositionsPresent())
+   {
+      // Preserve protection even when new entries were disabled manually.
+      if(!FxdRiskBaselineValid())
+      {
+         FxdHalt("RISK_BASELINE_EXPIRED_WITH_OPEN_POSITION");
+         return;
+      }
+      if(!IsConnected() || !IsTradeAllowed())
+      {
+         Print("FXDEMO_EXECUTOR: cannot manage own positions; operator intervention required.");
+         return;
+      }
+      FxdTrailOwnPositions();
+      // DD4 only blocks new entries; critical day1.5/DD5 still liquidates.
+      if(!FxdActiveRiskAllowed()) return;
+   }
    if(!FxdReadiness()) return;
-   // DD4 blocks only new entries: keep managing existing DEMO stops.
-   FxdTrailOwnPositions();
    if(!FxdActiveRiskAllowed()) return;
    FxdTryIntent();
 }
