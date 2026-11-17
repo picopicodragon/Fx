@@ -81,7 +81,8 @@ def run(captures:Path,bundles:list[Path],pair:str,ledger:Path,*,
             or any(p.is_symlink() for p in ledger.parents)
             or not ledger.parent.is_dir()):
         raise InputError("invalid explicit AI call bound or ledger")
-    report=period.run(captures,bundles,pair,ledger,now=now)
+    report=period.run(captures,bundles,pair,ledger,now=now,
+                      output_must_be_new=False)
     identity=_identity(report,analyst_model,reviewer_model)
     if not report["macro_coverage_complete_research_only"]:
         return {
