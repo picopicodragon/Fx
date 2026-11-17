@@ -94,6 +94,32 @@ class PeriodicTests(unittest.TestCase):
                           "WebRequest(","#import ","FILE_COMMON|"):
             self.assertNotIn(forbidden,raw)
 
+    def test_local_error_diagnostics_safe_and_specific(self):
+        cases = (
+            ("stale/future PC clock H1 snapshot",
+             "H1_CAPTURE_STALE_OR_CLOCK_SKEW"),
+            ("exactly three copied H1 CSV files required",
+             "H1_EXPECTED_EXACTLY_THREE_CSVS"),
+            ("non-atomic 3-pair capture",
+             "H1_CAPTURE_SET_NOT_ATOMIC"),
+            ("news snapshot source or manifest modified",
+             "NEWS_BUNDLE_INTEGRITY_FAILED"),
+        )
+        for message, code in cases:
+            with self.subTest(message=message):
+                output=periodic.safe_local_failure_report(InputError(message))
+                self.assertEqual(output["failure_reason_code"],code)
+                self.assertFalse(output["real_orders_permitted"])
+                self.assertEqual(output["ai_inference_calls_this_run"],0)
+                self.assertEqual(output["demo_orders_sent_this_run"],0)
+                self.assertNotIn(message,json.dumps(output))
+        secret="TOKEN-DO-NOT-PRINT-ABC"
+        for error in (InputError(secret), InputError(),ValueError(secret)):
+            output=periodic.safe_local_failure_report(error)
+            self.assertEqual(output["failure_reason_code"],
+                             "LOCAL_VALIDATION_UNCLASSIFIED")
+            self.assertNotIn(secret,json.dumps(output))
+
     def test_empty_macro_region_holds_without_fake_event(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);folder=prepare_captures(root)
