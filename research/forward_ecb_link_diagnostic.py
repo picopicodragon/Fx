@@ -41,6 +41,9 @@ def _reason(uri: str) -> tuple[str, str, str]:
             reason = "OFF_HOST_REJECTED"
         elif not parts.path:
             reason = "EMPTY_URL_PATH"
+        elif parts.path.startswith("//") and news._ecb_legacy_double_slash_path(
+                parts.path):
+            reason = "ECB_LEGACY_PATH_PRESERVED_METADATA_ONLY"
         elif parts.path.startswith("//"):
             reason = "DOUBLE_SLASH_URL_PATH"
         elif not parts.path.startswith("/"):
@@ -92,7 +95,8 @@ def inspect_file(original: Path) -> dict:
     for link in items:
         category = _reason(link)
         grouped[category] = grouped.get(category, 0) + 1
-        rejected += int(category[2] != "ALLOWLIST_MATCHED")
+        rejected += int(category[2] not in (
+            "ALLOWLIST_MATCHED", "ECB_LEGACY_PATH_PRESERVED_METADATA_ONLY"))
     return {
         "schema": SCHEMA,
         "status": "ECB_SAVED_XML_LINK_DIAGNOSTIC_NO_GO",
