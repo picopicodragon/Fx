@@ -36,6 +36,58 @@ MAX_SOURCE_BYTES = 38_000
 NEWS_DAYS = 14
 MAX_NEWS_ITEMS = 12
 
+# Fixed local reason codes only. Never surface raw XML, CSV, source paths,
+# untrusted news text, API credentials or exception messages.
+SAFE_LOCAL_FAILURE_REASONS = {
+    "unsafe H1 evidence folder": "H1_DIRECTORY_INVALID",
+    "exactly three copied H1 CSV files required": "H1_EXPECTED_EXACTLY_THREE_CSVS",
+    "duplicate H1 symbol": "H1_DUPLICATE_SYMBOL",
+    "non-atomic 3-pair capture": "H1_CAPTURE_SET_NOT_ATOMIC",
+    "stale/future PC clock H1 snapshot": "H1_CAPTURE_STALE_OR_CLOCK_SKEW",
+    "incomplete H1 120-bar snapshot": "H1_INCOMPLETE_120_BARS",
+    "unsafe H1 CSV bytes": "H1_CSV_BYTES_INVALID",
+    "unexpected H1 CSV columns": "H1_CSV_COLUMNS_INVALID",
+    "invalid H1 CSV": "H1_CSV_PARSE_FAILED",
+    "corrupt H1 row": "H1_CSV_ROW_CORRUPT",
+    "pair/timeframe mismatch": "H1_CSV_SYMBOL_TIMEFRAME_MISMATCH",
+    "invalid H1 numeric cells": "H1_NUMERIC_PARSE_FAILED",
+    "invalid H1 values": "H1_PRICE_OR_CAPTURE_INVALID",
+    "invalid OHLC bounds": "H1_OHLC_INVALID",
+    "H1 timestamps out of order": "H1_TIME_ORDER_INVALID",
+    "nonfinite technical indicator": "H1_INDICATORS_INVALID",
+    "unsafe output or parent missing": "OUTPUT_DESTINATION_INVALID",
+    "pair and verified news bundles required": "NEWS_BUNDLE_INPUT_INVALID",
+    "missing/unsafe completed feed bundle": "NEWS_BUNDLE_MISSING_OR_UNSAFE",
+    "news snapshot source or manifest modified": "NEWS_BUNDLE_INTEGRITY_FAILED",
+    "invalid or incomplete feed bundle manifest": "NEWS_BUNDLE_MANIFEST_INVALID",
+    "invalid RSS evidence bundle": "NEWS_BUNDLE_CONTENT_INVALID",
+    "unrecognized feed in snapshot": "NEWS_BUNDLE_FEED_UNRECOGNIZED",
+    "unsafe raw feed file": "NEWS_BUNDLE_RAW_FILE_INVALID",
+    "news title index mismatch": "NEWS_BUNDLE_TITLE_COUNT_INVALID",
+    "news title hash changed": "NEWS_BUNDLE_TITLE_HASH_MISMATCH",
+    "archived news safety status mutated": "NEWS_BUNDLE_SAFETY_STATUS_INVALID",
+    "unexpected official XML root": "NEWS_BUNDLE_XML_ROOT_INVALID",
+    "invalid packet": "AI_RESEARCH_PACKET_INVALID",
+    "evidence packet too long": "AI_RESEARCH_PACKET_TOO_LARGE",
+}
+
+
+def safe_local_failure_report(exc: Exception) -> dict:
+    """Minimal fixed failure code; not the potentially sensitive exception."""
+    code = "LOCAL_VALIDATION_UNCLASSIFIED"
+    if isinstance(exc, InputError) and type(exc.args[0]) is str:
+        code = SAFE_LOCAL_FAILURE_REASONS.get(exc.args[0], code)
+    return {
+        "schema": SCHEMA,
+        "status": "PERIODIC_AI_RESEARCH_FAIL_CLOSED_NO_GO",
+        "failure_reason_code": code,
+        "ai_inference_calls_this_run": 0,
+        "demo_orders_sent_this_run": 0,
+        "real_orders_permitted": False,
+        "runtime_go_no_go": "NO_GO",
+        "safety_hold_latched": True,
+    }
+
 
 def _clock(value):
     if not isinstance(value, datetime) or value.tzinfo is None:
@@ -291,15 +343,9 @@ def main(argv=None)->int:
             ensure_ascii=False))
         return 0
     except (InputError,ValueError,KeyError,OSError,TypeError,
-            ET.ParseError,OverflowError,UnicodeError):
-        print(json.dumps({
-            "schema":SCHEMA,
-            "status":"PERIODIC_AI_RESEARCH_FAIL_CLOSED_NO_GO",
-            "ai_inference_calls_this_run":0,
-            "demo_orders_sent_this_run":0,
-            "real_orders_permitted":False,
-            "runtime_go_no_go":"NO_GO",
-            "safety_hold_latched":True}))
+            ET.ParseError,OverflowError,UnicodeError) as exc:
+        print(json.dumps(safe_local_failure_report(exc),
+                         ensure_ascii=False))
         return 2
 
 
