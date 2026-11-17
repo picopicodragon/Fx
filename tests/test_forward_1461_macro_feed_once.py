@@ -180,7 +180,7 @@ class FeedCaptureTests(unittest.TestCase):
             record=result["feeds"][0]
             self.assertEqual(record["failure_stage"],"FORMAT_VALIDATION")
             self.assertEqual(record["failure_reason_code"],
-                             "INPUT_OR_FORMAT_REJECTED")
+                             "ITEM_LINK_UNAPPROVED")
             self.assertFalse((root/"archive"/"boj_whatsnew").exists())
             self.assertEqual(obs.audit(store)["record_count"],0)
 
