@@ -83,3 +83,35 @@ AI推論を実行したい場合は別途 -AllowPaidAi、二つの現実に利�
 DEMO-SPRINT-36以降は失敗時にAPIの秘匿済み分類（モデル不存在・アクセス不可・400・401・429・レスポンス不完全等）と現行台帳stage/pendingの有無を表示するよう変更。DEMO-SPRINT-38は以前のAI台帳に保留があれば、新タイムスタンプ名を用いた課金リトライを禁止する。過去の失敗の細分類は後から勝手に再構成できない。
 
 MetaEditorの既存コンパイル・MT4 AutoTrading OFF・EnableDemoOrders=falseは変更しない。実口座注文禁止を維持。
+
+
+## 2026-11-17: 無料検証が2度目にNO_GOになった場合
+
+3ペアの実レート＋公式RSS研究が一度成功したのち、現地再実行で
+PERIODIC_AI_RESEARCH_FAIL_CLOSED_NO_GOが発生。料金・注文は0。
+これは必ずしも10分超過を意味しない。3ファイルの不一致、古い
+$dst、保存バンドルの変化等の可能性があるため、原因を決めつけない。
+
+DEMO-SPRINT-40〜44によりPython無料CLIはfailure_reason_codeを含める。
+H1_CAPTURE_STALE_OR_CLOCK_SKEWなら本当に10分超過または時計差異。
+H1_EXPECTED_EXACTLY_THREE_CSVSならコピー先が空/不足。
+H1_CAPTURE_SET_NOT_ATOMICなら3ペア異なる取得回を混合。
+NEWS_BUNDLE_INTEGRITY_FAILEDなら原本が変わっている可能性。
+いずれもAPIの追加呼出しは不要。
+
+H1取得後の複数手順を削減した。最新のMT4読み取り専用
+FxFinalTestH1Exportスクリプトを一度実行したのち、PowerShellで
+次の単一コマンドを実行できる。$mt4FilesはMT4データフォルダー内
+MQL4\Filesの実パス、$bundlesは直前の公式ニュース原本の配列。
+
+    .\scripts\final_demo_periodic_fresh_once.ps1 -Mt4FilesDirectory $mt4Files -NewsBundle $bundles
+
+このコマンドはMT4の最新3ペアセットを探して一致をチェックし、
+PC推定現在時刻から480秒以内のみ自動コピーし、API課金0・注文0で
+3ペアのテクニカルとニュース研究を一括実行する。8分超なら
+新しいH1スクリプトを1回実行してから再度実行する。
+不正・欠損・期限切れなら理由を示して停止する。
+
+この無料診断が全3ペアで成功するまで、有料モデル分析コマンドを
+もう一度実行しない。古いpending台帳があれば別途照合する。
+実口座禁止、AutoTrading OFF、EnableDemoOrders=falseを維持。
