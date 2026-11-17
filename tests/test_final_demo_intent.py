@@ -167,7 +167,7 @@ class TestFinalDemoIntent(unittest.TestCase):
 
     def test_mql4_executor_has_demo_and_order_limits_default_off(self):
         script=(Path(__file__).resolve().parents[1]/
-                "research"/"mt4_demo"/"FxFinalTestDemoExecutor.mq4")
+                "mt4"/"demo"/"FxFinalTestDemoExecutor.mq4")
         code=script.read_text(encoding="utf-8")
         for required in (
             "EnableDemoOrders = false", "IsDemo()", "ExpectedDemoAccount",
