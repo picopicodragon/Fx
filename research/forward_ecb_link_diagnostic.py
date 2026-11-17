@@ -39,8 +39,12 @@ def _reason(uri: str) -> tuple[str, str, str]:
             reason = "NON_HTTPS_REJECTED"
         elif host != _HOST:
             reason = "OFF_HOST_REJECTED"
-        elif not parts.path.startswith("/") or parts.path.startswith("//"):
-            reason = "UNSAFE_PATH_REJECTED"
+        elif not parts.path:
+            reason = "EMPTY_URL_PATH"
+        elif parts.path.startswith("//"):
+            reason = "DOUBLE_SLASH_URL_PATH"
+        elif not parts.path.startswith("/"):
+            reason = "URL_PATH_NOT_ABSOLUTE"
         else:
             reason = "ALLOWLIST_MATCHED"
         if not re.fullmatch(r"[a-z0-9.-]{1,253}", host):
@@ -95,6 +99,7 @@ def inspect_file(original: Path) -> dict:
         "original_bytes": len(raw),
         "original_sha256_local_only": hashlib.sha256(raw).hexdigest(),
         "item_count": len(items),
+        "distinct_link_count": len(set(items)),
         "items_not_matching_existing_allowlist": rejected,
         "link_groups": [
             {"scheme": scheme, "hostname_unverified": host,
