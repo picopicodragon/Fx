@@ -184,6 +184,61 @@ class FeedCaptureTests(unittest.TestCase):
             self.assertFalse((root/"archive"/"boj_whatsnew").exists())
             self.assertEqual(obs.audit(store)["record_count"],0)
 
+    def test_boj_http_item_link_identified_without_https_downgrade(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);store=self.setup(root)
+            payload=make_xml("boj_whatsnew",NOW-timedelta(minutes=10))
+            payload=payload.replace(b"https://www.boj.or.jp/",
+                                    b"http://www.boj.or.jp/")
+            result=source.run(store,root/"diag",["boj_whatsnew"],
+                              allow_network=True,downloader=lambda _:payload,
+                              clock=lambda:NOW)
+            report=result["feeds"][0]
+            self.assertEqual(report["failure_stage"],"FORMAT_VALIDATION")
+            self.assertEqual(report["failure_reason_code"],
+                             "OFFICIAL_ITEM_HTTP_ONLY")
+            self.assertFalse(report["archive_complete"])
+            self.assertEqual(obs.audit(store)["record_count"],0)
+            self.assertEqual(result["orders_sent_this_run"],0)
+
+    def test_boj_rdf_root_reports_unsupported_rss1_without_promotion(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);store=self.setup(root)
+            rdf=(b'<rdf:RDF xmlns:rdf='
+                 b'"http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
+                 b'</rdf:RDF>')
+            result=source.run(store,root/"diag",["boj_whatsnew"],
+                              allow_network=True,downloader=lambda _:rdf,
+                              clock=lambda:NOW)
+            report=result["feeds"][0]
+            self.assertEqual(report["failure_reason_code"],
+                             "RSS1_RDF_ROOT_UNSUPPORTED")
+            self.assertEqual(report["failure_stage"],"FORMAT_VALIDATION")
+            self.assertEqual(obs.audit(store)["record_count"],0)
+
+    def test_dns_and_tls_errors_are_categorized_without_exception_text(self):
+        import socket
+        import ssl
+        from urllib.error import URLError
+        for cause, code in ((socket.gaierror("private internal address"),
+                             "DNS_RESOLUTION_FAILURE"),
+                            (ssl.SSLCertVerificationError("private cert data"),
+                             "TLS_CERTIFICATE_VERIFICATION_FAILURE"),
+                            (TimeoutError("private timeout data"),
+                             "NETWORK_TIMEOUT")):
+            with self.subTest(code=code), tempfile.TemporaryDirectory() as td:
+                root=Path(td);store=self.setup(root)
+                def fail(_):
+                    raise URLError(cause)
+                result=source.run(store,root/"diag",["ecb_press"],
+                                  allow_network=True,downloader=fail,
+                                  clock=lambda:NOW)
+                report=result["feeds"][0]
+                self.assertEqual(report["failure_stage"],"DOWNLOAD")
+                self.assertEqual(report["failure_reason_code"],code)
+                self.assertNotIn("private",json.dumps(result))
+                self.assertFalse(result["real_orders_permitted"])
+
     def test_network_mode_rejects_ambiguous_and_disallowed_inputs(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);store=self.setup(root)
