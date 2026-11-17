@@ -69,6 +69,7 @@ class TestFinalDemoIntent(unittest.TestCase):
             demo.ai, "_event", return_value=record or event()))
         context.enter_context(patch.object(demo.ai, "_base", return_value={}))
         context.enter_context(patch.object(demo.ai, "_valid", return_value=None))
+        context.enter_context(patch.object(demo, "_approved_review_in_journal", return_value=True))
         return path, context
 
     def test_dry_run_and_atomic_files_bind_real_demo_account(self):
@@ -111,6 +112,16 @@ class TestFinalDemoIntent(unittest.TestCase):
                         with self.assertRaises(InputError):
                             demo.inspect(root,EVENT,ledger,account_number=ACCOUNT,now=NOW)
                     self.assertFalse((root/demo.FILE_NAME).exists())
+
+    def test_unpublished_hypothesis_is_not_an_executable_signal(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            ledger,context=self.configured(root,state())
+            with context:
+                with patch.object(demo,"_approved_review_in_journal",return_value=False):
+                    with self.assertRaises(InputError):
+                        demo.inspect(root,EVENT,ledger,account_number=ACCOUNT,now=NOW)
+            self.assertFalse((root/demo.FILE_NAME).exists())
 
     def test_account_zero_or_unlisted_sha_rejected(self):
         with tempfile.TemporaryDirectory() as td:
