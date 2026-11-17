@@ -16,6 +16,7 @@ import re
 import secrets
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from research import forward_ai_shadow as ai
 from research import forward_macro_two_model_gate as macro_gate
@@ -86,14 +87,31 @@ def inspect(store: Path, event_sha: str, ledger_path: Path, *,
         raise InputError("observation safety controls changed")
     event = ai._event(store, event_sha)
     body = event["payload"]
-    if (event["source_id"] != "macro_joined"
-            or not body["consensus"].strip()
-            or not body["released_value"].strip()
-            or macro_gate.EVIDENCE_HASH_PATTERN.search(body["content"]) is None):
-        raise InputError("genuine point-in-time research packet not present")
+    source = event["source_id"]
+    if source == "macro_joined":
+        if (not body["consensus"].strip()
+                or not body["released_value"].strip()
+                or macro_gate.EVIDENCE_HASH_PATTERN.search(
+                    body["content"]) is None):
+            raise InputError("joined macro source/consensus/actual absent")
+    elif source == "fed_policy":
+        # A policy news article is NOT a quantitative economic surprise.
+        # This path is DEMO-only and requires an independent model review.
+        link = urlsplit(body["source_url"])
+        if (link.scheme != "https"
+                or link.hostname != "www.federalreserve.gov"
+                or link.username is not None or link.password is not None
+                or link.port not in (None, 443)
+                or not link.path.startswith("/")
+                or link.path.startswith("//")
+                or link.fragment):
+            raise InputError("invalid official policy source link")
+    else:
+        raise InputError("news without reviewed macro source unsupported")
     observed = timestamp(event["observed_at_utc"])
     published = timestamp(body["published_at_utc"])
-    if (not published <= observed <= now or now-observed > MAX_EVENT_AGE):
+    if (not published <= observed <= now or now-observed > MAX_EVENT_AGE
+            or (source == "fed_policy" and now - published > MAX_EVENT_AGE)):
         raise InputError("unusable or stale event chronology")
     if event["payload"]["pair"] not in PAIR_SYMBOLS:
         raise InputError("unsupported trade pair")
