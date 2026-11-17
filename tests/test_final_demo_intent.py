@@ -184,6 +184,14 @@ class TestFinalDemoIntent(unittest.TestCase):
             "// Only reads MQL4/Files/FxDemoIntent_v1.csv; no DLL, WebRequest or FILE_COMMON.",
             ""))
         self.assertNotIn("WebRequest(",code)
+        # MetaEditor warning 313: explicit grouping must preserve the
+        # OR of magic mismatch and (neither BUY nor SELL).
+        self.assertIn(
+            "if((OrderMagicNumber() != FXD_MAGIC) ||\n"
+            "         ((OrderType() != OP_BUY) && (OrderType() != OP_SELL))) continue;",
+            code)
+        self.assertNotIn(
+            "OrderType() != OP_BUY && OrderType() != OP_SELL", code)
 
 
 if __name__ == "__main__":
