@@ -98,26 +98,31 @@ $xml = Join-Path $root "ecb_verified_os_tls_$stamp.xml"
 $out = Join-Path $root "ecb_local_copy_$stamp"
 
 # 明示的な一度だけのHTTPS取得。OS証明書検証ON、HTTPリダイレクト禁止。
+$fetchOK = $false
 try {
     Invoke-WebRequest -Uri "https://www.ecb.europa.eu/rss/press.html" `
         -OutFile $xml -UseBasicParsing -MaximumRedirection 0 `
         -TimeoutSec 15 -ErrorAction Stop
+    $fetchOK = $true
     Write-Host "ECB_OS_TLS_FETCH_SUCCESS"
 } catch {
     Write-Host "ECB_OS_TLS_FETCH_FAILED_NO_GO"
-    # 例外や接続先の詳細を共有せず、安全に停止。
-    return
+    # 例外や接続先の詳細を共有しない。
 }
 
-# 原XMLを別フォルダーにwrite-once保存して、既存のオフライン検証を再利用。
-python -m research.forward_macro_feed_once `
-    --store $store --out-dir $out `
-    --feed ecb_press --feed-file "ecb_press=$xml"
+if ($fetchOK -and (Test-Path -LiteralPath $xml -PathType Leaf)) {
+    # 原XMLはwrite-onceの別フォルダーへ。既存のオフライン検証を再利用。
+    python -m research.forward_macro_feed_once `
+        --store $store --out-dir $out `
+        --feed ecb_press --feed-file "ecb_press=$xml"
+} else {
+    Write-Host "ECB_OFFLINE_IMPORT_SKIPPED_NO_GO"
+}
 
 python -m research.forward_observation --store $store --audit
 ~~~
 
-注意: 上の `return` はスクリプトファイルやPowerShell関数内の実行を想定する。対話プロンプトに行ごと貼る場合、失敗時に後続を手動実行してはいけない。安全のため、PowerShellの `Invoke-WebRequest` 成功ログと元XMLの存在を確認してからオフライン取り込みに進む。オフライン検証に失敗しても `--allow-network` を追加したりリダイレクトを許したりしない。OS既定検証で失敗した場合は公式サイト閲覧・プロキシ・証明書チェーンの管理者確認を優先する。
+注意: Windows側のOS証明書検証が失敗した場合はオフライン取り込みをスキップする。成功ログと元XMLの存在を確認した場合に限り、Pythonに保存原本を渡す。オフライン検証に失敗しても `--allow-network` を追加したりリダイレクトを許したりしない。OS既定検証で失敗した場合は公式サイト閲覧・プロキシ・証明書チェーンの管理者確認を優先する。
 
 ## オフライン再現検査
 
