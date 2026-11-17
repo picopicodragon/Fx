@@ -94,6 +94,22 @@ class PeriodicTests(unittest.TestCase):
                           "WebRequest(","#import ","FILE_COMMON|"):
             self.assertNotIn(forbidden,raw)
 
+    def test_fresh_one_command_copy_and_free_preflight_contract(self):
+        script=(Path(__file__).resolve().parents[1]/
+                "scripts"/"final_demo_periodic_fresh_once.ps1")
+        source=script.read_text("utf-8")
+        for required in (
+                "FxDemoH1_USDJPY_*.csv", "FxDemoH1_",
+                "EURJPY", "EURUSD", "capture_epoch_utc_pc",
+                "-lt -60", "-gt 480", "Import-Csv",
+                "H1_CAPTURE_STALE_OR_CLOCK_SKEW",
+                "final_demo_periodic_once.ps1",
+                "-H1CopiedDirectory", "-NewsBundle"):
+            self.assertIn(required,source)
+        for forbidden in ("-AllowPaidAi", "OPENAI_API_KEY", "OrderSend(",
+                          "EnableDemoOrders=true", "AutoTrading=true"):
+            self.assertNotIn(forbidden,source)
+
     def test_local_error_diagnostics_safe_and_specific(self):
         cases = (
             ("stale/future PC clock H1 snapshot",
