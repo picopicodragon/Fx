@@ -72,6 +72,28 @@ class ECBSavedXMLDiagnostics(unittest.TestCase):
             self.assertNotIn("bad.example.com",encoded)
             self.assertNotIn("private",encoded)
 
+    def test_exact_path_shape_and_duplicate_counts_without_leaking_links(self):
+        with tempfile.TemporaryDirectory() as td:
+            file=Path(td)/"ecb.xml"
+            raw=xml([
+                "https://www.ecb.europa.eu",
+                "https://www.ecb.europa.eu//press/release-1.html",
+                "https://www.ecb.europa.eu//press/release-1.html",
+                "https://www.ecb.europa.eu/press/release-2.html",
+            ])
+            file.write_bytes(raw)
+            report=diag.inspect_file(file)
+            groups={v["validation_reason"]:v["count"] for v in report["link_groups"]}
+            self.assertEqual(groups["EMPTY_URL_PATH"],1)
+            self.assertEqual(groups["DOUBLE_SLASH_URL_PATH"],2)
+            self.assertEqual(groups["ALLOWLIST_MATCHED"],1)
+            self.assertEqual(report["item_count"],4)
+            self.assertEqual(report["distinct_link_count"],3)
+            self.assertEqual(report["items_not_matching_existing_allowlist"],3)
+            self.assertNotIn("release-1",json.dumps(report))
+            self.assertEqual(file.read_bytes(),raw)
+            self.assertFalse(report["real_orders_permitted"])
+
     def test_missing_file_or_doctype_remains_fail_closed_without_writes(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
