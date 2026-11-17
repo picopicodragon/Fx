@@ -13,6 +13,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import socket
+import ssl
 import urllib.error
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -84,20 +86,49 @@ def _read(path: Path) -> bytes:
     return content
 
 
+_SAFE_FORMAT_REASONS = {
+    "official item link is HTTP not HTTPS": "OFFICIAL_ITEM_HTTP_ONLY",
+    "RSS 1.0 RDF root unsupported": "RSS1_RDF_ROOT_UNSUPPORTED",
+    "unknown RSS/Atom root": "RSS_ROOT_UNSUPPORTED",
+    "item link not same official source host": "ITEM_LINK_UNAPPROVED",
+    "malformed source link": "ITEM_LINK_MALFORMED",
+    "item link invalid": "ITEM_LINK_INVALID",
+    "RSS news item limit": "ITEM_COUNT_EXCEEDED",
+    "duplicate news item link": "DUPLICATE_ITEM_LINK",
+    "invalid RSS title length": "ITEM_TITLE_INVALID",
+    "missing RSS channel": "RSS_CHANNEL_MISSING",
+    "unsupported publisher date": "PUBLISHER_DATE_UNSUPPORTED",
+    "publisher date missing": "PUBLISHER_DATE_MISSING",
+    "publisher date has no timezone": "PUBLISHER_TIMEZONE_MISSING",
+    "future news publication date": "FUTURE_PUBLICATION_TIME",
+    "non-unique Atom news link": "ATOM_LINK_AMBIGUOUS",
+}
+
+
 def _failure_code(exc: Exception) -> str:
-    """Stable, non-sensitive category; never expose server bodies or exception text."""
+    """Static diagnostic categories; never echo exception strings or response bodies."""
     if isinstance(exc, urllib.error.HTTPError):
         return "HTTP_STATUS_" + str(exc.code)
     if isinstance(exc, urllib.error.URLError):
+        why = exc.reason
+        if isinstance(why, ssl.SSLCertVerificationError):
+            return "TLS_CERTIFICATE_VERIFICATION_FAILURE"
+        if isinstance(why, ssl.SSLError):
+            return "TLS_FAILURE"
+        if isinstance(why, socket.gaierror):
+            return "DNS_RESOLUTION_FAILURE"
+        if isinstance(why, TimeoutError):
+            return "NETWORK_TIMEOUT"
+        if isinstance(why, ConnectionResetError):
+            return "NETWORK_CONNECTION_RESET"
         return "NETWORK_REQUEST_FAILURE"
     if isinstance(exc, ET.ParseError):
         return "XML_PARSE_FAILURE"
     if isinstance(exc, InputError):
-        return "INPUT_OR_FORMAT_REJECTED"
+        return _SAFE_FORMAT_REASONS.get(str(exc), "INPUT_OR_FORMAT_REJECTED")
     if isinstance(exc, (OSError, UnicodeError)):
         return "LOCAL_IO_OR_ENCODING_FAILURE"
     return "VALIDATION_FAILURE"
-
 
 def run(store: Path, out_dir: Path, feeds: list[str], *,
         allow_network: bool = False, xml_files: dict[str, Path] | None = None,
