@@ -147,3 +147,22 @@ python -m research.forward_macro_feed_once `
 ## 安全
 
 すべての処理は `NO_GO`、`safety_hold_latched=true`、`demo_orders_permitted=false`、`real_orders_permitted=false`。通信失敗時の自動発注経路も存在しない。手元のローカル原本・ログ・時刻を第三者認証したものではない。
+
+
+## FWD-1487〜1489：保存済みECB原本だけを使用する記事リンクの原因分析
+
+2026年11月17日のWindows実行で、OS既定の証明書検証を経たECB RSS XMLは保存できた。ただし既存Pythonオフライン取り込みは `FORMAT_VALIDATION / ITEM_LINK_UNAPPROVED` で拒否。これは **ECB RSS内の少なくとも1記事のURLが、現時点の固定ホスト・HTTPSなどの規則に合致しなかった** ことを示す。実際のホスト名は未確認。追加の通信は不要。
+
+新コマンド `research.forward_ecb_link_diagnostic` は既存XMLファイルのみ読み、元XML SHA256、記事件数、リンクの `scheme`・`hostname_unverified`・`validation_reason` ごとの件数を表示する。任意の第三者ホスト名は伏せ、`*.europa.eu` を含む文字列も公式認証済みとみなさない。URLフルパス・認証情報・クエリ文字列は出力しない。XMLやジャーナルへの書込み、ネットワークアクセス、AI API、発注は0。
+
+~~~powershell
+cd C:\Users\Suzuki\Documents\ChatGPT\Fx-MACRO-FWD-20261113
+# 前操作の $xml を継続使用。必ず元XMLの実在を確認。
+if (-not (Test-Path -LiteralPath $xml -PathType Leaf)) {
+    throw "ECB原本XMLが見つかりません。保存場所を再確認してください。"
+}
+python -m research.forward_ecb_link_diagnostic --xml-file $xml
+if ($LASTEXITCODE -ne 0) { throw "ECB原本の診断を実施できませんでした" }
+~~~
+
+詳細のない `ITEM_LINK_UNAPPROVED` を見て、`SOURCE_HOSTS` を `*.europa.eu` 等へ一括拡張してはならない。保存原本の診断結果と公式サイトの説明を照合後、明示的に必要な**正確なFQDNのみ**別途レビューする。既存の `NO_GO`、安全停止ラッチ、demo/real注文禁止、マクロ/予想/AIレビュー不足は継続。PowerShellの `if` と `else` は対話モードで別々に貼ると `else` 単独コマンドとして扱われるため、必ず同一ブロックとして実行する。
