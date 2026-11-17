@@ -360,7 +360,8 @@ void OnTimer()
       return;
    }
    if(!FxdReadiness()) return;
-   if(!FxdActiveRiskAllowed()) return;
+   // DD4 blocks only new entries: keep managing existing DEMO stops.
    FxdTrailOwnPositions();
+   if(!FxdActiveRiskAllowed()) return;
    FxdTryIntent();
 }
