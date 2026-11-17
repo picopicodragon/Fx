@@ -84,6 +84,21 @@ def _read(path: Path) -> bytes:
     return content
 
 
+def _failure_code(exc: Exception) -> str:
+    """Stable, non-sensitive category; never expose server bodies or exception text."""
+    if isinstance(exc, urllib.error.HTTPError):
+        return "HTTP_STATUS_" + str(exc.code)
+    if isinstance(exc, urllib.error.URLError):
+        return "NETWORK_REQUEST_FAILURE"
+    if isinstance(exc, ET.ParseError):
+        return "XML_PARSE_FAILURE"
+    if isinstance(exc, InputError):
+        return "INPUT_OR_FORMAT_REJECTED"
+    if isinstance(exc, (OSError, UnicodeError)):
+        return "LOCAL_IO_OR_ENCODING_FAILURE"
+    return "VALIDATION_FAILURE"
+
+
 def run(store: Path, out_dir: Path, feeds: list[str], *,
         allow_network: bool = False, xml_files: dict[str, Path] | None = None,
         max_new: int = 3, downloader=None,
@@ -113,6 +128,7 @@ def run(store: Path, out_dir: Path, feeds: list[str], *,
             "realized_economic_values_count": 0,
             "source_authenticity_independently_attested": False,
         }
+        stage = "DOWNLOAD" if allow_network else "LOCAL_XML_READ"
         try:
             if allow_network:
                 network_attempt_count += 1
@@ -129,8 +145,10 @@ def run(store: Path, out_dir: Path, feeds: list[str], *,
             utc = _iso(received)
             mode = ("EXPLICIT_NETWORK_SINGLE_PASS" if allow_network
                     else "LOCAL_COPY")
+            stage = "FORMAT_VALIDATION"
             manifest = news.prepare(
                 {name: raw}, captured_at_utc=utc, collection_mode=mode)
+            stage = "ARCHIVE_WRITE"
             archive = out_dir / name
             news.save(archive, {name: raw}, manifest)
             result["archive_complete"] = True
@@ -141,6 +159,7 @@ def run(store: Path, out_dir: Path, feeds: list[str], *,
                 "news_item_count"]
             validated_bundle_count += 1
             if name in JOURNAL_FEEDS:
+                stage = "JOURNAL_APPEND"
                 imported = rss.import_xml(
                     store, name, raw, now=received, max_new=max_new)
                 result["journal_records_added"] = imported["new_recent_items"]
@@ -157,7 +176,9 @@ def run(store: Path, out_dir: Path, feeds: list[str], *,
                 result["regional_feed_journal_intake_disabled"] = True
         except (InputError, OSError, ValueError, TypeError, UnicodeError,
                 ArithmeticError, KeyError, ET.ParseError,
-                urllib.error.URLError):
+                urllib.error.URLError) as exc:
+            result["failure_stage"] = stage
+            result["failure_reason_code"] = _failure_code(exc)
             # Previously captured official source archives and journal writes
             # remain intact. Do not auto-retry a partially completed append.
             result["status"] = (
