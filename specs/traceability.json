@@ -911,7 +911,8 @@
       ],
       "tests": [
         "tests/test_p0_01_mql4_readonly_source_audit.py",
-        "tests/test_p0_01_mt4_readonly_observation_plan.py"
+        "tests/test_p0_01_mt4_readonly_observation_plan.py",
+        "tests/test_final_demo_periodic.py"
       ],
       "status": "active"
     },
