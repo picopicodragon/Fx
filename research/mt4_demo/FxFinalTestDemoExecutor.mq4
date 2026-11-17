@@ -29,10 +29,39 @@ string FxdPeakKey()
    return "FXDEMO_PEAK_" + IntegerToString(AccountNumber());
 }
 
+void FxdCloseOwnOnCritical()
+{
+   // A verified dedicated demo account contains no other trade managers.
+   // Never touch user/external-EA positions, even during a failed drill.
+   for(int n=OrdersTotal()-1; n>=0; n--)
+   {
+      if(!OrderSelect(n, SELECT_BY_POS, MODE_TRADES)) continue;
+      if(OrderMagicNumber() != FXD_MAGIC) continue;
+      int kind=OrderType();
+      bool ok=false;
+      if(kind==OP_BUY || kind==OP_SELL)
+      {
+         string sym=OrderSymbol();
+         double price=kind==OP_BUY ? MarketInfo(sym,MODE_BID) :
+                                     MarketInfo(sym,MODE_ASK);
+         if(price>0.0)
+            ok=OrderClose(OrderTicket(), OrderLots(), price,
+                          MaxSlippagePoints, clrNONE);
+      }
+      else
+         ok=OrderDelete(OrderTicket());
+      if(!ok) Print("FXDEMO_EXECUTOR: critical liquidation failed ticket=",
+                    OrderTicket(), " error=", GetLastError());
+   }
+}
+
 void FxdHalt(string why)
 {
    GlobalVariableSet(FxdHaltKey(), 1.0);
    Print("FXDEMO_EXECUTOR: HALTED ", why);
+   if(IsDemo() && AccountNumber()==ExpectedDemoAccount &&
+      IsConnected() && IsTradeAllowed())
+      FxdCloseOwnOnCritical();
    EventKillTimer();
 }
 
@@ -106,7 +135,7 @@ bool FxdDigitsOnly(string value)
 bool FxdActiveRiskAllowed()
 {
    double equity = AccountEquity();
-   if(equity <= 0.0 || VerifiedPeakEquityJPY < equity)
+   if(equity <= 0.0 || VerifiedPeakEquityJPY <= 0.0)
       return false;
    double peak = VerifiedPeakEquityJPY;
    if(GlobalVariableCheck(FxdPeakKey()))
