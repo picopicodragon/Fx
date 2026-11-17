@@ -45,6 +45,22 @@ python -m research.forward_observation --store $store --audit
 
 この結果のイベントハッシュは `journal.record_sha256` であり、公的時刻に対する第三者認証ではない。
 
+## FWD-1476〜1478：部分失敗時の安全な原因切り分け（2026-11-17）
+
+ECBと日銀が `SOURCE_UNAVAILABLE_OR_INVALID_HOLD_NO_GO` を返した場合でも、URLが無効だと断定しない。両URLは中央銀行公式RSS案内ページと一致している。更新後の `capture_report.json` の失敗フィードにだけ、追加の `failure_stage` と `failure_reason_code` を含める。
+
+- `DOWNLOAD`: 通信・HTTP・リダイレクトなど取得段階の問題。`HTTP_STATUS_403` などの数値はHTTPエラーのときだけ表示。例外本文・サーバー応答本文・アクセス認証情報は一切出さない。
+- `FORMAT_VALIDATION`: 取得応答のRSS/Atom XML構造、件数、同一ホストのリンク、発行時刻、サイズ等の既存制限に不適合。
+- `ARCHIVE_WRITE`: 保存先のファイルI/Oエラー。既存原本には追記も上書きもしない。
+- `JOURNAL_APPEND`: 米国ニュースの新規レコード取り込み失敗。既存ジャーナルは監査対象のまま維持。
+- `LOCAL_XML_READ`: 明示した保存済みXMLの読み出し失敗。
+
+`failure_reason_code` は `HTTP_STATUS_<number>`、`NETWORK_REQUEST_FAILURE`、`XML_PARSE_FAILURE`、`INPUT_OR_FORMAT_REJECTED`、`LOCAL_IO_OR_ENCODING_FAILURE`、`VALIDATION_FAILURE` のいずれか。すべて研究・NO_GOであり、失敗理由が分かっても取引許可は発生しない。
+
+2026-11-17 11:56 JSTの初回3/5取得分にはこれらの診断フィールドは存在しない。既存の保存ディレクトリを上書きせず、更新版で新たなディレクトリに対し、必要な `--feed ecb_press --feed boj_whatsnew` の**1回限りの明示実行**が必要。自動再実行やバックグラウンド処理は追加しない。
+
+公式RSSニュースを取得できても、経済統計の発表前予想・事後実値の充足を意味せず、実イベントまたはレビュー記録が増えていなければ `forward_shadow_start --mode refresh` は起動しない。
+
 ## オフライン再現検査
 
 ネットワークを使わないテスト入力を、実在するXMLコピーを明示して実行可能。新しい保存先・オリジナル実データのみ使用し、サンプルの合成RSSを実研究ジャーナルに入れない。
