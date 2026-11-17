@@ -166,3 +166,18 @@ if ($LASTEXITCODE -ne 0) { throw "ECB原本の診断を実施できませんで�
 ~~~
 
 詳細のない `ITEM_LINK_UNAPPROVED` を見て、`SOURCE_HOSTS` を `*.europa.eu` 等へ一括拡張してはならない。保存原本の診断結果と公式サイトの説明を照合後、明示的に必要な**正確なFQDNのみ**別途レビューする。既存の `NO_GO`、安全停止ラッチ、demo/real注文禁止、マクロ/予想/AIレビュー不足は継続。PowerShellの `if` と `else` は対話モードで別々に貼ると `else` 単独コマンドとして扱われるため、必ず同一ブロックとして実行する。
+
+
+## FWD-1490〜1492：ECB 15記事すべて同一公式ホスト、パス形式だけが拒否（実機結果）
+
+2026年11月17日の保存済みECB原本（5859 bytes、ローカルSHA256 `b34f2f8fc607bb8b4c4f8e720ab014fbba4d389aadf61ea92d0937ff857f945c`）を利用した実機診断で、15件全て `https://www.ecb.europa.eu` のホストとスキームに一致したが、15件とも `UNSAFE_PATH_REJECTED` となった。**異なるFQDNを許可する必要性は確認されていない。** この診断だけではパスが空なのか `//` で始まるのか不明。
+
+次版の `research.forward_ecb_link_diagnostic` は既存の全拒否を、`EMPTY_URL_PATH`（URLにパスがない）、`DOUBLE_SLASH_URL_PATH`（パスが `//` で始まる）、`URL_PATH_NOT_ABSOLUTE`（絶対パスでない）の3つにさらに分類する。生のパスやクエリ文字列は出力しない。同時に `distinct_link_count` を追加し、15記事が個別記事へ結びつく固有URLかどうかも、URL原文を公開せずに検査する。
+
+実行は原本に対するオフライン読み取りのみで、次の短いコマンドを用いる。更新版に切り替えた後、前回の `$xml` を再利用する。
+
+~~~powershell
+python -m research.forward_ecb_link_diagnostic --xml-file $xml
+~~~
+
+結果が `EMPTY_URL_PATH` の場合、記事のリンクが同じホームページを指すのか等を独立確認する。`DOUBLE_SLASH_URL_PATH` の場合でも**単純なスラッシュ縮約や検証条件の解除は行わない**。原本内のリンク形状とECB公式サイトの説明を確認し、個別記事識別と出典評価ができる範囲で限定的に設計する。新しい判断を経るまで、全て `NO_GO`・非発注、マクロ/AI研究ジャーナル0を維持。
