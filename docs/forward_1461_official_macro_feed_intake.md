@@ -61,6 +61,26 @@ ECBと日銀が `SOURCE_UNAVAILABLE_OR_INVALID_HOLD_NO_GO` を返した場合で
 
 公式RSSニュースを取得できても、経済統計の発表前予想・事後実値の充足を意味せず、実イベントまたはレビュー記録が増えていなければ `forward_shadow_start --mode refresh` は起動しない。
 
+## FWD-1479〜1482：現地ECB/BOJ失敗に対応する第2段階の非発注診断
+
+2026-11-17 13:24 JSTの実機診断で、ECBは `DOWNLOAD / NETWORK_REQUEST_FAILURE`、日銀は `FORMAT_VALIDATION / INPUT_OR_FORMAT_REJECTED` と確認。今回初めて「通信とRSS形式が異なる原因で失敗」と特定できた。**日銀のRSSがHTTP記事リンクやRSS1 RDFを実際に配信しているかはまだ原本未取得のため確定していない。**
+
+- ECBのネットワーク診断は `DNS_RESOLUTION_FAILURE`、`NETWORK_TIMEOUT`、`NETWORK_CONNECTION_RESET`、`TLS_FAILURE`、`TLS_CERTIFICATE_VERIFICATION_FAILURE` を安全な固定コードとして区分。分類不能な取得失敗は従来どおり `NETWORK_REQUEST_FAILURE`。
+- BOJは `OFFICIAL_ITEM_HTTP_ONLY`（公式同一ホストだが記事がHTTPリンク）、`RSS1_RDF_ROOT_UNSUPPORTED`、`RSS_ROOT_UNSUPPORTED`、`ITEM_LINK_UNAPPROVED`、`PUBLISHER_DATE_UNSUPPORTED` 等を厳格に区分。**HTTPの記事リンクを自動でHTTPSに書き換えない。未知形式を勝手に受理しない。**
+- 元XML・サーバーエラー内容・内部ネットワーク情報・認証情報・例外本文は失敗レポートに出さない。従来の3米国公式フィードや発表後24時間制限、原本の上書き防止は不変。
+- 既存の両公式サイトのURLを勝手に書き換えない。成功数が0の場合は終了コード2が正しい。調査のために自動再試行、継続ポーリング、AI有償API、MT4、発注を起動しない。
+- 本修正は失敗理由の分類機能であり、**根本的に通信不能を修復する機能ではない**。取得先ネットワークでの現地実行結果を確認してから形式対応を決める。
+
+更新版を明示的に取り込む場合のみ、下記の2フィードで新規保存先へ一度だけ実行する。
+
+~~~powershell
+$root = "$env:USERPROFILE\Documents\FXForwardEvidence"
+$store = Join-Path $root "macro_forward_journal"
+$out = Join-Path $root ("macro_feed_diagnostic_" + (Get-Date -Format "yyyyMMdd_HHmmss_fff"))
+python -m research.forward_macro_feed_once --store $store --out-dir $out --allow-network --feed ecb_press --feed boj_whatsnew
+python -m research.forward_observation --store $store --audit
+~~~
+
 ## オフライン再現検査
 
 ネットワークを使わないテスト入力を、実在するXMLコピーを明示して実行可能。新しい保存先・オリジナル実データのみ使用し、サンプルの合成RSSを実研究ジャーナルに入れない。
