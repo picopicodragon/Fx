@@ -82,6 +82,8 @@ def _link(url: str, feed: str):
         raise InputError("item link invalid")
     try:
         parts = urlsplit(url)
+        if parts.scheme == "http" and parts.hostname == SOURCE_HOSTS[feed]:
+            raise InputError("official item link is HTTP not HTTPS")
         if (parts.scheme != "https"
                 or parts.hostname != SOURCE_HOSTS[feed]
                 or parts.username is not None or parts.password is not None
@@ -139,6 +141,8 @@ def _parse_news(xml: bytes, feed: str, asof_utc: str):
                 links[0],
                 (e.findtext(ATOM + "published") or "").strip(),
             ))
+    elif root.tag == "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF":
+        raise InputError("RSS 1.0 RDF root unsupported")
     else:
         raise InputError("unknown RSS/Atom root")
     if len(items) > MAX_ENTRIES:
