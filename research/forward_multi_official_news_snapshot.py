@@ -77,26 +77,19 @@ def _published(s: str):
 
 
 def _ecb_legacy_double_slash_path(path: str) -> bool:
-    """Narrow ECB RSS item metadata exception; original URI is never rewritten.
-
-    Only the ECB press feed can contain an existing double-leading-slash
-    path. Never follow links or infer independent source authentication.
-    Suspicious or ambiguous paths stay rejected.
-    """
+    """Limited ECB RSS metadata exception: preserve original and never fetch links."""
     if (type(path) is not str or not path.startswith("//")
             or path.startswith("///")):
         return False
     tail = path[2:]
     if (not tail or "//" in tail or "\\" in tail or "%" in tail
-            or not re.fullmatch(r"[A-Za-z0-9._~!def _link(url: str, feed: str):
-'()*+,;=:@/-]+", tail)):
+            or not re.fullmatch(r"[A-Za-z0-9._~!$&'()*+,;=:@/-]+", tail)):
         return False
     parts = tail.split("/")
     if (any(part in ("", ".", "..") for part in parts)
             or parts[0] not in {"press", "home", "pub", "stats", "events"}):
         return False
     return True
-
 
 def _link(url: str, feed: str):
     if type(url) is not str or not 1 <= len(url) <= 1400 or (
