@@ -62,7 +62,8 @@ void FxdHalt(string why)
    if(IsDemo() && AccountNumber()==ExpectedDemoAccount &&
       IsConnected() && IsTradeAllowed())
       FxdCloseOwnOnCritical();
-   EventKillTimer();
+   // Keep the timer alive to retry critical DEMO liquidation. Never permit
+   // new positions while the persistent halt is latched.
 }
 
 bool FxdReadiness()
@@ -348,7 +349,14 @@ void OnTimer()
    if(!IsDemo() || AccountNumber() != ExpectedDemoAccount ||
       AccountCurrency() != "JPY")
    {
-      FxdHalt("ACCOUNT_TYPE_OR_IDENTITY_CHANGED");
+      GlobalVariableSet(FxdHaltKey(), 1.0);
+      Print("FXDEMO_EXECUTOR: account changed; timer stopped.");
+      EventKillTimer();
+      return;
+   }
+   if(GlobalVariableCheck(FxdHaltKey()))
+   {
+      if(IsConnected() && IsTradeAllowed()) FxdCloseOwnOnCritical();
       return;
    }
    if(!FxdReadiness()) return;
