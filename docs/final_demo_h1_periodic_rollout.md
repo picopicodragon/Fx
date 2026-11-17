@@ -115,3 +115,40 @@ PC推定現在時刻から480秒以内のみ自動コピーし、API課金0・�
 この無料診断が全3ペアで成功するまで、有料モデル分析コマンドを
 もう一度実行しない。古いpending台帳があれば別途照合する。
 実口座禁止、AutoTrading OFF、EnableDemoOrders=falseを維持。
+
+
+## 2026-11-17 HTTP401 analyst pending manual review (DEMO-SPRINT-46–49)
+
+An actual OpenAI API call failed with HTTP_401_INVALID_API_KEY before any
+model response was accepted. The original analyst ledger remains
+stage=ANALYST_PENDING, pending_role=analyst. DO NOT edit or delete it.
+DO NOT simply create a new timestamp and repeat a paid AI call.
+
+1. Visit https://platform.openai.com/api-keys and ensure a valid project-scoped
+   API key. The paid API platform is distinct from ChatGPT subscriptions.
+2. Replace the process-local OPENAI_API_KEY safely. Do not print or commit it.
+3. Only if the operator personally observed HTTP_401_INVALID_API_KEY from the
+   failed analyst call, select the EXACT original pending USDJPY ledger:
+   
+    $folder = Join-Path $env:USERPROFILE 'Documents\FXForwardEvidence\final_demo_periodic'
+    $pending = @(Get-ChildItem -LiteralPath $folder -File -Filter 'ai_USDJPY_*.json' |
+      Sort-Object LastWriteTimeUtc -Descending)
+    if ($pending.Count -ne 1) { throw 'Select exactly one verified HTTP401 pending ledger' }
+    python -m research.final_demo_http401_recovery --review-ledger $pending[0].FullName --operator-confirmed-http401
+
+This does ONE nonbillable read-only GET to https://api.openai.com/v1/models,
+and checks the two designated model IDs are listed for that API project.
+Only after successful authentication and model listing does it write a separate
+SHA256-bound operator review marker named auth401_review_ai_*.json. The original
+ledger is preserved verbatim; no artificial model result is created.
+No Responses API calls, inference, broker operations or orders occur.
+
+Run a strictly local review check:
+
+    python -m research.final_demo_http401_recovery --check-directory $folder
+
+This only permits the operator to separately opt in to a NEW AI research cycle
+later with fresh validated H1 evidence. It never automatically reruns paid calls.
+A pending reviewer, network timeout, unknown outcome, HTTP429/5xx or a changed
+ledger cannot be reconciled using the HTTP401 analyst path. Do not share API
+keys or full ledgers in chat. Keep demo orders OFF and real orders forbidden.
