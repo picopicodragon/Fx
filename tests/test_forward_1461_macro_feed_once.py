@@ -204,7 +204,7 @@ class FeedCaptureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);store=self.setup(root)
             file=root/"fed.xml"
-            file.write_bytes(make_xml("fed_policy",NOW-timedelta(days=1)))
+            file.write_bytes(make_xml("fed_policy",NOW-timedelta(days=2)))
             # 'now' in CLI is real current. Old XML must not masquerade as
             # new: no matter what the wall-clock time is on CI.
             with patch("research.forward_macro_feed_once._utc_now",
