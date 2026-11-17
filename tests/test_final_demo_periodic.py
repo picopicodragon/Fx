@@ -161,6 +161,38 @@ class PeriodicTests(unittest.TestCase):
                     now=NOW,inference=lambda *a,**kw: self.fail("replayed API"))
             self.assertEqual(no_op["paid_calls_this_run"],0)
 
+    def test_safe_error_has_no_response_body_and_discloses_pending_stage(self):
+        with tempfile.TemporaryDirectory() as d:
+            ledger=Path(d)/"ai_USDJPY_test.json"
+            ledger.write_text(json.dumps({
+                "stage":"ANALYST_PENDING","pending_role":"analyst",
+                "analyst":None,"reviewer":None,
+                "SECRET_CONTENT":"never print"}),encoding="utf-8")
+            from research.macro_ai_generate import MacroAPIError
+            problem=MacroAPIError(
+                "HTTP_404_MODEL_UNAVAILABLE_OR_NOT_FOUND",
+                api_param="model",api_code="model_not_found",
+                message_category="UNCLASSIFIED_INPUT_ERROR")
+            report=pipeline.safe_failure_report(problem,ledger)
+            self.assertEqual(report["failure_category"],
+                             "HTTP_404_MODEL_UNAVAILABLE_OR_NOT_FOUND")
+            self.assertEqual(report["ledger_state"],"ANALYST_PENDING")
+            self.assertEqual(report["pending_role"],"analyst")
+            self.assertTrue(report["api_dispatch_may_have_occurred"])
+            self.assertFalse(report["retry_permitted"])
+            self.assertNotIn("SECRET_CONTENT",json.dumps(report))
+
+    def test_absent_ledger_reports_preflight_without_paid_assumption(self):
+        with tempfile.TemporaryDirectory() as d:
+            report=pipeline.safe_failure_report(
+                InputError("stale/future PC clock H1 snapshot"),
+                Path(d)/"absent.json")
+            self.assertEqual(report["failure_category"],
+                             "LOCAL_PREFLIGHT_OR_VALIDATION")
+            self.assertEqual(report["ledger_state"],"ABSENT")
+            self.assertFalse(report["api_dispatch_may_have_occurred"])
+            self.assertFalse(report["retry_permitted"])
+
     def test_AI_no_optin_and_pending_request_never_retried(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);folder=prepare_captures(root)
