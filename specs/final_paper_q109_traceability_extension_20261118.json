@@ -101,6 +101,31 @@
         "tests/test_final_paper_release_matrix.py"
       ],
       "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_bls_event_archive.py",
+      "spec_ids": [
+        "Q25",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_bls_event_archive.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_event_blackout.py",
+      "spec_ids": [
+        "Q25",
+        "Q44",
+        "Q109"
+      ],
+      "tests": [
+        "tests/test_final_paper_event_blackout.py",
+        "tests/test_final_paper_bls_event_archive.py"
+      ],
+      "production_authorized": false
     }
   ],
   "activation_authorized": false,
