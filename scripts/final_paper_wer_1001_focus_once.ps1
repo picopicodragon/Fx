@@ -49,7 +49,7 @@ foreach ($event in $events) {
     try {
         [xml]$document = $event.ToXml()
         $xmlValid = $true
-        $fields = @($document.Event.EventData.Data)
+        $fields = @($document.SelectNodes('/*[local-name()="Event"]/*[local-name()="EventData"]/*[local-name()="Data"]'))
         foreach ($field in $fields) {
             if ($null -eq $field) { continue }
             $fieldName = [string]$field.GetAttribute('Name')
