@@ -52,7 +52,7 @@ foreach ($event in $events) {
         $fields = @($document.Event.EventData.Data)
         foreach ($field in $fields) {
             if ($null -eq $field) { continue }
-            $fieldName = [string]$field.Name
+            $fieldName = [string]$field.GetAttribute('Name')
             # Only the canonical app-name-related structured fields are read.
             # Never inspect full Message or other EventData payloads.
             if ($fieldName -in @('P1','AppName','param1','FaultingApplicationName')) {
