@@ -346,3 +346,41 @@ FREE_OBSERVATION_ONLY_RESTART_CANDIDATE_NO_GOが得られ、
 Ctrl+C停止からの予定どおりの終了だった場合も同様に、
 以前の空白期間をなかったことにせずラッチを維持。
 既存paperのデータ・API台帳・ロックを手動削除しない。
+
+
+## FINAL-PAPER-38〜41：121サイクル到達後の通信停止解除前審査（読取専用）
+
+2026-11-18 14:20頃のユーザー実機監査：
+completed_cycles=121、last_recorded_quote_age_seconds_pc_derived=51、
+price_stream_warning_level_pc_derived=FRESH、
+communication_latched=true、取引0件、cash/equity=100,000円、
+AI利用6/6回、追加API許可なし、MT4発注0件。
+
+106回から121回へ15サイクル増加したことは、価格供給・journal
+追加が正常に復旧したことの証拠。ただし FRESH=価格が新しい
+だけで、障害原因の究明・解除許可・AI費用の承認を意味しない。
+
+最新版worktree Fx-PAPER-NEXT-20261118 で、既存の監視PowerShellを
+止めずに別ウィンドウから以下を実行：
+
+    .\scripts\final_paper_comm_recovery_review_once.ps1
+
+審査は先頭から全journal SHA256チェーンを読み取り検証し、
+最後の10件以上の連続記録（30〜90秒の観測間隔、既存ラッチがtrue）、
+直近quoteがPC時計由来で120秒以内、他の損失/DDラッチ不発動、
+未決済仮想建玉なし、保留AIシグナルなしを確認する。
+
+- status=COMM_RECOVERY_EVIDENCE_REVIEW_ONLY_NO_GO
+- ready_for_manual_root_cause_review=true となっても
+  **通信停止解除が承認されたわけではない**。
+- root_cause_explained=false、通信ラッチはtrue、実/デモ注文は禁止。
+- API利用6/6回・未検証の月額料金・独立未検証の経済カレンダーなどの
+  未達事項は別の承認条件。審査が新しい有料API呼出しを許可しない。
+- 停止ロック、journal、仮想ポジション、運用ラッチ、
+  AI台帳は読み取りのみ。出力先に別名の監査レポートJSONを新規作成。
+- エラー・データ競合・元データ破損はfail closed。
+- 停止原因（Ctrl+C、Windowsターミナル終了、Python例外、その他）
+  はログから別途特定する。自動ラッチ解除は設計・実装しない。
+
+現在の最終テスト版は「無料価格観測復旧済み／新規仮想売買停止中」の
+状態を維持する。理由が不明な停止を再発させないための開発が必要。
