@@ -126,6 +126,31 @@
         "tests/test_final_paper_bls_event_archive.py"
       ],
       "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_quote_contract_evidence.py",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_quote_contract_evidence.py",
+        "tests/test_final_paper_release_matrix.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/final_paper_quote_contract_audit_once.ps1",
+      "spec_ids": [
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_quote_contract_evidence.py"
+      ],
+      "production_authorized": false
     }
   ],
   "activation_authorized": false,
