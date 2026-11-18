@@ -88,6 +88,34 @@ class StrictEntryAndBillingGatesTests(unittest.TestCase):
             self.assertIn("VIRTUAL_ENTRY_BLOCKED_UNATTESTED_SAFETY_EVIDENCE",
                           entry["events"])
 
+    def test_gap_itself_blocks_paid_even_when_synthetic_evidence_claims_ready(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)/"paper"
+            runtime._initialize(root)
+            state=paper.initial_state()
+            state["cycle_number"]=1
+            state["last_quote_epoch"]=T-3420
+            runtime._journal_append(root/"journal",state,"0"*64,"a"*64,NOW)
+            simulated_verification={
+                "active_known_blackout":False,
+                "calendar_supplied":True,
+                "independent_calendar_coverage_attested":True,
+                "pc_clock_independently_attested":True,
+            }
+            with patch.object(runtime,"_latest_quote",return_value=quote()), \
+                 patch.object(runtime,"_latest_h1_copy",return_value=Path(temp)), \
+                 patch.object(runtime.blackout,"check",
+                              return_value=simulated_verification), \
+                 patch.object(runtime,"_signals_for_new_h1",
+                              return_value=([],[],0)) as model:
+                report=runtime.run_one_cycle(
+                    Path(temp),root,[],allow_paid=True,analyst_model="a",
+                    reviewer_model="b",paid_limit=6,now=NOW)
+            self.assertFalse(model.call_args.kwargs["allow_paid"])
+            self.assertTrue(report["communication_latched"])
+            self.assertFalse(report["new_paid_ai_allowed_by_evidence_gate"])
+            self.assertFalse(report["entry_readiness_gate_open"])
+
     def test_no_unknown_type_bypasses_entry_gate(self):
         state=paper.initial_state()
         with self.assertRaises(Exception):
