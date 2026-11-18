@@ -64,7 +64,7 @@ def initial_state() -> dict:
         "peak_equity_jpy":"100000.00","ny17_day":None,
         "day_start_equity_jpy":"100000.00",
         "daily_loss_latched":False,"dd4_latched":False,
-        "dd5_latched":False,
+        "dd5_latched":False,"communication_latched":False,
         "positions":[],"pending_signals":[],
         "used_signal_ids":[],"trade_log":[],
         "last_quote_epoch":0,"cycle_number":0,
@@ -180,9 +180,7 @@ def _enter(state:dict, sig:dict, quote:dict, epoch:int)->str:
         return "PAIR_ALREADY_OPEN"
     if len(state["positions"])>=2:
         return "MAX_TWO_VIRTUAL_POSITIONS"
-    equity=_equity(state,{**{p["pair"]:quote for p in []},pair:quote,
-                          **{}}) if not state["positions"] else _dec(state["equity_jpy"])
-    # State equity was computed from all 3 current quotes at this step.
+    # Full current mark-to-market equity is computed before new entries.
     equity=_dec(state["equity_jpy"])
     if equity<=0:
         return "NONPOSITIVE_EQUITY"
@@ -235,6 +233,13 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,
     if set(quotes)!=set(PAIRS):
         raise InputError("incomplete price set")
     events=[]
+    if state["last_quote_epoch"]>0:
+        delta=epoch-state["last_quote_epoch"]
+        if delta>600:
+            next_state["communication_latched"]=True
+            events.append("VIRTUAL_COMMUNICATION_LEVEL2_LATCHED")
+        elif delta>90:
+            events.append("VIRTUAL_COMMUNICATION_LEVEL1_WARNING")
     for pos in list(next_state["positions"]):
         q=quotes[pos["pair"]]
         mark=q["bid"]-PIP[pos["pair"]] if pos["direction"]=="LONG" else q["ask"]+PIP[pos["pair"]]
@@ -308,7 +313,8 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,
             continue
         if sig["verdict"]=="APPROVED" and sig["action"] in ("LONG","SHORT"):
             if (next_state["daily_loss_latched"] or
-                next_state["dd4_latched"] or next_state["dd5_latched"]):
+                next_state["dd4_latched"] or next_state["dd5_latched"] or
+                next_state["communication_latched"]):
                 events.append("VIRTUAL_RISK_HALTED")
             else:
                 events.append(_enter(next_state,sig,quotes[sig["pair"]],epoch))
@@ -332,7 +338,8 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,
         "dd4_latched":next_state["dd4_latched"],
         "dd5_latched":next_state["dd5_latched"],
         "daily_loss_latched":next_state["daily_loss_latched"],
-        "jee_enabled":False,
+        "communication_latched":next_state["communication_latched"],
+        "jev_enabled":False,
         "broker_orders_sent_this_run":0,
         "demo_broker_orders_permitted":False,
         "real_orders_permitted":False,
