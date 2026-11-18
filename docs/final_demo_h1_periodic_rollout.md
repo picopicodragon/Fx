@@ -176,3 +176,39 @@ remaining EUR/JPY and EUR/USD pairs (two per pair); still research-only,
 with no MT4 order and no trading authorization. A preexisting unreconciled
 paid ledger or stale H1 fails closed. Do not rerun after a billable API
 dispatch failure without manual ledger reconciliation.
+
+
+## DEMO-SPRINT-54 to 57: all three completed AI decisions auditable offline
+
+Windows Rakuten DEMO confirmed a successful 3-pair CLOSED H1 + official-news
+research pass, plus two distinct model calls on each pair. The separate
+reports show USD/JPY, EUR/JPY and EUR/USD each returning APPROVED/HOLD.
+USD/JPY used an earlier capture, so this is NOT a contemporaneous
+three-pair snapshot and is NOT a trade approval.
+
+After pulling this branch, run from the worktree:
+
+    .\scripts\final_demo_three_pair_audit_once.ps1
+
+This performs NO network requests, AI calls or orders. It verifies all
+existing paid ledgers, including a hash-bound, operator-reviewed historical
+HTTP401 pending ledger; then selects the newest completed model ledger
+for each pair and emits a new local read-only evidence JSON report under
+Documents/FXForwardEvidence/three_pair_ai_audit_*.json.
+
+The report includes three verdict/action pairs, local packet and ledger hashes,
+the actual model identities and the separate historical HTTP401-reviewed count.
+It explicitly records cross_pair_same_snapshot=NOT_ATTESTED,
+point_in_time_news_consensus=NOT_ATTESTED,
+broker_server_clock=NOT_ATTESTED,
+market_execution_verified=false,
+demo_orders_permitted=false and real_orders_permitted=false.
+An incomplete newer ledger, changed old rejection marker, absent pair or
+unreconciled billable request fails closed.
+
+Next required milestone is a genuinely independent DEMO operational test:
+verify EA version and compilation, actual Rakuten DEMO identity/account clock,
+market order lifecycle and 0.5%/1%/1.5%/5% risk gates, NY17 rollover, daily
+blackout and persistent evidence. A research HOLD/APPROVED is not permission to
+create an executable signal or turn on AutoTrading. The local audit alone
+cannot demonstrate final-demo trading readiness.
