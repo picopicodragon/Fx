@@ -114,8 +114,24 @@
       "id": "E-GATE-01",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q109", "Q110", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"],
-      "evidence": ["docs/phase1_way_e_gate_audit.md", "specs/phase1_way_e_gate_register.json", "tests/test_phase1_way_e_audit.py"],
+      "spec_ids": [
+        "Q109",
+        "Q110",
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G7",
+        "G8",
+        "G9"
+      ],
+      "evidence": [
+        "docs/phase1_way_e_gate_audit.md",
+        "specs/phase1_way_e_gate_register.json",
+        "tests/test_phase1_way_e_audit.py"
+      ],
       "approval": null,
       "scope_note": "Offline gate/source inventory only; all nine real gates and fifteen real work packages remain blocked."
     },
@@ -123,8 +139,17 @@
       "id": "E-GATE-02",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q111", "Q112", "Q113", "Q114", "Q115"],
-      "evidence": ["docs/phase1_way_e_source_difference_register.md", "tests/test_phase1_way_e_audit.py"],
+      "spec_ids": [
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_way_e_source_difference_register.md",
+        "tests/test_phase1_way_e_audit.py"
+      ],
       "approval": null,
       "scope_note": "Existing source status and unresolved issues inventoried; no complete original-source review or safety approval."
     },
@@ -132,8 +157,18 @@
       "id": "E-GATE-03",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q197", "Q198", "Q199", "G6-05", "G6-06"],
-      "evidence": ["tests/test_phase1_way_e_audit.py", "tests/test_phase1_way_e_synthetic_review.py", "tests/test_phase1_synthetic_persistence.py"],
+      "spec_ids": [
+        "Q197",
+        "Q198",
+        "Q199",
+        "G6-05",
+        "G6-06"
+      ],
+      "evidence": [
+        "tests/test_phase1_way_e_audit.py",
+        "tests/test_phase1_way_e_synthetic_review.py",
+        "tests/test_phase1_synthetic_persistence.py"
+      ],
       "approval": null,
       "scope_note": "Synthetic denials and isolated SQLite fixtures only; 26+27 planned scenarios and real durability/broker tests remain NOT_EXECUTED."
     },
@@ -141,8 +176,14 @@
       "id": "E-GATE-04",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "IN_PROGRESS",
-      "spec_ids": ["Q110", "Q112", "Q171"],
-      "evidence": ["docs/phase1_way_e_evidence_approval_packages.md"],
+      "spec_ids": [
+        "Q110",
+        "Q112",
+        "Q171"
+      ],
+      "evidence": [
+        "docs/phase1_way_e_evidence_approval_packages.md"
+      ],
       "approval": null,
       "scope_note": "H1-H6 future evidence/approval drafts only; owner review and every real operation remain pending."
     },
@@ -150,8 +191,19 @@
       "id": "E-GATE-05",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
-      "evidence": ["docs/phase1_way_e_progress.md", "tests/test_phase1_way_e_audit.py", "https://github.com/picopicodragon/Fx/actions/runs/41373801456"],
+      "spec_ids": [
+        "Q109",
+        "Q110",
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_way_e_progress.md",
+        "tests/test_phase1_way_e_audit.py",
+        "https://github.com/picopicodragon/Fx/actions/runs/41373801456"
+      ],
       "approval": null,
       "scope_note": "3374 offline tests and GitHub CI passed before this registry update; final head CI must be checked separately."
     },
@@ -159,8 +211,13 @@
       "id": "E-GATE-06",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "IN_PROGRESS",
-      "spec_ids": ["Q109", "Q110"],
-      "evidence": ["https://github.com/picopicodragon/Fx/pull/162"],
+      "spec_ids": [
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "https://github.com/picopicodragon/Fx/pull/162"
+      ],
       "approval": null,
       "scope_note": "Integrated PR open for sole maintainer self-review and manual merge; no MODULE/PHASE approval."
     },
@@ -168,8 +225,16 @@
       "id": "H1-A",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
-      "evidence": ["docs/phase1_h1_original_source_review_handoff_20261102.md", "docs/phase1_h1_local_candidate_audit_20261102.md"],
+      "spec_ids": [
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_h1_original_source_review_handoff_20261102.md",
+        "docs/phase1_h1_local_candidate_audit_20261102.md"
+      ],
       "approval": null,
       "scope_note": "Owner specified a Git-external archive and granted scoped local reading; two archive snapshots and one FX conversation inventoried without altering originals. No owner source authentication or safety approval."
     },
@@ -177,8 +242,16 @@
       "id": "H1-B",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
-      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
-      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "spec_ids": [
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_h1_local_candidate_audit_20261102.md",
+        "docs/phase1_h1_owner_review_sheet_20261102.md"
+      ],
       "approval": null,
       "scope_note": "126 explicit-Q candidates, 41 unmatched user messages and a 15-item local owner packet prepared outside Git. Q116-Q147 excerpt strings match locally; parent context, later amendments and 24 Qs absent from the archive block final reconciliation."
     },
@@ -186,8 +259,30 @@
       "id": "H1-C",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
-      "spec_ids": ["Q111", "Q112", "Q115", "FX-SAF-001", "FX-SAF-002", "FX-SAF-003", "FX-SAF-004", "FX-SAF-005", "FX-SAF-006", "FX-SAF-007", "FX-SAF-008", "FX-SAF-009", "FX-SAF-010", "FX-SAF-011", "FX-SAF-012", "FX-SAF-013", "FX-SAF-014", "FX-SAF-015"],
-      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "spec_ids": [
+        "Q111",
+        "Q112",
+        "Q115",
+        "FX-SAF-001",
+        "FX-SAF-002",
+        "FX-SAF-003",
+        "FX-SAF-004",
+        "FX-SAF-005",
+        "FX-SAF-006",
+        "FX-SAF-007",
+        "FX-SAF-008",
+        "FX-SAF-009",
+        "FX-SAF-010",
+        "FX-SAF-011",
+        "FX-SAF-012",
+        "FX-SAF-013",
+        "FX-SAF-014",
+        "FX-SAF-015"
+      ],
+      "evidence": [
+        "docs/phase1_h1_local_candidate_audit_20261102.md",
+        "docs/phase1_h1_owner_review_sheet_20261102.md"
+      ],
       "approval": null,
       "scope_note": "P0-01 through P0-05 source candidate coverage and draft differences prepared for all 15; short-answer assignment, absent Q148-Q171, semantic comparison and owner verification remain blocked."
     },
@@ -195,8 +290,15 @@
       "id": "H1-D",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
-      "spec_ids": ["Q110", "Q112", "Q115"],
-      "evidence": ["docs/phase1_h1_local_candidate_audit_20261102.md", "docs/phase1_h1_owner_review_sheet_20261102.md"],
+      "spec_ids": [
+        "Q110",
+        "Q112",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_h1_local_candidate_audit_20261102.md",
+        "docs/phase1_h1_owner_review_sheet_20261102.md"
+      ],
       "approval": null,
       "scope_note": "Owner decision table and local message-pointer packet prepared; owner source authentication, confidentiality review, unresolved formulas and safety implementation approval remain pending."
     },
@@ -204,8 +306,19 @@
       "id": "H1-E",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
-      "evidence": ["docs/phase1_h1_owner_review_sheet_20261102.md", "https://github.com/picopicodragon/Fx/pull/164", "https://github.com/picopicodragon/Fx/actions/runs/41378361162"],
+      "spec_ids": [
+        "Q109",
+        "Q110",
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_h1_owner_review_sheet_20261102.md",
+        "https://github.com/picopicodragon/Fx/pull/164",
+        "https://github.com/picopicodragon/Fx/actions/runs/41378361162"
+      ],
       "approval": null,
       "scope_note": "Repository checks and 3375 offline tests passed locally; PR opened and GitHub CI evidence linked. No original-source, safety or phase acceptance."
     },
@@ -213,8 +326,16 @@
       "id": "H1-F",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q112", "Q113", "Q114", "Q115"],
-      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "specs/h1_post147_local_source_status.json"],
+      "spec_ids": [
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_h1_post147_source_recovery_audit_20261102.md",
+        "specs/h1_post147_local_source_status.json"
+      ],
       "approval": null,
       "scope_note": "Metadata-only inventory of the previously authorized Git-external originals folder found only two known snapshots and no new source. No new file content was opened."
     },
@@ -222,8 +343,18 @@
       "id": "H1-G",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
-      "spec_ids": ["Q112", "Q113", "Q114", "Q115", "Q148", "Q199"],
-      "evidence": ["specs/h1_post147_local_source_status.json", "docs/phase1_h1_post147_source_recovery_audit_20261102.md"],
+      "spec_ids": [
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115",
+        "Q148",
+        "Q199"
+      ],
+      "evidence": [
+        "specs/h1_post147_local_source_status.json",
+        "docs/phase1_h1_post147_source_recovery_audit_20261102.md"
+      ],
       "approval": null,
       "scope_note": "No newer original was present in the specified folder. Q148-Q199 local-archive recovery awaits an identified new file and separate scoped permission."
     },
@@ -231,8 +362,30 @@
       "id": "H1-H",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q111", "Q112", "Q115", "FX-SAF-001", "FX-SAF-002", "FX-SAF-003", "FX-SAF-004", "FX-SAF-005", "FX-SAF-006", "FX-SAF-007", "FX-SAF-008", "FX-SAF-009", "FX-SAF-010", "FX-SAF-011", "FX-SAF-012", "FX-SAF-013", "FX-SAF-014", "FX-SAF-015"],
-      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "specs/h1_post147_local_source_status.json"],
+      "spec_ids": [
+        "Q111",
+        "Q112",
+        "Q115",
+        "FX-SAF-001",
+        "FX-SAF-002",
+        "FX-SAF-003",
+        "FX-SAF-004",
+        "FX-SAF-005",
+        "FX-SAF-006",
+        "FX-SAF-007",
+        "FX-SAF-008",
+        "FX-SAF-009",
+        "FX-SAF-010",
+        "FX-SAF-011",
+        "FX-SAF-012",
+        "FX-SAF-013",
+        "FX-SAF-014",
+        "FX-SAF-015"
+      ],
+      "evidence": [
+        "docs/phase1_h1_post147_source_recovery_audit_20261102.md",
+        "specs/h1_post147_local_source_status.json"
+      ],
       "approval": null,
       "scope_note": "Offline candidate-to-draft impact and test proposals mapped for all 15 requirements. Q148-Q199 local source and owner semantic comparison remain unavailable."
     },
@@ -240,8 +393,17 @@
       "id": "H1-I",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q109", "Q110", "Q112", "Q113", "Q115"],
-      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "specs/h1_post147_local_source_status.json"],
+      "spec_ids": [
+        "Q109",
+        "Q110",
+        "Q112",
+        "Q113",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_h1_post147_source_recovery_audit_20261102.md",
+        "specs/h1_post147_local_source_status.json"
+      ],
       "approval": null,
       "scope_note": "Only metadata and generalized issues are registered. Source, comparison, safety approval, NO_GO and latch states remain unchanged."
     },
@@ -249,8 +411,19 @@
       "id": "H1-J",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "TESTED",
-      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q115"],
-      "evidence": ["docs/phase1_h1_post147_source_recovery_audit_20261102.md", "https://github.com/picopicodragon/Fx/pull/166", "https://github.com/picopicodragon/Fx/actions/runs/41397310027"],
+      "spec_ids": [
+        "Q109",
+        "Q110",
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q115"
+      ],
+      "evidence": [
+        "docs/phase1_h1_post147_source_recovery_audit_20261102.md",
+        "https://github.com/picopicodragon/Fx/pull/166",
+        "https://github.com/picopicodragon/Fx/actions/runs/41397310027"
+      ],
       "approval": null,
       "scope_note": "Eight structural checks and 3377 offline tests passed; PR and GitHub CI evidence linked. Owner source reconciliation, safety acceptance and manual main merge remain pending."
     },
@@ -258,10 +431,124 @@
       "id": "H1-K",
       "module_id": "M-P1-FOUNDATION-DESIGN",
       "status": "BLOCKED",
-      "spec_ids": ["Q109", "Q110", "Q111", "Q112", "Q113", "Q114", "Q115", "Q148", "Q199", "FX-SAF-001", "FX-SAF-002", "FX-SAF-003", "FX-SAF-004", "FX-SAF-005", "FX-SAF-006", "FX-SAF-007", "FX-SAF-008", "FX-SAF-009", "FX-SAF-010", "FX-SAF-011", "FX-SAF-012", "FX-SAF-013", "FX-SAF-014", "FX-SAF-015"],
-      "evidence": ["docs/phase1_h1k_20261104_source_audit.md", "specs/h1k_20261104_source_status.json"],
+      "spec_ids": [
+        "Q109",
+        "Q110",
+        "Q111",
+        "Q112",
+        "Q113",
+        "Q114",
+        "Q115",
+        "Q148",
+        "Q199",
+        "FX-SAF-001",
+        "FX-SAF-002",
+        "FX-SAF-003",
+        "FX-SAF-004",
+        "FX-SAF-005",
+        "FX-SAF-006",
+        "FX-SAF-007",
+        "FX-SAF-008",
+        "FX-SAF-009",
+        "FX-SAF-010",
+        "FX-SAF-011",
+        "FX-SAF-012",
+        "FX-SAF-013",
+        "FX-SAF-014",
+        "FX-SAF-015"
+      ],
+      "evidence": [
+        "docs/phase1_h1k_20261104_source_audit.md",
+        "specs/h1k_20261104_source_status.json"
+      ],
       "approval": null,
       "scope_note": "Authorized November 4 archive parsed locally; its FX design conversation and 126 explicit/41 unmatched candidates equal the October 23 snapshot. Q148-Q199 remain absent (0/52) in that conversation; owner reconciliation and safety approval remain blocked."
+    },
+    {
+      "id": "FP-20261118-OBSERVATION",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "TESTED",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "docs/final_paper_remainder_batch_20261118.md",
+        "tests/test_final_paper_runtime.py",
+        "2026-11-18 operator reports 153 linked virtual observation cycles"
+      ],
+      "scope_note": "Read-only quote monitoring observed. No virtual trades, no production release or MODULE/PHASE acceptance.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-REENTRY",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "IN_PROGRESS",
+      "spec_ids": [
+        "Q44",
+        "Q45",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "research/final_paper_reentry_review.py",
+        "tests/test_final_paper_reentry_review.py"
+      ],
+      "scope_note": "Manual 106-to-107 stop classified intentional; 3420s gap latched. No explicit approval to clear latch; no control-plane mutation implemented.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-BILLING",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "BLOCKED",
+      "spec_ids": [
+        "Q25",
+        "Q31",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "research/final_paper_budget_readiness.py",
+        "tests/test_final_paper_budget_readiness.py"
+      ],
+      "scope_note": "Monthly JPY3000 arithmetic audit is read-only; verified provider billing, reserved exposure and new paid-call authorization are missing. Lifetime 6/6 cap remains.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-EVENT-COVERAGE",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "BLOCKED",
+      "spec_ids": [
+        "Q25",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "research/final_paper_event_coverage_audit.py",
+        "tests/test_final_paper_event_coverage_audit.py"
+      ],
+      "scope_note": "USD/EUR/JPY event archives and prerelease consensus are not independently attested. Paper entries and paid AI stay blocked.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-INTEGRATION",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "IN_PROGRESS",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "tests/test_final_paper_end_to_end_safety_campaign.py",
+        "tests/test_final_paper_strict_runtime_gates.py"
+      ],
+      "scope_note": "Synthetic no-order/DD/event/gap test coverage; no actual entry/exit execution or profitability evidence; human acceptance pending.",
+      "approval": null
     }
   ],
   "modules": [
@@ -305,6 +592,30 @@
         "27 mock-broker scenarios NOT_EXECUTED",
         "MT4 connectivity/order reconciliation unverified",
         "No explicit owner approval for safety-critical implementation or module acceptance"
+      ]
+    },
+    {
+      "id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "BLOCKED",
+      "safety_critical": true,
+      "task_ids": [
+        "FP-20261118-OBSERVATION",
+        "FP-20261118-REENTRY",
+        "FP-20261118-BILLING",
+        "FP-20261118-EVENT-COVERAGE",
+        "FP-20261118-INTEGRATION"
+      ],
+      "evidence": [
+        "docs/final_paper_remainder_batch_20261118.md",
+        "https://github.com/picopicodragon/Fx/pull/290"
+      ],
+      "approval": null,
+      "blockers": [
+        "Explicit human permission and safety review before communication latch may be cleared",
+        "Provider billing independently reconciled against 3000 JPY monthly cap",
+        "Unattested USD/EUR/JPY macro blackout and prerelease consensus coverage",
+        "Independent MT4 broker clock and costs not verified",
+        "No live broker orders, no simulated trade performance established"
       ]
     }
   ],
@@ -353,6 +664,17 @@
       "status": "NOT_STARTED",
       "module_ids": [],
       "evidence": [],
+      "approval": null
+    },
+    {
+      "id": "PHASE-FINAL-PAPER-VIRTUAL",
+      "status": "BLOCKED",
+      "module_ids": [
+        "M-FINAL-PAPER-VIRTUAL-READINESS"
+      ],
+      "evidence": [
+        "docs/final_paper_remainder_batch_20261118.md"
+      ],
       "approval": null
     }
   ]
