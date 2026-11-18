@@ -51,7 +51,7 @@ class CommunicationReviewTests(unittest.TestCase):
             state=fixture(root,delta=delta,age=age,latch=latch,
                           positions=positions,pending=pending,other=other)
             with patch.object(review.runtime,"_journal_load",
-                              return_value=(state,"a"*64)), \\
+                              return_value=(state,"a"*64)), \
                  patch.object(review.status,"summarize",
                               return_value=summary(state,age=age)):
                 return review.review(root,now=NOW)
