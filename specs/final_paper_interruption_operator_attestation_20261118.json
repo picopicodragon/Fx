@@ -1,0 +1,32 @@
+{
+  "schema": "fx_final_paper_interruption_operator_attestation_v1",
+  "event_id": "PAPER_20261118_CYCLE_106_TO_107",
+  "event_type": "INTENTIONAL_OPERATOR_SHUTDOWN",
+  "classification": "OPERATOR_ATTESTED_INTENTIONAL_STOP",
+  "classification_basis": "EXPLICIT_OPERATOR_DECLARATION_IN_CONVERSATION",
+  "operator_declared_stop_was_manual_and_regular": true,
+  "scope": "HISTORICAL_INTERRUPTION_CLASSIFICATION_ONLY",
+  "observation_gap": {
+    "previous_journal_cycle": 106,
+    "next_journal_cycle": 107,
+    "previous_quote_epoch_pc_unattested": 1794974931,
+    "next_quote_epoch_pc_unattested": 1794978351,
+    "unobserved_seconds_pc_derived": 3420,
+    "time_independently_attested": false
+  },
+  "windows_application_1001": {
+    "count": 2,
+    "causally_related_to_python_process_exit": "NOT_ESTABLISHED",
+    "force_python_crash_classification": false
+  },
+  "previous_unknown_root_cause_record_superseded_for_this_event": true,
+  "applicable_to_other_future_stops": false,
+  "existing_journal_may_be_modified": false,
+  "existing_communication_latch_may_be_cleared_from_attestation_alone": false,
+  "reentry_authorized": false,
+  "paid_ai_inference_renewal_authorized": false,
+  "existing_paid_ai_call_limit": 6,
+  "broker_orders_permitted": false,
+  "real_orders_permitted": false,
+  "operational_no_go_maintained": true
+}

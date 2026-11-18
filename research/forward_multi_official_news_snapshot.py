@@ -76,19 +76,41 @@ def _published(s: str):
         timespec="seconds").replace("+00:00", "Z")
 
 
+def _ecb_legacy_double_slash_path(path: str) -> bool:
+    """Limited ECB RSS metadata exception: preserve original and never fetch links."""
+    if (type(path) is not str or not path.startswith("//")
+            or path.startswith("///")):
+        return False
+    tail = path[2:]
+    if (not tail or "//" in tail or "\\" in tail or "%" in tail
+            or not re.fullmatch(r"[A-Za-z0-9._~!$&'()*+,;=:@/-]+", tail)):
+        return False
+    parts = tail.split("/")
+    if (any(part in ("", ".", "..") for part in parts)
+            or parts[0] not in {"press", "home", "pub", "stats", "events"}):
+        return False
+    return True
+
 def _link(url: str, feed: str):
     if type(url) is not str or not 1 <= len(url) <= 1400 or (
             any(c.isspace() for c in url)):
         raise InputError("item link invalid")
     try:
         parts = urlsplit(url)
+        if parts.scheme == "http" and parts.hostname == SOURCE_HOSTS[feed]:
+            raise InputError("official item link is HTTP not HTTPS")
         if (parts.scheme != "https"
                 or parts.hostname != SOURCE_HOSTS[feed]
                 or parts.username is not None or parts.password is not None
                 or parts.port not in (None, 443)
-                or parts.fragment or not parts.path.startswith("/")
-                or parts.path.startswith("//")):
+                or parts.fragment or not parts.path.startswith("/")):
             raise InputError("item link not same official source host")
+        if parts.path.startswith("//") and not (
+                feed == "ecb_press"
+                and _ecb_legacy_double_slash_path(parts.path)):
+            raise InputError("item link not same official source host")
+    except InputError:
+        raise
     except ValueError as exc:
         raise InputError("malformed source link") from exc
     return url
@@ -139,6 +161,8 @@ def _parse_news(xml: bytes, feed: str, asof_utc: str):
                 links[0],
                 (e.findtext(ATOM + "published") or "").strip(),
             ))
+    elif root.tag == "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}RDF":
+        raise InputError("RSS 1.0 RDF root unsupported")
     else:
         raise InputError("unknown RSS/Atom root")
     if len(items) > MAX_ENTRIES:

@@ -1,7 +1,9 @@
 """FWD-1401: begin an immutable NO-ORDER shadow-forward evidence campaign.
 
 Start once with existing manually copied MT4 3-pair CSV sessions, then append
-new explicitly chosen sessions with --mode step. All old source bytes are
+new explicitly chosen sessions with --mode step. --mode refresh integrates
+newly observed real macro/AI journal evidence without falsely requiring a
+second price observation, while rechecking all prior copied CSV originals. All old source bytes are
 rechecked at every step. A missing real macro/consensus/reviewer event is a
 deterministic RESEARCH HOLD, NEVER a fabricated AI signal or simulated fill.
 This application performs no API calls, web fetch, scheduling, MT4 access,
@@ -124,8 +126,29 @@ def _load(folder: Path) -> list[dict]:
                 or state.get("API_calls_this_run") != 0
                 or type(state.get("sessions")) is not list):
             raise InputError("shadow record safety scope invalid")
-        if rows and len(state["sessions"]) <= len(rows[-1]["record"]["sessions"]):
-            raise InputError("shadow history failed incremental-session bound")
+        if rows:
+            old = rows[-1]["record"]
+            length = len(state["sessions"])
+            if state.get("mode") == "step":
+                if length <= len(old["sessions"]):
+                    raise InputError("step did not add a new copied CSV session")
+                if state["sessions"][:len(old["sessions"])] != old["sessions"]:
+                    raise InputError("step changed previously recorded sessions")
+            elif state.get("mode") == "refresh":
+                if state["sessions"] != old["sessions"]:
+                    raise InputError("macro refresh changed price evidence")
+                prev_events = old["reviewed_macro_event_count_in_supplied_journal"]
+                prev_reviews = old["independent_review_count_in_supplied_journal"]
+                events = state["reviewed_macro_event_count_in_supplied_journal"]
+                reviews = state["independent_review_count_in_supplied_journal"]
+                if (type(events) is not int or type(reviews) is not int
+                        or events < prev_events or reviews < prev_reviews
+                        or (events == prev_events and reviews == prev_reviews)):
+                    raise InputError("macro refresh lacks monotonic new evidence")
+            else:
+                raise InputError("illegal shadow campaign transition")
+        elif state.get("mode") != "start":
+            raise InputError("shadow campaign must begin with start")
         previous = obj["record_sha256"]
         rows.append(obj)
     return rows
@@ -161,10 +184,12 @@ def _entries_from_previous(previous: dict | None) -> list[tuple[str, Path]]:
 
 
 def _choose_sessions(*, previous: dict | None, new: list[str],
-                     plan_file: Path | None) -> tuple[list[tuple[str, Path]],
-                                                       dict | None]:
+                     plan_file: Path | None, mode: str
+                     ) -> tuple[list[tuple[str, Path]], dict | None]:
     if plan_file is not None and new:
         raise InputError("use either full evidence plan or explicit new sessions")
+    if mode == "refresh" and (plan_file is None or new or previous is None):
+        raise InputError("refresh requires old campaign and full explicit plan")
     if plan_file is not None:
         decoded, _ = runbook.read_plan(plan_file)
         selected = decoded["sessions"]
@@ -177,7 +202,10 @@ def _choose_sessions(*, previous: dict | None, new: list[str],
         raise InputError("repeated shadow session label")
     if previous is not None:
         old = _entries_from_previous(previous)
-        if len(selected) <= len(old) or selected[:len(old)] != old:
+        if mode == "refresh":
+            if selected != old:
+                raise InputError("macro refresh must use exact old price sessions")
+        elif len(selected) <= len(old) or selected[:len(old)] != old:
             raise InputError("shadow step must append a NEW session only")
     return selected, decoded if plan_file is not None else None
 
@@ -185,11 +213,12 @@ def _choose_sessions(*, previous: dict | None, new: list[str],
 def inspect(*, mode: str, asof_utc: str, new_sessions: list[str],
             previous: dict | None = None,
             plan_file: Path | None = None) -> dict:
-    if mode not in ("start", "step") or (mode == "start") == (previous is not None):
+    if mode not in ("start", "step", "refresh") or (
+            (mode == "start") == (previous is not None)):
         raise InputError("invalid shadow state transition")
     now = timestamp(asof_utc)
     selected, selected_plan = _choose_sessions(
-        previous=previous, new=new_sessions, plan_file=plan_file)
+        previous=previous, new=new_sessions, plan_file=plan_file, mode=mode)
     # The complete existing offline pilot runs macro, price, news, blackout,
     # safety fault and risk-acceptance debt audits on declared evidence.
     if selected_plan is None:
@@ -256,6 +285,14 @@ def inspect(*, mode: str, asof_utc: str, new_sessions: list[str],
         full["external_macro_event_observations"] == 0
         or full["external_macro_missing_consensus_count"] != 0
         or macro_events == 0 or reviews == 0)
+    if mode == "refresh":
+        if selected_plan is None or selected_plan["observation_store"] is None:
+            raise InputError("macro refresh requires a real observation journal")
+        old_events = previous["reviewed_macro_event_count_in_supplied_journal"]
+        old_reviews = previous["independent_review_count_in_supplied_journal"]
+        if (macro_events < old_events or reviews < old_reviews
+                or (macro_events == old_events and reviews == old_reviews)):
+            raise InputError("macro refresh did not add any observed event/review")
     verdict = {
         pair: {
             "status": "SAFETY_HOLD_NO_VALIDATED_LIVE_AI_DECISION",
@@ -274,6 +311,8 @@ def inspect(*, mode: str, asof_utc: str, new_sessions: list[str],
             if mode == "start" and fresh_added else
             "SHADOW_FORWARD_BASELINE_ONLY_HOLD_NO_GO"
             if mode == "start" else
+            "SHADOW_FORWARD_MACRO_EVIDENCE_REFRESHED_HOLD_NO_GO"
+            if mode == "refresh" else
             "SHADOW_FORWARD_NEW_SESSION_RECORDED_HOLD_NO_GO"
             if fresh_added else "SHADOW_FORWARD_HISTORICAL_STEP_HOLD_NO_GO"),
         "mode": mode,
@@ -327,7 +366,7 @@ def _append(folder: Path, record: dict, *, previous_hash: str | None,
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         description="Begin/step/read immutable no-order shadow forward study")
-    parser.add_argument("--mode", choices=("start", "step", "status"), required=True)
+    parser.add_argument("--mode", choices=("start", "step", "refresh", "status"), required=True)
     parser.add_argument("--state-dir", type=Path, required=True)
     parser.add_argument("--session", action="append", default=[])
     parser.add_argument("--plan-file", type=Path)

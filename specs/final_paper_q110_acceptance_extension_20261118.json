@@ -1,0 +1,138 @@
+{
+  "schema": "fx_final_paper_q110_acceptance_extension_v1",
+  "scope": "FINAL_PAPER_VIRTUAL_RESEARCH_ONLY",
+  "base_registry": "specs/acceptance_registry.json",
+  "base_registry_frozen_and_unchanged": true,
+  "tasks": [
+    {
+      "id": "FP-20261118-OBSERVATION",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "TESTED",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "docs/final_paper_remainder_batch_20261118.md",
+        "tests/test_final_paper_runtime.py",
+        "2026-11-18 operator reports 153 linked virtual observation cycles"
+      ],
+      "scope_note": "Read-only quote monitoring observed. No virtual trades, no production release or MODULE/PHASE acceptance.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-REENTRY",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "IN_PROGRESS",
+      "spec_ids": [
+        "Q44",
+        "Q45",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "research/final_paper_reentry_review.py",
+        "tests/test_final_paper_reentry_review.py"
+      ],
+      "scope_note": "Manual 106-to-107 stop classified intentional; 3420s gap latched. No explicit approval to clear latch; no control-plane mutation implemented.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-BILLING",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "BLOCKED",
+      "spec_ids": [
+        "Q25",
+        "Q31",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "research/final_paper_budget_readiness.py",
+        "tests/test_final_paper_budget_readiness.py"
+      ],
+      "scope_note": "Monthly JPY3000 arithmetic audit is read-only; verified provider billing, reserved exposure and new paid-call authorization are missing. Lifetime 6/6 cap remains.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-EVENT-COVERAGE",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "BLOCKED",
+      "spec_ids": [
+        "Q25",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "research/final_paper_event_coverage_audit.py",
+        "tests/test_final_paper_event_coverage_audit.py"
+      ],
+      "scope_note": "USD/EUR/JPY event archives and prerelease consensus are not independently attested. Paper entries and paid AI stay blocked.",
+      "approval": null
+    },
+    {
+      "id": "FP-20261118-INTEGRATION",
+      "module_id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "IN_PROGRESS",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q110"
+      ],
+      "evidence": [
+        "tests/test_final_paper_end_to_end_safety_campaign.py",
+        "tests/test_final_paper_strict_runtime_gates.py"
+      ],
+      "scope_note": "Synthetic no-order/DD/event/gap test coverage; no actual entry/exit execution or profitability evidence; human acceptance pending.",
+      "approval": null
+    }
+  ],
+  "modules": [
+    {
+      "id": "M-FINAL-PAPER-VIRTUAL-READINESS",
+      "status": "BLOCKED",
+      "safety_critical": true,
+      "task_ids": [
+        "FP-20261118-OBSERVATION",
+        "FP-20261118-REENTRY",
+        "FP-20261118-BILLING",
+        "FP-20261118-EVENT-COVERAGE",
+        "FP-20261118-INTEGRATION"
+      ],
+      "evidence": [
+        "docs/final_paper_remainder_batch_20261118.md",
+        "https://github.com/picopicodragon/Fx/pull/290"
+      ],
+      "approval": null,
+      "blockers": [
+        "Explicit human permission and safety review before communication latch may be cleared",
+        "Provider billing independently reconciled against 3000 JPY monthly cap",
+        "Unattested USD/EUR/JPY macro blackout and prerelease consensus coverage",
+        "Independent MT4 broker clock and costs not verified",
+        "No live broker orders, no simulated trade performance established"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "PHASE-FINAL-PAPER-VIRTUAL",
+      "status": "BLOCKED",
+      "module_ids": [
+        "M-FINAL-PAPER-VIRTUAL-READINESS"
+      ],
+      "evidence": [
+        "docs/final_paper_remainder_batch_20261118.md"
+      ],
+      "approval": null
+    }
+  ],
+  "human_approved_module": false,
+  "human_approved_phase": false,
+  "paid_ai_extension_authorized": false,
+  "virtual_reentry_authorized": false,
+  "broker_orders_authorized": false
+}

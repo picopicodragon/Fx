@@ -4,7 +4,7 @@
 [CmdletBinding()]
 param(
   [Parameter(Mandatory=$true)]
-  [ValidateSet('start','step','status')]
+  [ValidateSet('start','step','refresh','status')]
   [string]$Mode,
 
   [Parameter(Mandatory=$true)]
@@ -19,8 +19,9 @@ param(
 $ErrorActionPreference = 'Stop'
 if (($Session.Count -gt 0 -and $PlanFile) -or
     ($Mode -eq 'status' -and ($Session.Count -gt 0 -or $PlanFile)) -or
-    ($Mode -ne 'status' -and $Session.Count -eq 0 -and -not $PlanFile)) {
-  throw 'FWD shadow: supply named new CSV sessions OR full plan for start/step, neither for status. NO_GO'
+    ($Mode -eq 'refresh' -and ($Session.Count -gt 0 -or -not $PlanFile)) -or
+    ($Mode -in @('start','step') -and $Session.Count -eq 0 -and -not $PlanFile)) {
+  throw 'FWD shadow: start/step needs new CSV sessions or plan; refresh requires full plan; status needs neither. NO_GO'
 }
 if ($Mode -eq 'start') {
   if (Test-Path -LiteralPath $StateDirectory) {

@@ -1,0 +1,54 @@
+{
+  "schema": "fx_ai_provider_phase_policy_v1",
+  "decision_id": "FX-AI-ARCH-003",
+  "decision_date": "2026-11-18",
+  "decision_source": "explicit_user_decision_in_project_conversation",
+  "replaces_operational_jev_priority_from": "FX-AI-ARCH-001",
+  "applies_to": [
+    "final_paper_test",
+    "completed_system"
+  ],
+  "user_decision": "Do not use TypeSafe AI Jev in either the final paper-trading test build or the completed system.",
+  "final_paper_test": {
+    "order_execution": "NO_BROKER_ORDERS",
+    "market_data_source": "RAKUTEN_MT4_DEMO_READ_ONLY",
+    "portfolio_execution": "LOCAL_VIRTUAL_POSITIONS_ONLY",
+    "primary_hypothesis_provider": "OPENAI_RESPONSES",
+    "independent_review_provider": "OPENAI_SEPARATE_MODEL",
+    "jev_enabled": false,
+    "jev_required": false,
+    "jev_live_calls_allowed": false,
+    "openai_decisions_api_status": "UNSELECTED_OPTIONAL_RESEARCH_ONLY",
+    "go_no_go": "NO_GO",
+    "broker_order_execution_ever_allowed": false,
+    "operation_start_status": "AWAITING_LOCAL_METAEDITOR_COMPILE_AND_RUNNING_WINDOWS_SUPERVISOR",
+    "current_operational_limitations": [
+      "MACRO_EVENT_BLACKOUT_NOT_INDEPENDENTLY_ATTESTED",
+      "POINT_IN_TIME_CONSENSUS_NOT_INDEPENDENTLY_ATTESTED",
+      "PAID_AI_LIFETIME_CAPPED_AT_6_CALLS",
+      "BROKER_QUOTE_SERVER_CLOCK_NOT_INDEPENDENTLY_ATTESTED",
+      "TRADE_COSTS_NOT_FULLY_VERIFIED",
+      "MT4_EXPERT_COMPILE_NOT_YET_CONFIRMED"
+    ]
+  },
+  "completed_system": {
+    "jev_enabled": false,
+    "jev_required": false,
+    "jev_live_calls_allowed": false,
+    "independent_ai_review_required": true,
+    "live_order_authorized": false
+  },
+  "historical_comparison_artifacts": "RETAIN_BUT_NOT_RUNTIME_DEPENDENCIES",
+  "impact": "No Jev comparative testing is a release gate for these two phases; no implicit alternative provider substitution.",
+  "safety_invariants": {
+    "maximum_loss_per_trade_pct": 0.5,
+    "combined_open_risk_pct": 1,
+    "daily_loss_stop_pct": 1.5,
+    "hard_drawdown_stop_pct": 5,
+    "no_replay_after_ambiguous_api_dispatch": true,
+    "final_test_real_broker_orders_permitted": false,
+    "final_test_demo_broker_orders_permitted": false,
+    "completed_system_live_orders_permitted_now": false
+  },
+  "implementation_status": "PAPER_ENGINE_CODE_TESTED_LOCAL_MT4_OPERATION_PENDING"
+}
