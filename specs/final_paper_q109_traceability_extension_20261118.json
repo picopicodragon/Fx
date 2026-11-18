@@ -1,0 +1,109 @@
+{
+  "schema": "fx_final_paper_q109_traceability_extension_v1",
+  "scope": "SIMULATED_VIRTUAL_PAPER_ONLY",
+  "base_registry": "specs/traceability.json",
+  "base_registry_pinned_and_unchanged": true,
+  "registered_sources": [
+    {
+      "source": "research/final_paper_engine.py",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q13",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_engine.py",
+        "tests/test_final_paper_strict_runtime_gates.py",
+        "tests/test_final_paper_end_to_end_safety_campaign.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_runtime.py",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q25",
+        "Q44",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_runtime.py",
+        "tests/test_final_paper_strict_runtime_gates.py",
+        "tests/test_final_paper_end_to_end_safety_campaign.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_reentry_review.py",
+      "spec_ids": [
+        "Q44",
+        "Q45",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_reentry_review.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_budget_readiness.py",
+      "spec_ids": [
+        "Q25",
+        "Q31",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_budget_readiness.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_event_coverage_audit.py",
+      "spec_ids": [
+        "Q25",
+        "Q44",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_event_coverage_audit.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "research/final_paper_release_matrix.py",
+      "spec_ids": [
+        "Q6",
+        "Q7",
+        "Q25",
+        "Q44",
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_release_matrix.py"
+      ],
+      "production_authorized": false
+    },
+    {
+      "source": "scripts/final_paper_release_matrix_once.ps1",
+      "spec_ids": [
+        "Q109",
+        "Q110"
+      ],
+      "tests": [
+        "tests/test_final_paper_release_matrix.py"
+      ],
+      "production_authorized": false
+    }
+  ],
+  "activation_authorized": false,
+  "human_module_approval_recorded": false,
+  "phase_approval_recorded": false
+}
