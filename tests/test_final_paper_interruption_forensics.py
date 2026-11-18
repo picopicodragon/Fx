@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from datetime import datetime,timezone
 from pathlib import Path
+from unittest.mock import patch
 
 from research import final_paper_interruption_forensics as forensic
 from research import final_paper_engine as paper
@@ -22,7 +23,7 @@ def _fixture(root:Path, *,gap:bool=True,cycles:int=21):
     for index in range(1,cycles+1):
         # Includes a 2760-second interruption from cycle 11 to cycle 12.
         if gap and index<=11:
-            epoch=T-3300-(11-index)*60
+            epoch=T-3340-(11-index)*60
         else:
             epoch=T-40-(cycles-index)*60
         state=paper.initial_state()
@@ -80,11 +81,13 @@ class FinalPaperForensicTests(unittest.TestCase):
             root=Path(tmp)/"paper"
             _fixture(root)
             out=Path(tmp)/"report.json"
-            self.assertEqual(forensic.main([
-                "--state-root",str(root),"--out",str(out)]),0)
-            before=out.read_bytes()
-            self.assertEqual(forensic.main([
-                "--state-root",str(root),"--out",str(out)]),2)
+            with patch.object(forensic,"analyze",
+                              return_value=forensic.analyze(root,now=NOW)):
+                self.assertEqual(forensic.main([
+                    "--state-root",str(root),"--out",str(out)]),0)
+                before=out.read_bytes()
+                self.assertEqual(forensic.main([
+                    "--state-root",str(root),"--out",str(out)]),2)
             self.assertEqual(out.read_bytes(),before)
 
     def test_forensic_sources_do_not_execute_orders_paid_ai_or_clear_locks(self):
