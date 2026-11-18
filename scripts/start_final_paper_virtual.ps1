@@ -10,7 +10,8 @@ param(
     [int]$MaxPaidCallsLifetime = 0,
     [string]$AnalystModel = '',
     [string]$ReviewerModel = '',
-    [string]$StateRoot = ''
+    [string]$StateRoot = '',
+    [string]$EventBlackoutFile = ''
 )
 $ErrorActionPreference = 'Stop'
 if (-not (Test-Path -LiteralPath $Mt4FilesDirectory -PathType Container)) {
@@ -48,6 +49,11 @@ if (-not (Test-Path -LiteralPath $parent -PathType Container)) {
 Write-Host 'LOCAL VIRTUAL FX ONLY: starting capital JPY 100,000.'
 Write-Host 'No MT4 broker orders, no Jev and no real account access.'
 Write-Host 'AutoTrading must remain OFF. Ctrl+C stops this local supervisor.'
+if ($EventBlackoutFile) {
+    if (-not (Test-Path -LiteralPath $EventBlackoutFile -PathType Leaf)) {
+        throw 'Event blackout schedule missing. NO_GO'
+    }
+}
 $cmd = @('-m','research.final_paper_runtime',
     '--mt4-files',$mt4,'--state-root',$StateRoot,
     '--interval-seconds','15')
@@ -60,6 +66,7 @@ if ($AllowPaidAi) {
         '--analyst-model',$AnalystModel,
         '--reviewer-model',$ReviewerModel)
 }
+if ($EventBlackoutFile) { $cmd += @('--event-blackout-file',$EventBlackoutFile) }
 if (-not $Once) { $cmd += '--watch' }
 & python @cmd
 if ($LASTEXITCODE -ne 0) {
