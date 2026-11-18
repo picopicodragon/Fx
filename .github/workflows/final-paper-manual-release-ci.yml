@@ -1,0 +1,39 @@
+name: Final paper manual communication release regression
+
+on:
+  pull_request:
+    paths:
+      - 'research/final_paper_manual_comm_release.py'
+      - 'research/final_paper_runtime.py'
+      - 'scripts/final_paper_stage_manual_comm_release_once.ps1'
+      - 'tests/test_final_paper_manual_comm_release.py'
+      - '.github/workflows/final-paper-manual-release-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  paper-release-linux:
+    name: Linux 3.12 paper release regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m compileall -q research tests
+      - run: python -m unittest discover -s tests -p 'test_final_paper*.py' -v
+
+  paper-release-windows:
+    name: Windows 3.13 paper release regression
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m unittest discover -s tests -p "test_final_paper*.py"
