@@ -37,6 +37,18 @@ class DemoBrokerSafetyProbeTests(unittest.TestCase):
             "IsExpertEnabled(", "SendNotification("):
             self.assertNotIn(forbidden, source)
 
+    def test_local_runner_is_offline_and_produces_redacted_report(self):
+        script=(Path(__file__).resolve().parents[1] /
+                "scripts"/"final_demo_broker_safety_once.ps1").read_text("utf-8")
+        for token in ("FxDemoBrokerSafety_", "final_demo_broker_contract_audit",
+                      "--snapshot $copy --out $report",
+                      "redacted_broker_terms_audit.json", "MQL4\\Files"):
+            self.assertIn(token,script)
+        for forbidden in ("-AllowPaidAi", "OrderSend(", "OrderModify(",
+                          "OPENAI_API_KEY", "Invoke-WebRequest",
+                          "EnableDemoOrders=true"):
+            self.assertNotIn(forbidden,script)
+
     def test_probe_does_not_confuse_broker_values_with_independent_attestation(self):
         source=(Path(__file__).resolve().parents[1] /
                 "mt4" / "read_only" /
