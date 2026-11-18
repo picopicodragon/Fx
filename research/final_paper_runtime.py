@@ -234,16 +234,32 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                 "real_orders_permitted":False}
     known_blackout=blackout.check(event_blackout_file,
                                   quote["capture_epoch"],now=now)
+    # The local known-event list is NOT an independently verified complete
+    # three-currency calendar, and the broker clock is also unattested.
+    # The runnable paper supervisor must not convert either absence into
+    # permission to incur further AI bills or open a new virtual position.
+    evidence_ready=(
+        known_blackout["independent_calendar_coverage_attested"] is True
+        and known_blackout["pc_clock_independently_attested"] is True
+    )
+    risk_stop=any(state.get(name) is True for name in (
+        "communication_latched","dd4_latched","dd5_latched",
+        "daily_loss_latched"))
+    paid_safe=(
+        allow_paid and evidence_ready and not risk_stop
+        and not known_blackout["active_known_blackout"]
+    )
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
     signals,seen,paid=_signals_for_new_h1(
         state,captures,bundles,root,now,
-        allow_paid=allow_paid and not known_blackout["active_known_blackout"],
+        allow_paid=paid_safe,
         analyst_model=analyst_model,reviewer_model=reviewer_model,
         max_paid_calls=paid_limit)
     changed,report=paper.step(
         state,quote,signals=signals,
-        known_event_blackout=known_blackout["active_known_blackout"])
+        known_event_blackout=known_blackout["active_known_blackout"],
+        entry_evidence_ready=evidence_ready)
     changed["processed_h1_keys"].extend(seen)
     changed["paid_inference_calls"]+=paid
     if len(changed["processed_h1_keys"])>10000:
@@ -255,6 +271,9 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     report["known_macro_event_blackout_active"]=known_blackout["active_known_blackout"]
     report["event_calendar_supplied"]=known_blackout["calendar_supplied"]
     report["independent_future_event_calendar_attested"]=False
+    report["independent_broker_clock_attested"]=False
+    report["entry_readiness_gate_open"]=False
+    report["new_paid_ai_allowed_by_evidence_gate"]=False
     return report
 
 
