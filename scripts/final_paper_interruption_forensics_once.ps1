@@ -71,7 +71,7 @@ $bundle=[ordered]@{
     runtime_go_no_go='NO_GO'
 }
 $eventFile=Join-Path $StateRoot ('interruption_windows_events_' + $stamp + '.json')
-$utf8 = New-Object System.Text.UTF8Encoding($false)
+$utf8 = [System.Text.UTF8Encoding]::new($false)
 $body = ConvertTo-Json -InputObject $bundle -Depth 8
 $stream = [System.IO.File]::Open($eventFile,[System.IO.FileMode]::CreateNew,[System.IO.FileAccess]::Write,[System.IO.FileShare]::None)
 try {
