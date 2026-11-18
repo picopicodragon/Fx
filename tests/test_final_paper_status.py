@@ -32,8 +32,15 @@ class PaperStatusTests(unittest.TestCase):
             root=Path(folder)/"virtual"
             runtime._initialize(root)
             state=paper.initial_state()
-            from tests.test_final_paper_runtime import quote
-            state,_=paper.step(state,quote())
+            obs={"capture_epoch":int(T.timestamp()),
+                 "quotes":{pair:{
+                     "bid":paper.D("150"),"ask":paper.D("150.01"),
+                     "tickvalue":paper.D("100"),
+                     "ticksize":paper.D(".001"),
+                     "minlot":paper.D(".01"),"step":paper.D(".01"),
+                     "maxlot":paper.D("20"),"point":paper.D(".001")}
+                     for pair in paper.PAIRS}}
+            state,_=paper.step(state,obs)
             runtime._journal_append(
                 root/"journal",state,"0"*64,"a"*64,T)
             result=status.summarize(root)
