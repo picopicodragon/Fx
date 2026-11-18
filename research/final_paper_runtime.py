@@ -234,6 +234,11 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                 "real_orders_permitted":False}
     known_blackout=blackout.check(event_blackout_file,
                                   quote["capture_epoch"],now=now)
+    # Consume a single operator-staged permission only on a new fresh quote.
+    # This never relaxes independent calendar/clock/AI/transaction gates.
+    from research import final_paper_manual_comm_release as comm_release
+    working_state, manual_comm_release_applied = comm_release.apply_if_valid(
+        root, state, prior, quote, now)
     # The local known-event list is NOT an independently verified complete
     # three-currency calendar, and the broker clock is also unattested.
     # The runnable paper supervisor must not convert either absence into
@@ -242,7 +247,7 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
         known_blackout["independent_calendar_coverage_attested"] is True
         and known_blackout["pc_clock_independently_attested"] is True
     )
-    risk_stop=any(state.get(name) is True for name in (
+    risk_stop=any(working_state.get(name) is True for name in (
         "communication_latched","dd4_latched","dd5_latched",
         "daily_loss_latched"))
     quote_gap_safe=(
@@ -256,12 +261,12 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
     signals,seen,paid=_signals_for_new_h1(
-        state,captures,bundles,root,now,
+        working_state,captures,bundles,root,now,
         allow_paid=paid_safe,
         analyst_model=analyst_model,reviewer_model=reviewer_model,
         max_paid_calls=paid_limit)
     changed,report=paper.step(
-        state,quote,signals=signals,
+        working_state,quote,signals=signals,
         known_event_blackout=known_blackout["active_known_blackout"],
         entry_evidence_ready=evidence_ready)
     changed["processed_h1_keys"].extend(seen)
@@ -278,6 +283,7 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     report["independent_broker_clock_attested"]=False
     report["entry_readiness_gate_open"]=evidence_ready and not risk_stop and quote_gap_safe
     report["new_paid_ai_allowed_by_evidence_gate"]=paid_safe
+    report["manual_comm_release_applied_this_cycle"] = manual_comm_release_applied
     return report
 
 
