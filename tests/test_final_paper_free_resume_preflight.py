@@ -105,8 +105,8 @@ class FreeResumePreflightTests(unittest.TestCase):
             with patch.object(pre.stream,"diagnose",return_value=diag()), \
                  patch.object(pre.paper_status,"summarize",return_value=status()), \
                  patch.object(pre.paid,"audit",return_value=paid()):
-                with patch.object(pre,"preflight") as stub:
-                    stub.return_value=pre.preflight(root,root,now=NOW)
+                report=pre.preflight(root,root,now=NOW)
+                with patch.object(pre,"preflight",return_value=report):
                     self.assertEqual(pre.main([
                         "--state-root",str(root),
                         "--mt4-files",str(root),"--out",str(out)]),0)
