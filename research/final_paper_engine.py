@@ -279,6 +279,10 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,
     dd=(peak-equity)/peak
     daystart=_dec(next_state["day_start_equity_jpy"],positive=True)
     dayloss=max(D("0"),(daystart-equity)/daystart)
+    if dd>=D(".02"):
+        events.append("VIRTUAL_DD2_WARNING")
+    if dd>=D(".03"):
+        events.append("VIRTUAL_DD3_REEVALUATION")
     if dd>=DD_LEVEL3:
         next_state["dd4_latched"]=True
     if dd>=DD_HARD:
