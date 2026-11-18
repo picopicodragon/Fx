@@ -245,9 +245,13 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     risk_stop=any(state.get(name) is True for name in (
         "communication_latched","dd4_latched","dd5_latched",
         "daily_loss_latched"))
+    quote_gap_safe=(
+        state["last_quote_epoch"]==0 or
+        quote["capture_epoch"]-state["last_quote_epoch"]<=600
+    )
     paid_safe=(
         allow_paid and evidence_ready and not risk_stop
-        and not known_blackout["active_known_blackout"]
+        and quote_gap_safe and not known_blackout["active_known_blackout"]
     )
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
@@ -272,8 +276,8 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     report["event_calendar_supplied"]=known_blackout["calendar_supplied"]
     report["independent_future_event_calendar_attested"]=False
     report["independent_broker_clock_attested"]=False
-    report["entry_readiness_gate_open"]=False
-    report["new_paid_ai_allowed_by_evidence_gate"]=False
+    report["entry_readiness_gate_open"]=evidence_ready and not risk_stop and quote_gap_safe
+    report["new_paid_ai_allowed_by_evidence_gate"]=paid_safe
     return report
 
 
