@@ -429,3 +429,42 @@ Linux CIとWindows CIの通過は実機イベント取得の成功ではない�
 **停止ラッチ解除、Pythonプロセス再起動、MT4注文、有料AI呼び出し、
 運用journal・AI台帳・単独運用ロックの変更を一切実施しない。**
 根本原因が判明しない場合は unknown のまま停止ラッチ維持。
+
+
+## FINAL-PAPER-49〜52：2026-11-18 13:38 のApplicationイベントID1001の限定調査
+
+ユーザーがWindows実機から報告したCSV・journal照合情報：
+- 106→107サイクル間の無観測は3420秒（57分）。
+- 直近153サイクル、復旧後の47サイクル観測、latest quote47秒。
+- Applicationログ：2026-11-18T13:38:04.122+09:00、
+  13:38:06.196+09:00 にEvent ID1001が2件。
+- Systemログ：NO_MATCH_OR_NOT_ACCESSIBLEであり、
+  「該当イベントなし」と「読み取りできない」を区別できない。
+- Windowsアプリ1001はWER等が記録することがあり、イベント
+  IDだけではPythonプロセスの異常終了は証明できない。
+- 欠測直前のquote時刻13:08:51 JST、再開直後14:05:51 JSTであり、
+  Application 1001は欠測の約29分後に発生、直後の障害ではない。
+
+次の追加調査は、Windows Applicationログの13:30〜13:45について
+Event ID 1000/1001/1002の発行元カテゴリと、
+XML EventDataの限られたAppName/P1/param1等の要素から
+匿名化したアプリ種別だけを抽出する。
+
+    .\scripts\final_paper_wer_1001_focus_once.ps1
+
+出力：wer_1001_metadata_*.json。保存するものはイベントID、
+ローカル時刻、発行元カテゴリ、既知プロセスの種別
+(PYTHON/POWERSHELL/WINDOWS_TERMINAL/MT4_TERMINAL_POSSIBLEなど)、
+許可済みのイベント種類だけ。イベント本文・元のXML・フルパス、
+コマンドライン、ダンプ情報、固有識別子を保存しない。
+イベントID1000などが当該時間帯にない場合も、取りこぼしなく
+「全Windowsログを検証した」とはみなさない。
+
+診断スクリプトは既存のMT4、Python監視、journal、単独ロック、
+通信ラッチ、API台帳、仮想証拠へ変更を加えない。
+判定は WER_METADATA_INSPECTION_ONLY_NO_GO であり、
+root_cause_explained=false、通信停止ラッチ=true維持、
+AI利用6/6で追加課金なし、実/デモ売買も禁止。
+
+EventID 1001 と実際のPython停止との因果関係が確定できない場合は
+原因 UNKNOWN のまま安全停止を継続する。
