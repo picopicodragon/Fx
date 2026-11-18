@@ -37,6 +37,12 @@ bool PaperSnapshot(datetime pcUtc, datetime brokerNow)
          MarketInfo(s,MODE_BID)<=0.0 ||
          MarketInfo(s,MODE_ASK)<=MarketInfo(s,MODE_BID) ||
          MarketInfo(s,MODE_TIME)<=0 ||
+         MarketInfo(s,MODE_TICKVALUE)<=0.0 ||
+         MarketInfo(s,MODE_TICKSIZE)<=0.0 ||
+         MarketInfo(s,MODE_MINLOT)<=0.0 ||
+         MarketInfo(s,MODE_LOTSTEP)<=0.0 ||
+         MarketInfo(s,MODE_MAXLOT)<MarketInfo(s,MODE_MINLOT) ||
+         MarketInfo(s,MODE_POINT)<=0.0 ||
          brokerNow-(datetime)MarketInfo(s,MODE_TIME)<0 ||
          brokerNow-(datetime)MarketInfo(s,MODE_TIME)>30)
          return false;
@@ -44,7 +50,10 @@ bool PaperSnapshot(datetime pcUtc, datetime brokerNow)
    int f=FileOpen(output,FILE_CSV|FILE_WRITE|FILE_ANSI,',');
    if(f==INVALID_HANDLE) return false;
    FileWrite(f,"pair","bid","ask","tick_time_broker_epoch_unattested",
-      "broker_time_epoch_unattested","capture_epoch_utc_pc");
+      "broker_time_epoch_unattested","capture_epoch_utc_pc",
+      "tickvalue_jpy_broker_reported","ticksize_broker_reported",
+      "min_lot_broker_reported","lot_step_broker_reported",
+      "max_lot_broker_reported","point_broker_reported");
    for(int n=0; n<3; n++)
    {
       string sym=PaperSymbols[n];
@@ -54,7 +63,13 @@ bool PaperSnapshot(datetime pcUtc, datetime brokerNow)
          DoubleToString(MarketInfo(sym,MODE_ASK),digits),
          IntegerToString((int)MarketInfo(sym,MODE_TIME)),
          IntegerToString((int)brokerNow),
-         IntegerToString((int)pcUtc));
+         IntegerToString((int)pcUtc),
+         DoubleToString(MarketInfo(sym,MODE_TICKVALUE),8),
+         DoubleToString(MarketInfo(sym,MODE_TICKSIZE),8),
+         DoubleToString(MarketInfo(sym,MODE_MINLOT),8),
+         DoubleToString(MarketInfo(sym,MODE_LOTSTEP),8),
+         DoubleToString(MarketInfo(sym,MODE_MAXLOT),8),
+         DoubleToString(MarketInfo(sym,MODE_POINT),8));
    }
    FileFlush(f);
    FileClose(f);
