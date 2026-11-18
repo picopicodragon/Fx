@@ -17,8 +17,25 @@ from research.offline_backtest import InputError
 SCHEMA="fx_final_paper_operating_status_v1"
 
 
-def summarize(root:Path)->dict:
+def summarize(root:Path, *, now:datetime|None=None)->dict:
     state,head=runtime._journal_load(root/"journal")
+    current=now or datetime.now(timezone.utc)
+    if current.tzinfo is None:
+        raise InputError("status requires aware clock")
+    if (type(state.get("paid_inference_calls")) is not int or
+            not 0<=state["paid_inference_calls"]<=runtime.MAX_PAID_LIFETIME):
+        raise InputError("invalid AI usage state")
+    last=state["last_quote_epoch"]
+    if type(last) is not int or last<0:
+        raise InputError("invalid last quote clock")
+    age=None if last==0 else int(current.timestamp())-last
+    if age is not None and age< -10:
+        raise InputError("future last quote clock")
+    level=("NO_CAPTURE" if age is None else "LEVEL2" if age>=600
+           else "LEVEL1" if age>=60 else "FRESH")
+    halted=any(state[k] for k in (
+        "daily_loss_latched","dd4_latched","dd5_latched",
+        "communication_latched"))
     trades=state["trade_log"]
     wins=sum(1 for trade in trades if D(trade["virtual_pnl_jpy"])>0)
     losses=sum(1 for trade in trades if D(trade["virtual_pnl_jpy"])<0)
@@ -46,6 +63,19 @@ def summarize(root:Path)->dict:
         "daily_loss_latched":state["daily_loss_latched"],
         "communication_latched":state["communication_latched"],
         "paid_ai_calls_lifetime":state["paid_inference_calls"],
+        "paid_ai_calls_remaining_under_current_limit":
+            runtime.MAX_PAID_LIFETIME-state["paid_inference_calls"],
+        "paid_ai_lifetime_cap_reached":
+            state["paid_inference_calls"]==runtime.MAX_PAID_LIFETIME,
+        "api_cost_jpy_verified":False,
+        "api_budget_renewal_authorized":False,
+        "last_recorded_quote_age_seconds_pc_derived":age,
+        "price_stream_warning_level_pc_derived":level,
+        "new_virtual_positions_allowed_now":
+            level=="FRESH" and not halted
+            and state["paid_inference_calls"]<runtime.MAX_PAID_LIFETIME
+            and False,  # Free status is not a new AI trading authorization.
+        "watchdog_only_does_not_persist_communication_latch":True,
         "jev_enabled":False,
         "independent_broker_clock_attested":False,
         "market_consensus_calendar_attested":False,
