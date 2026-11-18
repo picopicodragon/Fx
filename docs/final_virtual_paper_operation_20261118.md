@@ -299,3 +299,50 @@ running状態未証明のlock存在有無、6回利用枠は新規課金なし�
 解除、未知AI課金の再試行、デモ/実口座の注文を行わない。
 既存の6/6回有料推論上限も不変。正常復旧の前に新規エントリーを
 始めないこと。MetaEditorの実機確認・専門家ログはユーザーが実施。
+
+
+## FINAL-PAPER-33〜36：2026-11-18 13:54のPython消費側停止後の安全な初期復旧
+
+利用者の読み取り専用診断で確定した範囲：
+
+- diagnosis=FRESH_MT4_QUOTES_NOT_PROCESSED_BY_PYTHON
+- journal_cycles=106、Python最終処理時刻は2713秒前
+- MT4生CSVは13秒前に新規保存、前回ジャーナルより新しい
+- runtime_lock_present_not_process_proof=false
+- MT4注文ゼロ、AI追加ゼロ、既存有料AI累計6/6
+
+従って**MT4観測側のCSV生成は継続し、Python監視側が最新CSVを
+消費していない**。ただし、Pythonプロセスが実際に終了しているか、
+なぜ停止したのかはログがない限り確定しない。
+
+別PowerShellで更新済みの Fx-PAPER-NEXT-20261118 作業ツリーを使用：
+
+    .\scripts\final_paper_free_resume_preflight_once.ps1 -Mt4FilesDirectory $mt4Files
+
+このコマンドはWindowsのWin32_Processで全python/pythonw/pyプロセスを
+列挙し、research.final_paper_runtimeに一致する実行中プロセスが
+**一つでもあれば即停止**。列挙権限不足でもfail-closed。
+単独運用ロックが残っていれば停止し、削除しない。
+次に既存の読取専用診断・AI台帳照合・ジャーナル状態を再評価し、
+120秒以内の最新quote、仮想ポジション0件、AI台帳整合を要求。
+既存のAPI累計6/6は更新しない。新規有料AIを許可しない。
+監査結果は既存のjournalやai_researchを書き換えず、
+free_resume_preflight_*.jsonを新しく保存する。
+
+FREE_OBSERVATION_ONLY_RESTART_CANDIDATE_NO_GOが得られ、
+既存の監視PowerShellが終了していることも操作者が確認できた場合は、
+**無料の監視だけ**を自分の判断で再開することができる：
+
+    .\scripts\start_final_paper_virtual.ps1 -Mt4FilesDirectory $mt4Files
+
+この再開では新しいquoteを1件処理し、保存済みquoteとのギャップが
+600秒を超えるため VIRTUAL_COMMUNICATION_LEVEL2_LATCHED が
+ジャーナルに永続化されることが予想される。
+**人間承認を要する通信停止ラッチを自動で解除しない**。
+そのまま無料の観測・証拠保全は継続できるが、新規仮想
+ポジションは開かない。通信回復後の新規売買再許可は
+別途本人承認・停止原因分析・安全審査が必要。
+
+Ctrl+C停止からの予定どおりの終了だった場合も同様に、
+以前の空白期間をなかったことにせずラッチを維持。
+既存paperのデータ・API台帳・ロックを手動削除しない。
