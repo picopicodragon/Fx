@@ -246,3 +246,56 @@ remaining_calls_under_existing_limit=0。課金推定額は未立証。
     .\scripts\final_paper_status_once.ps1
 
 同時監視プロセスを増やさず、追加有料AI呼び出しを行わない。
+
+
+## FINAL-PAPER-29〜31：2026-11-18 13:42 実機の2020秒quote停止調査
+
+本人のローカルread-only statusは、
+completed_cycles=106、paid_ai_calls_lifetime=6/6、
+last_recorded_quote_age_seconds_pc_derived=2020、
+price_stream_warning_level_pc_derived=LEVEL2、
+quote_recent_enough_for_further_paper_evaluation=false、
+communication_latched=falseだった。
+
+この場合、保存済みのjournalが正常であることと、
+**継続した価格供給・仮想評価が正常であることは別**。
+停止ラッチは新しいquoteが到着した次のpaper engineサイクルで
+ギャップを計測するため、単にstatus照合しても更新されない。
+既存監視プロセスは停止・重複起動・ロック削除しない。
+
+独立したread-only切り分けツールを追加した。
+既存のFx-PAPER-NEXT-20261118ワークツリーだけを最新化した後、
+MT4のMQL4\Filesの実パスを指定して実行する。
+
+    .\scripts\final_paper_stream_diagnostic_once.ps1 -Mt4FilesDirectory $mt4Files
+
+出力に含むのは journal最終処理quoteのPC由来経過秒数、
+MT4側最新FxPaperQuote CSVのPC由来経過秒数、OSファイル変更時刻、
+running状態未証明のlock存在有無、6回利用枠は新規課金なし、
+売買許可なしといった診断メタデータのみ。
+
+診断の主なパターン：
+
+- MT4_OBSERVER_QUOTE_STREAM_STALE：最も新しいMT4 quote CSV自体が
+  600秒以上古い。楽天デモMT4の接続・Expertsログ・USDJPY H1の
+  FxFinalPaperReadOnlyObserverが起動中か確認。価格が途絶える理由は
+  実機ログがない限り確定できない。
+- FRESH_MT4_QUOTES_NOT_PROCESSED_BY_PYTHON：最新CSVは120秒以内だが、
+  journalがそれを処理していない。Python監視を表示している
+  PowerShellウィンドウの終了・FAIL_CLOSED・ロック存在を確認。
+  **ロックがあるだけではプロセス稼働証拠にはならない**。
+  journal/AIの再送・再起動は手動監査が済むまで禁止。
+- UNPROCESSED_MT4_QUOTES_ALREADY_STALE：最新CSVが処理されず、
+  既に120秒を超えている。MT4/監視の双方を確認する。
+- MT4_OBSERVER_HAS_NO_QUOTE_CSV：quote CSVなし。EA装着・MetaEditor
+  コンパイル・Expertsログ、指定した正しいデモMQL4\Filesを確認。
+- LATEST_MT4_QUOTE_ALREADY_PROCESSED：最新のCSVがjournalに反映済み。
+  **今も稼働中かどうかは別途実機確認が必要**。
+- QUOTE_ARCHIVE_BEHIND_JOURNAL_REVIEW：入力フォルダーを含む
+  ローカル証拠が逆行しているため、ファイルの差し替えや
+  MT4別フォルダーへの接続を疑い、操作を止めて照合する。
+
+新ツールは読み取り専用であり、停止ロック・台帳・通信障害ラッチの
+解除、未知AI課金の再試行、デモ/実口座の注文を行わない。
+既存の6/6回有料推論上限も不変。正常復旧の前に新規エントリーを
+始めないこと。MetaEditorの実機確認・専門家ログはユーザーが実施。
