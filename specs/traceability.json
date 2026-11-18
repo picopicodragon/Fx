@@ -940,23 +940,6 @@
         "tests/test_final_demo_cycle.py"
       ],
       "status": "active"
-    },
-    {
-      "group_id": "FX-FINAL-VIRTUAL-PAPER-NO-ORDER",
-      "spec_ids": [
-        "Q6", "Q7", "Q13", "Q25", "Q26", "Q27", "Q28", "Q29",
-        "Q41", "Q42", "Q43", "Q57", "Q91", "Q100", "Q109",
-        "Q110", "Q171", "Q197", "Q198", "Q199"
-      ],
-      "prefixes": [
-        "research/final_paper_"
-      ],
-      "tests": [
-        "tests/test_final_paper_engine.py",
-        "tests/test_final_paper_runtime.py",
-        "tests/test_final_paper_status.py"
-      ],
-      "status": "active"
     }
   ]
 }
