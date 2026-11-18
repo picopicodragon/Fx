@@ -58,6 +58,22 @@ class FinalPaperQuoteContractEvidenceTests(unittest.TestCase):
             self.assertFalse(output["new_virtual_entries_permitted"])
             self.assertFalse(output["new_paid_ai_calls_permitted"])
 
+    def test_raw_mt4_sample_fresh_through_120_seconds_not_121(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder=Path(tmp)/"MT4"/"MQL4"/"Files"
+            folder.mkdir(parents=True)
+            write_quote(folder,0)
+            for age,expected in ((59,True),(60,True),(70,True),
+                                 (120,True),(121,False)):
+                with self.subTest(age=age):
+                    at=datetime.fromtimestamp(T+age,tz=timezone.utc)
+                    output=evidence.audit(folder,now=at)
+                    self.assertEqual(output[
+                        "latest_quote_fresh_pc_derived"],expected)
+                    self.assertEqual(output[
+                        "latest_quote_age_seconds_pc_derived"],age)
+                    self.assertFalse(output["full_transaction_costs_verified"])
+
     def test_only_last_ten_snapshots_read(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder=Path(tmp)/"MT4"/"MQL4"/"Files"
