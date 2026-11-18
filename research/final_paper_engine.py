@@ -220,7 +220,8 @@ def _enter(state:dict, sig:dict, quote:dict, epoch:int)->str:
     return "VIRTUAL_POSITION_OPENED"
 
 
-def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,dict]:
+def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
+         known_event_blackout:bool=False)->tuple[dict,dict]:
     """Pure step; caller must durable-write new state before acknowledging."""
     if (type(state) is not dict or state.get("schema")!=SCHEMA
         or state.get("start_capital_jpy")!="100000.00"
@@ -236,6 +237,10 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,
     if set(quotes)!=set(PAIRS):
         raise InputError("incomplete price set")
     events=[]
+    if type(known_event_blackout) is not bool:
+        raise InputError("invalid event blackout gate")
+    if known_event_blackout:
+        events.append("VIRTUAL_KNOWN_MACRO_EVENT_BLACKOUT")
     if state["last_quote_epoch"]>0:
         delta=epoch-state["last_quote_epoch"]
         if delta>600:
@@ -328,7 +333,9 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,
                            reason="AI_APPROVED_VIRTUAL_FLAT",epoch=epoch)
                     events.append("AI_APPROVED_VIRTUAL_FLAT")
         elif sig["verdict"]=="APPROVED" and sig["action"] in ("LONG","SHORT"):
-            if (next_state["daily_loss_latched"] or
+            if known_event_blackout:
+                events.append("VIRTUAL_ENTRY_BLOCKED_KNOWN_MACRO_EVENT")
+            elif (next_state["daily_loss_latched"] or
                 next_state["dd4_latched"] or next_state["dd5_latched"] or
                 next_state["communication_latched"]):
                 events.append("VIRTUAL_RISK_HALTED")
