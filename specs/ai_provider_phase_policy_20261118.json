@@ -19,7 +19,17 @@
     "jev_required": false,
     "jev_live_calls_allowed": false,
     "openai_decisions_api_status": "UNSELECTED_OPTIONAL_RESEARCH_ONLY",
-    "go_no_go": "NO_GO"
+    "go_no_go": "NO_GO",
+    "broker_order_execution_ever_allowed": false,
+    "operation_start_status": "AWAITING_LOCAL_METAEDITOR_COMPILE_AND_RUNNING_WINDOWS_SUPERVISOR",
+    "current_operational_limitations": [
+      "MACRO_EVENT_BLACKOUT_NOT_INDEPENDENTLY_ATTESTED",
+      "POINT_IN_TIME_CONSENSUS_NOT_INDEPENDENTLY_ATTESTED",
+      "PAID_AI_LIFETIME_CAPPED_AT_6_CALLS",
+      "BROKER_QUOTE_SERVER_CLOCK_NOT_INDEPENDENTLY_ATTESTED",
+      "TRADE_COSTS_NOT_FULLY_VERIFIED",
+      "MT4_EXPERT_COMPILE_NOT_YET_CONFIRMED"
+    ]
   },
   "completed_system": {
     "jev_enabled": false,
@@ -40,5 +50,5 @@
     "final_test_demo_broker_orders_permitted": false,
     "completed_system_live_orders_permitted_now": false
   },
-  "implementation_status": "POLICY_RECORDED_PAPER_TRADING_ENGINE_NOT_YET_VALIDATED"
+  "implementation_status": "PAPER_ENGINE_CODE_TESTED_LOCAL_MT4_OPERATION_PENDING"
 }
