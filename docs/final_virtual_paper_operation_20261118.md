@@ -116,3 +116,34 @@ DD4%で新規停止、DD5%で仮想全決済と停止ラッチ。
   照合するまでロックやpendingレコードを削除せず、再起動しない。
 - 既存のデモ執行EAを使わない。AutoTradingはOFFを維持し、
   テストに使うのは価格情報だけ。実デモ売買や本番売買は今回未承認。
+
+
+## FINAL-PAPER-12〜14：2026-11-18最終確認
+
+- 読取専用EAの実機コンパイル／USDJPY H1でのタイマー起動／
+  Python監視の初回実行は **Windows実機で未実証**。GitHub CIは成功したが
+  ローカル実機の運用開始を代わりに認定しない。
+- 3ペアのサーバー相対時計が不整合なquote CSVは取引シミュレーションを拒否する。
+- 仮説構築AIのFLATを独立検証AIがAPPROVEDにした場合、次の新鮮な
+  DEMO quoteで、該当ペアの **仮想ポジション** のみ決済する。
+  BROKERへの決済注文は一切発行しない。
+- 既に実機で確認された FxFinalDemoBrokerSafetyProbe.mq4 の
+  0 errors / 0 warnings と3ペア研究用ブローカー観測監査は、
+  **新しい** FxFinalPaperReadOnlyObserver.mq4 のコンパイル成功とは別。
+- **ユーザー操作の最短ルート**：mainへは自動マージせず、作業ツリーを
+  origin/feat/mt4-demo-final-e2e-20261117 に更新し、上記新EAを
+  MetaEditorでコンパイルしてデモUSDJPY H1へ追加。AutoTrading OFFを維持。
+  Expertsログに「FXPAPER: read-only 60-second DEMO observation enabled」
+  が出た後、PowerShellで以下を開始する：
+
+      .\scripts\start_final_paper_virtual.ps1 -Mt4FilesDirectory $mt4Files
+
+  15秒ごとの監視で VIRTUAL_PAPER_CYCLE_RECORDED_RESEARCH_NO_GO を
+  見るまでは**運用開始を実証したとしない**。
+- 新規有料推論を利用する場合は最初から `-AllowPaidAi` と
+  `-NewsBundle $bundles`、`-MaxPaidCallsLifetime 6`、
+  明示した2つのOpenAIモデルを指定する。最大6APIコールは
+  自動継続を制限する上限であり、毎月3,000円の厳密な円換算予算管理ではない。
+- 現在は重要イベント±15分の**独立保証された将来カレンダー**が欠ける。
+  そのため仮想結果は研究上のシミュレーションであって、
+  完成版の全安全停止条件を検証済みとするものではない。
