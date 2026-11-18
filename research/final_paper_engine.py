@@ -221,7 +221,8 @@ def _enter(state:dict, sig:dict, quote:dict, epoch:int)->str:
 
 
 def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
-         known_event_blackout:bool=False)->tuple[dict,dict]:
+         known_event_blackout:bool=False,
+         entry_evidence_ready:bool=True)->tuple[dict,dict]:
     """Pure step; caller must durable-write new state before acknowledging."""
     if (type(state) is not dict or state.get("schema")!=SCHEMA
         or state.get("start_capital_jpy")!="100000.00"
@@ -237,8 +238,9 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
     if set(quotes)!=set(PAIRS):
         raise InputError("incomplete price set")
     events=[]
-    if type(known_event_blackout) is not bool:
-        raise InputError("invalid event blackout gate")
+    if (type(known_event_blackout) is not bool or
+            type(entry_evidence_ready) is not bool):
+        raise InputError("invalid event/entry evidence gate")
     if known_event_blackout:
         events.append("VIRTUAL_KNOWN_MACRO_EVENT_BLACKOUT")
     if state["last_quote_epoch"]>0:
@@ -335,6 +337,8 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
         elif sig["verdict"]=="APPROVED" and sig["action"] in ("LONG","SHORT"):
             if known_event_blackout:
                 events.append("VIRTUAL_ENTRY_BLOCKED_KNOWN_MACRO_EVENT")
+            elif not entry_evidence_ready:
+                events.append("VIRTUAL_ENTRY_BLOCKED_UNATTESTED_SAFETY_EVIDENCE")
             elif (next_state["daily_loss_latched"] or
                 next_state["dd4_latched"] or next_state["dd5_latched"] or
                 next_state["communication_latched"]):
@@ -369,4 +373,5 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
         "runtime_go_no_go":"NO_GO",
         "safety_hold_latched":True,
         "simulated_only":True,
+        "virtual_entry_evidence_ready":entry_evidence_ready,
     }
