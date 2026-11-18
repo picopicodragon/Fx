@@ -3,7 +3,8 @@
 [CmdletBinding()]
 param(
     [string]$StateRoot = '',
-    [string]$BillingStatement = ''
+    [string]$BillingStatement = '',
+    [string]$EventCalendar = ''
 )
 $ErrorActionPreference='Stop'
 if (-not $StateRoot) {
@@ -21,6 +22,12 @@ if ($BillingStatement) {
         throw 'Optional operator billing evidence file missing. NO_GO'
     }
     $cmd+=@('--billing-statement',$BillingStatement)
+}
+if ($EventCalendar) {
+    if (-not (Test-Path -LiteralPath $EventCalendar -PathType Leaf)) {
+        throw 'Optional research macro-event archive missing. NO_GO'
+    }
+    $cmd+=@('--event-calendar',$EventCalendar)
 }
 & python @cmd
 if ($LASTEXITCODE -ne 0) {
