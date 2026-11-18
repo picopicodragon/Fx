@@ -109,3 +109,46 @@ BillingStatementオプションは内容を審査してから使う。
 - Linux/Windowsの全件CIと、合成3通貨・DD5・通信ラッチ・
   指標停止の新規テストを確認したうえで実機評価へ進む。
   自動マージ、通信ラッチ解除、有料AI追加利用は承認していない。
+
+
+## FINAL-PAPER-87〜93：221回の観測監査後、MT4実測スプレッド・契約属性の保存
+
+ユーザー実機が2026-11-18 16:00に報告した統合監査：
+completed_cycles=221（153回から+68）、
+latest_quote_age_seconds_pc_derived=16、FRESH、
+price_feed_observation_viable_now=true、
+historical_manual_stop_attested=true、
+recent_continuity_review_sufficient=true。
+しかしcommunication_latched=true、AI利用6/6（未承認の追加課金は禁止）、
+保存済みUSD/EUR/JPY経済イベント0、calendar_sourceの独立照合なし、
+MT4時計・取引コスト未検証、NO_GOのまま。
+
+ローカルで既存の価格監視を**停止・再起動・変更せず**に、
+MT4 MQL4/Filesの最近10件までの3ペアCSVを安全に読み取り、
+スプレッドの最小・最大・平均、各ペアの契約属性の変化件数、
+30〜90秒の観測間隔を記録する補助監査を追加：
+
+    .\scripts\final_paper_quote_contract_audit_once.ps1 -Mt4FilesDirectory $mt4Files
+
+また既存統合監査にも、オプションを追加した：
+
+    .\scripts\final_paper_release_matrix_once.ps1 -Mt4FilesDirectory $mt4Files
+
+上記いずれも**実際のMT4 Filesディレクトリ**を指定する。
+スクリプトは最新の価格CSVだけを照合し、broker発注命令は出さない。
+CSV内のbid/ask/口座IDの原文を監査出力に書かず、集計済みの
+スプレッドpips・契約属性の出現件数と局所ハッシュ数のみ保存する。
+
+重要：観測されたスプレッドは過去10件の記録に過ぎない。
+**委託手数料、スリッページ分布、スワップ、約定価格、ブローカー時刻の
+独立認証にはならない**。したがって、
+TRANSACTION_COSTS_NOT_FULLY_ATTESTED
+と INDEPENDENT_MT4_CLOCK_ATTESTATION_ABSENT は監査の後も残る。
+上限6回の追加AI呼出しを許可せず、通信ラッチも解除しない。
+
+対応コード：
+research/final_paper_quote_contract_evidence.py、
+scripts/final_paper_quote_contract_audit_once.ps1、
+tests/test_final_paper_quote_contract_evidence.py。
+Q109は既存の固定台帳を壊さず、
+specs/final_paper_q109_traceability_extension_20261118.jsonへ追記。
