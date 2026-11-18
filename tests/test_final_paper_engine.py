@@ -64,6 +64,44 @@ class FinalPaperEngineTests(unittest.TestCase):
         self.assertIn("AI_HOLD_OR_NONAPPROVED_NO_POSITION",
                       report["events"])
 
+    def test_approved_flat_closes_only_matching_virtual_pair_next_quote(self):
+        state=paper.initial_state()
+        state,_=paper.step(state,quotes(),signals=[signal()])
+        state,_=paper.step(state,quotes(T+60))
+        self.assertEqual(len(state["positions"]),1)
+        state,_=paper.step(state,quotes(T+120),
+                           signals=[signal(epoch=T+120,action="FLAT",
+                                           uid="f"*64)])
+        self.assertEqual(len(state["positions"]),1)
+        state,report=paper.step(state,quotes(T+180))
+        self.assertEqual(len(state["positions"]),0)
+        self.assertEqual(report["broker_orders_sent_this_run"],0)
+        self.assertEqual(state["trade_log"][-1]["reason"],
+                         "AI_APPROVED_VIRTUAL_FLAT")
+
+    def test_nonapproved_flat_does_not_force_close(self):
+        state=paper.initial_state()
+        state,_=paper.step(state,quotes(),signals=[signal()])
+        state,_=paper.step(state,quotes(T+60))
+        s=signal(epoch=T+120,action="FLAT",uid="f"*64)
+        s["verdict"]="REJECTED"
+        state,_=paper.step(state,quotes(T+120),signals=[s])
+        state,_=paper.step(state,quotes(T+180))
+        self.assertEqual(len(state["positions"]),1)
+
+    def test_cross_pair_broker_clock_mismatch_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/"FxPaperQuote_20261118_010000.csv"
+            with path.open("w",newline="",encoding="utf-8") as out:
+                writer=csv.writer(out)
+                writer.writerow(paper.QUOTE_FIELDS)
+                for j,sym in enumerate(paper.SYMS):
+                    writer.writerow([sym,"159.5","159.505",T,T+j,T,
+                                      "100",".001",".01",".01","20",".001"])
+            with self.assertRaises(InputError):
+                paper.validate_quotes(
+                    path,now=datetime.fromtimestamp(T+10,tz=timezone.utc))
+
     def test_nonapproved_signal_does_not_trade(self):
         state=paper.initial_state()
         sig=signal()
