@@ -152,3 +152,27 @@ later with fresh validated H1 evidence. It never automatically reruns paid calls
 A pending reviewer, network timeout, unknown outcome, HTTP429/5xx or a changed
 ledger cannot be reconciled using the HTTP401 analyst path. Do not share API
 keys or full ledgers in chat. Keep demo orders OFF and real orders forbidden.
+
+
+## 2026-11-18: 449 sec FREE vs 420 sec paid-precheck mismatch fixed
+
+Observed on Windows: MT4 H1 source age 449 seconds, FREE H1/news validation of
+all three pairs passed, then the operator's paid AI 420-second freshness
+check stopped before any paid inference; no orders. This is a mismatched
+preflight timing policy, not an AI decision failure.
+
+DEMO-SPRINT-51 unifies the fresh helper's FREE cutoff at 420 seconds and
+allows explicitly opted-in, bounded research directly after FREE preflight
+within the same PowerShell command. Default remains free-only. The second
+gate rechecks age before any paid dispatch. No auto retry or trading.
+
+After executing the read-only FxFinalTestH1Export on the Rakuten DEMO
+USDJPY H1 chart, immediately run from the Fx worktree (single command):
+
+    .\scripts\final_demo_periodic_fresh_once.ps1 -Mt4FilesDirectory $mt4Files -NewsBundle $bundles -AllowPaidAi -Pair @("EUR/JPY","EUR/USD") -AnalystModel "gpt-6.1-sol" -ReviewerModel "gpt-6-astra"
+
+This explicitly permits at most four API inference calls across the
+remaining EUR/JPY and EUR/USD pairs (two per pair); still research-only,
+with no MT4 order and no trading authorization. A preexisting unreconciled
+paid ledger or stale H1 fails closed. Do not rerun after a billable API
+dispatch failure without manual ledger reconciliation.
