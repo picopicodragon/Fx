@@ -71,10 +71,9 @@ def summarize(root:Path, *, now:datetime|None=None)->dict:
         "api_budget_renewal_authorized":False,
         "last_recorded_quote_age_seconds_pc_derived":age,
         "price_stream_warning_level_pc_derived":level,
-        "new_virtual_positions_allowed_now":
-            level=="FRESH" and not halted
-            and state["paid_inference_calls"]<runtime.MAX_PAID_LIFETIME
-            and False,  # Free status is not a new AI trading authorization.
+        "quote_recent_enough_for_further_paper_evaluation":
+            level=="FRESH" and not halted,
+        "new_paid_ai_calls_authorized_by_status":False,
         "watchdog_only_does_not_persist_communication_latch":True,
         "jev_enabled":False,
         "independent_broker_clock_attested":False,
