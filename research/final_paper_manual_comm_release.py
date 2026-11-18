@@ -14,6 +14,7 @@ from pathlib import Path
 
 from research import final_paper_runtime as runtime
 from research import final_paper_reentry_review as reentry
+from research import final_paper_ai_continuation_audit as ai_audit
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_final_paper_manual_comm_release_v1"
@@ -49,12 +50,11 @@ def _validate_current_state(state: dict) -> None:
 
 
 def _reject_other_gaps(root: Path, state: dict) -> None:
-    # The only historically attested >600s gap is #106 -> #107.
-    # Check every later gap, rather than extrapolate 10 recent good quotes
-    # to the whole intervening history.
+    # The only historically attested >600s gap is #106 -> #107,
+    # exactly 3420 seconds. All other cycles must be ordered and <=600s.
     journal = root / "journal"
     before = None
-    for n in range(107, state["cycle_number"] + 1):
+    for n in range(1, state["cycle_number"] + 1):
         file = journal / f"{n:08d}.json"
         if not file.is_file() or file.is_symlink():
             raise InputError("PAPER_COMM_RELEASE_JOURNAL_CHANGED")
@@ -63,9 +63,13 @@ def _reject_other_gaps(root: Path, state: dict) -> None:
             quote_epoch = event["state"]["last_quote_epoch"]
         except (KeyError, ValueError, UnicodeError, OSError, TypeError) as exc:
             raise InputError("PAPER_COMM_RELEASE_JOURNAL_CHANGED") from exc
-        if type(quote_epoch) is not int or (before is not None and
-                (quote_epoch <= before or quote_epoch - before > 600)):
-            raise InputError("PAPER_COMM_RELEASE_OTHER_GAP_UNATTESTED")
+        if type(quote_epoch) is not int:
+            raise InputError("PAPER_COMM_RELEASE_JOURNAL_CHANGED")
+        if before is not None:
+            gap = quote_epoch - before
+            if (gap <= 0 or (gap > 600 and
+                    not (n == 107 and gap == 3420))):
+                raise InputError("PAPER_COMM_RELEASE_OTHER_GAP_UNATTESTED")
         before = quote_epoch
     if before != state["last_quote_epoch"]:
         raise InputError("PAPER_COMM_RELEASE_JOURNAL_CHANGED")
@@ -103,6 +107,12 @@ def stage(root: Path, mt4: Path, *, now: datetime | None = None,
     state, head = runtime._journal_load(root / "journal")
     _validate_current_state(state)
     _reject_other_gaps(root, state)
+    paid = ai_audit.audit(root)
+    if (paid.get("journal_cycles") != state["cycle_number"]
+            or paid.get("journal_head_sha256_local_only") != head
+            or paid.get("paid_calls_recorded_in_journal") !=
+                paid.get("paid_calls_in_completed_ledgers")):
+        raise InputError("PAPER_COMM_RELEASE_AI_LEDGER_UNRECONCILED")
     review = reentry.review(root)
     if (review.get("historical_event_id") != EVENT
             or review.get("recent_quote_continuity_and_risk_review_ok") is not True
@@ -153,7 +163,10 @@ def apply_if_valid(root: Path, state: dict, head: str, quote: dict,
                    now: datetime) -> tuple[dict, bool]:
     # A consumed marker persists through later cycles. Never reuse this
     # historical approval to clear a new interruption's latch.
-    if state.get("manual_comm_release_sha256") is not None:
+    marker = state.get("manual_comm_release_sha256")
+    if marker is not None:
+        if type(marker) is not str or runtime.SHA.fullmatch(marker) is None:
+            raise InputError("PAPER_COMM_RELEASE_MARKER_UNSAFE")
         return state, False
     permit = root / NAME
     if not permit.exists() and not permit.is_symlink():
