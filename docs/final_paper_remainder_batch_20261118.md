@@ -152,3 +152,40 @@ scripts/final_paper_quote_contract_audit_once.ps1、
 tests/test_final_paper_quote_contract_evidence.py。
 Q109は既存の固定台帳を壊さず、
 specs/final_paper_q109_traceability_extension_20261118.jsonへ追記。
+
+
+## FINAL-PAPER-95〜97：244サイクル・70秒のLEVEL1警告とMT4生CSVの判定差
+
+2026-11-18 16:24の実機監査：244サイクル（221から+23）、
+最後の処理済みquote経過70秒、厳格な監視FRESH=false、
+MT4生CSVのsample freshness=true、10件のUSD/JPY 0.5pips /
+EUR/JPY 1.0pips / EUR/USD 0.5pips。通信停止ラッチtrue、
+有料AI 6/6、MT4注文禁止、NO_GO。
+
+実装上の境界は異なる：
+- research/final_paper_status.py：journalの最終quote経過0〜59秒は
+  FRESH、60〜599秒はLEVEL1、600秒以上はLEVEL2。
+- research/final_paper_quote_contract_evidence.py：最近のMT4生CSVは
+  120秒以内ならsample fresh。それを超えるとfalse。
+- 読取時刻は一度の原子的なスナップショットではない。
+
+従って70秒で journal LEVEL1 と MT4 raw fresh が同時に成立しうる。
+これは自動的に通信障害再発やPythonの異常終了の証拠ではない。
+60秒基準は120秒に緩めず、LAST_QUOTE_NOT_FRESHブロッカー、
+通信停止ラッチ、AI課金停止、注文禁止を維持する。
+
+統合監査に、journal warning level、明示的な60秒未満/
+120秒以内の閾値、raw sample age、鮮度ラベル差異、
+時計測定が非原子的・未証明であることを追加した。
+テストは244件/70秒の実機と同型の合成データと、
+生CSVの59、60、70、120、121秒の境界を確認する。
+
+同じ状態が繰り返され、実機でproducer/consumerのどちらに
+遅れがあるか確認したい場合は、監視用PowerShellを止めず
+別のウィンドウで次の読取専用診断を実行する：
+
+    .\scripts\final_paper_stream_diagnostic_once.ps1 -Mt4FilesDirectory $mt4Files
+
+生CSVが一時的にjournalより新しいだけで、監視が停止したとは
+断定しない。10分を超える新しい障害が確認される場合に限り、
+Windows/Pythonログを追加調査し、安全停止を維持する。
