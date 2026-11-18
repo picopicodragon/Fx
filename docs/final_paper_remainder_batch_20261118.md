@@ -77,3 +77,35 @@ BillingStatementオプションは内容を審査してから使う。
    自動テスト成功は本人による完成版承認とは異なる。
 
 今後も、実デモ/本番発注・Jev・未承認の追加AI利用は許可しない。
+
+
+## 一括開発の追補：2026-11-18 後続工程
+
+- 公式のBLSカレンダーは米国の一部の経済指標の発表予定であり、
+  全てのFX主要イベント、ECB、日銀の予定や市場コンセンサスまで
+  保証していない。research/final_paper_bls_event_archive.py は
+  **保存済み**のBLS ICSをオフラインで厳格解析し、
+  CPI・雇用統計・PPIなどの識別可能な米国イベントを、
+  既存のUSD重要イベント停止用research JSONに変換する。
+  不明な発表は勝手にCRITICALにしない。ネットアクセスなし。
+- BLS公式カレンダー保存済みファイルの利用例
+  （実際のファイルと実際の取得時刻がない場合は実行しない）：
+
+      python -m research.final_paper_bls_event_archive \
+        --ics-file <保存したBLSのICSパス> \
+        --asof-utc <実際の原本保存日時をUTCで> \
+        --days-forward 14 \
+        --out <新規保存先のJSON>
+
+  上記はPython用の説明例。PowerShellでの改行継続は
+  バッククォートを使用すること。
+- Q109の既存45件の保護対象・Q110の元の受入台帳は、
+  **旧オフライン基準として固定されている**ため変更禁止。
+  本スプリントの安全コード／テスト対応は
+  specs/final_paper_q109_traceability_extension_20261118.json、
+  TASK/MODULE/PHASEの未承認・保留情報は
+  specs/final_paper_q110_acceptance_extension_20261118.json
+  に別管理する。旧CIの基準値を書き換えて通過と見なさない。
+- Linux/Windowsの全件CIと、合成3通貨・DD5・通信ラッチ・
+  指標停止の新規テストを確認したうえで実機評価へ進む。
+  自動マージ、通信ラッチ解除、有料AI追加利用は承認していない。
