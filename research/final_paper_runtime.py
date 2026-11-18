@@ -163,10 +163,7 @@ def _signals_for_new_h1(
         # Before any billable API request, make sure all older dispatches
         # have a clear terminal result; unknown requests always halt.
         review401.check_directory(ai_folder)
-        stamp=datetime.fromtimestamp(
-            int(data["captured_at_utc_pc_unattested"].split("T")[0]
-                .replace("-","")) if False else int(now.timestamp()),
-            tz=timezone.utc).strftime("%Y%m%d_%H%M%S")
+        stamp=now.strftime("%Y%m%d_%H%M%S")
         ledger=ai_folder/(
             f"ai_{paper.SYMS[paper.PAIRS.index(pair)]}_{bar}_{stamp}.json")
         if ledger.exists() or ledger.is_symlink():
@@ -290,7 +287,7 @@ def main(argv=None)->int:
                     analyst_model=args.analyst_model,
                     reviewer_model=args.reviewer_model,
                     paid_limit=args.max_paid_calls_lifetime,now=now)
-            except InputError as exc:
+            except InputError:
                 # Never hide a malformed ledger / potential paid request.
                 # An unsafe newer CSV must be examined before resuming.
                 raise
