@@ -77,6 +77,18 @@ class ThreePairResearchAudit(unittest.TestCase):
                 audit.main(["--ledger-directory", str(root),
                             "--out", str(out)]), 2)
 
+    def test_one_shot_runner_has_no_api_or_order_methods(self):
+        script=(Path(__file__).resolve().parents[1]/
+                "scripts"/"final_demo_three_pair_audit_once.ps1")
+        content=script.read_text("utf-8")
+        for required in ("final_demo_three_pair_audit",
+                         "--ledger-directory", "--out",
+                         "final_demo_periodic"):
+            self.assertIn(required,content)
+        for forbidden in ("-AllowPaidAi", "OPENAI_API_KEY", "OrderSend(",
+                          "Invoke-WebRequest", "EnableDemoOrders=true"):
+            self.assertNotIn(forbidden,content)
+
     def test_missing_pair_rejected_without_output(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
