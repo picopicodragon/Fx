@@ -63,6 +63,8 @@ def convert(file:Path, *, asof_utc:str, days_forward:int=14)->dict:
             "source_url":bls.URL,
             "importance":importance,
         })
+    if len(chosen)>100:
+        raise InputError("too many selected BLS events")
     candidate={
         "schema":guard.SCHEMA,
         "captured_at_utc_pc":asof_utc,
