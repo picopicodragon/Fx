@@ -202,3 +202,47 @@ independent_future_event_calendar_attested=false を出し続ける。
 新機能へ切り替わらない。既存の監視を維持し、次の停止・起動時に
 最新版でオプションを使用する。例外停止した場合はロックや
 有料AI台帳を削除しない。
+
+
+## FINAL-PAPER-25〜27：106サイクル・AI 6/6回到達後の無課金監視と再確認
+
+利用者実機から報告された2026-11-18 13:09時点の台帳監査は
+PAPER_AI_COUNTER_RECONCILED_BILLING_UNVERIFIED_NO_GO、
+journal_cycles=106、completed_two_model_ledgers=3、
+paid_calls_recorded_in_journal=6、paid_calls_in_completed_ledgers=6、
+previous_401_rejections_manually_reviewed=0（**本paper用台帳のみ**）、
+remaining_calls_under_existing_limit=0。課金推定額は未立証。
+
+本変更は運用ステータスの無料読み取りに次を追加するだけ。
+既存のSHA256チェーン・仮想ポジション・有料AI台帳は変更しない。
+
+- last_recorded_quote_age_seconds_pc_derived：最後の保存済quoteの
+  観測時刻と現PC時計の差。PC時計の独立認証は行わない。
+- price_stream_warning_level_pc_derived：quote未捕捉時NO_CAPTURE、
+  60秒未満FRESH、60〜599秒LEVEL1、600秒以上LEVEL2。
+- paid_ai_calls_remaining_under_current_limit：上限6回の未使用件数。
+  6/6なら0。api_cost_jpy_verified=false、
+  api_budget_renewal_authorized=false、new_paid_ai_calls_authorized_by_status=false。
+- quote_recent_enough_for_further_paper_evaluationは観測鮮度と
+  状態ラッチから導いた参考診断であり、AI呼出し許可・発注許可
+  または取引シグナルではない。
+- 監視中に古い価格が継続した場合は再度statusでLEVEL1/LEVEL2を
+  確認する。STATUSコマンド自体は通信停止ラッチを永続化しない。
+  次に新しいquoteが到着した際、既存paper engineがgap>=600秒を
+  検出して通信停止ラッチを立てる。手動でのラッチ解除は行わない。
+
+利用者のWindows監視稼働中のオリジナル作業ツリーを更新しない。
+**別途作成済みFx-PAPER-NEXT-20261118** だけを更新して、
+以下で読み取り専用の監視状況を確認する。
+
+    cd C:\Users\Suzuki\Documents\ChatGPT\Fx-PAPER-NEXT-20261118
+    if (@(git status --porcelain).Count -gt 0) { throw '作業ツリーがdirty' }
+    git fetch origin
+    if ($LASTEXITCODE -ne 0) { throw 'fetch失敗' }
+    git switch --detach origin/feat/mt4-demo-final-e2e-20261117
+    if ($LASTEXITCODE -ne 0) { throw 'checkout失敗' }
+    python -m unittest discover -s tests -p 'test_final_paper*.py'
+    if ($LASTEXITCODE -ne 0) { throw '単体テスト失敗' }
+    .\scripts\final_paper_status_once.ps1
+
+同時監視プロセスを増やさず、追加有料AI呼び出しを行わない。
