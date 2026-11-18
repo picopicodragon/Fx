@@ -14,15 +14,18 @@ from pathlib import Path
 from research import final_paper_status as status
 from research import final_paper_reentry_review as reentry
 from research import final_paper_budget_readiness as billing
+from research import final_paper_event_coverage_audit as macro
 from research.offline_backtest import InputError
 
 SCHEMA="fx_final_paper_release_matrix_v1"
 
 
-def evaluate(root:Path, *, billing_statement:Path|None=None)->dict:
+def evaluate(root:Path, *, billing_statement:Path|None=None,
+             event_calendar:Path|None=None)->dict:
     operating=status.summarize(root)
     review=reentry.review(root)
     costs=billing.review(root,billing_statement)
+    calendar=macro.audit(event_calendar)
     head=operating["journal_head_sha256_local_only"]
     if (head!=review["journal_head_sha256_local_only"] or
             operating["completed_cycles"]!=review["journal_cycles"]):
@@ -69,6 +72,13 @@ def evaluate(root:Path, *, billing_statement:Path|None=None)->dict:
         "communication_latched":operating["communication_latched"],
         "unpaid_quote_monitoring_can_continue":True,
         "monthly_budget_limit_jpy":costs["monthly_budget_limit_jpy"],
+        "calendar_local_archive_supplied":calendar["calendar_supplied"],
+        "calendar_locally_archived_events":calendar["locally_archived_event_count"],
+        "calendar_currency_evidence_missing":
+            calendar["currencies_without_any_event_evidence"],
+        "known_important_event_blackout_active_now":
+            calendar["known_blackout_active_now"],
+        "calendar_completeness_independently_attested":False,
         "manual_billing_statement_supplied":
             costs["operator_billing_statement_supplied"],
         "budget_arithmetic_room_for_two_calls_only":
@@ -92,10 +102,12 @@ def main(argv=None)->int:
     p=argparse.ArgumentParser(description="Read-only complete final paper gap matrix")
     p.add_argument("--state-root",type=Path,required=True)
     p.add_argument("--billing-statement",type=Path)
+    p.add_argument("--event-calendar",type=Path)
     p.add_argument("--out",type=Path,required=True)
     args=p.parse_args(argv)
     try:
-        out=evaluate(args.state_root,billing_statement=args.billing_statement)
+        out=evaluate(args.state_root,billing_statement=args.billing_statement,
+                     event_calendar=args.event_calendar)
         if (args.out.exists() or args.out.is_symlink()
                 or not args.out.parent.is_dir() or args.out.parent.is_symlink()):
             raise InputError("unsafe new readiness report")
