@@ -15,17 +15,19 @@ from research import final_paper_status as status
 from research import final_paper_reentry_review as reentry
 from research import final_paper_budget_readiness as billing
 from research import final_paper_event_coverage_audit as macro
+from research import final_paper_quote_contract_evidence as quote_costs
 from research.offline_backtest import InputError
 
 SCHEMA="fx_final_paper_release_matrix_v1"
 
 
 def evaluate(root:Path, *, billing_statement:Path|None=None,
-             event_calendar:Path|None=None)->dict:
+             event_calendar:Path|None=None, mt4_files:Path|None=None)->dict:
     operating=status.summarize(root)
     review=reentry.review(root)
     costs=billing.review(root,billing_statement)
     calendar=macro.audit(event_calendar)
+    observed_contracts=quote_costs.audit(mt4_files) if mt4_files else None
     head=operating["journal_head_sha256_local_only"]
     if (head!=review["journal_head_sha256_local_only"] or
             operating["completed_cycles"]!=review["journal_cycles"]):
@@ -79,6 +81,20 @@ def evaluate(root:Path, *, billing_statement:Path|None=None,
         "known_important_event_blackout_active_now":
             calendar["known_blackout_active_now"],
         "calendar_completeness_independently_attested":False,
+        "mt4_quote_contract_samples_supplied":observed_contracts is not None,
+        "observed_mt4_quote_cycles":
+            observed_contracts["sampled_complete_three_pair_cycles"]
+            if observed_contracts else 0,
+        "sampled_quote_stream_fresh_pc_unattested":
+            observed_contracts["latest_quote_fresh_pc_derived"]
+            if observed_contracts else False,
+        "observed_spread_pips_by_pair":
+            {pair:{
+                "minimum":data["spread_min_pips_observed"],
+                "maximum":data["spread_max_pips_observed"]}
+             for pair,data in observed_contracts["per_pair"].items()}
+            if observed_contracts else {},
+        "commission_slippage_swap_independently_verified":False,
         "manual_billing_statement_supplied":
             costs["operator_billing_statement_supplied"],
         "budget_arithmetic_room_for_two_calls_only":
@@ -103,11 +119,13 @@ def main(argv=None)->int:
     p.add_argument("--state-root",type=Path,required=True)
     p.add_argument("--billing-statement",type=Path)
     p.add_argument("--event-calendar",type=Path)
+    p.add_argument("--mt4-files",type=Path)
     p.add_argument("--out",type=Path,required=True)
     args=p.parse_args(argv)
     try:
         out=evaluate(args.state_root,billing_statement=args.billing_statement,
-                     event_calendar=args.event_calendar)
+                     event_calendar=args.event_calendar,
+                     mt4_files=args.mt4_files)
         if (args.out.exists() or args.out.is_symlink()
                 or not args.out.parent.is_dir() or args.out.parent.is_symlink()):
             raise InputError("unsafe new readiness report")
