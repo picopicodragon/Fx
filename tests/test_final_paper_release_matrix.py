@@ -102,6 +102,7 @@ class FinalPaperReleaseMatrixTests(unittest.TestCase):
     def test_optional_mt4_spread_samples_do_not_certify_total_cost(self):
         synthetic={
             "sampled_complete_three_pair_cycles":10,
+            "latest_quote_age_seconds_pc_derived":16,
             "latest_quote_fresh_pc_derived":True,
             "per_pair":{
                 "USD/JPY":{
@@ -130,6 +131,59 @@ class FinalPaperReleaseMatrixTests(unittest.TestCase):
                       out["virtual_entry_blockers"])
         self.assertFalse(out["new_paid_inference_permitted"])
         self.assertFalse(out["new_virtual_positions_permitted"])
+
+    def test_244_cycle_70_second_journal_level1_and_120_second_sample(self):
+        # The real 16:24 PC report used journal age=70 seconds, raw CSV
+        # freshness <=120 seconds. They do not share a strict threshold or
+        # an atomic measurement instant. Never treat this as LEVEL2.
+        state=dict(STATUS,
+                   completed_cycles=244,
+                   price_stream_warning_level_pc_derived="LEVEL1",
+                   last_recorded_quote_age_seconds_pc_derived=70)
+        reviewed=dict(REVIEW,journal_cycles=244)
+        raw={
+            "sampled_complete_three_pair_cycles":10,
+            "latest_quote_age_seconds_pc_derived":70,
+            "latest_quote_fresh_pc_derived":True,
+            "per_pair": {
+                pair:{"spread_min_pips_observed":value,
+                      "spread_max_pips_observed":value}
+                for pair,value in (
+                    ("USD/JPY","0.5"),("EUR/JPY","1.0"),
+                    ("EUR/USD","0.5"))
+            },
+        }
+        with patch.object(matrix.status,"summarize",return_value=state), \
+             patch.object(matrix.reentry,"review",return_value=reviewed), \
+             patch.object(matrix.billing,"review",return_value=BILL), \
+             patch.object(matrix.quote_costs,"audit",return_value=raw):
+            result=matrix.evaluate(Path("not-used"),
+                                   mt4_files=Path("MT4/MQL4/Files"))
+        self.assertEqual(result["completed_cycles"],244)
+        self.assertEqual(result["paper_journal_warning_level_pc_derived"],
+                         "LEVEL1")
+        self.assertEqual(result["paper_journal_fresh_threshold_seconds_exclusive"],
+                         60)
+        self.assertEqual(result["mt4_raw_sample_fresh_threshold_seconds_inclusive"],
+                         120)
+        self.assertTrue(result[
+            "paper_journal_and_mt4_freshness_labels_diverge"])
+        self.assertFalse(result["price_feed_observation_viable_now"])
+        self.assertTrue(result["sampled_quote_stream_fresh_pc_unattested"])
+        self.assertFalse(result[
+            "producer_consumer_process_failure_proved_by_snapshot"])
+        self.assertFalse(result["quote_clock_measurements_atomic_or_independent"])
+        self.assertIn("LAST_QUOTE_NOT_FRESH",result["virtual_entry_blockers"])
+        self.assertFalse(result["new_virtual_positions_permitted"])
+        self.assertFalse(result["new_paid_inference_permitted"])
+
+    def test_missing_raw_quote_sample_explains_it_is_unmeasured(self):
+        out=self._check()
+        self.assertIsNone(out["mt4_raw_sample_latest_quote_age_seconds_pc_derived"])
+        self.assertFalse(out[
+            "paper_journal_and_mt4_freshness_labels_diverge"])
+        self.assertEqual(out["paper_journal_fresh_threshold_seconds_exclusive"],
+                         60)
 
     def test_source_readonly_and_no_network_or_orders(self):
         src=(Path(__file__).resolve().parents[1]/
