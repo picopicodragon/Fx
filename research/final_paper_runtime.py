@@ -100,6 +100,9 @@ def _latest_quote(mt4: Path, now:datetime)->dict|None:
         reverse=True)
     if not files:
         return None
+    # Do not inspect a quote while MT4 still has it open for writing.
+    if now.timestamp()-files[0].stat().st_mtime<2:
+        return None
     return paper.validate_quotes(files[0],now=now)
 
 
@@ -119,11 +122,25 @@ def _latest_h1_copy(mt4:Path,archive:Path,now:datetime)->Path|None:
     filepaths=[mt4/f"FxDemoH1_{sym}_{stamp}.csv" for sym in paper.SYMS]
     if any(not f.is_file() or f.is_symlink() for f in filepaths):
         return None
-    dst.mkdir()
-    for source in filepaths:
-        shutil.copyfile(source,dst/source.name)
-    # The existing 120-closed-H1 contract protects completeness/timing.
-    period._read_h1(dst,now)
+    # MT4 writes one CSV at a time. Delay until all three are closed.
+    if any(now.timestamp()-f.stat().st_mtime<2 for f in filepaths):
+        return None
+    staging=archive/("staging_"+stamp)
+    if staging.exists() or staging.is_symlink():
+        raise InputError("unreviewed paper capture staging folder")
+    staging.mkdir()
+    try:
+        for source in filepaths:
+            shutil.copyfile(source,staging/source.name)
+        # This checks atomic same-stamp 3-pair capture and all 120 bars.
+        period._read_h1(staging,now)
+        staging.rename(dst)
+    except InputError:
+        # Remove only an unpublished local temporary copy, not source data.
+        for copied in staging.glob("*.csv"):
+            copied.unlink()
+        staging.rmdir()
+        return None
     return dst
 
 
