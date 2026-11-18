@@ -97,6 +97,7 @@ def validate_quotes(file: Path, *, now: datetime|None=None) -> dict:
         raise InputError("naive time")
     quotes={}
     epochs=set()
+    broker_epochs=set()
     for row in rows:
         if None in row or set(row)!=set(QUOTE_FIELDS):
             raise InputError("quote row columns")
@@ -117,12 +118,13 @@ def validate_quotes(file: Path, *, now: datetime|None=None) -> dict:
                 not 0<=broker-tick<=30):
             raise InputError("invalid quote or reported contract")
         epochs.add(epoch)
+        broker_epochs.add(broker)
         quotes[SYMBOL_TO_PAIR[row["pair"]]]={
             "bid":bid,"ask":ask,"tickvalue":tickvalue,"ticksize":ticksize,
             "minlot":minlot,"step":step,"maxlot":maxlot,"point":point,
         }
-    if len(epochs)!=1:
-        raise InputError("non-atomic quotes")
+    if len(epochs)!=1 or len(broker_epochs)!=1:
+        raise InputError("non-atomic quotes or inconsistent broker clock")
     epoch=epochs.pop()
     age=now.timestamp()-epoch
     if not -10<=age<=120:
@@ -316,7 +318,16 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None)->tuple[dict,
             events.append("VIRTUAL_SIGNAL_EXPIRED")
             next_state["used_signal_ids"].append(sig["id"])
             continue
-        if sig["verdict"]=="APPROVED" and sig["action"] in ("LONG","SHORT"):
+        if sig["verdict"]=="APPROVED" and sig["action"]=="FLAT":
+            # An independently approved FLAT closes only this pair's
+            # VIRTUAL position, at the next observed executable bid/ask.
+            # Risk halts never prevent risk-reducing virtual exits.
+            for pos in list(next_state["positions"]):
+                if pos["pair"]==sig["pair"]:
+                    _close(next_state,pos,quotes[pos["pair"]],
+                           reason="AI_APPROVED_VIRTUAL_FLAT",epoch=epoch)
+                    events.append("AI_APPROVED_VIRTUAL_FLAT")
+        elif sig["verdict"]=="APPROVED" and sig["action"] in ("LONG","SHORT"):
             if (next_state["daily_loss_latched"] or
                 next_state["dd4_latched"] or next_state["dd5_latched"] or
                 next_state["communication_latched"]):
