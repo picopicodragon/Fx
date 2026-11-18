@@ -205,7 +205,12 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                 "broker_orders_sent_this_run":0,
                 "real_orders_permitted":False}
     if quote["capture_epoch"]<=state["last_quote_epoch"]:
+        gap=max(0,int(now.timestamp())-state["last_quote_epoch"])
+        level="LEVEL2" if gap>=600 else "LEVEL1" if gap>=60 else "NONE"
         return {"status":"PAPER_WAITING_FOR_NEXT_QUOTE",
+                "last_quote_elapsed_seconds":gap,
+                "interruption_warning":level,
+                "new_virtual_positions_allowed":False,
                 "broker_orders_sent_this_run":0,
                 "real_orders_permitted":False}
     copies=root/"captures"
