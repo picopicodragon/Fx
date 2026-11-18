@@ -4,7 +4,8 @@
 param(
     [string]$StateRoot = '',
     [string]$BillingStatement = '',
-    [string]$EventCalendar = ''
+    [string]$EventCalendar = '',
+    [string]$Mt4FilesDirectory = ''
 )
 $ErrorActionPreference='Stop'
 if (-not $StateRoot) {
@@ -28,6 +29,16 @@ if ($EventCalendar) {
         throw 'Optional research macro-event archive missing. NO_GO'
     }
     $cmd+=@('--event-calendar',$EventCalendar)
+}
+if ($Mt4FilesDirectory) {
+    if (-not (Test-Path -LiteralPath $Mt4FilesDirectory -PathType Container)) {
+        throw 'Optional DEMO MT4 quote folder missing. NO_GO'
+    }
+    $mt4 = (Resolve-Path -LiteralPath $Mt4FilesDirectory).Path.TrimEnd('\')
+    if (-not $mt4.EndsWith('\MQL4\Files',[StringComparison]::OrdinalIgnoreCase)) {
+        throw 'Expected exact DEMO MQL4\Files directory. NO_GO'
+    }
+    $cmd+=@('--mt4-files',$mt4)
 }
 & python @cmd
 if ($LASTEXITCODE -ne 0) {
