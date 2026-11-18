@@ -99,6 +99,38 @@ class FinalPaperReleaseMatrixTests(unittest.TestCase):
         self.assertTrue(result["budget_arithmetic_room_for_two_calls_only"])
         self.assertFalse(result["new_paid_inference_permitted"])
 
+    def test_optional_mt4_spread_samples_do_not_certify_total_cost(self):
+        synthetic={
+            "sampled_complete_three_pair_cycles":10,
+            "latest_quote_fresh_pc_derived":True,
+            "per_pair":{
+                "USD/JPY":{
+                    "spread_min_pips_observed":"0.5",
+                    "spread_max_pips_observed":"0.6"},
+                "EUR/JPY":{
+                    "spread_min_pips_observed":"1.0",
+                    "spread_max_pips_observed":"1.2"},
+                "EUR/USD":{
+                    "spread_min_pips_observed":"0.5",
+                    "spread_max_pips_observed":"0.5"},
+            },
+        }
+        with patch.object(matrix.status,"summarize",return_value=STATUS), \
+             patch.object(matrix.reentry,"review",return_value=REVIEW), \
+             patch.object(matrix.billing,"review",return_value=BILL), \
+             patch.object(matrix.quote_costs,"audit",return_value=synthetic):
+            out=matrix.evaluate(Path("not-used"),
+                                mt4_files=Path("MT4/MQL4/Files"))
+        self.assertTrue(out["mt4_quote_contract_samples_supplied"])
+        self.assertEqual(out["observed_mt4_quote_cycles"],10)
+        self.assertEqual(out["observed_spread_pips_by_pair"]["USD/JPY"][
+            "minimum"],"0.5")
+        self.assertFalse(out["commission_slippage_swap_independently_verified"])
+        self.assertIn("TRANSACTION_COSTS_NOT_FULLY_ATTESTED",
+                      out["virtual_entry_blockers"])
+        self.assertFalse(out["new_paid_inference_permitted"])
+        self.assertFalse(out["new_virtual_positions_permitted"])
+
     def test_source_readonly_and_no_network_or_orders(self):
         src=(Path(__file__).resolve().parents[1]/
              "research"/"final_paper_release_matrix.py").read_text("utf-8")
