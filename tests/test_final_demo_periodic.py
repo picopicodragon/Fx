@@ -101,14 +101,23 @@ class PeriodicTests(unittest.TestCase):
         for required in (
                 "FxDemoH1_USDJPY_*.csv", "FxDemoH1_",
                 "EURJPY", "EURUSD", "capture_epoch_utc_pc",
-                "-lt -60", "-gt 480", "Import-Csv",
+                "-lt -60", "-gt 420", "Import-Csv",
                 "H1_CAPTURE_STALE_OR_CLOCK_SKEW",
                 "final_demo_periodic_once.ps1",
-                "-H1CopiedDirectory", "-NewsBundle"):
+                "-H1CopiedDirectory", "-NewsBundle",
+                "if ($AllowPaidAi)", "-AllowPaidAi",
+                "H1_CAPTURE_STALE_BEFORE_PAID_RESEARCH",
+                "Paid AI parameters must have explicit -AllowPaidAi",
+                "-AnalystModel $AnalystModel",
+                "-ReviewerModel $ReviewerModel"):
             self.assertIn(required,source)
-        for forbidden in ("-AllowPaidAi", "OPENAI_API_KEY", "OrderSend(",
+        for forbidden in ("-gt 480", "OrderSend(",
                           "EnableDemoOrders=true", "AutoTrading=true"):
             self.assertNotIn(forbidden,source)
+        self.assertLess(source.index("Free preflight finished."),
+                        source.index("if ($AllowPaidAi) {", source.index("Free preflight finished.")))
+        self.assertLess(source.index("H1_CAPTURE_STALE_BEFORE_PAID_RESEARCH"),
+                        source.index("-Pair $Pair -AllowPaidAi"))
 
     def test_local_error_diagnostics_safe_and_specific(self):
         cases = (
