@@ -63,7 +63,7 @@ class FinalPaperProviderPolicyTests(unittest.TestCase):
                  patch.object(runtime.ai,"run",return_value=ai_result) as inference, \
                  patch.object(runtime.review401,"check_directory") as safety:
                 sig,seen,n=runtime._signals_for_new_h1(
-                    state,root/"captures",[],root,
+                    state,root/"captures",[root/"dummy_bundle"],root,
                     datetime.now(timezone.utc),
                     allow_paid=True,analyst_model="gpt-6.1-sol",
                     reviewer_model="gpt-6-astra",
@@ -78,7 +78,7 @@ class FinalPaperProviderPolicyTests(unittest.TestCase):
             with patch.object(runtime.period,"_read_h1",return_value=stub), \
                  patch.object(runtime.ai,"run") as inference:
                 sig,seen,n=runtime._signals_for_new_h1(
-                    state,root/"captures",[],root,
+                    state,root/"captures",[root/"dummy_bundle"],root,
                     datetime.now(timezone.utc),
                     allow_paid=True,analyst_model="gpt-6.1-sol",
                     reviewer_model="gpt-6-astra",
