@@ -32,7 +32,18 @@ def evaluate(root:Path, *, billing_statement:Path|None=None,
     if (head!=review["journal_head_sha256_local_only"] or
             operating["completed_cycles"]!=review["journal_cycles"]):
         raise InputError("readiness snapshots raced")
+    # The paper journal uses a *strict* 60-second quote warning boundary,
+    # whereas the independent raw-MT4 sample audit uses <=120 seconds.
+    # Both values are obtained from sequential, not atomic, snapshots.
+    # Showing both must never widen the underlying 60-second gate.
     fresh=operating["price_stream_warning_level_pc_derived"]=="FRESH"
+    journal_age=operating["last_recorded_quote_age_seconds_pc_derived"]
+    sample_age=(observed_contracts["latest_quote_age_seconds_pc_derived"]
+                if observed_contracts else None)
+    sample_fresh=(observed_contracts["latest_quote_fresh_pc_derived"]
+                  if observed_contracts else False)
+    freshness_diverges=(observed_contracts is not None
+                        and sample_fresh is True and not fresh)
     reason=[]
     if not fresh:
         reason.append("LAST_QUOTE_NOT_FRESH")
@@ -64,8 +75,16 @@ def evaluate(root:Path, *, billing_statement:Path|None=None,
         "status":"PAPER_READINESS_MATRIX_RESEARCH_HOLD_NO_GO",
         "completed_cycles":operating["completed_cycles"],
         "journal_head_sha256_local_only":head,
-        "latest_quote_age_seconds_pc_derived":
-            operating["last_recorded_quote_age_seconds_pc_derived"],
+        "latest_quote_age_seconds_pc_derived":journal_age,
+        "paper_journal_warning_level_pc_derived":
+            operating["price_stream_warning_level_pc_derived"],
+        "paper_journal_fresh_threshold_seconds_exclusive":60,
+        "mt4_raw_sample_fresh_threshold_seconds_inclusive":120,
+        "mt4_raw_sample_latest_quote_age_seconds_pc_derived":sample_age,
+        "paper_journal_and_mt4_freshness_labels_diverge":
+            freshness_diverges,
+        "producer_consumer_process_failure_proved_by_snapshot":False,
+        "quote_clock_measurements_atomic_or_independent":False,
         "price_feed_observation_viable_now":fresh,
         "historical_manual_stop_attested":
             review["historical_manual_stop_attested"],
@@ -85,9 +104,7 @@ def evaluate(root:Path, *, billing_statement:Path|None=None,
         "observed_mt4_quote_cycles":
             observed_contracts["sampled_complete_three_pair_cycles"]
             if observed_contracts else 0,
-        "sampled_quote_stream_fresh_pc_unattested":
-            observed_contracts["latest_quote_fresh_pc_derived"]
-            if observed_contracts else False,
+        "sampled_quote_stream_fresh_pc_unattested":sample_fresh,
         "observed_spread_pips_by_pair":
             {pair:{
                 "minimum":data["spread_min_pips_observed"],
