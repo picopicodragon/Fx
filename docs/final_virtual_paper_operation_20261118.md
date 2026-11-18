@@ -384,3 +384,48 @@ AI利用6/6回、追加API許可なし、MT4発注0件。
 
 現在の最終テスト版は「無料価格観測復旧済み／新規仮想売買停止中」の
 状態を維持する。理由が不明な停止を再発させないための開発が必要。
+
+
+## FINAL-PAPER-43〜47：138サイクル復旧審査後のPython監視停止原因の証拠収集
+
+利用者が実機で確認：最終テスト63件成功、
+communication recovery review: journal_cycles=138、
+直近連続10件合格、最終quote経過55秒（FRESH）、
+ready_for_manual_root_cause_review=true、communication_latched=true、
+root_cause_explained=false、paid_ai_calls_lifetime=6/6、
+仮想建玉/保留シグナル0、デモ/実売買注文0。
+
+この結果は**新規仮想売買を再許可する承認ではない**。
+重要なのは、Python監視の約45分の停止が何によるものか
+実機で原因証拠を集めること。停止の背景について、
+CLIによるCtrl+C終了、PowerShellウィンドウ終了、Python例外、
+Windows再起動、その他のいずれかを断定しない。
+
+最新ソースを安全な別ワークツリーに取得したあと、
+監視中のターミナルを閉じずに、別PowerShellから実施する。
+
+    .\scripts\final_paper_interruption_forensics_once.ps1
+
+当該スクリプトは既存のハッシュ鎖を読取検証し、
+直近最大1024サイクル内に記録された最新の600秒超の欠測について、
+停止直前・再開直後のPC時刻および欠測秒数を特定する。
+その時刻周辺のWindows Systemイベント
+（41、1074、6005、6006、6008）と
+Applicationイベント（1000、1001）の**IDと発生時刻だけ**を
+ローカルで抽出・保存する。イベントのメッセージ本文、ユーザー名、
+APIキー、プロセスのコマンドラインは保存・公開しない。
+
+出力は以下の2ファイルに分ける。
+- interruption_timeline_*.json：
+  ジャーナル上の欠測箇所、秒数、最新の安全停止状態。
+- interruption_windows_events_*.json：
+  WindowsログのイベントID・時刻・照会可否のみ。
+
+「Windowsイベントの存在」はPythonの異常終了の直接の証明ではなく、
+同時刻周辺に発生した現象を示すのみ。何も出ない場合も
+ログの閲覧許可や記録有無の違いがあり、正常終了を断定しない。
+Linux CIとWindows CIの通過は実機イベント取得の成功ではない。
+
+**停止ラッチ解除、Pythonプロセス再起動、MT4注文、有料AI呼び出し、
+運用journal・AI台帳・単独運用ロックの変更を一切実施しない。**
+根本原因が判明しない場合は unknown のまま停止ラッチ維持。
