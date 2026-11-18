@@ -22,6 +22,7 @@ from research import final_demo_http401_recovery as review401
 from research import final_demo_periodic as period
 from research import final_demo_periodic_ai as ai
 from research import final_paper_engine as paper
+from research import final_paper_event_blackout as blackout
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_final_paper_runtime_journal_v1"
@@ -210,7 +211,8 @@ def _signals_for_new_h1(
 
 def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                   allow_paid:bool,analyst_model:str,reviewer_model:str,
-                  paid_limit:int,now:datetime|None=None)->dict:
+                  paid_limit:int,now:datetime|None=None,
+                  event_blackout_file:Path|None=None)->dict:
     now=now or datetime.now(timezone.utc)
     if now.tzinfo is None:
         raise InputError("invalid current clock")
@@ -230,13 +232,18 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                 "new_virtual_positions_allowed":False,
                 "broker_orders_sent_this_run":0,
                 "real_orders_permitted":False}
+    known_blackout=blackout.check(event_blackout_file,
+                                  quote["capture_epoch"],now=now)
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
     signals,seen,paid=_signals_for_new_h1(
-        state,captures,bundles,root,now,allow_paid=allow_paid,
+        state,captures,bundles,root,now,
+        allow_paid=allow_paid and not known_blackout["active_known_blackout"],
         analyst_model=analyst_model,reviewer_model=reviewer_model,
         max_paid_calls=paid_limit)
-    changed,report=paper.step(state,quote,signals=signals)
+    changed,report=paper.step(
+        state,quote,signals=signals,
+        known_event_blackout=known_blackout["active_known_blackout"])
     changed["processed_h1_keys"].extend(seen)
     changed["paid_inference_calls"]+=paid
     if len(changed["processed_h1_keys"])>10000:
@@ -245,6 +252,9 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     report["paid_calls_this_cycle"]=paid
     report["paid_calls_session_cumulative"]=changed["paid_inference_calls"]
     report["h1_new_pair_count"]=len(seen)
+    report["known_macro_event_blackout_active"]=known_blackout["active_known_blackout"]
+    report["event_calendar_supplied"]=known_blackout["calendar_supplied"]
+    report["independent_future_event_calendar_attested"]=False
     return report
 
 
@@ -270,6 +280,7 @@ def main(argv=None)->int:
     p.add_argument("--max-paid-calls-lifetime",type=int,default=0)
     p.add_argument("--watch",action="store_true")
     p.add_argument("--interval-seconds",type=int,default=15)
+    p.add_argument("--event-blackout-file",type=Path)
     args=p.parse_args(argv)
     acquired=False
     lock=args.state_root/".single_operator.lock"
@@ -308,7 +319,8 @@ def main(argv=None)->int:
                     allow_paid=args.allow_paid_ai,
                     analyst_model=args.analyst_model,
                     reviewer_model=args.reviewer_model,
-                    paid_limit=args.max_paid_calls_lifetime,now=now)
+                    paid_limit=args.max_paid_calls_lifetime,now=now,
+                    event_blackout_file=args.event_blackout_file)
             except InputError:
                 # Never hide a malformed ledger / potential paid request.
                 # An unsafe newer CSV must be examined before resuming.
