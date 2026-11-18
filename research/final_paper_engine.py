@@ -67,6 +67,7 @@ def initial_state() -> dict:
         "dd5_latched":False,"communication_latched":False,
         "positions":[],"pending_signals":[],
         "used_signal_ids":[],"trade_log":[],
+        "processed_h1_keys":[],"paid_inference_calls":0,
         "last_quote_epoch":0,"cycle_number":0,
         "virtual_only":True,"broker_orders_permitted":False,
         "jev_required":False,
