@@ -147,3 +147,58 @@ DD4%で新規停止、DD5%で仮想全決済と停止ラッチ。
 - 現在は重要イベント±15分の**独立保証された将来カレンダー**が欠ける。
   そのため仮想結果は研究上のシミュレーションであって、
   完成版の全安全停止条件を検証済みとするものではない。
+
+
+## FINAL-PAPER-16〜23：AI利用枠の台帳突合と既知マクロ発表停止
+
+Windowsローカルで実測された初期運転：監査済み21サイクル、
+仮想資金100,000円、保有・決済0、AI推論使用済み6/6回、
+継続quote観測とSHA256ジャーナル照合が成立した。利益・収益性の
+検証が成立したわけではない。無限有料AI稼働の許可でもない。
+
+### AI台帳を料金ゼロで読み取り照合する
+
+現在稼働中の監視は停止せず、**別の** PowerShellで以下を実行する：
+
+    cd C:\Users\Suzuki\Documents\ChatGPT\Fx-MACRO-FWD-20261113
+    .\scripts\final_paper_ai_continuation_audit_once.ps1
+
+新しい research/final_paper_ai_continuation_audit.py はPythonジャーナルの
+累計有料コール数と、ai_research/ai_*.json の完了二段階台帳
+（各2コール）を照合する。以前のHTTP401など承認済み失敗は
+合算に含めず、未照合pendingは新規呼び出し禁止とする。
+実際の利用料金（日本円）はAPI回数から確定できず null とする。
+監査成功でも budget_renewal_authorized=false、
+new_paid_inference_allowed_by_this_audit=false。
+**使用済み6回の枠をリセット・増額する機能ではない。**
+月額AI予算3,000円の外部請求との照合・本人の追加課金許可なく
+次の有料コールを自動で開始しない。
+
+### 既知の重要マクロイベントだけを追加停止する（任意・読取専用）
+
+research/final_paper_event_blackout.py はローカルで保存した
+fx_final_paper_known_macro_blackout_v1 形式のイベント一覧を読み、
+USD/EUR/JPYの重要発表±900秒に入ったサイクルでは、新規仮想
+エントリーと有料AI分析を止める。仮想損切り・利確・決済は継続。
+APIアクセス、MT4発注、Webカレンダー取得は行わない。
+
+カレンダーを手元で公式原本と照合できた場合、起動コマンドへ
+-EventBlackoutFile <検証済みJSONのローカルパス> を追加できる。
+JSONトップレベル必須：schema、captured_at_utc_pc（UTC時刻）、
+scope=OPERATOR_SAVED_RESEARCH_ONLY、events配列。イベント要素は
+id、currency（USD/EUR/JPY）、scheduled_at_utc（UTC時刻）、
+source_url（許可済み公的ドメイン）、importance（HIGH/CRITICAL）。
+JSON自体に個人情報・APIキーを入れない。未照合原本や架空の日付を
+公式カレンダーとして入力しない。
+
+ファイルが提供されなかった場合、既知ブラックアウトは起動しないが
+independent_future_event_calendar_attested=false を出し続ける。
+ファイルを渡しても**3通貨全イベントの網羅性・情報取得時刻・
+ブローカー時計の独立証明は行われない**。そのため、仮想損益は
+研究結果であって完成版のイベント停止条件の合格とは認定しない。
+渡したファイルが不正、期限切れ、不明ソースの場合はFail Closed。
+
+現状のWindows監視プロセスは、ソースを更新しても自動的に
+新機能へ切り替わらない。既存の監視を維持し、次の停止・起動時に
+最新版でオプションを使用する。例外停止した場合はロックや
+有料AI台帳を削除しない。
