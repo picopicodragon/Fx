@@ -212,3 +212,46 @@ market order lifecycle and 0.5%/1%/1.5%/5% risk gates, NY17 rollover, daily
 blackout and persistent evidence. A research HOLD/APPROVED is not permission to
 create an executable signal or turn on AutoTrading. The local audit alone
 cannot demonstrate final-demo trading readiness.
+
+
+## DEMO-SPRINT-59–64: broker DEMO account/risk terms observation
+
+Three pairs have passed real two-model AI research and an offline ledger
+audit, but all decisions were HOLD and none proves execution readiness.
+
+A distinct read-only MT4 **Script** has been added:
+
+    mt4/read_only/FxFinalDemoBrokerSafetyProbe.mq4
+
+Install the MQ4 in the *same existing Rakuten DEMO MT4* data folder at
+MQL4/Scripts, then compile in MetaEditor F7 (0 errors/0 warnings required).
+Run ONCE from Scripts on the **USDJPY H1** chart with AutoTrading OFF.
+It independently checks IsDemo, connection, JPY deposit currency, USDJPY H1
+chart, basic account equity and quote/contract values. It writes
+FxDemoBrokerSafety_YYYYMMDD_HHMMSS.csv with three rows under MQL4/Files.
+No trade, DLL, network, timer or trading permissions are enabled.
+
+The broker snapshot contains sensitive DEMO account number and equity.
+**Do not paste or share that original CSV**. It is for operator-local
+evidence only. Server time and TimeGMT remain independently UNATTESTED;
+broker tick-value figures are broker-reported, not externally verified.
+
+Then, without uploading sensitive raw data, run from the Fx Windows worktree:
+
+    .\scripts\final_demo_broker_safety_once.ps1 -Mt4FilesDirectory $mt4Files
+
+The script copies the newest broker terms file into a local protected
+evidence folder and invokes the offline Python auditor. Its **redacted**
+report contains broker-reported 3-pair bid/ask, lot steps, min/max lot,
+tick-value/tick-size, price step, stop/freeze levels, quote lag and equity.
+It rejects >10-minute-old PC clocks, >30-second broker quote lag,
+open/pending account orders, invalid contracts or incomplete/cross-account
+snapshots. Equity risk references are 0.5% per trade, 1.0% simultaneous,
+1.5% daily and 5% maximum DD; none is permission to place an order.
+
+The only success status is
+DEMO_BROKER_TERMS_OBSERVED_RESEARCH_HOLD_NO_GO,
+with demo_orders_permitted=false and real_orders_permitted=false.
+There has been no MetaEditor compilation or physical broker test of the new
+script yet. The Python CI cannot substitute for either. Continue to prohibit
+real accounts and keep all demo auto-trading switches OFF.
