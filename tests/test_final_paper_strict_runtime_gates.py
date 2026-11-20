@@ -72,7 +72,7 @@ class StrictEntryAndBillingGatesTests(unittest.TestCase):
                 report=runtime.run_one_cycle(
                     Path(temp),root,[],allow_paid=True,analyst_model="a",
                     reviewer_model="b",paid_limit=6,now=NOW)
-            self.assertFalse(model.call_args.kwargs["allow_paid"])
+            model.assert_not_called()
             self.assertFalse(report["entry_readiness_gate_open"])
             self.assertFalse(report["new_paid_ai_allowed_by_evidence_gate"])
             self.assertFalse(report["virtual_entry_evidence_ready"])
@@ -81,12 +81,12 @@ class StrictEntryAndBillingGatesTests(unittest.TestCase):
             self.assertTrue(report["communication_latched"])
             new_state,_=runtime._journal_load(root/"journal")
             self.assertEqual(new_state["paid_inference_calls"],0)
-            self.assertEqual(len(new_state["pending_signals"]),1)
+            self.assertEqual(len(new_state["pending_signals"]),0)
+            self.assertTrue(report["ai_signal_pipeline_skipped_by_unattested_safety_hold"])
             new_state,entry=paper.step(new_state,quote(T+60),
                                        entry_evidence_ready=False)
             self.assertEqual(new_state["positions"],[])
-            self.assertIn("VIRTUAL_ENTRY_BLOCKED_UNATTESTED_SAFETY_EVIDENCE",
-                          entry["events"])
+            self.assertEqual(new_state["paid_inference_calls"],0)
 
     def test_gap_itself_blocks_paid_even_when_synthetic_evidence_claims_ready(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -111,7 +111,7 @@ class StrictEntryAndBillingGatesTests(unittest.TestCase):
                 report=runtime.run_one_cycle(
                     Path(temp),root,[],allow_paid=True,analyst_model="a",
                     reviewer_model="b",paid_limit=6,now=NOW)
-            self.assertFalse(model.call_args.kwargs["allow_paid"])
+            model.assert_not_called()
             self.assertTrue(report["communication_latched"])
             self.assertFalse(report["new_paid_ai_allowed_by_evidence_gate"])
             self.assertFalse(report["entry_readiness_gate_open"])
