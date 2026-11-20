@@ -93,8 +93,12 @@ def review(root:Path, *, max_files:int=MAX_SELECTED_FILES)->dict:
             sample=engine.validate_quotes(
                 file,now=datetime.fromtimestamp(epoch+1,tz=timezone.utc))
             source_sha=sample["source_sha256"]
-            source_ok=True
-            codes=[]
+            if sample["capture_epoch"]!=epoch:
+                source_ok=False
+                codes=["CAPTURE_TIME_DIFFERS_FROM_FILENAME"]
+            else:
+                source_ok=True
+                codes=[]
             leads={}
         except (InputError,ValueError,TypeError,ArithmeticError,
                 OSError,UnicodeError,OverflowError):
