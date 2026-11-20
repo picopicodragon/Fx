@@ -111,8 +111,10 @@ def audit(archive:Path)->dict:
         raise InputError("OFFICIAL_ARCHIVE_SIX_SOURCES_INCOMPLETE")
     # No extra untracked files: anyone silently adding an archive file
     # must create a new independently reviewed manifest version.
-    files={p.name for p in archive.iterdir() if p.is_file() and
-           not p.is_symlink()}
+    entries=list(archive.iterdir())
+    if any(p.is_symlink() or not p.is_file() for p in entries):
+        raise InputError("OFFICIAL_ARCHIVE_UNTRACKED_LINK_OR_DIRECTORY")
+    files={p.name for p in entries}
     if files!={x["source_id"]+
                (".ics" if x["source_id"].endswith("_ics") else ".html")
                for x in digest_list}|{"manifest.json"}:
