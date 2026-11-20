@@ -83,6 +83,8 @@ class ResumedContinuityTests(unittest.TestCase):
              patch.object(continuity.paid,"audit",return_value={
                  "paid_calls_recorded_in_journal":paid_count,
                  "paid_calls_in_completed_ledgers":paid_count,
+                 "journal_cycles":561,
+                 "journal_head_sha256_local_only":prior_head,
              }):
             return continuity.verify(self.root,self.first,self.second)
 
