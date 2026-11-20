@@ -157,6 +157,9 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
                 "demo_account_verified","single_observer_verified",
                 "metaeditor_zero_compile_errors_verified"))):
         raise InputError("FINAL_GATE_MT4_V2_COMPILATION_OR_SINGLE_EA_UNATTESTED")
+    logfile=permit.parent/files["mt4_v2_experts_log"]["filename"]
+    if b"FXPAPER-CLOCKFREEZE-20261120-V2" not in logfile.read_bytes():
+        raise InputError("FINAL_GATE_MT4_BUILD_LOG_MARKER_MISSING")
     clock=data["clock"]
     if (type(clock) is not dict or set(clock)!={
             "independent_utc_checked_at","broker_utc_checked_at",
@@ -187,6 +190,8 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
     # the observed MT4-PC offset is also verified on every fresh source.
     # MetaQuotes server clock is NOT independently authenticated by this.
     csv_path=quote.get("source_original_file")
+    if csv_path is None:
+        raise InputError("FINAL_GATE_ORIGINAL_QUOTE_REQUIRED")
     if csv_path is not None:
         from research import final_paper_engine as engine
         if type(csv_path) is not Path or not csv_path.is_file():
