@@ -242,7 +242,7 @@ class LaunchAcceptanceTests(unittest.TestCase):
         self.assertIn("Get-FileHash -LiteralPath $ex4",src)
         self.assertIn("Get-FileHash -LiteralPath $source",src)
         self.assertIn("Get-FileHash -LiteralPath $mq4",src)
-        self.assertIn("INSPECT_EXISTING_DIRECTORY",src.upper())
+        self.assertIn("InspectExistingDirectory",src)
         self.assertIn("ParameterSetName -eq 'Compile'",src)
         self.assertIn("ISOLATED_MQ4_COMPILE_ZERO_ERRORS_EX4_PRESENT_NO_GO",src)
         # Compile/inspect must never install, attach or stop the EA.
