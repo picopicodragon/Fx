@@ -456,6 +456,10 @@ def main(argv=None)->int:
     p.add_argument("--watch",action="store_true")
     p.add_argument("--interval-seconds",type=int,default=15)
     p.add_argument("--event-blackout-file",type=Path)
+    p.add_argument("--final-auto-evidence-file",type=Path)
+    p.add_argument("--final-auto-official-archive",type=Path)
+    p.add_argument("--final-auto-budget-authorization",type=Path)
+    p.add_argument("--allow-final-paid-ai",action="store_true")
     args=p.parse_args(argv)
     acquired=False
     lock=args.state_root/".single_operator.lock"
@@ -473,12 +477,32 @@ def main(argv=None)->int:
                     not args.analyst_model or not args.reviewer_model or
                     args.analyst_model==args.reviewer_model or
                     not os.environ.get("OPENAI_API_KEY")))
-                or (not args.allow_paid_ai and (
-                    args.analyst_model or args.reviewer_model))):
+                or (not (args.allow_paid_ai or args.allow_final_paid_ai) and (
+                    args.analyst_model or args.reviewer_model))
+                or (args.allow_final_paid_ai and (
+                    args.allow_paid_ai or not args.news_bundle or
+                    not args.analyst_model or not args.reviewer_model or
+                    args.analyst_model==args.reviewer_model or
+                    not os.environ.get("OPENAI_API_KEY") or
+                    args.final_auto_budget_authorization is None))
+                or ((args.final_auto_evidence_file is None)!=
+                    (args.final_auto_official_archive is None))
+                or (args.final_auto_budget_authorization is not None and
+                    not args.allow_final_paid_ai)
+                or (args.allow_final_paid_ai and
+                    args.final_auto_evidence_file is None)
+                or (args.final_auto_evidence_file is not None and
+                    args.allow_paid_ai)):
             raise InputError("invalid final paper startup")
         if any(not b.is_dir() or b.is_symlink() for b in args.news_bundle):
             raise InputError("missing archived news")
         _initialize(args.state_root)
+        if args.allow_final_paid_ai:
+            for name in ("auto_ai_research","auto_budget_journal"):
+                folder=args.state_root/name
+                if folder.is_symlink():
+                    raise InputError("unsafe final auto accounting folder")
+                folder.mkdir(exist_ok=True)
         if lock.exists() or lock.is_symlink():
             raise InputError("previous paper operator lock requires audit")
         with lock.open("x",encoding="utf-8") as f:
@@ -495,7 +519,12 @@ def main(argv=None)->int:
                     analyst_model=args.analyst_model,
                     reviewer_model=args.reviewer_model,
                     paid_limit=args.max_paid_calls_lifetime,now=now,
-                    event_blackout_file=args.event_blackout_file)
+                    event_blackout_file=args.event_blackout_file,
+                    final_auto_evidence=args.final_auto_evidence_file,
+                    final_auto_official_archive=args.final_auto_official_archive,
+                    final_auto_budget_authorization=
+                        args.final_auto_budget_authorization,
+                    allow_final_paid=args.allow_final_paid_ai)
             except InputError:
                 # Never hide a malformed ledger / potential paid request.
                 # An unsafe newer CSV must be examined before resuming.
