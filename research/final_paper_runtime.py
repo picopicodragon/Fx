@@ -24,6 +24,7 @@ from research import final_demo_periodic_ai as ai
 from research import final_paper_engine as paper
 from research import final_paper_event_blackout as blackout
 from research import final_paper_completed_decision as completed_decision
+from research import final_paper_integrated_control as integrated_control
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_final_paper_runtime_journal_v1"
@@ -256,6 +257,12 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     from research import final_paper_manual_comm_release as comm_release
     working_state, manual_comm_release_applied = comm_release.apply_if_valid(
         root, state, prior, quote, now)
+    # Cross-link the EXISTING safe runtime to the consolidated model.
+    # No source-backed independent verification is implemented yet:
+    # real macro/clock/consensus/cost/EA trust is strictly FALSE and this
+    # cannot be overridden via user-controlled files or environment flags.
+    integrated_gate,integrated_budget=integrated_control.existing_runtime_no_go(
+        working_state,quote,known_blackout)
     # The local known-event list is NOT an independently verified complete
     # three-currency calendar, and the broker clock is also unattested.
     # The runnable paper supervisor must not convert either absence into
@@ -278,6 +285,7 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     signal_path_safe=(
         evidence_ready and not risk_stop and quote_gap_safe
         and not known_blackout["active_known_blackout"]
+        and integrated_gate["saved_two_model_ai_signal_eligible_by_evidence"]
     )
     # A healthy quote and an (eventually) approved macro clock are not
     # enough to reopen the historical paid-API ledger. The 6-call lifetime
@@ -287,6 +295,7 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
         and type(paid_limit) is int and 0<=paid_limit<=MAX_PAID_LIFETIME
         and type(working_state.get("paid_inference_calls")) is int
         and working_state["paid_inference_calls"]+2<=paid_limit
+        and integrated_budget["conditions_satisfied_hypothetically"]
     )
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
@@ -321,6 +330,12 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     report["new_paid_ai_allowed_by_evidence_gate"]=paid_safe
     report["ai_signal_pipeline_skipped_by_unattested_safety_hold"]=not signal_path_safe
     report["manual_comm_release_applied_this_cycle"] = manual_comm_release_applied
+    report["integrated_gate_schema"]=integrated_gate["schema"]
+    report["integrated_block_reasons"]=integrated_gate["block_reasons"]
+    report["budget_gate_status"]=integrated_budget["status"]
+    report["budget_block_reasons"]=integrated_budget["failure_reasons"]
+    report["final_ai_virtual_execution_authorized"]=signal_path_safe
+    report["final_new_billable_ai_authorized"]=paid_safe
     return report
 
 
