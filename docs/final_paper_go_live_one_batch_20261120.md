@@ -161,3 +161,39 @@ This checkout is only the dedicated review worktree, not the original
 running supervisor checkout. Never modify or check out the active process
 working tree. The saved first snapshot stays intact; rerun produces two
 new distinct samples and is safe and read only.
+
+
+## 2026-11-20: MetaEditor returned nonzero after isolated V2 compile
+
+Actual first Windows compile printed Compiling ONE isolated V2 source only
+then stopped on nonzero MetaEditor process exit. This only proves a
+nonzero native status, NOT that MQL4 failed.
+
+MetaEditor build 6230 can return the NUMBER of files successfully
+compiled (single successful source returns 1). MetaQuotes documentation
+specifies /compile:"..." /log with logs next to the source.
+Check the last Result: N errors line and a new isolated EX4, not solely
+native exit status.
+
+The script now supports read-only inspection of the EXISTING isolated
+compile folder WITHOUT launching MetaEditor again:
+
+    $root=Join-Path $env:USERPROFILE 'Documents\FXForwardEvidence\final_virtual_paper'
+    $last=Get-ChildItem -LiteralPath $root -Directory -Filter 'metaeditor_v2_candidate_*' |
+        Sort-Object Name -Descending | Select-Object -First 1
+    if ($null -eq $last) { throw 'No isolated compile evidence folder' }
+    .\scripts\final_paper_metaeditor_v2_compile_candidate_once.ps1 -InspectExistingDirectory $last.FullName
+
+Inspection verifies current V2 MQ4 SHA matches the copied source, final
+compiler zero-error summary, EX4 existence/size and EX4 SHA.
+A missing log or EX4 stays NO_GO. Read-only inspection never changes
+any old file. When compiling a new isolated folder, the native
+MetaEditor exit code is informational only; log and actual EX4 decide.
+
+Even a genuine compiled EX4 does not authorize installation into
+running Rakuten DEMO MT4 without separate operator approval,
+exclusive-EA Expert log evidence and full pretrade safety checks.
+
+References:
+https://www.metatrader5.com/en/metaeditor/help/beginning/integration_ide
+https://www.mql5.com/en/articles/23991
