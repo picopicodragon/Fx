@@ -121,7 +121,9 @@ class QuoteOnlyBlockedPolicy(unittest.TestCase):
                     Path(temp),root,[],allow_paid=True,
                     analyst_model="a",reviewer_model="b",
                     paid_limit=6,now=NOW)
-            self.assertFalse(model.call_args.kwargs["allow_paid"])
+            # The consolidated gate now blocks evaluating ANY H1 model
+            # when independent macro/clock/cost proofs are absent.
+            model.assert_not_called()
             self.assertFalse(result["new_paid_ai_allowed_by_evidence_gate"])
             self.assertEqual(result["paid_calls_session_cumulative"],6)
             self.assertEqual(result["broker_orders_sent_this_run"],0)
