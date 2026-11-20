@@ -45,7 +45,7 @@ class IncidentTriageTests(unittest.TestCase):
         self.root = Path(self.tmp.name) / "state"
         self.root.mkdir()
         self.mt4 = Path(self.tmp.name) / "MQL4" / "Files"
-        self.mt4.mkdir()
+        self.mt4.mkdir(parents=True)
         self.lock = self.root / ".single_operator.lock"
         self.lock.write_text(
             "running; review journal on unexpected stop\n", "utf-8")
