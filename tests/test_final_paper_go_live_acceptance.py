@@ -227,6 +227,32 @@ class LaunchAcceptanceTests(unittest.TestCase):
                       "demo_orders_permitted","real_orders_permitted"):
             self.assertIn(field,source)
 
+    def test_metaeditor_single_file_exit_code_is_not_compile_verdict(self):
+        src=(Path(__file__).resolve().parents[1]/
+             "scripts/final_paper_metaeditor_v2_compile_candidate_once.ps1"
+            ).read_text(encoding="utf-8")
+        # A MetaEditor version can return exit code 1 for one successfully
+        # compiled source. Demand compiler result + same-directory EX4,
+        # never authorize by exit code (0 or 1) alone.
+        self.assertIn("Start-Process -FilePath",src)
+        self.assertIn("$metaEditorExitCode=$proc.ExitCode",src)
+        self.assertNotIn("if ($proc.ExitCode -ne 0)",src)
+        self.assertIn("Last compiler result:",src)
+        self.assertIn("No newly created EX4 exists",src)
+        self.assertIn("Get-FileHash -LiteralPath $ex4",src)
+        self.assertIn("Get-FileHash -LiteralPath $source",src)
+        self.assertIn("Get-FileHash -LiteralPath $mq4",src)
+        self.assertIn("INSPECT_EXISTING_DIRECTORY",src.upper())
+        self.assertIn("ParameterSetName -eq 'Compile'",src)
+        self.assertIn("ISOLATED_MQ4_COMPILE_ZERO_ERRORS_EX4_PRESENT_NO_GO",src)
+        self.assertIn("Original",src.replace("original","Original"))
+        for forbidden in ("OrderSend(","OrderModify(","OrderClose("):
+            # These are referenced only in static forbidden-token lists,
+            # not calls; the script must not invoke a broker terminal.
+            self.assertNotIn("& $mt4",src)
+            self.assertNotIn("Stop-Process",src)
+            self.assertNotIn("Start-Process -FilePath $mt4",src)
+
     def test_powershell_never_stops_or_restarts_runtime(self):
         script=(Path(__file__).resolve().parents[1]/
                 "scripts/final_paper_go_live_acceptance_once.ps1"
