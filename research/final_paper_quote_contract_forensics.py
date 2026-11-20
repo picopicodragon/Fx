@@ -189,8 +189,10 @@ def _classify(file:Path)->dict:
     except (InputError,ValueError,TypeError,OverflowError,ArithmeticError,
             OSError,UnicodeError):
         engine_pass=False
-    if engine_pass and issues:
-        raise InputError("FORENSIC_CLASSIFIER_ENGINE_CONFLICT")
+    # The multi-day reviewer adds an exact filename-vs-PC capture match
+    # which the live engine only checks for freshness. Distinguish them:
+    # both are research data checks, and neither authorizes trading.
+    source_pass=engine_pass and not issues
     if not engine_pass and not issues:
         _issue(issues,0,"ENGINE_REJECTED_UNCLASSIFIED_SOURCE")
     if hashlib.sha256(file.read_bytes()).digest()!=hashlib.sha256(raw).digest():
@@ -199,6 +201,7 @@ def _classify(file:Path)->dict:
         "sha256_local_original":hashlib.sha256(raw).hexdigest(),
         "byte_length":len(raw),
         "engine_quote_validator_passed":engine_pass,
+        "strict_multiday_source_passed":source_pass,
         "issues":issues,
     }
 
@@ -226,6 +229,7 @@ def investigate(root:Path,name:str, *, neighbors:int=2)->dict:
             "source_basename":file.name,
             "source_sha256_local_only":item["sha256_local_original"],
             "engine_quote_validator_passed":item["engine_quote_validator_passed"],
+            "strict_multiday_source_passed":item["strict_multiday_source_passed"],
             "issue_codes":[entry["code"] for entry in item["issues"][:8]],
         })
     return {
@@ -235,6 +239,7 @@ def investigate(root:Path,name:str, *, neighbors:int=2)->dict:
         "original_sha256_local_only":inspected["sha256_local_original"],
         "original_byte_length":inspected["byte_length"],
         "engine_quote_validator_passed":inspected["engine_quote_validator_passed"],
+        "strict_multiday_source_passed":inspected["strict_multiday_source_passed"],
         "issue_count":len(inspected["issues"]),
         "issues_without_source_values":inspected["issues"],
         "nearby_original_sources":adjacent,
