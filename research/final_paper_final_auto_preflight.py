@@ -51,8 +51,12 @@ def review(root:Path,mt4:Path,evidence:Path,official:Path,
     if quote is None:
         raise InputError("FINAL_AUTO_FRESH_MT4_QUOTE_REQUIRED")
     binding=state.get("auto_entry_session_binding_sha256",head)
-    checked=gate.evaluate(evidence,official,quote,now=now,
-                          entry_binding_sha=binding)
+    original=mt4/("FxPaperQuote_"+
+        datetime.fromtimestamp(quote["capture_epoch"],tz=timezone.utc)
+        .strftime("%Y%m%d_%H%M%S")+".csv")
+    checked=gate.evaluate(evidence,official,
+                          {**quote,"source_original_file":original},
+                          now=now,entry_binding_sha=binding)
     policy=budget.policy(budget_policy,now=now,
                          session_binding_sha=binding,
                          analyst_model=analyst_model,
