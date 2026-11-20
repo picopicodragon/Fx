@@ -126,6 +126,25 @@ class ManualFreeObservationRecoveryTests(unittest.TestCase):
             self._recover()
         self.assertTrue(self.lock.exists())
 
+    def test_exact_20261120_windows_lock_44_bytes_and_sha(self):
+        self.assertEqual(len(mod.LOCK_BYTES), 44)
+        self.assertEqual(mod.LOCK_SHA256_OBSERVED,
+                         "7298c233cd837ff6c403e25dbf3a8632031ad57"
+                         "a4e35dad0a0c66aad2ccee4f1")
+        self.assertEqual(mod.hashlib.sha256(mod.LOCK_BYTES).hexdigest(),
+                         mod.LOCK_SHA256_OBSERVED)
+        self.assertEqual(self.lock.stat().st_size, 44)
+        self.assertEqual(mod.hashlib.sha256(self.lock.read_bytes()).hexdigest(),
+                         mod.LOCK_SHA256_OBSERVED)
+
+    def test_linux_lf_variant_not_silently_treated_as_windows_lock(self):
+        self.lock.write_bytes(mod.LOCK_BYTES.replace(b"\r\n", b"\n"))
+        self.assertEqual(self.lock.stat().st_size, 43)
+        with self.assertRaises(InputError):
+            self._recover()
+        self.assertTrue(self.lock.exists())
+        self.assertFalse((self.root / mod.RECEIPT_NAME).exists())
+
     def test_unexpected_lock_contents_rejected(self):
         self.lock.write_text("other operator\n")
         with self.assertRaises(InputError):
