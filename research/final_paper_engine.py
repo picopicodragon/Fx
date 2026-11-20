@@ -177,7 +177,8 @@ def _valid_signal(sig:dict)->bool:
         and _dec(sig["atr14"])>0)
 
 
-def _enter(state:dict, sig:dict, quote:dict, epoch:int)->str:
+def _enter(state:dict, sig:dict, quote:dict, epoch:int, *,
+           carry_costs:dict|None=None)->str:
     pair=sig["pair"]
     if any(p["pair"]==pair for p in state["positions"]):
         return "PAIR_ALREADY_OPEN"
@@ -195,6 +196,11 @@ def _enter(state:dict, sig:dict, quote:dict, epoch:int)->str:
     # Conservative sizing covers spread and one-pip exit slippage.
     stopdistance += PIP[pair]*SLIPPAGE_PIPS_EACH_SIDE
     loss_per_lot=(stopdistance/quote["ticksize"])*quote["tickvalue"]
+    # Reserve 14 calendar days of the operator-reviewed worst-case
+    # overnight swap for an INTERNAL virtual trade. This may reject more
+    # trades; the reserve is not a broker fill or actual fee receipt.
+    if carry_costs is not None:
+        loss_per_lot+=_dec(carry_costs[pair][sig["action"]],positive=True)*D("14")
     available=equity*FRACTION
     current_risk=sum((_risk(p) for p in state["positions"]),D("0"))
     available=min(available,max(D("0"),equity*CONCURRENT-current_risk))
@@ -222,7 +228,8 @@ def _enter(state:dict, sig:dict, quote:dict, epoch:int)->str:
 
 def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
          known_event_blackout:bool=False,
-         entry_evidence_ready:bool=True)->tuple[dict,dict]:
+         entry_evidence_ready:bool=True,
+         carry_costs:dict|None=None)->tuple[dict,dict]:
     """Pure step; caller must durable-write new state before acknowledging."""
     if (type(state) is not dict or state.get("schema")!=SCHEMA
         or state.get("start_capital_jpy")!="100000.00"
@@ -241,6 +248,17 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
     if (type(known_event_blackout) is not bool or
             type(entry_evidence_ready) is not bool):
         raise InputError("invalid event/entry evidence gate")
+    # Existing historic paper simulations retain their exact original
+    # no-carry behavior unless the FINAL-AUTO cost evidence is supplied.
+    if carry_costs is not None:
+        if (type(carry_costs) is not dict or set(carry_costs)!=set(PAIRS)):
+            raise InputError("invalid final auto carry pair map")
+        for pair in PAIRS:
+            d=carry_costs[pair]
+            if (type(d) is not dict or set(d)!={"LONG","SHORT"} or
+                    any(_dec(d[key],positive=True)>D("100000")
+                        for key in ("LONG","SHORT"))):
+                raise InputError("invalid conservative swap rate")
     if known_event_blackout:
         events.append("VIRTUAL_KNOWN_MACRO_EVENT_BLACKOUT")
     if state["last_quote_epoch"]>0:
@@ -250,6 +268,31 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
             events.append("VIRTUAL_COMMUNICATION_LEVEL2_LATCHED")
         elif delta>90:
             events.append("VIRTUAL_COMMUNICATION_LEVEL1_WARNING")
+    # Account for conservative holding charges before mark-to-market,
+    # daily/DD loss caps, and any virtual stop or target. The explicit
+    # daily cost ceiling also covers weekends/triple-swap uncertainty as
+    # an intentionally pessimistic paper assumption, NOT live swap proof.
+    if carry_costs is not None and next_state["ny17_day"] is not None:
+        from datetime import date
+        from research.forward_risk_timeline import trading_day
+        today=trading_day(datetime.fromtimestamp(epoch,tz=timezone.utc)
+                          .isoformat().replace("+00:00","Z"))
+        try:
+            days=(date.fromisoformat(today)-
+                  date.fromisoformat(next_state["ny17_day"])).days
+        except ValueError as exc:
+            raise InputError("invalid prior NY17 trading day") from exc
+        if not 0<=days<=30:
+            raise InputError("unsafe NY17 carry gap")
+        if days and next_state["positions"]:
+            charge=sum((
+                _dec(carry_costs[p["pair"]][p["direction"]],positive=True)*
+                _dec(p["lots"],positive=True)*D(days)
+                for p in next_state["positions"]),D("0"))
+            next_state["cash_jpy"]=_s(_dec(next_state["cash_jpy"])-charge)
+            next_state["auto_carry_charged_jpy"]=_s(
+                _dec(next_state.get("auto_carry_charged_jpy","0"))+charge)
+            events.append("AUTO_PAPER_CONSERVATIVE_NY17_CARRY_CHARGED")
     for pos in list(next_state["positions"]):
         q=quotes[pos["pair"]]
         mark=q["bid"]-PIP[pos["pair"]] if pos["direction"]=="LONG" else q["ask"]+PIP[pos["pair"]]
@@ -344,7 +387,8 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
                 next_state["communication_latched"]):
                 events.append("VIRTUAL_RISK_HALTED")
             else:
-                events.append(_enter(next_state,sig,quotes[sig["pair"]],epoch))
+                events.append(_enter(next_state,sig,quotes[sig["pair"]],epoch,
+                                     carry_costs=carry_costs))
         else:
             events.append("AI_HOLD_OR_NONAPPROVED_NO_POSITION")
         next_state["used_signal_ids"].append(sig["id"])
