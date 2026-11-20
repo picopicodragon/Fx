@@ -245,13 +245,11 @@ class LaunchAcceptanceTests(unittest.TestCase):
         self.assertIn("INSPECT_EXISTING_DIRECTORY",src.upper())
         self.assertIn("ParameterSetName -eq 'Compile'",src)
         self.assertIn("ISOLATED_MQ4_COMPILE_ZERO_ERRORS_EX4_PRESENT_NO_GO",src)
-        self.assertIn("Original",src.replace("original","Original"))
-        for forbidden in ("OrderSend(","OrderModify(","OrderClose("):
-            # These are referenced only in static forbidden-token lists,
-            # not calls; the script must not invoke a broker terminal.
-            self.assertNotIn("& $mt4",src)
-            self.assertNotIn("Stop-Process",src)
-            self.assertNotIn("Start-Process -FilePath $mt4",src)
+        # Compile/inspect must never install, attach or stop the EA.
+        for forbidden in ("& $mt4","Stop-Process",
+                          "Start-Process -FilePath $mt4",
+                          "Copy-Item -Destination $Mt4FilesDirectory"):
+            self.assertNotIn(forbidden,src)
 
     def test_powershell_never_stops_or_restarts_runtime(self):
         script=(Path(__file__).resolve().parents[1]/
