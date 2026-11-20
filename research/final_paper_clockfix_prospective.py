@@ -28,6 +28,7 @@ BASELINE={
     "reviewed_original_count":3020,
     "strict_engine_valid_original_count":3016,
     "invalid_original_count":4,
+    "invalid_condition_occurrences":{"TICK_TIME_AFTER_BROKER_TIME":4},
     "first_source_basename":"FxPaperQuote_20261118_022249.csv",
     "last_source_basename":"FxPaperQuote_20261120_050056.csv",
     "original_sequence_sha256_local_only":
@@ -78,12 +79,15 @@ def _read_baseline(path:Path)->dict:
     if (type(data) is not dict
             or data.get("schema")!=SOURCE_SCHEMA
             or data.get("status")!="SOURCE_TIME_ORDER_ANOMALY_CAMPAIGN_RESEARCH_NO_GO"
-            or data.get("invalid_condition_occurrences")!={
-                "TICK_TIME_AFTER_BROKER_TIME":4}
+            or data.get("invalid_condition_occurrences")!=
+               BASELINE["invalid_condition_occurrences"]
             or data.get("all_originals_passed_strict_engine") is not False
             or data.get("runtime_go_no_go")!="NO_GO"
             or data.get("new_virtual_positions_permitted") is not False
             or data.get("new_paid_ai_calls_permitted") is not False
+            or data.get("demo_orders_permitted") is not False
+            or data.get("real_orders_permitted") is not False
+            or data.get("safety_hold_latched") is not True
             or any(data.get(key)!=value for key,value in BASELINE.items())):
         raise InputError("CLOCKFIX_BASELINE_EVIDENCE_NOT_MATCHING_OBSERVED")
     return data
