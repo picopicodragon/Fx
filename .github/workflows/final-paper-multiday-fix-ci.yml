@@ -1,0 +1,51 @@
+name: Final paper multi-day failure diagnosis and independent archive check
+
+on:
+  pull_request:
+    paths:
+      - 'research/final_paper_multiday_quote_stress.py'
+      - 'scripts/final_paper_multiday_macro_integrity_once.ps1'
+      - 'tests/test_final_paper_multiday_failure_diagnostic.py'
+      - '.github/workflows/final-paper-multiday-fix-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux Python 3.12 complete regressions
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m compileall -q research tests scripts
+      - run: python -m unittest discover -s tests -p 'test*.py'
+
+  windows:
+    name: Windows Python 3.13 complete regressions and PowerShell syntax
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Parse multi-day independent PowerShell steps
+        shell: pwsh
+        run: |
+          $tokens=$null
+          $errors=$null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            'scripts/final_paper_multiday_macro_integrity_once.ps1',
+            [ref]$tokens,[ref]$errors
+          ) | Out-Null
+          if ($errors.Count -ne 0) {
+            $errors | ForEach-Object { Write-Error $_ }
+            exit 1
+          }
+      - run: python -m unittest discover -s tests -p "test*.py"
