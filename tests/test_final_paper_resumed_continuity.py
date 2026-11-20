@@ -26,6 +26,7 @@ def handoff(*, second=False):
         "captured_utc_pc_unattested":time.isoformat(),
         "paper_supervisor_process_count":1,
         "paper_supervisor_process_id":4173,
+        "paper_supervisor_paid_ai_opt_in_cli_flag_present":False,
         "paper_supervisor_created_utc_pc_unattested":
             "2026-11-20T02:50:00Z",
         "mt4_terminal_process_count":1,
@@ -103,6 +104,7 @@ class ResumedContinuityTests(unittest.TestCase):
                 "2026-11-20T03:00:41Z"),
             ("runtime_lock_present_not_process_proof",False),
             ("paper_supervisor_process_count",0),
+            ("paper_supervisor_paid_ai_opt_in_cli_flag_present",True),
             ("mt4_terminal_process_count",0),
         ):
             with self.subTest(k=k):
