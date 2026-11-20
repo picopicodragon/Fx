@@ -311,7 +311,8 @@ def settle(folder:Path,*,reserve_sha:str,ledger:Path,now:datetime)->None:
     from research import final_demo_http401_recovery as reader
     valid,sha=reader._read_ledger(ledger)
     if (valid["stage"]!="COMPLETE" or valid["pending_role"] is not None
-            or valid["analyst"] is None or valid["reviewer"] is None):
+            or valid["analyst"] is None or valid["reviewer"] is None
+            or valid.get("packet_sha256")!=item["packet_sha256"]):
         raise InputError("FINAL_BUDGET_LEDGER_UNFINISHED")
     _record(folder,state,action="SETTLED",pair=item["pair"],
             packet_sha=item["packet_sha256"],
