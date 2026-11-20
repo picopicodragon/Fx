@@ -26,7 +26,11 @@ if ($PSCmdlet.ParameterSetName -eq 'Compile') {
     if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
         throw 'MetaEditor executable not found.'
     }
-    if ((Split-Path -Leaf $exe) -notmatch '^metaeditor(64)?\.exe
+    if ((Split-Path -Leaf $exe) -notmatch '^metaeditor(64)?\.exe$') {
+        throw 'Only actual MetaEditor executable permitted.'
+    }
+}
+$source=Join-Path (Split-Path -Parent $PSScriptRoot) 'mt4\read_only\FxFinalPaperReadOnlyObserver.mq4'
 if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
     throw 'Read-only V2 source absent. NO_GO.'
 }
