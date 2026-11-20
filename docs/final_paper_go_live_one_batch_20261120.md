@@ -1,0 +1,132 @@
+# Fully automated AI virtual FX PAPER: final human-gated launch package
+
+Status: SOURCE/CI REVIEW CANDIDATE ONLY. The running Rakuten DEMO MT4
+and Windows Python supervisor remain in their original worktree.
+
+## Actual Windows baseline, 2026-11-20
+
+At 16:16 JST: journal 802 cycles; 6/6 old paid calls reconciled;
+all six official original hashes intact; communication_latched=true.
+Original quote monitoring: 3,020 CSV, 3,016 valid, four original
+1-second broker-versus-tick time inversions; preserve ALL originals.
+Real new AI inferences 0, real new virtual entries 0, DEMO/real MT4
+orders 0. MQL4 V2 candidate not yet compiled or deployed.
+
+## Entire new engineering batch
+
+1. research/final_paper_go_live_acceptance.py verifies two live Windows
+   snapshots, same supervisor and advancing quote/journal; rescans 3,020
+   ORIGINAL quote bytes against the fixed name/SHA256 chain; reconciles
+   the complete 6/6 paid AI ledger and official six archived originals;
+   requires the actual no-order clock-freeze V2 source SHA and prints
+   outstanding external evidence and operator approvals. A supervisor
+   may legitimately append journal entries during an audit; it accepts
+   only a monotonic consistent newer head.
+2. scripts/final_paper_go_live_acceptance_once.ps1 collects two
+   independent snapshots 75 seconds apart with ONE command. It does
+   not restart/stop MT4 or Python, nor change any historical source.
+3. scripts/final_paper_metaeditor_v2_compile_candidate_once.ps1 is an
+   explicitly opt-in ISOLATED MetaEditor compile of a COPY of candidate
+   MQ4. It verifies a 0-error log, EX4 existence/size and hashes.
+   It does not install EX4 into a live terminal or touch running EAs.
+4. research/final_paper_current_incident_release.py plus
+   scripts/final_paper_stage_current_comm_release_once.ps1 implement
+   human-approved current-incident-specific, one-use communication
+   latch release. Unlike the old 2026-11-18 approval, it recognizes
+   the most recent recorded >600s gap AFTER cycle 107. Approval is
+   bound to journal cycles, head SHA, gap and exact operator intent,
+   must be staged while old supervisor is stopped and lock absent,
+   and expires in 300 seconds. The next fresh quote can consume it
+   once. Any later long interruption re-latches automatically.
+   This never approves billable AI, macro/clock/cost or broker orders.
+5. Tests include source tamper, exact ledger hashes, missing approvals,
+   risk re-latch and MQL4/PowerShell parser checks.
+
+## Windows acceptance, from NEW worktree, no disruption
+
+    cd "$env:USERPROFILE\Documents\ChatGPT\Fx-PAPER-INTEGRATED-REVIEW-20261120"
+    git fetch origin
+    if ($LASTEXITCODE -ne 0) { throw 'Git fetch failed' }
+    $tree=Join-Path $env:USERPROFILE 'Documents\ChatGPT\Fx-PAPER-LAUNCH-REVIEW-20261120'
+    if (Test-Path -LiteralPath $tree) { throw 'Target folder already exists' }
+    git worktree add --detach $tree origin/feat/final-paper-launch-acceptance-package-20261120
+    if ($LASTEXITCODE -ne 0) { throw 'Worktree creation failed' }
+    Set-Location $tree
+    .\scripts\final_paper_go_live_acceptance_once.ps1 -Mt4FilesDirectory $mt4Files
+
+This requires the previously saved final_virtual_paper evidence folder,
+the original quote_time_order_campaign_20261120_140145_466.json and
+official_public_capture_20261120_113041_303 directory. If missing,
+FAIL CLOSED, never regenerate fake prior evidence.
+
+Successful acceptance is:
+GO_LIVE_EVIDENCE_VERIFIED_OPERATOR_GATES_REMAIN_NO_GO.
+It is NOT full automatic AI virtual trading permission.
+
+## MetaEditor V2 compile, optional operator-initiated step
+
+Find the actual MetaEditor executable from Rakuten MT4 installation.
+After explicit operator decision, compile only an ISOLATED COPIED source:
+
+    .\scripts\final_paper_metaeditor_v2_compile_candidate_once.ps1 -MetaEditorExe '<actual absolute metaeditor.exe path>' -ApproveIsolatedCompile
+
+The command does not remove/replace or attach any EA. Manually review
+the 0-error MetaEditor log, MQ4 SHA, new EX4 SHA, and old EA version.
+Separately plan intended old EA stop, preserve its Experts log,
+check DEMO/JPY account, USDJPY/H1, AutoTrading OFF and no orders,
+and attach exactly ONE newly compiled V2 observer. Save new
+FXPAPER-CLOCKFREEZE-20261120-V2 Experts start marker and UTC time.
+No second observer, no double Python supervisor.
+
+MetaQuotes documents /compile:<path> /log CLI:
+https://www.metatrader5.com/en/metaeditor/help/beginning/integration_ide
+https://www.metatrader4.com/en/trading-platform/help/autotrading/metaeditor
+
+## Current communications incident approval: NEVER automatic
+
+Review the latest journal gap and physical MT4 and process continuity.
+Only AFTER the current Python supervisor is intentionally stopped,
+its process independently absent, and its lock absent, a human may
+explicitly stage ONE incident-specific virtual-only approval:
+
+    .\scripts\final_paper_stage_current_comm_release_once.ps1 -Mt4FilesDirectory $mt4Files -OperatorApproval 'APPROVE_20261120_INCIDENT_INTERNAL_VIRTUAL_COMMUNICATION_RELEASE_ONLY'
+
+Do not run until that approval has been explicitly granted.
+This does NOT restart Python. On an independently controlled restart
+within the permit time/quote bounds, the next fresh quote may consume
+it exactly once. Otherwise no latch release. It neither enables AI
+payments nor entries without independently verified evidence.
+
+## Provider spend control, verified 2026-11-20
+
+OpenAI API now offers a separate enforceable MONTHLY hard spending
+limit for organization or project, distinct from mere advisory alerts.
+The vendor states enforcement is not instantaneous: slight overrun
+may occur. Thus both provider hard cap and local worst-case
+two-model-cost reservation are necessary, not guaranteed precise
+cost ceilings.
+https://developers.openai.com/api/docs/guides/spend-limits
+
+The ¥3,000/month planning amount is not a signed approval to spend
+or an actual provider USD hard cap. Operator approval is needed for
+new model API calls, project limit and expected FX conversion; paid
+provider usage/invoices must reconcile in JPY. Existing 6/6 historical
+AI calls MUST never reset. Ambiguous paid requests are never retried.
+
+## Real outstanding GO conditions
+
+- Verified complete USD/EUR/JPY high impact calendar and +/-15 minute
+  blackout (six stored original SHA matches alone do not prove this).
+- Point-in-time consensus prior to release, with source/time evidence.
+- PC clock vs Rakuten broker independent reference verification.
+- Broker contract and real spread/slippage/commission/swap modeled.
+- Evidence that V2 built, old EA exited and one new read-only DEMO EA
+  alone is running. Old four invalid quote originals remain intact.
+- Operator-approved release for the exact 2026-11-20 communications
+  incident, provider hard cap, JPY budget and call cap review.
+- New paid API remains unauthorized until explicit user budget consent.
+
+Only after these are genuinely verified and approved may a separately
+reviewed runtime permit AI-generated virtual entries. Broker MT4 orders
+are permanently disabled. Source/CI success is not operational GO.
+Main merge is operator-controlled.
