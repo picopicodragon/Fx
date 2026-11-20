@@ -274,7 +274,6 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
     # an intentionally pessimistic paper assumption, NOT live swap proof.
     if carry_costs is not None and next_state["ny17_day"] is not None:
         from datetime import date
-        from research.forward_risk_timeline import trading_day
         today=trading_day(datetime.fromtimestamp(epoch,tz=timezone.utc)
                           .isoformat().replace("+00:00","Z"))
         try:
