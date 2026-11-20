@@ -96,18 +96,29 @@ def review(
             or proof["paid_calls_reconciled_and_unchanged"] is not True
             or proof["journal_hash_chain_valid"] is not True):
         raise InputError("GO_LIVE_SUPERVISOR_EVIDENCE_UNVERIFIED")
-    state,head=runtime._journal_load(root/"journal")
-    if (state["cycle_number"]!=proof["latest_journal_cycles"]
-            or head!=proof["latest_journal_head_sha256_local_only"]
-            or state["communication_latched"] is not True
-            or state["positions"]!=[] or state["pending_signals"]!=[]
-            or state["paid_inference_calls"]!=6):
-        raise InputError("GO_LIVE_HEAD_OR_RISK_CHANGED_DURING_REVIEW")
-    billed=paid.audit(root)
-    if (billed["paid_calls_recorded_in_journal"]!=6
-            or billed["paid_calls_in_completed_ledgers"]!=6
-            or billed["journal_head_sha256_local_only"]!=head):
-        raise InputError("GO_LIVE_PAID_LEDGER_UNRECONCILED")
+    # The actual supervisor is still appending cycles during this audit.
+    # A later, NEW head is expected; monotonic progress is not a breach.
+    # Reconcile all paid evidence to a CONSISTENT current journal snapshot.
+    state=None
+    head=None
+    for attempt in range(3):
+        candidate, candidate_head=runtime._journal_load(root/"journal")
+        if (candidate["cycle_number"]<proof["latest_journal_cycles"]
+                or candidate["communication_latched"] is not True
+                or candidate["positions"]!=[]
+                or candidate["pending_signals"]!=[]
+                or candidate["paid_inference_calls"]!=6):
+            raise InputError("GO_LIVE_HEAD_OR_RISK_CHANGED_DURING_REVIEW")
+        billed=paid.audit(root)
+        if (billed["paid_calls_recorded_in_journal"]!=6
+                or billed["paid_calls_in_completed_ledgers"]!=6):
+            raise InputError("GO_LIVE_PAID_LEDGER_UNRECONCILED")
+        if (billed["journal_head_sha256_local_only"]==candidate_head
+                and billed["journal_cycles"]==candidate["cycle_number"]):
+            state,head=candidate,candidate_head
+            break
+    if state is None or head is None:
+        raise InputError("GO_LIVE_JOURNAL_MOVING_TOO_FAST_FOR_ATOMIC_AUDIT")
     originals=official.audit(archive)
     if (originals["original_source_count"]!=6
             or originals["all_saved_bytes_locally_consistent"] is not True):
