@@ -174,6 +174,16 @@ def apply_if_valid(root:Path,state:dict,head:str,quote:dict,
             or obj.get("approval_record_sha256")!=runtime._digest(
                 {k:v for k,v in obj.items() if k!="approval_record_sha256"})):
         raise InputError("CURRENT_INCIDENT_PERMIT_TAMPERED_OR_STALE_HEAD")
+    # A previously consumed head-bound permit remains on disk as an
+    # immutable audit record. Never reapply it, and never honor a different
+    # incident when an old marker is already present.
+    marker=state.get("manual_comm_release_sha256")
+    if marker is not None:
+        if (type(marker) is not str or
+                runtime.SHA.fullmatch(marker) is None or
+                marker!=obj["approval_record_sha256"]):
+            raise InputError("CURRENT_INCIDENT_ALREADY_RELEASED_DIFFERENT_EVENT")
+        return state,False
     age=int(now.timestamp())-obj["created_epoch_pc_unattested"]
     if not 0<=age<=AGE_LIMIT:
         raise InputError("CURRENT_INCIDENT_PERMIT_EXPIRED")
