@@ -1,0 +1,58 @@
+name: Final paper resumed observer and quote profile safety
+
+on:
+  pull_request:
+    paths:
+      - 'research/final_paper_resumed_continuity.py'
+      - 'research/final_paper_quote_regime_profile.py'
+      - 'research/final_paper_runtime.py'
+      - 'scripts/final_paper_local_machine_handoff_once.ps1'
+      - 'scripts/final_paper_verify_resumed_monitor_once.ps1'
+      - 'scripts/final_paper_quote_regime_once.ps1'
+      - 'tests/test_final_paper_resumed_continuity.py'
+      - 'tests/test_final_paper_quote_regime_profile.py'
+      - 'tests/test_final_paper_quote_only_hold.py'
+      - '.github/workflows/final-paper-resumed-observer-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux Python 3.12 full-suite safety
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m compileall -q research tests scripts
+      - run: python -m unittest discover -s tests -p 'test*.py'
+  windows:
+    name: Windows Python 3.13 full-suite and PS syntax
+    runs-on: windows-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Parse new Windows observer scripts
+        shell: pwsh
+        run: |
+          foreach ($p in @(
+            'scripts/final_paper_local_machine_handoff_once.ps1',
+            'scripts/final_paper_verify_resumed_monitor_once.ps1',
+            'scripts/final_paper_quote_regime_once.ps1'
+          )) {
+            $tokens=$null; $errors=$null
+            [System.Management.Automation.Language.Parser]::ParseFile($p,[ref]$tokens,[ref]$errors) | Out-Null
+            if ($errors.Count -ne 0) {
+              $errors | ForEach-Object { Write-Error $_ }
+              exit 1
+            }
+          }
+      - run: python -m unittest discover -s tests -p "test*.py"
