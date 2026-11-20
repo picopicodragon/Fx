@@ -196,6 +196,9 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
         from research import final_paper_engine as engine
         if not isinstance(csv_path,Path) or not csv_path.is_file():
             raise InputError("FINAL_GATE_QUOTE_FILE_MISSING")
+        if hashlib.sha256(csv_path.read_bytes()).hexdigest()!=quote.get(
+                "source_sha256"):
+            raise InputError("FINAL_GATE_QUOTE_CHANGED_AFTER_ENGINE_VALIDATION")
         import csv
         try:
             raw=csv.DictReader(csv_path.read_text("utf-8-sig").splitlines())
