@@ -25,7 +25,10 @@ SCHEMA = "fx_final_paper_free_observation_operator_recovery_v1"
 APPROVAL = "ACKNOWLEDGE_20261120_GAP_RESUME_UNPAID_OBSERVATION_ONLY"
 EXPECTED_CYCLES = 550
 EXPECTED_LAST_QUOTE = 1795004931
-LOCK_BYTES = b"running; review journal on unexpected stop\n"
+LOCK_BYTES = b"running; review journal on unexpected stop\r\n"
+# Windows text-mode lock creation converts LF to CRLF. The 2026-11-20
+# observed 44-byte lock has this exact SHA256; never accept arbitrary text.
+LOCK_SHA256_OBSERVED = "7298c233cd837ff6c403e25dbf3a8632031ad57a4e35dad0a0c66aad2ccee4f1"
 RECEIPT_NAME = "manual_observation_lock_recovery_20261120.json"
 ARCHIVE_NAME = "manual_observation_lock_20261120.archived"
 
@@ -54,7 +57,9 @@ def recover(root: Path, mt4: Path, *, operator_approval: str,
             or old_permit.exists() or old_permit.is_symlink()):
         raise InputError("OBSERVER_RESTART_PREVIOUS_PERMIT_OR_ARCHIVE_PRESENT")
     if (not lock.is_file() or lock.is_symlink()
-            or lock.read_bytes() != LOCK_BYTES):
+            or lock.read_bytes() != LOCK_BYTES
+            or hashlib.sha256(lock.read_bytes()).hexdigest()
+                != LOCK_SHA256_OBSERVED):
         raise InputError("OBSERVER_RESTART_LOCK_CONTENT_UNEXPECTED")
     record = incident.investigate(root, mt4, now=current)
     if (record["journal_cycles"] != EXPECTED_CYCLES
@@ -75,7 +80,7 @@ def recover(root: Path, mt4: Path, *, operator_approval: str,
             or record["paid_calls_journal"] != 6
             or record["paid_calls_completed_ledgers"] != 6
             or record["runtime_lock_sha256_local_only"] !=
-                hashlib.sha256(LOCK_BYTES).hexdigest()):
+                LOCK_SHA256_OBSERVED):
         raise InputError("OBSERVER_RESTART_SAFETY_EVIDENCE_INCOMPLETE")
     # No new process can be proven absent *inside* Python. The local
     # PowerShell wrapper must re-check all Win32 Python process args just
@@ -93,7 +98,7 @@ def recover(root: Path, mt4: Path, *, operator_approval: str,
         "operator_checked_win32_paper_supervisor_count_zero": True,
         "original_journal_cycles": EXPECTED_CYCLES,
         "original_journal_head_sha256": head,
-        "original_lock_sha256": hashlib.sha256(LOCK_BYTES).hexdigest(),
+        "original_lock_sha256": LOCK_SHA256_OBSERVED,
         "original_lock_archive_name": ARCHIVE_NAME,
         "created_utc_pc_unattested": current.isoformat(),
         "new_38h_communication_gap_release_authorized": False,
