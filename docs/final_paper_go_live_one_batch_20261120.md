@@ -130,3 +130,34 @@ Only after these are genuinely verified and approved may a separately
 reviewed runtime permit AI-generated virtual entries. Broker MT4 orders
 are permanently disabled. Source/CI success is not operational GO.
 Main merge is operator-controlled.
+
+
+## 2026-11-20 17:04 JST: Windows first-handoff false failure fixed
+
+The first Windows read-only handoff successfully saved a JSON:
+
+- local_machine_handoff_20261120_170435_039.json
+- exactly one paper supervisor and one MT4 terminal; journal 850;
+  newest original FxPaperQuote_20261120_080356.csv.
+- Previous parent script incorrectly used inherited $LASTEXITCODE after
+  calling a PowerShell child. That child runs w32tm.exe /query /status as
+  an optional observation, so the nonzero LASTEXITCODE described only the
+  local Windows time service diagnostic, not a failure to write the handoff.
+- Parent now validates **exactly one newly created JSON** and explicit
+  handoff schema, process count, supervisor lock and NO_GO restrictions.
+  It still fails closed when an evidence file is absent, invalid or unsafe.
+- The actual w32tm status is not rewritten or claimed as clock attestation.
+  The running Python/MT4 remains untouched, all approval and billing
+  requirements are unchanged.
+- Retrieve the latest PR branch in the existing separate REVIEW worktree:
+
+    git fetch origin
+    if ($LASTEXITCODE -ne 0) { throw 'Git fetch failed' }
+    git switch --detach origin/feat/final-paper-launch-acceptance-package-20261120
+    if ($LASTEXITCODE -ne 0) { throw 'Review checkout failed' }
+    .\scripts\final_paper_go_live_acceptance_once.ps1 -Mt4FilesDirectory $mt4Files
+
+This checkout is only the dedicated review worktree, not the original
+running supervisor checkout. Never modify or check out the active process
+working tree. The saved first snapshot stays intact; rerun produces two
+new distinct samples and is safe and read only.
