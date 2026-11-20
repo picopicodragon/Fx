@@ -295,6 +295,13 @@ def step(state:dict, capture:dict, *, signals:list[dict]|None=None,
             events.append("AUTO_PAPER_CONSERVATIVE_NY17_CARRY_CHARGED")
     for pos in list(next_state["positions"]):
         q=quotes[pos["pair"]]
+        # The final-auto sizing reserves only 14 days of conservative
+        # carrying cost. Never allow a virtual trade to outlive that cap.
+        if carry_costs is not None and (
+                epoch-int(pos["opened_epoch"])>=14*86400):
+            _close(next_state,pos,q,reason="FINAL_AUTO_MAX_14_DAY_HOLD",epoch=epoch)
+            events.append("FINAL_AUTO_MAX_14_DAY_HOLD")
+            continue
         mark=q["bid"]-PIP[pos["pair"]] if pos["direction"]=="LONG" else q["ask"]+PIP[pos["pair"]]
         low=_dec(pos["stop"],positive=True)
         high=_dec(pos["target"],positive=True)
