@@ -134,7 +134,11 @@ def review(folder:Path, *, max_files:int=MAX_FILES)->dict:
         v=samples[pair]
         med=baseline[pair]
         run=best=0
-        for x in v:
+        for idx,x in enumerate(v):
+            # A missing minute or weekend must break a sustained-widening
+            # episode, even if two distant observed spreads are both wide.
+            if idx>0 and delta_seconds[idx-1]>90:
+                run=0
             run=run+1 if x>=med*2 else 0
             best=max(best,run)
         summary[pair]={
