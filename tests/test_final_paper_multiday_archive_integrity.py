@@ -79,6 +79,22 @@ class MultidayQuoteTests(unittest.TestCase):
         self.assertFalse(data["new_paid_ai_calls_permitted"])
         self.assertEqual(len(data["per_ny17_day"]),3)
 
+    def test_widening_streak_does_not_bridge_missing_day(self):
+        for minute in range(3):
+            capture(self.folder, START+timedelta(minutes=minute))
+        capture(self.folder,START+timedelta(minutes=3),widened=True)
+        capture(self.folder,START+timedelta(days=1),widened=True)
+        for minute in range(1,4):
+            capture(self.folder, START+timedelta(days=1,minutes=minute))
+        data=multi.review(self.folder)
+        self.assertEqual(
+            data["observed_three_pairs"]["USD/JPY"][
+                "at_least_twice_observed_median_count"],2)
+        self.assertEqual(
+            data["observed_three_pairs"]["USD/JPY"][
+                "longest_consecutive_twice_median_samples"],1)
+        self.assertEqual(data["quote_intervals_above_600_seconds"],1)
+
     def test_single_day_real_240_samples_stays_insufficient(self):
         for minute in range(240):
             capture(self.folder,START+timedelta(minutes=minute),
