@@ -271,17 +271,28 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
         state["last_quote_epoch"]==0 or
         quote["capture_epoch"]-state["last_quote_epoch"]<=600
     )
-    paid_safe=(
-        allow_paid and evidence_ready and not risk_stop
-        and quote_gap_safe and not known_blackout["active_known_blackout"]
+    # Critical isolation: a communications latch, unverified economic
+    # calendar/clock or a >600s capture gap blocks BOTH paid and saved AI
+    # signal evaluation. Otherwise a malformed or expired research ledger
+    # could halt quote observation despite virtual entry being prohibited.
+    signal_path_safe=(
+        evidence_ready and not risk_stop and quote_gap_safe
+        and not known_blackout["active_known_blackout"]
     )
+    paid_safe=allow_paid and signal_path_safe
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
-    signals,seen,paid=_signals_for_new_h1(
-        working_state,captures,bundles,root,now,
-        allow_paid=paid_safe,
-        analyst_model=analyst_model,reviewer_model=reviewer_model,
-        max_paid_calls=paid_limit)
+    if signal_path_safe:
+        signals,seen,paid=_signals_for_new_h1(
+            working_state,captures,bundles,root,now,
+            allow_paid=paid_safe,
+            analyst_model=analyst_model,reviewer_model=reviewer_model,
+            max_paid_calls=paid_limit)
+    else:
+        # Quote-only hold: no new H1 consumed, no saved signal replay, and
+        # no paid model dispatch. Later manual clearance cannot silently
+        # backfill past H1 decisions without normal freshness checks.
+        signals,seen,paid=[],[],0
     changed,report=paper.step(
         working_state,quote,signals=signals,
         known_event_blackout=known_blackout["active_known_blackout"],
@@ -300,6 +311,7 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     report["independent_broker_clock_attested"]=False
     report["entry_readiness_gate_open"]=evidence_ready and not risk_stop and quote_gap_safe
     report["new_paid_ai_allowed_by_evidence_gate"]=paid_safe
+    report["ai_signal_pipeline_skipped_by_unattested_safety_hold"]=not signal_path_safe
     report["manual_comm_release_applied_this_cycle"] = manual_comm_release_applied
     return report
 
