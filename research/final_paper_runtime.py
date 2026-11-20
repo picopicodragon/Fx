@@ -255,8 +255,17 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     # Consume a single operator-staged permission only on a new fresh quote.
     # This never relaxes independent calendar/clock/AI/transaction gates.
     from research import final_paper_manual_comm_release as comm_release
-    working_state, manual_comm_release_applied = comm_release.apply_if_valid(
+    working_state, historical_manual_comm_applied = comm_release.apply_if_valid(
         root, state, prior, quote, now)
+    # Current 2026-11-20 interruption has an INDEPENDENT, operator-staged
+    # approval bound to its own recent historical >600s gap and journal head.
+    # Neither this nor the old single-use release bypasses macro/clock/cost
+    # attestation, billable AI limits or demo/live broker order bans.
+    from research import final_paper_current_incident_release as new_incident
+    working_state, current_incident_applied = new_incident.apply_if_valid(
+        root, working_state, prior, quote, now)
+    manual_comm_release_applied=(
+        historical_manual_comm_applied or current_incident_applied)
     # Cross-link the EXISTING safe runtime to the consolidated model.
     # No source-backed independent verification is implemented yet:
     # real macro/clock/consensus/cost/EA trust is strictly FALSE and this
@@ -330,6 +339,7 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     report["new_paid_ai_allowed_by_evidence_gate"]=paid_safe
     report["ai_signal_pipeline_skipped_by_unattested_safety_hold"]=not signal_path_safe
     report["manual_comm_release_applied_this_cycle"] = manual_comm_release_applied
+    report["current_incident_release_applied_this_cycle"] = current_incident_applied
     report["integrated_gate_schema"]=integrated_gate["schema"]
     report["integrated_block_reasons"]=integrated_gate["block_reasons"]
     report["budget_gate_status"]=integrated_budget["status"]
