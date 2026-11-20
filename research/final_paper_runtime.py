@@ -23,6 +23,7 @@ from research import final_demo_periodic as period
 from research import final_demo_periodic_ai as ai
 from research import final_paper_engine as paper
 from research import final_paper_event_blackout as blackout
+from research import final_paper_completed_decision as completed_decision
 from research.offline_backtest import InputError
 
 SCHEMA = "fx_final_paper_runtime_journal_v1"
@@ -166,6 +167,22 @@ def _signals_for_new_h1(
         key=f"{pair}:{bar}"
         if key in state["processed_h1_keys"]:
             continue
+        # A PREEXISTING complete two-model ledger may supply a fresh signal
+        # without a new paid request. It must match the exact archived
+        # H1/official-news packet. Never replay a handled H1 decision.
+        if bundles:
+            saved = completed_decision.load_completed(
+                root, captures, bundles, pair, bar, now)
+            if saved is not None:
+                legacy_id=hashlib.sha256((
+                    pair+":"+str(bar)+":"+saved["packet_sha256"]
+                ).encode("utf-8")).hexdigest()
+                prior_ids=set(state["used_signal_ids"])
+                prior_ids.update(x["id"] for x in state["pending_signals"])
+                if saved["id"] not in prior_ids and legacy_id not in prior_ids:
+                    signals.append(saved)
+                considered.append(key)
+                continue
         if not allow_paid or not bundles:
             considered.append(key)
             continue
