@@ -139,6 +139,10 @@ def verify(root:Path, first_path:Path, second_path:Path)->dict:
             or state["last_quote_epoch"]<left["quote_epoch"]
             or billed["paid_calls_recorded_in_journal"]!=
                billed["paid_calls_in_completed_ledgers"]
+            or billed.get("paid_calls_recorded_in_journal")!=
+               state.get("paid_inference_calls")
+            or billed.get("journal_head_sha256_local_only")!=head
+            or billed.get("journal_cycles")!=state.get("cycle_number")
             or state["paid_inference_calls"]!=6
             or state.get("communication_latched") is not True
             or any(state.get(n) is not False for n in (
