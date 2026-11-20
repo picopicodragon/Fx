@@ -28,15 +28,26 @@ $outMarket=Join-Path $StateRoot ('multiday_stress_'+$stamp+'.json')
 $outOriginal=Join-Path $StateRoot ('official_integrity_'+$stamp+'.json')
 Write-Host '1/2 Auditing original three-pair MT4 quotes across NY17 days'
 & python -m research.final_paper_multiday_quote_stress --mt4-files $mt4 --max-files $MaxFiles --out $outMarket
-if ($LASTEXITCODE -ne 0) {
-    throw 'Multi-day quote research failed closed. No trading state changed.'
+$marketExit = $LASTEXITCODE
+if ($marketExit -ne 0) {
+    Write-Warning 'Original quote scan stopped safely. Inspect diagnostic_reason_code and source_file_basename above.'
 }
+# The two proof sets are independent. Audit the originals even if a
+# historical quote is invalid; never declare an overall pass in that case.
 Write-Host '2/2 Verifying six saved official original source hashes'
 & python -m research.final_paper_official_archive_integrity --archive $archive --out $outOriginal
-if ($LASTEXITCODE -ne 0) {
-    throw 'Official original hash audit failed closed. Do not trust archive.'
+$archiveExit = $LASTEXITCODE
+if ($archiveExit -ne 0) {
+    Write-Warning 'Official original hash audit stopped safely. Archive is not verified.'
 }
-Write-Host ('Multi-day quote profile: '+$outMarket)
-Write-Host ('Six-original byte integrity: '+$outOriginal)
+if ($marketExit -eq 0) {
+    Write-Host ('Multi-day quote profile: '+$outMarket)
+}
+if ($archiveExit -eq 0) {
+    Write-Host ('Six-original byte integrity: '+$outOriginal)
+}
 Write-Host 'Neither report independently attests official event completeness, broker clock or execution cost.'
 Write-Host 'Risk latches, paid-AI 6/6 and no-broker-order conditions remain unchanged.'
+if ($marketExit -ne 0 -or $archiveExit -ne 0) {
+    throw 'One or both independent evidence checks remain NO_GO. Do not remove any quote evidence.'
+}
