@@ -4,9 +4,12 @@ on:
   pull_request:
     paths:
       - 'research/final_paper_supervisor_incident.py'
+      - 'research/final_paper_manual_observation_recovery.py'
       - 'scripts/final_paper_supervisor_incident_once.ps1'
+      - 'scripts/final_paper_manual_observation_recovery_once.ps1'
       - 'scripts/final_paper_collect_external_evidence_once.ps1'
       - 'tests/test_final_paper_supervisor_incident.py'
+      - 'tests/test_final_paper_manual_observation_recovery.py'
       - '.github/workflows/final-paper-supervisor-incident-ci.yml'
   workflow_dispatch:
 
@@ -39,7 +42,7 @@ jobs:
       - name: Parse live-handoff PowerShell scripts
         shell: pwsh
         run: |
-          foreach ($p in @('scripts/final_paper_supervisor_incident_once.ps1','scripts/final_paper_collect_external_evidence_once.ps1')) {
+          foreach ($p in @('scripts/final_paper_supervisor_incident_once.ps1','scripts/final_paper_manual_observation_recovery_once.ps1','scripts/final_paper_collect_external_evidence_once.ps1')) {
             $tokens=$null; $errors=$null
             [System.Management.Automation.Language.Parser]::ParseFile($p,[ref]$tokens,[ref]$errors) | Out-Null
             if ($errors.Count -ne 0) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
