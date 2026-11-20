@@ -25,6 +25,20 @@ SCHEMA="fx_final_paper_multiday_quote_stress_v1"
 NAME=re.compile(r"^FxPaperQuote_([0-9]{8}_[0-9]{6})\.csv$")
 MAX_FILES=10080
 MAX_INVENTORY=40000
+# Only predefined, non-sensitive reason codes may appear on stdout.
+SOURCE_ERROR_CODES={
+    "missing or unsafe DEMO quote snapshot":"QUOTE_FILE_INVALID_OR_UNSAFE",
+    "invalid quote bytes":"QUOTE_BYTES_INVALID",
+    "invalid quote columns":"QUOTE_COLUMNS_INVALID",
+    "invalid quote CSV":"QUOTE_CSV_MALFORMED",
+    "three quote pairs required":"THREE_CURRENCY_PAIRS_INVALID",
+    "quote row columns":"QUOTE_ROW_COLUMNS_INVALID",
+    "quote parse failure":"QUOTE_FIELDS_INVALID",
+    "invalid quote or reported contract":"QUOTE_OR_CONTRACT_INVALID",
+    "non-atomic quotes or inconsistent broker clock":"QUOTE_TIME_NONATOMIC",
+    "stale/future quote":"QUOTE_CAPTURE_TIME_MISMATCH",
+    "naive time":"SOURCE_CLOCK_INVALID",
+}
 PERCENTILE=(50,95,99)
 
 
@@ -37,13 +51,25 @@ def _fmt(value:D)->str:
     return format(value.quantize(D("0.01")),"f")
 
 
-def review(folder:Path, *, max_files:int=MAX_FILES)->dict:
+def review(folder:Path, *, max_files:int=MAX_FILES,
+           diagnostic:dict|None=None)->dict:
+    # Diagnostic fields contain only bounded filenames, ordinals and phases.
+    # Never include quote values, local absolute paths or broker identifiers.
+    if diagnostic is not None:
+        diagnostic.update({
+            "phase":"CHECK_SOURCE_ROOT",
+            "selected_file_number":None,
+            "selected_source_name":None,
+            "verified_complete_files":0,
+        })
     if (type(max_files) is not int or not 2<=max_files<=MAX_FILES
             or not folder.is_dir() or folder.is_symlink()
             or any(p.is_symlink() for p in folder.parents)
             or folder.name.lower()!="files" or
             folder.parent.name.lower()!="mql4"):
         raise InputError("MULTIDAY_SOURCE_ROOT_UNSAFE")
+    if diagnostic is not None:
+        diagnostic["phase"]="INVENTORY_SOURCE_FILES"
     sources=[]
     for f in folder.glob("FxPaperQuote_*.csv"):
         if f.is_symlink() or f.is_dir() or NAME.fullmatch(f.name) is None:
@@ -63,7 +89,13 @@ def review(folder:Path, *, max_files:int=MAX_FILES)->dict:
     offsets=[]
     max_tick={pair:0 for pair in paper.PAIRS}
     day_first_last={}
-    for file in files:
+    for source_index,file in enumerate(files,1):
+        if diagnostic is not None:
+            diagnostic.update({
+                "phase":"VALIDATE_ORIGINAL_QUOTE",
+                "selected_file_number":source_index,
+                "selected_source_name":file.name,
+            })
         stamp=NAME.fullmatch(file.name).group(1)
         try:
             epoch=int(datetime.strptime(stamp,"%Y%m%d_%H%M%S").replace(
@@ -78,6 +110,8 @@ def review(folder:Path, *, max_files:int=MAX_FILES)->dict:
             file,now=datetime.fromtimestamp(epoch+1,tz=timezone.utc))
         if parsed["capture_epoch"]!=epoch:
             raise InputError("MULTIDAY_FILENAME_AND_CAPTURE_DISAGREE")
+        if diagnostic is not None:
+            diagnostic["phase"]="VALIDATE_SOURCE_FIELDS_AND_CLOCK"
         try:
             rows=list(csv.DictReader(file.read_text("utf-8-sig").splitlines(),
                                      strict=True))
@@ -113,6 +147,10 @@ def review(folder:Path, *, max_files:int=MAX_FILES)->dict:
         if epochs:
             delta_seconds.append(epoch-epochs[-1])
         epochs.append(epoch)
+        if diagnostic is not None:
+            diagnostic["verified_complete_files"]=source_index
+    if diagnostic is not None:
+        diagnostic["phase"]="SUMMARIZE_VERIFIED_SOURCE_SET"
     daily={}
     baseline={pair:_p(samples[pair],50) for pair in paper.PAIRS}
     for day,bucket in sorted(per_day.items()):
@@ -203,8 +241,10 @@ def main(argv=None)->int:
     p.add_argument("--max-files",type=int,default=MAX_FILES)
     p.add_argument("--out",required=True,type=Path)
     args=p.parse_args(argv)
+    diagnostic={}
     try:
-        report=review(args.mt4_files,max_files=args.max_files)
+        report=review(args.mt4_files,max_files=args.max_files,
+                      diagnostic=diagnostic)
         if (args.out.exists() or args.out.is_symlink()
                 or not args.out.parent.is_dir()
                 or args.out.parent.is_symlink()):
@@ -214,10 +254,24 @@ def main(argv=None)->int:
         print(json.dumps(report,ensure_ascii=False))
         return 0
     except (InputError,OSError,ValueError,TypeError,KeyError,
-            OverflowError,UnicodeError,ArithmeticError):
+            OverflowError,UnicodeError,ArithmeticError) as error:
+        original=str(error) if isinstance(error,InputError) else ""
+        if original in SOURCE_ERROR_CODES:
+            code=SOURCE_ERROR_CODES[original]
+        elif re.fullmatch(r"MULTIDAY_[A-Z0-9_]+",original):
+            code=original
+        else:
+            code="MULTIDAY_SOURCE_OR_IO_REJECTED"
         print(json.dumps({
             "schema":SCHEMA,
             "status":"MULTIDAY_QUOTE_STRESS_FAIL_CLOSED_NO_GO",
+            "diagnostic_reason_code":code,
+            "diagnostic_phase":diagnostic.get("phase","NOT_STARTED"),
+            "source_file_ordinal":diagnostic.get("selected_file_number"),
+            "source_file_basename":diagnostic.get("selected_source_name"),
+            "original_complete_files_verified_before_failure":
+                diagnostic.get("verified_complete_files",0),
+            "original_broker_quote_contents_exposed":False,
             "new_paid_ai_calls_permitted":False,
             "new_virtual_positions_permitted":False,
             "demo_orders_permitted":False,
