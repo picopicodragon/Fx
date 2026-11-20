@@ -83,7 +83,7 @@ def budget_check(state:dict, *,
         "observed_month_spend_jpy":str(spend),
         "next_analyst_reviewer_max_jpy":str(next_pair),
         "remaining_after_possible_reservation_jpy":
-            str(max(D("0"),cap-spend-next_pair)),
+            str(max(D("0"),cap-spend-next_pair).quantize(D("0.01"))),
         "conditions_satisfied_hypothetically":not reasons,
         "failure_reasons":reasons,
         "new_billable_dispatch_authorized_by_this_review":False,
