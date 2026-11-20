@@ -134,6 +134,44 @@ class SourceLinkedReplayTests(unittest.TestCase):
                 saved.load_completed(root,root,[root],"USD/JPY",
                                      bar,NOW+timedelta(seconds=4300))
 
+    def test_runtime_reuses_completed_same_bar_ledger_without_paid_request(self):
+        from research import final_paper_runtime as runtime
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            runtime._initialize(root)
+            state=paper.initial_state()
+            bars={"captures":{
+                sym:{"candles":[{"server_epoch":123456}]}
+                for sym in paper.SYMS}}
+            decision=signal()
+            with patch.object(runtime.period,"_read_h1",return_value=bars), \\
+                 patch.object(runtime.completed_decision,"load_completed",
+                     side_effect=[decision,None,None]), \\
+                 patch.object(runtime.ai,"run") as inference:
+                sig,seen,n=runtime._signals_for_new_h1(
+                    state,root/"captures",[root/"archived_news"],root,NOW,
+                    allow_paid=False,analyst_model="",reviewer_model="",
+                    max_paid_calls=0)
+                inference.assert_not_called()
+            self.assertEqual(len(sig),1)
+            self.assertEqual(sig[0]["id"],decision["id"])
+            self.assertEqual(len(seen),3)
+            self.assertEqual(n,0)
+            state["processed_h1_keys"]=seen
+            state["used_signal_ids"]=[decision["id"]]
+            with patch.object(runtime.period,"_read_h1",return_value=bars), \\
+                 patch.object(runtime.completed_decision,"load_completed") as proof, \\
+                 patch.object(runtime.ai,"run") as inference:
+                sig,seen,n=runtime._signals_for_new_h1(
+                    state,root/"captures",[root/"archived_news"],root,NOW,
+                    allow_paid=False,analyst_model="",reviewer_model="",
+                    max_paid_calls=0)
+                proof.assert_not_called()
+                inference.assert_not_called()
+            self.assertEqual(sig,[])
+            self.assertEqual(seen,[])
+            self.assertEqual(n,0)
+
     def test_no_api_or_broker_interfaces_in_replay(self):
         base=Path(__file__).resolve().parents[1]
         for name in ("research/final_paper_e2e_replay.py",
