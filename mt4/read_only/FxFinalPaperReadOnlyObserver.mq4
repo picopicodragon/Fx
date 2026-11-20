@@ -24,29 +24,63 @@ bool PaperValidTerminal()
       Period()==PERIOD_H1;
 }
 
-bool PaperSnapshot(datetime pcUtc, datetime brokerNow)
+// Sample every source field exactly once. In the old version a first loop
+// validated MODE_TIME against an earlier TimeCurrent(), but a SECOND loop
+// re-read MODE_TIME when writing the CSV. A fresh tick between those loops
+// could produce a tick timestamp AFTER the recorded broker timestamp.
+// This snapshot freezes the read values, samples TimeCurrent() afterward,
+// and validates the exact same values that will be persisted.
+// No broker orders, network calls, DLLs, or AutoTrading changes.
+bool PaperSnapshot(datetime pcUtc)
 {
-   if(!PaperValidTerminal() || pcUtc<=0 || brokerNow<=0) return false;
+   if(!PaperValidTerminal() || pcUtc<=0) return false;
    string stamp=PaperStamp(pcUtc);
    string output="FxPaperQuote_"+stamp+".csv";
    if(FileIsExist(output)) return false;
+
+   double bids[3], asks[3], tickValues[3], tickSizes[3];
+   double minLots[3], lotSteps[3], maxLots[3], points[3];
+   int digits[3];
+   datetime tickTimes[3];
+
    for(int i=0; i<3; i++)
    {
       string s=PaperSymbols[i];
-      if(!SymbolSelect(s,true) || iBars(s,PERIOD_H1)<PAPER_BARS+2 ||
-         MarketInfo(s,MODE_BID)<=0.0 ||
-         MarketInfo(s,MODE_ASK)<=MarketInfo(s,MODE_BID) ||
-         MarketInfo(s,MODE_TIME)<=0 ||
-         MarketInfo(s,MODE_TICKVALUE)<=0.0 ||
-         MarketInfo(s,MODE_TICKSIZE)<=0.0 ||
-         MarketInfo(s,MODE_MINLOT)<=0.0 ||
-         MarketInfo(s,MODE_LOTSTEP)<=0.0 ||
-         MarketInfo(s,MODE_MAXLOT)<MarketInfo(s,MODE_MINLOT) ||
-         MarketInfo(s,MODE_POINT)<=0.0 ||
-         brokerNow-(datetime)MarketInfo(s,MODE_TIME)<0 ||
-         brokerNow-(datetime)MarketInfo(s,MODE_TIME)>30)
+      if(!SymbolSelect(s,true) || iBars(s,PERIOD_H1)<PAPER_BARS+2)
+         return false;
+
+      bids[i]=MarketInfo(s,MODE_BID);
+      asks[i]=MarketInfo(s,MODE_ASK);
+      tickTimes[i]=(datetime)MarketInfo(s,MODE_TIME);
+      tickValues[i]=MarketInfo(s,MODE_TICKVALUE);
+      tickSizes[i]=MarketInfo(s,MODE_TICKSIZE);
+      minLots[i]=MarketInfo(s,MODE_MINLOT);
+      lotSteps[i]=MarketInfo(s,MODE_LOTSTEP);
+      maxLots[i]=MarketInfo(s,MODE_MAXLOT);
+      points[i]=MarketInfo(s,MODE_POINT);
+      digits[i]=(int)MarketInfo(s,MODE_DIGITS);
+      if(bids[i]<=0.0 || asks[i]<=bids[i] || tickTimes[i]<=0 ||
+         tickValues[i]<=0.0 || tickSizes[i]<=0.0 ||
+         minLots[i]<=0.0 || lotSteps[i]<=0.0 ||
+         maxLots[i]<minLots[i] || maxLots[i]<lotSteps[i] ||
+         points[i]<=0.0 || digits[i]<2 || digits[i]>6)
          return false;
    }
+
+   // The most recent known Market Watch server clock must not be older
+   // than any of the already sampled per-symbol tick timestamps.
+   datetime brokerNow=TimeCurrent();
+   if(brokerNow<=0) return false;
+   for(int k=0; k<3; k++)
+   {
+      long tickAge=(long)brokerNow-(long)tickTimes[k];
+      if(tickAge<0 || tickAge>30)
+      {
+         Print("FXPAPER: quote clock/tick age unsafe; skip entire snapshot.");
+         return false;
+      }
+   }
+
    int f=FileOpen(output,FILE_CSV|FILE_WRITE|FILE_ANSI,',');
    if(f==INVALID_HANDLE) return false;
    FileWrite(f,"pair","bid","ask","tick_time_broker_epoch_unattested",
@@ -56,20 +90,18 @@ bool PaperSnapshot(datetime pcUtc, datetime brokerNow)
       "max_lot_broker_reported","point_broker_reported");
    for(int n=0; n<3; n++)
    {
-      string sym=PaperSymbols[n];
-      int digits=(int)MarketInfo(sym,MODE_DIGITS);
-      FileWrite(f,sym,
-         DoubleToString(MarketInfo(sym,MODE_BID),digits),
-         DoubleToString(MarketInfo(sym,MODE_ASK),digits),
-         IntegerToString((int)MarketInfo(sym,MODE_TIME)),
+      FileWrite(f,PaperSymbols[n],
+         DoubleToString(bids[n],digits[n]),
+         DoubleToString(asks[n],digits[n]),
+         IntegerToString((int)tickTimes[n]),
          IntegerToString((int)brokerNow),
          IntegerToString((int)pcUtc),
-         DoubleToString(MarketInfo(sym,MODE_TICKVALUE),8),
-         DoubleToString(MarketInfo(sym,MODE_TICKSIZE),8),
-         DoubleToString(MarketInfo(sym,MODE_MINLOT),8),
-         DoubleToString(MarketInfo(sym,MODE_LOTSTEP),8),
-         DoubleToString(MarketInfo(sym,MODE_MAXLOT),8),
-         DoubleToString(MarketInfo(sym,MODE_POINT),8));
+         DoubleToString(tickValues[n],8),
+         DoubleToString(tickSizes[n],8),
+         DoubleToString(minLots[n],8),
+         DoubleToString(lotSteps[n],8),
+         DoubleToString(maxLots[n],8),
+         DoubleToString(points[n],8));
    }
    FileFlush(f);
    FileClose(f);
@@ -152,8 +184,7 @@ void OnTimer()
       return;
    }
    datetime pcUtc=TimeGMT();
-   datetime brokerNow=TimeCurrent();
-   if(!PaperSnapshot(pcUtc,brokerNow))
+   if(!PaperSnapshot(pcUtc))
       Print("FXPAPER: quote snapshot unavailable, no inference.");
    if(!PaperExportH1(pcUtc))
       Print("FXPAPER: H1 export unavailable, no inference.");
