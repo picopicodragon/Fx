@@ -318,6 +318,12 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                     budget_info,root/"auto_budget_journal",
                     journal_reserve_shas=state.get(
                         "auto_budget_reservation_receipts",[]))
+                from research import final_paper_ai_continuation_audit as old_paid_audit
+                old_paid=old_paid_audit.audit(root)
+                if (old_paid["journal_head_sha256_local_only"]!=prior
+                        or old_paid["paid_calls_in_completed_ledgers"]!=6
+                        or old_paid["paid_calls_recorded_in_journal"]!=6):
+                    raise InputError("FINAL_AUTO_HISTORICAL_PAID_SIX_UNRECONCILED")
             except (InputError,OSError,KeyError,ValueError,TypeError,
                     UnicodeError,ArithmeticError):
                 budget_info=None
