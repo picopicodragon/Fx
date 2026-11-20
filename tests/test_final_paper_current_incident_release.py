@@ -29,7 +29,7 @@ def observed(epoch:int)->dict:
                "minlot":paper.D(".01"),
                "maxlot":paper.D("20"),
                "step":paper.D(".01"),
-               "point":paper.D(".001")} for p in paper.PAIRS,
+               "point":paper.D(".001")} for p in paper.PAIRS},
         },
     }
 
