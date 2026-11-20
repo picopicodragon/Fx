@@ -21,9 +21,9 @@ if (-not $mt4.TrimEnd('\').EndsWith('\MQL4\Files',[StringComparison]::OrdinalIgn
 }
 Write-Host '1/4 Windows and MT4 process/quote evidence (read only)'
 & "$PSScriptRoot\final_paper_local_machine_handoff_once.ps1" -Mt4FilesDirectory $mt4 -StateRoot $StateRoot
-if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) {
-    Write-Warning 'A child command set a nonzero exit. Inspect the saved report.'
-}
+# PowerShell script invocation does not reliably set $LASTEXITCODE.
+# Reading its previous native-program value here produced a false warning
+# despite successful forensic capture. Throwing errors propagate directly.
 Write-Host '2/4 Python journal / MT4 producer-consumer diagnosis (read only)'
 try {
     & "$PSScriptRoot\final_paper_stream_diagnostic_once.ps1" -Mt4FilesDirectory $mt4 -StateRoot $StateRoot
