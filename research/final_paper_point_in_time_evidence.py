@@ -105,7 +105,7 @@ def audit(folder: Path, manifest: Path) -> dict:
             raise InputError("duplicate or malformed source event")
         ids.add(ident)
         cur = event["currency"]
-        if cur not in CURRENCIES:
+        if type(cur) is not str or cur not in CURRENCIES:
             raise InputError("unsupported currency")
         currencies.add(cur)
         release = _utc(event["release_at_utc"])
@@ -113,7 +113,7 @@ def audit(folder: Path, manifest: Path) -> dict:
         consensus = _utc(event["consensus_captured_at_utc_pc"])
         if scheduled >= release or consensus >= release:
             raise InputError("not a pre-release snapshot")
-        if (release - scheduled).total_seconds() > 120*86400 or
+        if ((release - scheduled).total_seconds() > 120*86400 or
                 (release - consensus).total_seconds() > 30*86400):
             raise InputError("unreasonably old pre-release evidence")
         _url(event["official_source_url"], OFFICIAL)
