@@ -98,3 +98,22 @@ remaining_independent_review_requirements、three_pair_statusesなどでよい�
 
 mainマージは有人承認のみ。リアルデモ/本番への発注は禁止。
 既存監視を止めない。必要性のない新規有料AI呼出しをしない。
+
+## 2026-11-20 16:16 JSTの実機診断更新
+
+- ジャーナル802周期、既存課金AI6/6で一致。
+- 実価格CSV FxPaperQuote_20261120_071556.csv のcapture epochは
+  journal last_quote_epoch=1795158956と一致（UTC 07:15:56）。
+- QUOTE_NOT_NEW_OR_REVERSED は新規エントリー時の厳格判定としては正しい。
+  一方、read-only readinessで同じ価格を再検査するのは正常であり、
+  この一致を価格時刻逆転の実害として報告しない。
+
+新しい latest_quote_observation_status は、
+- LATEST_SOURCE_ALREADY_RECORDED_IN_JOURNAL: 既に処理済み。
+- LATEST_SOURCE_BEHIND_JOURNAL_REQUIRES_REVIEW: 原本がjournalより古い。
+- NEW_SOURCE_NOT_YET_IN_READ_ONLY_JOURNAL_SNAPSHOT: 未反映の新価格。
+
+readinessの要修正一覧のみ、最新価格とjournal時刻が同一の場合は
+QUOTE_NOT_NEW_OR_REVERSEDを除外する。
+strict_new_entry_gate_block_reasonsには従来の判定を残し、
+仮想建玉、有料AI、DEMO/実注文、通信ラッチ停止を解除しない。
