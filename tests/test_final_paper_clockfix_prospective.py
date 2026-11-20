@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import math
 import tempfile
 import unittest
 from datetime import datetime, timezone, timedelta
@@ -17,6 +18,8 @@ from research import final_paper_clockfix_prospective as future
 from research.offline_backtest import InputError
 
 BEGIN=datetime(2026,11,20,3,55,tzinfo=timezone.utc)
+REAL_BASELINE_INVALID_RATE=(future.BASELINE["invalid_original_count"]/
+                            future.BASELINE["reviewed_original_count"])
 
 
 def csv_source(folder:Path,dt:datetime, *, inverted=False,
@@ -85,6 +88,16 @@ class ProspectiveClockFixAuditTests(unittest.TestCase):
     def audit(self):
         return future.audit(self.quotes,self.baseline_report,
                             self.cutover,candidate_source=self.candidate)
+
+    def test_real_legacy_rate_needs_over_two_thousand_illustrative_samples(self):
+        self.assertEqual(
+            math.ceil(math.log(0.05)/math.log1p(-REAL_BASELINE_INVALID_RATE)),
+            2261)
+        self.assertAlmostEqual((1-REAL_BASELINE_INVALID_RATE)**120,
+                               0.8529573361925464)
+        report=self.audit()
+        self.assertFalse(report["iid_assumption_independently_validated"])
+        self.assertFalse(report["statistics_can_enable_new_virtual_entries"])
 
     def test_preexisting_four_anomalies_are_anchored_even_without_new_quotes(self):
         report=self.audit()
