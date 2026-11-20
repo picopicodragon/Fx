@@ -1,0 +1,51 @@
+name: Final paper immutable baseline and prospective clockfix comparison
+
+on:
+  pull_request:
+    paths:
+      - 'research/final_paper_clockfix_prospective.py'
+      - 'mt4/read_only/FxFinalPaperReadOnlyObserver.mq4'
+      - 'scripts/final_paper_clockfix_prospective_once.ps1'
+      - 'tests/test_final_paper_clockfix_prospective.py'
+      - '.github/workflows/final-paper-clockfix-prospective-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-full:
+    name: Linux Python 3.12 full-suite clockfix
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m compileall -q research tests
+      - run: python -m unittest discover -s tests -p 'test*.py'
+  windows-full:
+    name: Windows Python 3.13 full-suite and PowerShell grammar
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Validate prospective read-only PowerShell syntax
+        shell: pwsh
+        run: |
+          $tokens=$null
+          $errors=$null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            'scripts/final_paper_clockfix_prospective_once.ps1',
+            [ref]$tokens,[ref]$errors
+          ) | Out-Null
+          if ($errors.Count -ne 0) {
+            $errors | ForEach-Object { Write-Error $_ }
+            exit 1
+          }
+      - run: python -m unittest discover -s tests -p "test*.py"

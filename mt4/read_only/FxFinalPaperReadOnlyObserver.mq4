@@ -6,6 +6,7 @@
 #property strict
 #define PAPER_BARS 120
 #define PAPER_PERIOD 60
+#define PAPER_BUILD_TAG "FXPAPER-CLOCKFREEZE-20261120-V2"
 
 string PaperSymbols[3] = {"USDJPY","EURJPY","EURUSD"};
 datetime PaperLastClosed[3] = {0,0,0};
@@ -171,7 +172,7 @@ int OnInit()
       return INIT_FAILED;
    }
    if(!EventSetTimer(PAPER_PERIOD)) return INIT_FAILED;
-   Print("FXPAPER: read-only 60-second DEMO observation enabled; orders=0.");
+   Print("FXPAPER: read-only 60-second DEMO observation enabled; orders=0; build=",PAPER_BUILD_TAG,".");
    return INIT_SUCCEEDED;
 }
 
@@ -193,5 +194,5 @@ void OnTimer()
 void OnDeinit(const int reason)
 {
    EventKillTimer();
-   Print("FXPAPER: observer stopped; reason=",reason);
+   Print("FXPAPER: observer stopped; reason=",reason,"; build=",PAPER_BUILD_TAG);
 }
