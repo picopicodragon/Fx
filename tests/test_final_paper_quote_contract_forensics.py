@@ -98,7 +98,12 @@ class OriginalContractEvidenceTests(unittest.TestCase):
             with self.subTest(problem=problem):
                 self._rewrite(problem)
                 result=forensic.investigate(self.folder,self.bad.name)
-                self.assertFalse(result["engine_quote_validator_passed"])
+                # The continuous engine checks quote freshness (+/-10s),
+                # while the multi-day auditor additionally requires the
+                # source filename to equal the original capture epoch.
+                self.assertEqual(result["engine_quote_validator_passed"],
+                                 problem=="wrong_capture")
+                self.assertFalse(result["strict_multiday_source_passed"])
                 self.assertIn(code,[i["code"]
                                    for i in result["issues_without_source_values"]])
 
