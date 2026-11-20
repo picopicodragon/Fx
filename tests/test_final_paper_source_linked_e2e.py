@@ -144,9 +144,9 @@ class SourceLinkedReplayTests(unittest.TestCase):
                 sym:{"candles":[{"server_epoch":123456}]}
                 for sym in paper.SYMS}}
             decision=signal()
-            with patch.object(runtime.period,"_read_h1",return_value=bars), \\
+            with patch.object(runtime.period,"_read_h1",return_value=bars), \
                  patch.object(runtime.completed_decision,"load_completed",
-                     side_effect=[decision,None,None]), \\
+                     side_effect=[decision,None,None]), \
                  patch.object(runtime.ai,"run") as inference:
                 sig,seen,n=runtime._signals_for_new_h1(
                     state,root/"captures",[root/"archived_news"],root,NOW,
@@ -159,8 +159,8 @@ class SourceLinkedReplayTests(unittest.TestCase):
             self.assertEqual(n,0)
             state["processed_h1_keys"]=seen
             state["used_signal_ids"]=[decision["id"]]
-            with patch.object(runtime.period,"_read_h1",return_value=bars), \\
-                 patch.object(runtime.completed_decision,"load_completed") as proof, \\
+            with patch.object(runtime.period,"_read_h1",return_value=bars), \
+                 patch.object(runtime.completed_decision,"load_completed") as proof, \
                  patch.object(runtime.ai,"run") as inference:
                 sig,seen,n=runtime._signals_for_new_h1(
                     state,root/"captures",[root/"archived_news"],root,NOW,
