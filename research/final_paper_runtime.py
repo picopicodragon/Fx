@@ -229,7 +229,11 @@ def _signals_for_new_h1(
 def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                   allow_paid:bool,analyst_model:str,reviewer_model:str,
                   paid_limit:int,now:datetime|None=None,
-                  event_blackout_file:Path|None=None)->dict:
+                  event_blackout_file:Path|None=None,
+                  final_auto_evidence:Path|None=None,
+                  final_auto_official_archive:Path|None=None,
+                  final_auto_budget_authorization:Path|None=None,
+                  allow_final_paid:bool=False)->dict:
     now=now or datetime.now(timezone.utc)
     if now.tzinfo is None:
         raise InputError("invalid current clock")
@@ -256,14 +260,95 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     from research import final_paper_manual_comm_release as comm_release
     working_state, manual_comm_release_applied = comm_release.apply_if_valid(
         root, state, prior, quote, now)
+    # Integration is opt-in only on a separately operator-started process.
+    # The existing Windows monitor runs WITHOUT these arguments and remains
+    # in immutable historical 6/6 paid/quote-only mode.
+    from research import final_paper_auto_entry_gate as final_gate
+    from research import final_paper_auto_budget as final_budget
+    from research import final_paper_current_comm_release as current_comm
+    from research import final_paper_auto_pipeline as final_pipeline
+    if allow_final_paid and (final_auto_evidence is None or
+                             final_auto_official_archive is None or
+                             final_auto_budget_authorization is None or
+                             allow_paid):
+        raise InputError("FINAL_AUTO_PAID_REQUIRES_SEPARATE_APPROVAL")
+    if (final_auto_evidence is None)!=(final_auto_official_archive is None):
+        raise InputError("FINAL_AUTO_EVIDENCE_PATHS_INCOMPLETE")
+    integrated=final_auto_evidence is not None
+    current_release_applied=False
+    if integrated:
+        working_state,current_release_applied=current_comm.apply_if_valid(
+            root,working_state,prior,quote,now)
+    session_binding=state.get("auto_entry_session_binding_sha256",prior)
+    gate_report=None
+    gate_blocked_reason="NO_ATTESTED_ENTRY_BUNDLE"
+    carry_costs=(state.get("auto_carry_costs_jpy_per_lot_day")
+                 if integrated else None)
+    budget_info=None
+    if integrated:
+        if (state.get("paid_inference_calls")!=6
+                or state.get("broker_orders_permitted") is not False):
+            raise InputError("FINAL_AUTO_OLD_AI_LEDGER_OR_BROKER_STATE_UNSAFE")
+        try:
+            original_path=mt4/("FxPaperQuote_"+
+                datetime.fromtimestamp(quote["capture_epoch"],tz=timezone.utc)
+                .strftime("%Y%m%d_%H%M%S")+".csv")
+            gate_report=final_gate.evaluate(
+                final_auto_evidence,final_auto_official_archive,
+                {**quote,"source_original_file":original_path},
+                now=now,entry_binding_sha=session_binding)
+            if (state.get("auto_entry_permit_sha256") not in (
+                    None,gate_report["permit_sha256_local_only"])):
+                raise InputError("FINAL_AUTO_ENTRY_PERMIT_CHANGED_MID_SESSION")
+            carry_costs=gate_report["carry_costs_jpy_per_lot_day"]
+            gate_blocked_reason="NONE"
+        except (InputError,OSError,KeyError,ValueError,TypeError,
+                UnicodeError,ArithmeticError):
+            # Fail CLOSED for new entries, but still value/stop already
+            # open virtual positions with their last conservative carry.
+            gate_report=None
+            gate_blocked_reason="ENTRY_EVIDENCE_INCOMPLETE_OR_EXPIRED"
+        if allow_final_paid and gate_report is not None:
+            try:
+                budget_info=final_budget.policy(
+                    final_auto_budget_authorization,
+                    now=now,session_binding_sha=session_binding,
+                    analyst_model=analyst_model,
+                    reviewer_model=reviewer_model)
+                if state.get("auto_budget_policy_sha256") not in (
+                        None,budget_info["policy_sha256_local_only"]):
+                    raise InputError("FINAL_AUTO_PAID_POLICY_CHANGED_IN_SESSION")
+                final_budget.check(
+                    budget_info,root/"auto_budget_journal",
+                    journal_reserve_shas=state.get(
+                        "auto_budget_reservation_receipts",[]))
+                from research import final_paper_ai_continuation_audit as old_paid_audit
+                old_paid=old_paid_audit.audit(root)
+                if (old_paid["journal_head_sha256_local_only"]!=prior
+                        or old_paid["paid_calls_in_completed_ledgers"]!=6
+                        or old_paid["paid_calls_recorded_in_journal"]!=6):
+                    raise InputError("FINAL_AUTO_HISTORICAL_PAID_SIX_UNRECONCILED")
+            except (InputError,OSError,KeyError,ValueError,TypeError,
+                    UnicodeError,ArithmeticError):
+                budget_info=None
+                gate_blocked_reason="PAID_BUDGET_PENDING_UNRECONCILED_OR_EXPIRED"
     # The local known-event list is NOT an independently verified complete
     # three-currency calendar, and the broker clock is also unattested.
     # The runnable paper supervisor must not convert either absence into
     # permission to incur further AI bills or open a new virtual position.
     evidence_ready=(
-        known_blackout["independent_calendar_coverage_attested"] is True
-        and known_blackout["pc_clock_independently_attested"] is True
+        (gate_report is not None and
+         gate_report["entry_evidence_ready_by_operator_attestation"] is True)
+        if integrated else (
+            known_blackout["independent_calendar_coverage_attested"] is True
+            and known_blackout["pc_clock_independently_attested"] is True
+        )
     )
+    combined_blackout=(known_blackout["active_known_blackout"] or
+                       bool(gate_report and
+                            gate_report["known_event_blackout_active"]))
+    if integrated and allow_final_paid and budget_info is None:
+        evidence_ready=False
     risk_stop=any(working_state.get(name) is True for name in (
         "communication_latched","dd4_latched","dd5_latched",
         "daily_loss_latched"))
@@ -277,7 +362,7 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     # could halt quote observation despite virtual entry being prohibited.
     signal_path_safe=(
         evidence_ready and not risk_stop and quote_gap_safe
-        and not known_blackout["active_known_blackout"]
+        and not combined_blackout
     )
     # A healthy quote and an (eventually) approved macro clock are not
     # enough to reopen the historical paid-API ledger. The 6-call lifetime
@@ -290,34 +375,68 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
     )
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
-    if signal_path_safe:
+    final_paid=0
+    final_receipts=[]
+    if signal_path_safe and integrated and allow_final_paid:
+        if budget_info is None:
+            raise InputError("FINAL_AUTO_PAID_BUDGET_NOT_RECONCILED")
+        signals,seen,final_receipts,final_paid=final_pipeline.decisions(
+            working_state,captures,bundles,root,now,policy=budget_info,
+            analyst_model=analyst_model,reviewer_model=reviewer_model)
+        paid=0  # Historical 6/6 lifetime is NEVER reset or incremented.
+    elif signal_path_safe:
         signals,seen,paid=_signals_for_new_h1(
             working_state,captures,bundles,root,now,
             allow_paid=paid_safe,
             analyst_model=analyst_model,reviewer_model=reviewer_model,
             max_paid_calls=paid_limit)
     else:
-        # Quote-only hold: no new H1 consumed, no saved signal replay, and
-        # no paid model dispatch. Later manual clearance cannot silently
-        # backfill past H1 decisions without normal freshness checks.
+        # Fail-closed quote-only mode still runs existing virtual exits/DD.
         signals,seen,paid=[],[],0
     changed,report=paper.step(
         working_state,quote,signals=signals,
-        known_event_blackout=known_blackout["active_known_blackout"],
-        entry_evidence_ready=evidence_ready)
+        known_event_blackout=combined_blackout,
+        entry_evidence_ready=evidence_ready,
+        **({"carry_costs":carry_costs} if integrated else {}))
     changed["processed_h1_keys"].extend(seen)
     changed["paid_inference_calls"]+=paid
+    if integrated:
+        changed["auto_entry_session_binding_sha256"]=session_binding
+        if gate_report is not None:
+            changed["auto_entry_permit_sha256"]=gate_report[
+                "permit_sha256_local_only"]
+            changed["auto_carry_costs_jpy_per_lot_day"]=carry_costs
+        if budget_info is not None:
+            changed["auto_budget_policy_sha256"]=budget_info[
+                "policy_sha256_local_only"]
+        if final_receipts:
+            changed.setdefault("auto_budget_reservation_receipts",[]).extend(
+                final_receipts)
+            changed["auto_new_paid_inference_calls"]=(
+                changed.get("auto_new_paid_inference_calls",0)+final_paid)
     if len(changed["processed_h1_keys"])>10000:
         raise InputError("too many H1 cycles")
     _journal_append(journal,changed,prior,quote["source_sha256"],now)
-    report["paid_calls_this_cycle"]=paid
+    report["paid_calls_this_cycle"]=paid+final_paid
+    report["new_final_paid_calls_this_cycle"]=final_paid
+    report["old_6_of_6_calls_unchanged"]=integrated
+    report["final_auto_mode_selected"]=integrated
+    report["final_operator_evidence_source_verified_for_paper"]=bool(gate_report)
+    report["final_auto_gate_hold_reason_code"]=gate_blocked_reason
+    report["final_auto_incremental_budget_active"]=budget_info is not None
+    report["final_comm_manual_release_applied_this_cycle"]=current_release_applied
+    report["final_operator_research_gate_open"]=integrated and signal_path_safe
+    report["new_virtual_positions_permitted_by_final_gate"]=(
+        integrated and evidence_ready and not risk_stop and
+        quote_gap_safe and not combined_blackout)
     report["paid_calls_session_cumulative"]=changed["paid_inference_calls"]
     report["h1_new_pair_count"]=len(seen)
-    report["known_macro_event_blackout_active"]=known_blackout["active_known_blackout"]
+    report["known_macro_event_blackout_active"]=combined_blackout
     report["event_calendar_supplied"]=known_blackout["calendar_supplied"]
     report["independent_future_event_calendar_attested"]=False
     report["independent_broker_clock_attested"]=False
-    report["entry_readiness_gate_open"]=evidence_ready and not risk_stop and quote_gap_safe
+    report["entry_readiness_gate_open"]=(evidence_ready and not risk_stop
+                                          and quote_gap_safe and not combined_blackout)
     report["new_paid_ai_allowed_by_evidence_gate"]=paid_safe
     report["ai_signal_pipeline_skipped_by_unattested_safety_hold"]=not signal_path_safe
     report["manual_comm_release_applied_this_cycle"] = manual_comm_release_applied
@@ -347,6 +466,10 @@ def main(argv=None)->int:
     p.add_argument("--watch",action="store_true")
     p.add_argument("--interval-seconds",type=int,default=15)
     p.add_argument("--event-blackout-file",type=Path)
+    p.add_argument("--final-auto-evidence-file",type=Path)
+    p.add_argument("--final-auto-official-archive",type=Path)
+    p.add_argument("--final-auto-budget-authorization",type=Path)
+    p.add_argument("--allow-final-paid-ai",action="store_true")
     args=p.parse_args(argv)
     acquired=False
     lock=args.state_root/".single_operator.lock"
@@ -364,12 +487,32 @@ def main(argv=None)->int:
                     not args.analyst_model or not args.reviewer_model or
                     args.analyst_model==args.reviewer_model or
                     not os.environ.get("OPENAI_API_KEY")))
-                or (not args.allow_paid_ai and (
-                    args.analyst_model or args.reviewer_model))):
+                or (not (args.allow_paid_ai or args.allow_final_paid_ai) and (
+                    args.analyst_model or args.reviewer_model))
+                or (args.allow_final_paid_ai and (
+                    args.allow_paid_ai or not args.news_bundle or
+                    not args.analyst_model or not args.reviewer_model or
+                    args.analyst_model==args.reviewer_model or
+                    not os.environ.get("OPENAI_API_KEY") or
+                    args.final_auto_budget_authorization is None))
+                or ((args.final_auto_evidence_file is None)!=
+                    (args.final_auto_official_archive is None))
+                or (args.final_auto_budget_authorization is not None and
+                    not args.allow_final_paid_ai)
+                or (args.allow_final_paid_ai and
+                    args.final_auto_evidence_file is None)
+                or (args.final_auto_evidence_file is not None and
+                    args.allow_paid_ai)):
             raise InputError("invalid final paper startup")
         if any(not b.is_dir() or b.is_symlink() for b in args.news_bundle):
             raise InputError("missing archived news")
         _initialize(args.state_root)
+        if args.allow_final_paid_ai:
+            for name in ("auto_ai_research","auto_budget_journal"):
+                folder=args.state_root/name
+                if folder.is_symlink():
+                    raise InputError("unsafe final auto accounting folder")
+                folder.mkdir(exist_ok=True)
         if lock.exists() or lock.is_symlink():
             raise InputError("previous paper operator lock requires audit")
         with lock.open("x",encoding="utf-8") as f:
@@ -386,7 +529,12 @@ def main(argv=None)->int:
                     analyst_model=args.analyst_model,
                     reviewer_model=args.reviewer_model,
                     paid_limit=args.max_paid_calls_lifetime,now=now,
-                    event_blackout_file=args.event_blackout_file)
+                    event_blackout_file=args.event_blackout_file,
+                    final_auto_evidence=args.final_auto_evidence_file,
+                    final_auto_official_archive=args.final_auto_official_archive,
+                    final_auto_budget_authorization=
+                        args.final_auto_budget_authorization,
+                    allow_final_paid=args.allow_final_paid_ai)
             except InputError:
                 # Never hide a malformed ledger / potential paid request.
                 # An unsafe newer CSV must be examined before resuming.
