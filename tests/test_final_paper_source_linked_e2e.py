@@ -103,7 +103,12 @@ class SourceLinkedReplayTests(unittest.TestCase):
                  patch.object(saved.period,"run",return_value=report), \
                  patch.object(saved.ai,"_identity",return_value={
                     "packet_sha256":"b"*64}), \
-                 patch.object(saved.ai,"_valid") as valid:
+                 patch.object(saved.ai,"_valid") as valid, \
+                 patch("research.final_paper_ai_continuation_audit.audit",
+                       return_value={
+                           "paid_calls_recorded_in_journal":6,
+                           "paid_calls_in_completed_ledgers":6,
+                       }):
                 found=saved.load_completed(root,root,[root], "USD/JPY",
                                            bar,NOW)
                 valid.assert_called_once()
@@ -116,7 +121,12 @@ class SourceLinkedReplayTests(unittest.TestCase):
                  patch.object(saved.period,"run",return_value=report), \
                  patch.object(saved.ai,"_identity",return_value={
                     "packet_sha256":"d"*64}), \
-                 patch.object(saved.ai,"_valid"):
+                 patch.object(saved.ai,"_valid"), \
+                 patch("research.final_paper_ai_continuation_audit.audit",
+                       return_value={
+                           "paid_calls_recorded_in_journal":6,
+                           "paid_calls_in_completed_ledgers":6,
+                       }):
                 with self.assertRaises(InputError):
                     saved.load_completed(root,root,[root],"USD/JPY",
                                          bar,NOW)
