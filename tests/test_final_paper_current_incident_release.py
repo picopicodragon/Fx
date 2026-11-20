@@ -181,6 +181,23 @@ class CurrentIncidentApprovalTests(unittest.TestCase):
         self.assertFalse(after["communication_latched"])
         self.assertEqual(after["paid_inference_calls"],6)
         self.assertEqual(after["positions"],[])
+        # A consumed permit remains on disk. Subsequent genuine cycles
+        # have a NEW journal head but must not fail or consume it again.
+        with patch.object(runtime,"_latest_quote",
+                          return_value=observed(T+120)), \
+             patch.object(runtime,"_latest_h1_copy",
+                          return_value=None):
+            second=runtime.run_one_cycle(
+                self.mt4,self.root,[],
+                allow_paid=False,analyst_model="",reviewer_model="",
+                paid_limit=0,now=NOW+timedelta(seconds=120))
+        self.assertFalse(second["current_incident_release_applied_this_cycle"])
+        self.assertFalse(second["communication_latched"])
+        self.assertEqual(second["paid_calls_this_cycle"],0)
+        self.assertEqual(second["broker_orders_sent_this_run"],0)
+        final,_=runtime._journal_load(self.root/"journal")
+        self.assertEqual(final["cycle_number"],152)
+        self.assertFalse(final["communication_latched"])
 
     def test_script_never_stops_supervisor_automatically(self):
         src=(Path(__file__).resolve().parents[1]/
