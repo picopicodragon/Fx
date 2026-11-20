@@ -290,9 +290,13 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
                 or state.get("broker_orders_permitted") is not False):
             raise InputError("FINAL_AUTO_OLD_AI_LEDGER_OR_BROKER_STATE_UNSAFE")
         try:
+            original_path=mt4/("FxPaperQuote_"+
+                datetime.fromtimestamp(quote["capture_epoch"],tz=timezone.utc)
+                .strftime("%Y%m%d_%H%M%S")+".csv")
             gate_report=final_gate.evaluate(
                 final_auto_evidence,final_auto_official_archive,
-                quote,now=now,entry_binding_sha=session_binding)
+                {**quote,"source_original_file":original_path},
+                now=now,entry_binding_sha=session_binding)
             if (state.get("auto_entry_permit_sha256") not in (
                     None,gate_report["permit_sha256_local_only"])):
                 raise InputError("FINAL_AUTO_ENTRY_PERMIT_CHANGED_MID_SESSION")
