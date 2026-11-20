@@ -87,6 +87,53 @@ class RealSourceReadinessTests(unittest.TestCase):
         self.assertIn("PRE_RELEASE_CONSENSUS_NOT_TIME_ATTESTED",
                       report["remaining_independent_review_requirements"])
 
+    def test_already_ingested_quote_is_not_misreported_as_reversed(self):
+        self.state["last_quote_epoch"]=EPOCH
+        report=self.check()
+        self.assertEqual(
+            report["latest_quote_observation_status"],
+            "LATEST_SOURCE_ALREADY_RECORDED_IN_JOURNAL")
+        self.assertTrue(report["same_quote_is_normal_for_read_only_snapshot"])
+        self.assertEqual(report["source_minus_journal_epoch_seconds_pc_derived"],0)
+        self.assertNotIn(
+            "QUOTE_NOT_NEW_OR_REVERSED",
+            report["remaining_independent_review_requirements"])
+        # Crucial: the entry gate itself still REFUSES an already used quote.
+        self.assertIn(
+            "QUOTE_NOT_NEW_OR_REVERSED",
+            report["strict_new_entry_gate_block_reasons"])
+        self.assertFalse(report["new_virtual_entries_permitted"])
+        self.assertFalse(report["new_paid_ai_inference_permitted"])
+        self.assertFalse(report["readiness_report_never_grants_new_entry"] is False)
+
+    def test_source_behind_journal_is_a_genuine_timing_alert(self):
+        self.state["last_quote_epoch"]=EPOCH+60
+        report=self.check()
+        self.assertEqual(
+            report["latest_quote_observation_status"],
+            "LATEST_SOURCE_BEHIND_JOURNAL_REQUIRES_REVIEW")
+        self.assertFalse(report["same_quote_is_normal_for_read_only_snapshot"])
+        self.assertEqual(report["source_minus_journal_epoch_seconds_pc_derived"],-60)
+        self.assertIn(
+            "SOURCE_QUOTE_EPOCH_BEHIND_LAST_JOURNAL_CYCLE",
+            report["remaining_independent_review_requirements"])
+        self.assertIn(
+            "QUOTE_NOT_NEW_OR_REVERSED",
+            report["strict_new_entry_gate_block_reasons"])
+        self.assertFalse(report["new_virtual_entries_permitted"])
+
+    def test_new_source_only_describes_snapshot_race_not_permission(self):
+        report=self.check()
+        self.assertEqual(
+            report["latest_quote_observation_status"],
+            "NEW_SOURCE_NOT_YET_IN_READ_ONLY_JOURNAL_SNAPSHOT")
+        self.assertEqual(report["source_minus_journal_epoch_seconds_pc_derived"],60)
+        self.assertFalse(report["same_quote_is_normal_for_read_only_snapshot"])
+        self.assertFalse(report["new_virtual_entries_permitted"])
+        self.assertIn(
+            "COMPLETE_USD_EUR_JPY_CALENDAR_UNATTESTED",
+            report["remaining_independent_review_requirements"])
+
     def test_paid_journal_mismatch_refused(self):
         with self.assertRaises(InputError):
             self.check(paid_result={
