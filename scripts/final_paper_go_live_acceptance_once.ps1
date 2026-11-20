@@ -32,10 +32,33 @@ if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) {
 }
 function New-SafetySample {
     $before=@(Get-ChildItem -LiteralPath $StateRoot -File -Filter 'local_machine_handoff_*.json' | ForEach-Object {$_.Name})
+    # The child writes its own JSON report and finishes with Write-Host.
+    # It also intentionally probes w32tm.exe, which can leave a NONZERO
+    # $LASTEXITCODE when the Windows time service is unavailable. That
+    # diagnostic is NOT the child's exit status. Never use inherited
+    # $LASTEXITCODE as proof that this PowerShell script failed/succeeded.
     & "$PSScriptRoot\final_paper_local_machine_handoff_once.ps1" -Mt4FilesDirectory $mt4 -StateRoot $StateRoot
-    if ($LASTEXITCODE -ne 0) { throw 'Read-only host snapshot failed. NO_GO' }
-    $added=@(Get-ChildItem -LiteralPath $StateRoot -File -Filter 'local_machine_handoff_*.json' | Where-Object {$_.Name -notin $before})
-    if ($added.Count -ne 1) { throw 'Expected precisely one new read-only snapshot. NO_GO' }
+    $added=@(Get-ChildItem -LiteralPath $StateRoot -File -Filter 'local_machine_handoff_*.json' |
+        Where-Object { $_.Name -notin $before })
+    if ($added.Count -ne 1) {
+        throw 'Expected precisely one new read-only snapshot. NO_GO'
+    }
+    # A new file alone is not sufficient: explicitly validate the emitted
+    # handoff schema, intended NO_GO status, process counts and booleans.
+    $proof=Get-Content -LiteralPath $added[0].FullName -Raw -ErrorAction Stop |
+        ConvertFrom-Json -ErrorAction Stop
+    if ($proof.schema -cne 'fx_final_paper_local_machine_handoff_v1' -or
+        $proof.status -cne 'READ_ONLY_LOCAL_EVIDENCE_NOT_LIVE_TRADE_APPROVAL' -or
+        $proof.runtime_go_no_go -cne 'NO_GO' -or
+        $proof.paper_supervisor_process_count -ne 1 -or
+        $proof.mt4_terminal_process_count -ne 1 -or
+        $proof.runtime_lock_present_not_process_proof -ne $true -or
+        $proof.new_paid_ai_calls_authorized -ne $false -or
+        $proof.new_virtual_positions_permitted -ne $false -or
+        $proof.demo_orders_permitted -ne $false -or
+        $proof.real_orders_permitted -ne $false) {
+        throw 'New snapshot reported an invalid process or safety state. NO_GO'
+    }
     return $added[0].FullName
 }
 Write-Host 'Final AI virtual PAPER acceptance: first READ-ONLY snapshot'
