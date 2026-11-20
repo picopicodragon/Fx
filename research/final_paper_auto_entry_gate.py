@@ -206,6 +206,14 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
                 or parsed.username or parsed.password or parsed.port is not None):
             raise InputError("FINAL_GATE_EVENT_URL_NOT_OFFICIAL")
         epoch=_utc(event["release_utc"])
+        expected_by_currency={
+            "USD":{"us_bls_calendar_ics"},
+            "EUR":{"eur_ecb_calendar"},
+            "JPY":{"jpy_boj_calendar"},
+        }
+        if event["original_source_id"] not in expected_by_currency[
+                event["currency"]]:
+            raise InputError("FINAL_GATE_EVENT_ORIGINAL_CURRENCY_MISMATCH")
         if not start<=epoch<=end:
             raise InputError("FINAL_GATE_EVENT_OUTSIDE_CALENDAR")
         if abs(qepoch-epoch)<=900:
