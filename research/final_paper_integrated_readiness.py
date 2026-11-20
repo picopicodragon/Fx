@@ -50,7 +50,30 @@ def review(state_root:Path,mt4:Path,official_archive:Path,
     # of independent clock, full USD/EUR/JPY calendar, consensus or costs.
     known={"active_known_blackout":False}
     gate,budget=control.existing_runtime_no_go(state,quote,known)
-    blockers=list(gate["block_reasons"])
+    # Readiness is a READ-ONLY snapshot of a journal which may already have
+    # ingested the latest physical quote. The strict entry gate *correctly*
+    # rejects an equal epoch, but an already-ingested original is not itself
+    # a reversed-price or stale-feed incident. Keep the strict entry gate
+    # untouched and report the observational distinction separately.
+    journal_epoch=state.get("last_quote_epoch")
+    source_epoch=quote["capture_epoch"]
+    if (type(journal_epoch) is not int or journal_epoch<0
+            or type(source_epoch) is not int or source_epoch<=0):
+        raise InputError("FINAL_AI_SOURCE_JOURNAL_TIME_INVALID")
+    if source_epoch==journal_epoch:
+        observation_status="LATEST_SOURCE_ALREADY_RECORDED_IN_JOURNAL"
+    elif source_epoch<journal_epoch:
+        observation_status="LATEST_SOURCE_BEHIND_JOURNAL_REQUIRES_REVIEW"
+    else:
+        observation_status="NEW_SOURCE_NOT_YET_IN_READ_ONLY_JOURNAL_SNAPSHOT"
+    strict_entry_blockers=list(gate["block_reasons"])
+    blockers=list(strict_entry_blockers)
+    if source_epoch==journal_epoch:
+        # Only the user-facing READINESS follow-up list is clarified;
+        # no live signal, paid request, or virtual entry can use it.
+        blockers=[x for x in blockers if x!="QUOTE_NOT_NEW_OR_REVERSED"]
+    elif source_epoch<journal_epoch:
+        blockers.append("SOURCE_QUOTE_EPOCH_BEHIND_LAST_JOURNAL_CYCLE")
     blockers+=budget["failure_reasons"]
     blockers+=[
         "OFFICIAL_SAVED_BYTES_ARE_NOT_EVENT_CALENDAR_SEMANTICS",
@@ -66,6 +89,13 @@ def review(state_root:Path,mt4:Path,official_archive:Path,
         "journal_cycle_count":state["cycle_number"],
         "paper_head_sha256_local_only":head,
         "last_quote_epoch_pc_unattested":quote["capture_epoch"],
+        "journal_last_quote_epoch_pc_unattested":journal_epoch,
+        "source_minus_journal_epoch_seconds_pc_derived":source_epoch-journal_epoch,
+        "latest_quote_observation_status":observation_status,
+        "same_quote_is_normal_for_read_only_snapshot":
+            source_epoch==journal_epoch,
+        "strict_new_entry_gate_block_reasons":strict_entry_blockers,
+        "readiness_report_never_grants_new_entry":True,
         "last_quote_sha256_local_only":quote["source_sha256"],
         "existing_paid_calls":state["paid_inference_calls"],
         "old_lifetime_ai_budget_reconciled":True,
