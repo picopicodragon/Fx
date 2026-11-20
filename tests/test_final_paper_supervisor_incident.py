@@ -108,6 +108,9 @@ class IncidentTriageTests(unittest.TestCase):
                    ).read_text("utf-8")
         self.assertIn("Get-CimInstance Win32_Process", wrapper)
         self.assertIn("POSSIBLE_ORPHAN_LOCK", wrapper)
+        self.assertIn("Get-WinEvent", wrapper)
+        self.assertIn("event_messages_redacted=$true", wrapper)
+        self.assertIn("system_restart_event_hints", wrapper)
         for illegal in ("Stop-Process", "Start-Process", "Remove-Item",
                         "Rename-Item", "OrderSend", "Invoke-WebRequest"):
             self.assertNotIn(illegal, wrapper)
