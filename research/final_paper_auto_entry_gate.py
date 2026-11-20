@@ -27,12 +27,12 @@ from research.offline_backtest import InputError
 SCHEMA="fx_final_paper_auto_entry_evidence_v1"
 APPROVAL="APPROVE_FINAL_PAPER_VIRTUAL_ENTRY_EVIDENCE_FOR_THIS_JOURNAL"
 SCOPE="RAKUTEN_MT4_DEMO_INTERNAL_VIRTUAL_ONLY"
-CLOCK_MAX_AGE_SECONDS=600
+CLOCK_MAX_AGE_SECONDS=86400  # daily independent UTC proof + per-quote broker offset check
 PERMIT_MAX_LIFETIME_SECONDS=86400
 MAX_SOURCE_BYTES=1_000_000
 SOURCES=("official_us","official_eur","official_jpy",
          "independent_utc_clock","broker_clock","pre_release_consensus",
-         "cost_model")
+         "cost_model","mt4_v2_experts_log")
 SOURCE_IDS={
     "official_us":"us_bls_calendar_ics",
     "official_eur":"eur_ecb_calendar",
@@ -94,7 +94,7 @@ def _manifest(permit:Path)->tuple[dict,str]:
     if (type(data) is not dict or set(data)!={
             "schema","scope","operator_approval","approved_at_utc",
             "expires_at_utc","bound_journal_sha256","official_archive_manifest_sha256",
-            "sources","clock","calendar","consensus","cost","human_evidence_review"}
+            "sources","clock","calendar","consensus","cost","mt4","human_evidence_review"}
             or data["schema"]!=SCHEMA or data["scope"]!=SCOPE
             or data["operator_approval"]!=APPROVAL
             or data["human_evidence_review"] is not True):
@@ -127,6 +127,8 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
     files=data["sources"]
     if (type(files) is not dict or set(files)!=set(SOURCES)):
         raise InputError("FINAL_GATE_SOURCE_SET_INCOMPLETE")
+    if len({x.get("filename") for x in files.values() if type(x) is dict})!=len(SOURCES):
+        raise InputError("FINAL_GATE_DISTINCT_SOURCE_FILES_REQUIRED")
     for name,meta in files.items():
         if (type(meta) is not dict or set(meta)!={"filename","sha256"}
                 or type(meta["filename"]) is not str
@@ -145,10 +147,21 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
             # exist, remain immutable and carry a pinned original SHA.
             original=permit.parent/meta["filename"]
         _original(original,meta["sha256"])
+    mt4_proof=data["mt4"]
+    if (type(mt4_proof) is not dict or set(mt4_proof)!={
+            "build_tag","demo_account_verified","single_observer_verified",
+            "metaeditor_zero_compile_errors_verified"}
+            or mt4_proof["build_tag"]!=
+                "FXPAPER-CLOCKFREEZE-20261120-V2"
+            or any(mt4_proof[name] is not True for name in (
+                "demo_account_verified","single_observer_verified",
+                "metaeditor_zero_compile_errors_verified"))):
+        raise InputError("FINAL_GATE_MT4_V2_COMPILATION_OR_SINGLE_EA_UNATTESTED")
     clock=data["clock"]
     if (type(clock) is not dict or set(clock)!={
             "independent_utc_checked_at","broker_utc_checked_at",
             "pc_utc_offset_seconds","broker_utc_offset_seconds",
+            "expected_broker_minus_pc_seconds",
             "external_utc_source_checked","broker_time_independently_reviewed"}
             or clock["external_utc_source_checked"] is not True
             or clock["broker_time_independently_reviewed"] is not True):
@@ -165,8 +178,31 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
         raise InputError("FINAL_GATE_CLOCK_OFFSET_INVALID") from None
     if (not pc_offset.is_finite() or not broker_offset.is_finite()
             or abs(pc_offset)>Decimal("2")
-            or abs(broker_offset)>Decimal("2")):
+            or abs(broker_offset)>Decimal("2")
+            or type(clock["expected_broker_minus_pc_seconds"]) is not int
+            or clock["expected_broker_minus_pc_seconds"] not in (
+                -18000,-14400,-10800,-7200,-3600,0,3600,7200,10800,14400,18000)):
         raise InputError("FINAL_GATE_CLOCK_OFFSET_TOO_LARGE")
+    # A daily NTP check alone cannot guard a subsequent 60s quote;
+    # the observed MT4-PC offset is also verified on every fresh source.
+    # MetaQuotes server clock is NOT independently authenticated by this.
+    csv_path=quote.get("source_original_file")
+    if csv_path is not None:
+        from research import final_paper_engine as engine
+        if type(csv_path) is not Path or not csv_path.is_file():
+            raise InputError("FINAL_GATE_QUOTE_FILE_MISSING")
+        import csv
+        try:
+            raw=csv.DictReader(csv_path.read_text("utf-8-sig").splitlines())
+            rows=list(raw)
+            expected=clock["expected_broker_minus_pc_seconds"]
+            if len(rows)!=3 or any(
+                    abs(int(row["broker_time_epoch_unattested"])-
+                        int(row["capture_epoch_utc_pc"])-expected)>2
+                    for row in rows):
+                raise InputError("FINAL_GATE_BROKER_PC_OFFSET_CHANGED")
+        except (OSError,UnicodeError,ValueError,TypeError,KeyError):
+            raise InputError("FINAL_GATE_BROKER_PC_OFFSET_UNREADABLE") from None
     calendar=data["calendar"]
     if (type(calendar) is not dict or set(calendar)!={
             "coverage_start_utc","coverage_until_utc","covered_currencies",
