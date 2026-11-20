@@ -1,0 +1,62 @@
+name: Final human-gated full AI virtual FX launch candidate
+
+on:
+  pull_request:
+    paths:
+      - 'research/final_paper_go_live_acceptance.py'
+      - 'research/final_paper_current_incident_release.py'
+      - 'research/final_paper_runtime.py'
+      - 'scripts/final_paper_go_live_acceptance_once.ps1'
+      - 'scripts/final_paper_stage_current_comm_release_once.ps1'
+      - 'scripts/final_paper_metaeditor_v2_compile_candidate_once.ps1'
+      - 'tests/test_final_paper_go_live_acceptance.py'
+      - 'tests/test_final_paper_current_incident_release.py'
+      - '.github/workflows/final-paper-human-gated-launch-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    name: Linux Python 3.12 full 6k+ safety suite
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m compileall -q research tests
+      - run: python -m unittest discover -s tests -p 'test*.py'
+
+  windows:
+    runs-on: windows-latest
+    name: Windows Python 3.13 full safety suite and PowerShell parser
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Parse all release and isolated MetaEditor candidate scripts
+        shell: pwsh
+        run: |
+          $files = @(
+            'scripts/final_paper_go_live_acceptance_once.ps1',
+            'scripts/final_paper_stage_current_comm_release_once.ps1',
+            'scripts/final_paper_metaeditor_v2_compile_candidate_once.ps1'
+          )
+          foreach ($file in $files) {
+            $tokens=$null
+            $errors=$null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              $file, [ref]$tokens,[ref]$errors
+            ) | Out-Null
+            if ($errors.Count -ne 0) {
+              $errors | ForEach-Object { Write-Error $_ }
+              exit 1
+            }
+          }
+      - run: python -m unittest discover -s tests -p "test*.py"
