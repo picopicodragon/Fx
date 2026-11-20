@@ -60,6 +60,7 @@ def _snap(obj:dict)->dict:
             or type(obj.get("mt4_terminal_process_count")) is not int
             or obj["mt4_terminal_process_count"]!=1
             or obj.get("runtime_lock_present_not_process_proof") is not True
+            or obj.get("paper_supervisor_paid_ai_opt_in_cli_flag_present") is not False
             or obj.get("new_paid_ai_calls_authorized") is not False
             or obj.get("new_virtual_positions_permitted") is not False
             or obj.get("real_orders_permitted") is not False):
