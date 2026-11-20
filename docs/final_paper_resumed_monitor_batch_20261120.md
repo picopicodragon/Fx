@@ -35,16 +35,21 @@ GitHub接続ではWindowsプロセスを直接参照できないため、稼働�
 
 ## Windowsからのread-only確認
 
-監視は止めない。レビュー作業ツリーの変更を確認して新コードを取得：
+監視は止めない。現在Pythonが起動された作業ツリーが不明なため、
+**既存Fx-PAPER-REVIEW-20261118のブランチを切り替えず**、
+独立した新しいGit作業ツリーを作る。新規フォルダが既に存在したら中止：
 
     cd C:\Users\Suzuki\Documents\ChatGPT\Fx-PAPER-REVIEW-20261118
-    if (@(git status --porcelain).Count -ne 0) { throw 'Dirty worktree. NO_GO' }
     git fetch origin
     if ($LASTEXITCODE -ne 0) { throw 'Fetch failed. NO_GO' }
-    git switch --detach origin/feat/final-paper-resumed-continuity-20261120
-    if ($LASTEXITCODE -ne 0) { throw 'Switch failed. NO_GO' }
+    $newTree=Join-Path $env:USERPROFILE 'Documents\ChatGPT\Fx-PAPER-OBSERVE-REVIEW-20261120'
+    if (Test-Path -LiteralPath $newTree) { throw 'Target worktree exists. NO_GO' }
+    git worktree add --detach $newTree origin/feat/final-paper-resumed-continuity-20261120
+    if ($LASTEXITCODE -ne 0) { throw 'Worktree creation failed. NO_GO' }
+    Set-Location $newTree
 
-過去のmt4Files変数がDEMO MQL4/Filesを指すなら、別PowerShellで：
+過去のmt4Files変数がDEMO MQL4/Filesを指すなら、
+この別PowerShellの独立レビュー用作業ツリーで：
 
     .\scripts\final_paper_verify_resumed_monitor_once.ps1 -Mt4FilesDirectory $mt4Files
     .\scripts\final_paper_quote_regime_once.ps1 -Mt4FilesDirectory $mt4Files
