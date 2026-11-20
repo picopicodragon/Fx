@@ -79,7 +79,21 @@ def review(state_root:Path,mt4:Path,official_archive:Path,
         "OFFICIAL_SAVED_BYTES_ARE_NOT_EVENT_CALENDAR_SEMANTICS",
         "NO_INDEPENDENT_PROVIDER_JPY_BILLING_RECEIPT",
         "V2_METAEDITOR_COMPILATION_AND_EA_SWITCH_NOT_ATTESTED",
-        "PREVIOUS_HISTORICAL_4_QUOTE_CLOCK_INVERSIONS_PRESERVED",
+    ]
+    # Retain the four original anomalies as historical evidence; their
+    # retention is a SUCCESS of forensic integrity, not a defect to erase.
+    operator_approvals=[
+        "AUTHORIZE_MANUAL_DEMO_EA_V2_CHANGEOVER_WITH_STOP_LOG",
+        "AUTHORIZE_CURRENT_INCIDENT_COMMUNICATION_LATCH_RELEASE_AFTER_REVIEW",
+        "AUTHORIZE_NEW_AI_MONTHLY_CALL_AND_JPY_COST_LIMITS",
+    ]
+    independent_evidence=[
+        "VERIFY_COMPLETE_USD_EUR_JPY_IMPORTANT_EVENTS_AND_15M_WINDOWS",
+        "ARCHIVE_PRE_RELEASE_MARKET_CONSENSUS_WITH_CAPTURE_TIMESTAMP",
+        "INDEPENDENTLY_COMPARE_WINDOWS_PC_AND_RAKUTEN_MT4_BROKER_CLOCKS",
+        "RECONCILE_SPREAD_SLIPPAGE_SWAP_AND_CONTRACT_TERMS",
+        "VERIFY_PROVIDER_HARD_BILLING_CAP_AND_JPY_CHARGE_RECEIPTS",
+        "PROVE_COMPILED_V2_SINGLE_DEMO_EA_FROM_EXPERTS_LOG",
     ]
     return {
         "schema":SCHEMA,
@@ -104,6 +118,11 @@ def review(state_root:Path,mt4:Path,official_archive:Path,
         "integrated_evidence_gate":gate["status"],
         "integrated_budget_gate":budget["status"],
         "remaining_independent_review_requirements":sorted(set(blockers)),
+        "next_operator_authorizations_required":operator_approvals,
+        "next_independent_evidence_actions":independent_evidence,
+        "historical_evidence_to_preserve_not_repair":[
+            "FOUR_ORIGINAL_MT4_TICK_TIME_INVERSIONS_2026_11_19"
+        ],
         "previous_four_invalid_originals_silently_excluded":False,
         "live_runtime_restarted":False,
         "communication_latch_mutated":False,
