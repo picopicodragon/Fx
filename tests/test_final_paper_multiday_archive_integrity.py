@@ -146,6 +146,12 @@ class PublicArchiveIntegrityTests(unittest.TestCase):
         with self.assertRaises(InputError):
             archive.audit(self.folder)
 
+    def test_untracked_directory_fails_archive_integrity(self):
+        extra=self.folder/"untracked_dir"
+        extra.mkdir()
+        with self.assertRaises(InputError):
+            archive.audit(self.folder)
+
     def test_no_network_or_broker_calls_in_new_reviewers(self):
         base=Path(__file__).resolve().parents[1]
         for f in ("research/final_paper_multiday_quote_stress.py",
