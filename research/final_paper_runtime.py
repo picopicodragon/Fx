@@ -279,7 +279,15 @@ def run_one_cycle(mt4:Path,root:Path,bundles:list[Path], *,
         evidence_ready and not risk_stop and quote_gap_safe
         and not known_blackout["active_known_blackout"]
     )
-    paid_safe=allow_paid and signal_path_safe
+    # A healthy quote and an (eventually) approved macro clock are not
+    # enough to reopen the historical paid-API ledger. The 6-call lifetime
+    # ceiling is immutable without separate reviewed budget/release work.
+    paid_safe=(
+        allow_paid and signal_path_safe
+        and type(paid_limit) is int and 0<=paid_limit<=MAX_PAID_LIFETIME
+        and type(working_state.get("paid_inference_calls")) is int
+        and working_state["paid_inference_calls"]+2<=paid_limit
+    )
     copies=root/"captures"
     captures=_latest_h1_copy(mt4,copies,now)
     if signal_path_safe:
