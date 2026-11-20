@@ -109,7 +109,8 @@ class FinalPaperMacroBlackoutTests(unittest.TestCase):
                     folder,root,[],allow_paid=True,
                     analyst_model="a",reviewer_model="b",
                     paid_limit=6,now=NOW,event_blackout_file=file)
-            self.assertFalse(inferred.call_args.kwargs["allow_paid"])
+            inferred.assert_not_called()
+            self.assertTrue(report["ai_signal_pipeline_skipped_by_unattested_safety_hold"])
             self.assertTrue(report["known_macro_event_blackout_active"])
             self.assertFalse(report["independent_future_event_calendar_attested"])
             self.assertEqual(report["paid_calls_this_cycle"],0)
