@@ -47,4 +47,72 @@ if ($active.Count -eq 0 -and (Test-Path -LiteralPath $lock)) {
 if ($active.Count -gt 0) {
     Write-Warning 'A Python supervisor is present: do not launch another one.'
 }
+# Search the probable stop window, but export ONLY event metadata, never
+# raw Windows Message, account identifiers, paths, API keys or user secrets.
+try {
+    $sourceReport=Get-Content -LiteralPath $report -Raw -ErrorAction Stop | ConvertFrom-Json
+    $since=[datetimeoffset]::Parse($sourceReport.last_consumed_quote_utc_pc_unattested).LocalDateTime.AddMinutes(-30)
+    $until=$since.AddHours(4)
+    $system=@()
+    $pythonErrors=@()
+    $systemQueryOk=$false
+    $applicationQueryOk=$false
+    try {
+        $hits=@(Get-WinEvent -FilterHashtable @{
+            LogName='System'; StartTime=$since; EndTime=$until
+            Id=@(41,1074,6005,6006,6008)
+        } -MaxEvents 100 -ErrorAction Stop)
+        $systemQueryOk=$true
+        $system=@($hits | Select-Object -First 30 | ForEach-Object {
+            [ordered]@{
+                time_utc_pc_unattested=$_.TimeCreated.ToUniversalTime().ToString('o')
+                id=$_.Id
+                provider=$_.ProviderName
+            }
+        })
+    } catch { $systemQueryOk=$false }
+    try {
+        $app=@(Get-WinEvent -FilterHashtable @{
+            LogName='Application'; StartTime=$since; EndTime=$until
+            Id=@(1000,1001)
+        } -MaxEvents 100 -ErrorAction Stop)
+        $applicationQueryOk=$true
+        $pythonErrors=@($app | Where-Object {
+            $_.Message -match '(?i)python(w)?\.exe'
+        } | Select-Object -First 30 | ForEach-Object {
+            [ordered]@{
+                time_utc_pc_unattested=$_.TimeCreated.ToUniversalTime().ToString('o')
+                id=$_.Id
+                provider=$_.ProviderName
+            }
+        })
+    } catch { $applicationQueryOk=$false }
+    $events=[ordered]@{
+        schema='fx_final_paper_windows_exit_event_hints_v1'
+        status='WINDOWS_EVENT_HINTS_NOT_PROOF_OF_ROOT_CAUSE_NO_GO'
+        incident_last_quote_utc_pc_unattested=$sourceReport.last_consumed_quote_utc_pc_unattested
+        system_query_succeeded=$systemQueryOk
+        application_query_succeeded=$applicationQueryOk
+        system_restart_event_hints=$system
+        python_application_error_event_hints=$pythonErrors
+        event_messages_redacted=$true
+        independent_root_cause_proven=$false
+        supervisor_restarted=$false
+        lock_file_modified=$false
+        communication_latch_cleared=$false
+        paid_ai_calls_permitted=$false
+        new_virtual_entries_permitted=$false
+        broker_orders_permitted=$false
+        runtime_go_no_go='NO_GO'
+    }
+    $hintPath=Join-Path $StateRoot ('windows_exit_event_hints_'+
+        (Get-Date -Format 'yyyyMMdd_HHmmss_fff')+'.json')
+    $events | ConvertTo-Json -Depth 7 |
+        Set-Content -LiteralPath $hintPath -Encoding UTF8 -NoNewline
+    Write-Host ('WINDOWS_EXIT_EVENT_HINTS='+$hintPath)
+    Write-Host ('SYSTEM_RESTART_EVENT_HINT_COUNT='+$system.Count)
+    Write-Host ('PYTHON_APPLICATION_ERROR_HINT_COUNT='+$pythonErrors.Count)
+} catch {
+    Write-Warning 'Windows event hints could not be captured; cause remains unproven.'
+}
 Write-Host 'No restart, risk latch release, paid AI call, virtual entry or broker order executed.'
