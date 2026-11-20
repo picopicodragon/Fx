@@ -170,7 +170,8 @@ def apply_if_valid(root:Path,state:dict,head:str,quote:dict,
             or type(obj.get("incident_previous_cycle")) is not int
             or type(obj.get("incident_next_cycle")) is not int
             or type(obj.get("incident_gap_seconds_pc_unattested")) is not int
-            or obj.get("bound_journal_sha256")!=head
+            or type(obj.get("bound_journal_sha256")) is not str
+            or runtime.SHA.fullmatch(obj["bound_journal_sha256"]) is None
             or obj.get("approval_record_sha256")!=runtime._digest(
                 {k:v for k,v in obj.items() if k!="approval_record_sha256"})):
         raise InputError("CURRENT_INCIDENT_PERMIT_TAMPERED_OR_STALE_HEAD")
@@ -184,6 +185,11 @@ def apply_if_valid(root:Path,state:dict,head:str,quote:dict,
                 marker!=obj["approval_record_sha256"]):
             raise InputError("CURRENT_INCIDENT_ALREADY_RELEASED_DIFFERENT_EVENT")
         return state,False
+    # A new journal head is NORMAL after the one permitted application
+    # has already been durable-written. Bind the head only when first
+    # consuming an unspent approval.
+    if obj["bound_journal_sha256"]!=head:
+        raise InputError("CURRENT_INCIDENT_PERMIT_STALE_JOURNAL_HEAD")
     age=int(now.timestamp())-obj["created_epoch_pc_unattested"]
     if not 0<=age<=AGE_LIMIT:
         raise InputError("CURRENT_INCIDENT_PERMIT_EXPIRED")
