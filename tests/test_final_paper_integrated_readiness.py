@@ -79,6 +79,14 @@ class RealSourceReadinessTests(unittest.TestCase):
         self.assertFalse(report["full_ai_virtual_trading_ready"])
         self.assertFalse(report["new_paid_ai_inference_permitted"])
         self.assertFalse(report["new_virtual_entries_permitted"])
+        self.assertNotIn(
+            "PREVIOUS_HISTORICAL_4_QUOTE_CLOCK_INVERSIONS_PRESERVED",
+            report["remaining_independent_review_requirements"])
+        self.assertEqual(
+            report["historical_evidence_to_preserve_not_repair"],
+            ["FOUR_ORIGINAL_MT4_TICK_TIME_INVERSIONS_2026_11_19"])
+        self.assertEqual(len(report["next_operator_authorizations_required"]),3)
+        self.assertEqual(len(report["next_independent_evidence_actions"]),6)
         self.assertFalse(report["live_journal_modified"])
         self.assertFalse(report["communication_latch_mutated"])
         self.assertTrue(report["saved_official_document_hash_integrity"])
