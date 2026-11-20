@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -219,6 +220,18 @@ def audit(folder:Path,baseline_path:Path,cutover_utc:str,
                 })
     count=len(selected)
     research_samples_sufficient=count>=120 and len(day_counts)>=2
+    # A 120-sample clean run would be weak evidence against a historical
+    # 4/3020 event rate: under a *hypothetical independent identically
+    # distributed* model, it has ~85% probability of no errors even if the
+    # old issue remains. Correlation/regime changes make this only a
+    # descriptive heuristic, never an acceptance or trading gate.
+    historical_rate=(BASELINE["invalid_original_count"]/
+                     BASELINE["reviewed_original_count"])
+    if not 0<historical_rate<1:
+        raise InputError("CLOCKFIX_BASELINE_RATE_OUT_OF_RANGE")
+    iid_detection_sample_target=math.ceil(
+        math.log(0.05)/math.log1p(-historical_rate))
+    iid_zero_chance=pow(1-historical_rate,count)
     return {
         "schema":SCHEMA,
         "status":"CLOCKFIX_CANDIDATE_PROSPECTIVE_RESEARCH_HOLD_NO_GO",
@@ -245,6 +258,15 @@ def audit(folder:Path,baseline_path:Path,cutover_utc:str,
         "post_cutover_gaps_above_90s":gap90,
         "post_cutover_gaps_above_600s":gap600,
         "research_120_observations_two_ny17_days_reached":research_samples_sufficient,
+        "historical_invalid_fraction":round(historical_rate,9),
+        "iid_95pct_detect_at_least_one_if_rate_unchanged_sample_target":
+            iid_detection_sample_target,
+        "post_count_reaches_iid_95pct_detection_heuristic":
+            count>=iid_detection_sample_target,
+        "iid_probability_of_zero_if_legacy_rate_unchanged_illustrative":
+            round(iid_zero_chance,6),
+        "iid_assumption_independently_validated":False,
+        "statistics_can_enable_new_virtual_entries":False,
         "post_cutover_observed_future_tick_anomaly":any(future_counts.values()),
         "post_cutover_issues_first_25":problems,
         "proof_clock_race_eliminated":False,
