@@ -1,0 +1,63 @@
+{
+  "schema": "fx_final_paper_q110_acceptance_extension_20261120_v1",
+  "base_registry": "specs/acceptance_registry.json",
+  "base_extension": "specs/final_paper_q110_acceptance_extension_20261118.json",
+  "legacy_registries_intentionally_unchanged": true,
+  "scope": "FINAL_PAPER_NON_BROKER_VIRTUAL_ONLY",
+  "tasks": [
+    {
+      "id": "FP-20261120-AI-SAVED-REUSE",
+      "status": "OFFLINE_TESTED_NOT_LIVE_ACCEPTED",
+      "evidence": [
+        "research/final_paper_completed_decision.py",
+        "tests/test_final_paper_source_linked_e2e.py"
+      ],
+      "operator_approval": null
+    },
+    {
+      "id": "FP-20261120-SOURCE-LINKED-E2E",
+      "status": "OFFLINE_TESTED_NOT_LIVE_ACCEPTED",
+      "evidence": [
+        "research/final_paper_e2e_replay.py",
+        "tests/test_final_paper_source_linked_e2e.py"
+      ],
+      "operator_approval": null
+    },
+    {
+      "id": "FP-20261120-PIT-CALENDAR",
+      "status": "BLOCKED_EXTERNAL_EVIDENCE",
+      "evidence": [
+        "research/final_paper_point_in_time_evidence.py",
+        "tests/test_final_paper_evidence_costs.py"
+      ],
+      "operator_approval": null
+    },
+    {
+      "id": "FP-20261120-JPY-API-COST",
+      "status": "BLOCKED_PROVIDER_BILLING",
+      "evidence": [
+        "research/final_paper_api_cost_envelope.py",
+        "tests/test_final_paper_evidence_costs.py"
+      ],
+      "operator_approval": null
+    },
+    {
+      "id": "FP-20261120-LIVE-ENTRY-GO",
+      "status": "BLOCKED_RELEASE_GATES",
+      "evidence": [
+        "research/final_paper_five_gate_readiness.py",
+        "tests/test_final_paper_five_gate_readiness.py"
+      ],
+      "operator_approval": null
+    }
+  ],
+  "module_status": "BLOCKED_EXTERNAL_AND_OPERATOR_ACCEPTANCE",
+  "phase_status": "BLOCKED_EXTERNAL_AND_OPERATOR_ACCEPTANCE",
+  "operator_approved_communication_release_scope_only": true,
+  "live_communication_latch_cleared": false,
+  "added_paid_calls_authorized": false,
+  "live_new_virtual_entry_authorized": false,
+  "demo_orders_authorized": false,
+  "real_orders_authorized": false,
+  "main_merge_authorized": false
+}
