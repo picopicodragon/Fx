@@ -54,6 +54,13 @@ def load_completed(root: Path, captures: Path, bundles: list[Path],
     state, digest = ledger_reader._read_ledger(source)
     if state["stage"] != "COMPLETE" or state["pending_role"] is not None:
         raise InputError("saved AI decision pending review")
+    # An orphan COMPLETE call or ANY unresolved old pending dispatch means
+    # billable history is uncertain. Never import a trade signal from it.
+    from research import final_paper_ai_continuation_audit as paid_audit
+    reconciled = paid_audit.audit(root)
+    if (reconciled["paid_calls_recorded_in_journal"] !=
+            reconciled["paid_calls_in_completed_ledgers"]):
+        raise InputError("saved paid AI decision is not journal reconciled")
     if state["analyst_model"] == state["reviewer_model"]:
         raise InputError("two independent model identities required")
     # Use the saved final file modification time, never the beginning of the
