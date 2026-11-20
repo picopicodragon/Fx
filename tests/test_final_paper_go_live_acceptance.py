@@ -201,6 +201,32 @@ class LaunchAcceptanceTests(unittest.TestCase):
             with self.assertRaises(InputError):
                 launch._historical_chain(f,self.baseline,self.mq4)
 
+    def test_handoff_success_uses_validated_json_not_stale_native_exit(self):
+        base=Path(__file__).resolve().parents[1]
+        source=(base/"scripts"/"final_paper_go_live_acceptance_once.ps1"
+               ).read_text(encoding="utf-8")
+        child=(base/"scripts"/"final_paper_local_machine_handoff_once.ps1"
+              ).read_text(encoding="utf-8")
+        # w32tm.exe is a DIAGNOSTIC inside the child, not the child's
+        # success/failed code. Its nonzero LASTEXITCODE must not falsely
+        # abort after a valid saved source; no unverified snapshot accepted.
+        self.assertIn("w32tm.exe /query /status",child)
+        self.assertIn("$timeStatusExitCode=$LASTEXITCODE",child)
+        self.assertNotIn(
+            "if ($LASTEXITCODE -ne 0) { throw 'Read-only host snapshot failed",
+            source)
+        self.assertIn("ConvertFrom-Json -ErrorAction Stop",source)
+        self.assertIn("Expected precisely one new read-only snapshot",source)
+        for field in ("fx_final_paper_local_machine_handoff_v1",
+                      "READ_ONLY_LOCAL_EVIDENCE_NOT_LIVE_TRADE_APPROVAL",
+                      "paper_supervisor_process_count",
+                      "mt4_terminal_process_count",
+                      "runtime_lock_present_not_process_proof",
+                      "new_paid_ai_calls_authorized",
+                      "new_virtual_positions_permitted",
+                      "demo_orders_permitted","real_orders_permitted"):
+            self.assertIn(field,source)
+
     def test_powershell_never_stops_or_restarts_runtime(self):
         script=(Path(__file__).resolve().parents[1]/
                 "scripts/final_paper_go_live_acceptance_once.ps1"
