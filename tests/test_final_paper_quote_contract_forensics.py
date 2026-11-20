@@ -98,14 +98,31 @@ class OriginalContractEvidenceTests(unittest.TestCase):
             with self.subTest(problem=problem):
                 self._rewrite(problem)
                 result=forensic.investigate(self.folder,self.bad.name)
-                # The continuous engine checks quote freshness (+/-10s),
-                # while the multi-day auditor additionally requires the
-                # source filename to equal the original capture epoch.
-                self.assertEqual(result["engine_quote_validator_passed"],
-                                 problem=="wrong_capture")
+                # Changing only one currency capture makes its three-pair
+                # observation non-atomic and the engine must reject it.
+                self.assertFalse(result["engine_quote_validator_passed"])
                 self.assertFalse(result["strict_multiday_source_passed"])
                 self.assertIn(code,[i["code"]
                                    for i in result["issues_without_source_values"]])
+
+    def test_three_atomic_capture_times_differ_from_filename(self):
+        # The engine allows an internally atomic timestamp within 120s;
+        # strict multiday source requires an exact filename/capture match.
+        rows=list(csv.DictReader(self.bad.read_text("utf-8").splitlines()))
+        for row in rows:
+            row["ask"]=str(D(row["bid"])+D(".01"))
+            row["capture_epoch_utc_pc"]=str(int(BASE.timestamp())+1)
+        with self.bad.open("w",newline="",encoding="utf-8") as stream:
+            writer=csv.DictWriter(stream,fieldnames=engine.QUOTE_FIELDS)
+            writer.writeheader()
+            writer.writerows(rows)
+        result=forensic.investigate(self.folder,self.bad.name)
+        self.assertTrue(result["engine_quote_validator_passed"])
+        self.assertFalse(result["strict_multiday_source_passed"])
+        self.assertEqual(sum(i["code"]=="CAPTURE_TIME_DIFFERS_FROM_FILENAME"
+                             for i in result["issues_without_source_values"]),3)
+        with self.assertRaises(InputError):
+            strict.review(self.folder)
 
     def test_normal_file_reports_no_anomaly_but_is_not_trade_go(self):
         r=forensic.investigate(self.folder,self.before.name)
