@@ -194,7 +194,7 @@ def evaluate(permit:Path,official_archive:Path,quote:dict,
         raise InputError("FINAL_GATE_ORIGINAL_QUOTE_REQUIRED")
     if csv_path is not None:
         from research import final_paper_engine as engine
-        if type(csv_path) is not Path or not csv_path.is_file():
+        if not isinstance(csv_path,Path) or not csv_path.is_file():
             raise InputError("FINAL_GATE_QUOTE_FILE_MISSING")
         import csv
         try:
