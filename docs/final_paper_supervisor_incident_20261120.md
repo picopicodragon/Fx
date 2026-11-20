@@ -72,3 +72,44 @@ Windowsのイベントビューアー Application / System の
 月3,000円予算の課金確認・独立時刻・マクロ原本網羅は未完。
 
 新規有料AI0件、MT4デモ/実注文0件、mainマージなし。
+
+## 追加：一度限りの有人・無課金価格観測リカバリ（新規仮想売買ではない）
+
+Python監視ウィンドウ末尾・Windowsイベントログを確認し、今回の停止理由を
+可能な範囲で調査した後、**本人が無料観測だけの復旧を明示選択**する場合に限り、
+安全ロックを削除せず、原本のまま別名アーカイブする機構を追加した。
+
+この回復操作は対象を**journalが550サイクル、最終quote epochが1795004931**
+である今回の停止1件に限定する。次のいずれかでは拒否：
+- Python監視が1件でも存続、またはプロセスCommandLineが見えず確認不能
+- 最新MT4価格が120秒を超過、PCとbrokerの時刻が不整合
+- journalやAI台帳のハッシュ・6/6照合不一致、元のjournalが550から変化
+- 仮想建玉またはpending signalが存在、DD・日次損失の他停止あり
+- 古い通信解除許可ファイルが存在、リカバリ済みの証拠が存在
+- 原本ロック内容が期待と異なる、ファイルリンク/パスが不適切
+
+**安全な最初の操作**は、読み取り専用の調査のみ：
+
+    .\scripts\final_paper_supervisor_incident_once.ps1 -Mt4FilesDirectory $mt4Files
+
+今回の停止履歴・OSエラーを確認し、本人が無課金観測だけの再開を
+明示選択した場合の**別の操作**：
+
+    .\scripts\final_paper_manual_observation_recovery_once.ps1 -Mt4FilesDirectory $mt4Files -ApproveObservationOnlyRecovery
+
+原本ロックは削除せず
+`manual_observation_lock_20261120.archived`
+として同じstate rootに保存し、journal SHAを含む一回限りのreceiptを記録。
+このコマンドは**Python監視の起動も通信停止ラッチ解除もしない**。
+解除されたのは「異常終了で残った監督の排他ファイル」という
+ローカル運用ブロッカーだけであり、金融リスクを許可していない。
+
+その後、free preflightがPASSした場合のみ別PowerShellから
+（AutoTrading OFF、追加API指定なし）無料価格観測を人間が起動：
+
+    .\scripts\start_final_paper_virtual.ps1 -Mt4FilesDirectory $mt4Files
+
+この呼び出しはCtrl+Cまで継続。新規仮想建玉は安全停止を維持し、
+6/6 AI再利用は不可、ブローカーへの注文は0。
+新しい38時間の通信停止ラッチは**人間からの別の明示解除承認と
+独立安全確認が整うまで停止**する。
